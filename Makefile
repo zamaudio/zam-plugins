@@ -1,6 +1,6 @@
 PREFIX ?= /usr/local
 
-all: zamautosat zamcomp zamcompexp zamcompx2 zameq2 zamulticomp zamvalve zamvalve-tanh zamdither zamtube Makefile
+all: zamautosat zamcomp zamcompexp zamcompx2 zameq2 zamulticomp zamvalve zamvalve-tanh zamdither zamtube zamexcite Makefile
 
 zamautosat: force_look
 	$(MAKE) -C zamautosat
@@ -32,6 +32,9 @@ zamtube: force_look
 zamdither: force_look
 	$(MAKE) -C zamdither
 
+zamexcite: force_look
+	$(MAKE) -C zamexcite
+
 force_look:
 	true
 
@@ -47,6 +50,7 @@ install: all
 	$(MAKE) -C zamvalve-tanh install
 	$(MAKE) -C zamdither install
 	$(MAKE) -C zamtube install
+	$(MAKE) -C zamexcite install
 
 clean: force_look
 	$(MAKE) -C zamautosat clean
@@ -59,4 +63,5 @@ clean: force_look
 	$(MAKE) -C zamvalve-tanh clean
 	$(MAKE) -C zamdither clean
 	$(MAKE) -C zamtube clean
+	$(MAKE) -C zamexcite clean
 

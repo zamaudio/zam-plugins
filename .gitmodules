@@ -28,3 +28,6 @@
 [submodule "zamcompexp"]
 	path = zamcompexp
 	url = http://github.com/zamaudio/zamcompexp
+[submodule "zamexcite"]
+	path = zamexcite
+	url = http://github.com/zamaudio/zamexcite
