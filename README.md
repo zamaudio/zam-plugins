@@ -23,6 +23,7 @@ Build Dependencies:
 Installation:
 =============
 
+	git submodule init
 	git submodule update
 	make
 	sudo make install
