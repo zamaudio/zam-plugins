@@ -1,0 +1,30 @@
+[submodule "zamautosat"]
+	path = zamautosat
+	url = http://github.com/zamaudio/zamautosat
+[submodule "zamtube"]
+	path = zamtube
+	url = http://github.com/zamaudio/zamtube
+[submodule "zamdither"]
+	path = zamdither
+	url = http://github.com/zamaudio/zamdither
+[submodule "zamvalve"]
+	path = zamvalve
+	url = http://github.com/zamaudio/zamvalve
+[submodule "zamvalve-tanh"]
+	path = zamvalve-tanh
+	url = http://github.com/zamaudio/zamvalve
+[submodule "zamulticomp"]
+	path = zamulticomp
+	url = http://github.com/zamaudio/zamulticomp
+[submodule "zamcomp"]
+	path = zamcomp
+	url = http://github.com/zamaudio/zamcomp
+[submodule "zamcompx2"]
+	path = zamcompx2
+	url = http://github.com/zamaudio/zamcomp
+[submodule "zameq2"]
+	path = zameq2
+	url = http://github.com/zamaudio/zameq2
+[submodule "zamcompexp"]
+	path = zamcompexp
+	url = http://github.com/zamaudio/zamcompexp
