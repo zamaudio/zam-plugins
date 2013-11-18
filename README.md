@@ -13,6 +13,13 @@ However, I have provided the .dsp files in the sources for archiving or
 if anyone wants to play with the source, and for the future when faust 
 handles metadata better..
 
+
+Build Dependencies:
+===================
+
+	pkg-config lv2-dev ladspa-sdk lv2-c++-tools faust
+
+
 Installation:
 =============
 
