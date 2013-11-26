@@ -35,9 +35,6 @@ zamdither: force_look
 zamexcite: force_look
 	$(MAKE) -C zamexcite
 
-zamverb: force_look
-	$(MAKE) -C zamverb
-
 force_look:
 	true
 
@@ -54,7 +51,6 @@ install: all
 	$(MAKE) -C zamdither install
 	$(MAKE) -C zamtube install
 	$(MAKE) -C zamexcite install
-	$(MAKE) -C zamverb install
 
 clean: force_look
 	$(MAKE) -C zamautosat clean
@@ -68,5 +64,4 @@ clean: force_look
 	$(MAKE) -C zamdither clean
 	$(MAKE) -C zamtube clean
 	$(MAKE) -C zamexcite clean
-	$(MAKE) -C zamverb clean
 
