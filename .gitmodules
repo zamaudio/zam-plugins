@@ -31,6 +31,3 @@
 [submodule "zamexcite"]
 	path = zamexcite
 	url = http://github.com/zamaudio/zamexcite
-[submodule "zamverb"]
-	path = zamverb
-	url = http://github.com/zamaudio/zamverb
