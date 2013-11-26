@@ -1,6 +1,6 @@
 PREFIX ?= /usr/local
 
-all: zamautosat zamcomp zamcompexp zamcompx2 zameq2 zamulticomp zamvalve zamvalve-tanh zamdither zamtube zamexcite zamverb Makefile
+all: zamautosat zamcomp zamcompexp zamcompx2 zameq2 zamulticomp zamvalve zamvalve-tanh zamdither zamtube zamexcite Makefile
 
 zamautosat: force_look
 	$(MAKE) -C zamautosat
