@@ -2,41 +2,38 @@ PREFIX ?= /usr/local
 
 all: zamautosat zamcomp zamcompexp zamcompx2 zameq2 zamulticomp zamvalve zamvalve-tanh zamdither zamtube zamexcite Makefile
 
-zamautosat: force_look
+zamautosat: FORCE
 	$(MAKE) -C zamautosat
 
-zamcomp: force_look
+zamcomp: FORCE
 	$(MAKE) -C zamcomp
 
-zamcompx2: force_look
+zamcompx2: FORCE
 	$(MAKE) -C zamcompx2
 
-zamcompexp: force_look
+zamcompexp: FORCE
 	$(MAKE) -C zamcompexp
 
-zameq2: force_look
+zameq2: FORCE
 	$(MAKE) -C zameq2
 
-zamulticomp: force_look
+zamulticomp: FORCE
 	$(MAKE) -C zamulticomp
 
-zamvalve: force_look
+zamvalve: FORCE
 	$(MAKE) -C zamvalve
 
-zamvalve-tanh: force_look
+zamvalve-tanh: FORCE
 	$(MAKE) -C zamvalve-tanh
 
-zamtube: force_look
+zamtube: FORCE
 	$(MAKE) -C zamtube
 
-zamdither: force_look
+zamdither: FORCE
 	$(MAKE) -C zamdither
 
-zamexcite: force_look
+zamexcite: FORCE
 	$(MAKE) -C zamexcite
-
-force_look:
-	true
 
 install: all
 	install -d $(DESTDIR)$(PREFIX)/lib/ladspa $(DESTDIR)$(PREFIX)/lib/lv2
@@ -52,7 +49,7 @@ install: all
 	$(MAKE) -C zamtube install
 	$(MAKE) -C zamexcite install
 
-clean: force_look
+clean: FORCE
 	$(MAKE) -C zamautosat clean
 	$(MAKE) -C zamcomp clean
 	$(MAKE) -C zamcompx2 clean
@@ -65,3 +62,5 @@ clean: force_look
 	$(MAKE) -C zamtube clean
 	$(MAKE) -C zamexcite clean
 
+# pseudo target to force (re)making other targets
+FORCE:
