@@ -1,67 +1,79 @@
 PREFIX ?= /usr/local
+LIBDIR ?= lib
+OPTIMIZATIONS ?=
 
-all: zamautosat zamcomp zamcompexp zamcompx2 zameq2 zamulticomp zamvalve zamvalve-tanh zamdither zamtube zamexcite Makefile
+NAME    = zam-plugins
+VERSION = $(shell cat .version)
 
-zamautosat: force_look
-	$(MAKE) -C zamautosat
+SUBMODULES = zamautosat zamcomp zamcompexp zamcompx2 zameq2 zamulticomp \
+			 zamvalve zamvalve-tanh zamdither zamtube zamexcite
 
-zamcomp: force_look
-	$(MAKE) -C zamcomp
+all: $(SUBMODULES)
 
-zamcompx2: force_look
-	$(MAKE) -C zamcompx2
-
-zamcompexp: force_look
-	$(MAKE) -C zamcompexp
-
-zameq2: force_look
-	$(MAKE) -C zameq2
-
-zamulticomp: force_look
-	$(MAKE) -C zamulticomp
-
-zamvalve: force_look
-	$(MAKE) -C zamvalve
-
-zamvalve-tanh: force_look
-	$(MAKE) -C zamvalve-tanh
-
-zamtube: force_look
-	$(MAKE) -C zamtube
-
-zamdither: force_look
-	$(MAKE) -C zamdither
-
-zamexcite: force_look
-	$(MAKE) -C zamexcite
-
-force_look:
-	true
+$(SUBMODULES): FORCE
+	$(MAKE) -C $@
 
 install: all
-	install -d $(DESTDIR)$(PREFIX)/lib/ladspa $(DESTDIR)$(PREFIX)/lib/lv2
-	$(MAKE) -C zamautosat install
-	$(MAKE) -C zamcomp install
-	$(MAKE) -C zamcompx2 install
-	$(MAKE) -C zamcompexp install
-	$(MAKE) -C zameq2 install
-	$(MAKE) -C zamulticomp install
-	$(MAKE) -C zamvalve install
-	$(MAKE) -C zamvalve-tanh install
-	$(MAKE) -C zamdither install
-	$(MAKE) -C zamtube install
-	$(MAKE) -C zamexcite install
+	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa \
+		$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2
+	if test 'x$(OPTIMIZATIONS)' != 'x'; then \
+		optimizations='OPTIMIZATIONS=$(OPTIMIZATIONS)'; \
+	else \
+		optimizations=''; \
+	fi; \
+	for submodule in $(SUBMODULES); do \
+		$(MAKE) PREFIX="$(PREFIX)" LIBDIR="$(LIBDIR)" $$optimizations \
+			-C "$$submodule" install; \
+	done
 
-clean: force_look
-	$(MAKE) -C zamautosat clean
-	$(MAKE) -C zamcomp clean
-	$(MAKE) -C zamcompx2 clean
-	$(MAKE) -C zamcompexp clean
-	$(MAKE) -C zameq2 clean
-	$(MAKE) -C zamulticomp clean
-	$(MAKE) -C zamvalve clean
-	$(MAKE) -C zamvalve-tanh clean
-	$(MAKE) -C zamdither clean
-	$(MAKE) -C zamtube clean
-	$(MAKE) -C zamexcite clean
+clean: FORCE
+	for submodule in $(SUBMODULES); do \
+		$(MAKE) "PREFIX=$(PREFIX)" LIBDIR="$(LIBDIR)" -C "$$submodule" clean; \
+	done
 
+submodules: FORCE
+	git submodule init
+	git submodule update
+
+.version: FORCE
+	if test -d .git; then \
+		git describe > .version; \
+	fi
+
+_dist_pre: .version FORCE
+	rm -rf dist
+	mkdir dist
+	git clone . dist/$(NAME)-$(VERSION)
+	(cd dist/$(NAME)-$(VERSION); git checkout $(VERSION))
+	for submodule in $(SUBMODULES); do \
+		echo "[submodule \"$$submodule\"]"; \
+		echo "	path = $$submodule"; \
+		echo "	url = file://$$PWD/$$submodule"; \
+	done > dist/$(NAME)-$(VERSION)/.gitmodules
+	$(MAKE) -C dist/$(NAME)-$(VERSION) submodules .version
+	rm -rf dist/$(NAME)-$(VERSION)/.git* \
+		dist/$(NAME)-$(VERSION)/*/.git*
+
+_dist_post: FORCE
+	rm -rf dist
+
+_dist_bz2: FORCE
+	cd dist; tar -cvjf ../$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
+
+_dist_gz: FORCE
+	cd dist; tar -cvzf ../$(NAME)-$(VERSION).tar.gz $(NAME)-$(VERSION)
+
+_dist_xz: FORCE
+	cd dist; tar -cvJf ../$(NAME)-$(VERSION).tar.xz $(NAME)-$(VERSION)
+
+_dist_zip: FORCE
+	cd dist; zip -r ../$(NAME)-$(VERSION).zip $(NAME)-$(VERSION)
+
+dist_bz2: _dist_pre _dist_bz2 _dist_post
+dist_gz: _dist_pre _dist_gz _dist_post
+dist_xz: _dist_pre _dist_xz _dist_post
+dist_zip: _dist_pre _dist_zip _dist_post
+dist: dist_xz
+
+# pseudo target to force (re)making other targets
+FORCE:
