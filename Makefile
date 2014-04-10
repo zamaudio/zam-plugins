@@ -15,13 +15,10 @@ plugins: libs
 	$(MAKE) -C plugins/ZamComp
 
 gen: plugins libs/lv2_ttl_generator
-	$(MAKE) -C libs/lv2-ttl-generator
+	@./libs/generate-ttl.sh
 
 libs/lv2_ttl_generator:
 	$(MAKE) -C libs/lv2-ttl-generator
-
-# 	./utils/lv2_ttl_generator bin/lv2/ZamComp.lv2/ZamComp.so
-# 	mv *.ttl bin/lv2/ZamComp.lv2
 
 # --------------------------------------------------------------
 

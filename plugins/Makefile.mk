@@ -83,7 +83,7 @@ $(lv2_dsp): $(OBJS_DSP) ../../libs/distrho/DistrhoPluginMain.cpp
 
 $(lv2_ui): $(OBJS_UI) ../../libs/distrho/DistrhoUIMain.cpp ../../libs/libdgl.a
 	mkdir -p $(shell dirname $@)
-	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(DGL_LIBS) $(SHARED) -DDISTRHO_PLUGIN_TARGET_DSSI -o $@
+	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(DGL_LIBS) $(SHARED) -DDISTRHO_PLUGIN_TARGET_LV2 -o $@
 
 # --------------------------------------------------------------
 # VST
