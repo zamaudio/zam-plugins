@@ -4,7 +4,7 @@
 # Created by falkTX
 #
 
-include Makefile.mk
+include ../../Makefile.mk
 
 # --------------------------------------------------------------
 
@@ -41,16 +41,6 @@ all: $(TARGET)
 ../libdgl.a: $(OBJS)
 	$(RM) $@
 	$(AR) crs $@ $^
-
-../libdgl.dll: $(OBJS)
-	# -Wl,--output-def,$@.def,--out-implib,$@.a
-	$(CXX) $^ -shared $(LINK_FLAGS) -o $@
-
-../libdgl.dylib: $(OBJS)
-	$(CXX) $^ -dynamiclib $(LINK_FLAGS) -o $@
-
-../libdgl.so: $(OBJS)
-	$(CXX) $^ -shared $(LINK_FLAGS) -o $@
 
 # --------------------------------------------------------------
 

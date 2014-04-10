@@ -4,33 +4,24 @@
 # Created by falkTX
 #
 
-all: libs plugins gen
+# --------------------------------------------------------------
+# Project name, used for binaries
+
+NAME = ZamComp
 
 # --------------------------------------------------------------
+# Files to build
 
-libs:
-	$(MAKE) -C libs/dgl
+OBJS_DSP = \
+	ZamCompPlugin.cpp.o
 
-plugins: libs
-	$(MAKE) -C plugins/ZamComp
-
-gen: plugins libs/lv2_ttl_generator
-	@./libs/generate-ttl.sh
-
-libs/lv2_ttl_generator:
-	$(MAKE) -C libs/lv2-ttl-generator
+OBJS_UI  = \
+	ZamCompArtwork.cpp.o \
+	ZamCompUI.cpp.o
 
 # --------------------------------------------------------------
+# Do some magic
 
-install: all
-
-# --------------------------------------------------------------
-
-clean:
-	$(MAKE) clean -C libs/dgl
-	$(MAKE) clean -C plugins/ZamComp
-	$(MAKE) clean -C libs/lv2-ttl-generator
+include ../Makefile.mk
 
 # --------------------------------------------------------------
-
-.PHONY: libs plugins
