@@ -70,7 +70,7 @@ $(dssi_dsp): $(OBJS_DSP) ../../libs/distrho/DistrhoPluginMain.cpp
 
 $(dssi_ui): $(OBJS_UI) ../../libs/distrho/DistrhoUIMain.cpp ../../libs/libdgl.a
 	mkdir -p $(shell dirname $@)
-	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(DGL_LIBS) $(shell pkg-config --libs liblo) -DDISTRHO_PLUGIN_TARGET_DSSI -o $@
+	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(DGL_LIBS) $(shell pkg-config --cflags --libs liblo) -DDISTRHO_PLUGIN_TARGET_DSSI -o $@
 
 # --------------------------------------------------------------
 # LV2
