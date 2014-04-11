@@ -127,7 +127,7 @@ protected:
 	        return (20.f*log10(g));
 	}
 
-    float run_comp(int k, int ch, float inL, float inR);
+    void run_comp(int k, float inL, float inR, float *outL, float *outR);
     float run_filter(int i, int ch, float in);
     void set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
     void set_hp_coeffs(float fc, float q, float sr, int i, int ch, float gain);

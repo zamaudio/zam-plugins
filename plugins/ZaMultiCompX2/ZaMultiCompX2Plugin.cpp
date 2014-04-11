@@ -439,7 +439,7 @@ void ZaMultiCompX2Plugin::set_hp_coeffs(float fc, float q, float sr, int i, int 
         b2[ch][i] =  (float)((1.f - alpha)*inv);
 }
 
-float ZaMultiCompX2Plugin::run_comp(int k, int ch, float inL, float inR)
+void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, float *outR)
 {
 	float srate = d_getSampleRate();
         float makeupgain = from_dB(makeup[k]);
@@ -455,7 +455,6 @@ float ZaMultiCompX2Plugin::run_comp(int k, int ch, float inL, float inR)
         float Rxg, Ryg;
         float Lxl, Lyl, Ly1;
         float Rxl, Ryl, Ry1;
-        float out;
 
         Lyg = Ryg = 0.f;
         Lxg = (inL==0.f) ? -160.f : to_dB(fabs(inL));
@@ -516,19 +515,15 @@ float ZaMultiCompX2Plugin::run_comp(int k, int ch, float inL, float inR)
         
         //gainr_r = Ryl;
 
-	if (ch == 0) {
-	        out = inL;
-        	out *= Lgain * makeupgain;
-	} else {
-		out = inR;
-        	out *= Rgain * makeupgain;
-	}
+	*outL = inL;
+	*outL *= Lgain * makeupgain;
+	*outR = inR;
+	*outR *= Rgain * makeupgain;
         
         old_yl[0][k] = Lyl;
         old_yl[1][k] = Ryl;
         old_y1[0][k] = Ly1;
         old_y1[1][k] = Ry1;	
-        return out;
 }
 
 void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
@@ -560,6 +555,7 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
         for (uint32_t i = 0; i < frames; ++i) {
                 float tmp1[2], tmp2[2], tmp3[2], tmp4[2], tmp5[2], tmp6[2];
 		float fil1[2], fil2[2], fil3[2], fil4[2];
+		float outL, outR;
 
 		// Interleaved channel processing
 		outputs[0][i] = inputs[0][i];
@@ -568,8 +564,10 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
                 fil1[1] = run_filter(0, 1, inputs[1][i]);
                 tmp1[0] = run_filter(1, 0, fil1[0]);
                 tmp1[1] = run_filter(1, 1, fil1[1]);
-                tmp2[0] = tog1 ? run_comp(0, 0, tmp1[0], tmp1[1]) : tmp1[0];
-                tmp2[1] = tog1 ? run_comp(0, 1, tmp1[0], tmp1[1]) : tmp1[1];
+
+		run_comp(0, tmp1[0], tmp1[1], &outL, &outR);
+                tmp2[0] = tog1 ? outL : tmp1[0];
+                tmp2[1] = tog1 ? outR : tmp1[1];
 
                 fil2[0] = run_filter(2, 0, inputs[0][i]);
                 fil2[1] = run_filter(2, 1, inputs[1][i]);
@@ -579,15 +577,19 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
                 fil3[1] = run_filter(4, 1, tmp3[1]);
                 tmp4[0] = run_filter(5, 0, fil3[0]);
                 tmp4[1] = run_filter(5, 1, fil3[1]);
-                tmp3[0] = tog2 ? run_comp(1, 0, tmp4[0], tmp4[1]) : tmp4[0];
-                tmp3[1] = tog2 ? run_comp(1, 1, tmp4[0], tmp4[1]) : tmp4[1];
+
+		run_comp(1, tmp4[0], tmp4[1], &outL, &outR);
+                tmp3[0] = tog2 ? outL : tmp4[0];
+                tmp3[1] = tog2 ? outR : tmp4[1];
 
                 fil4[0] = run_filter(6, 0, inputs[0][i]);
                 fil4[1] = run_filter(6, 1, inputs[1][i]);
                 tmp5[0] = run_filter(7, 0, fil4[0]);
                 tmp5[1] = run_filter(7, 1, fil4[1]);
-                tmp6[0] = tog3 ? run_comp(2, 0, tmp5[0], tmp5[1]) : tmp5[0];
-                tmp6[1] = tog3 ? run_comp(2, 1, tmp5[0], tmp5[1]) : tmp5[1];
+		
+		run_comp(2, tmp5[0], tmp5[1], &outL, &outR);
+                tmp6[0] = tog3 ? outL : tmp5[0];
+                tmp6[1] = tog3 ? outR : tmp5[1];
 
                 outputs[0][i] = tmp2[0] + tmp3[0] + tmp6[0];
                 outputs[1][i] = tmp2[1] + tmp3[1] + tmp6[1];
