@@ -47,12 +47,12 @@ void ZamTubePlugin::d_initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramTubedrive:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = PARAMETER_IS_AUTOMABLE;
         parameter.name       = "Tube Drive";
         parameter.symbol     = "tubedrive";
         parameter.unit       = " ";
-        parameter.ranges.def = 1.0f;
-        parameter.ranges.min = 0.1f;
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = -30.0f;
         parameter.ranges.max = 30.0f;
         break;
     case paramBass:
@@ -123,9 +123,9 @@ void ZamTubePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Output level";
         parameter.symbol     = "gain";
         parameter.unit       = " ";
-        parameter.ranges.def = 1.0f;
-        parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 10.0f;
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = -15.0f;
+        parameter.ranges.max = 15.0f;
         break;
     }
 }
@@ -199,12 +199,12 @@ void ZamTubePlugin::d_setProgram(uint32_t index)
         return;
 
     /* Default parameter values */
-    tubedrive = 1.0f;
+    tubedrive = 0.0f;
     bass = 0.5f;
     middle = 0.5f;
     treble = 0.0f;
     cabinet = 0.0f;
-    mastergain = 1.0f;
+    mastergain = 0.0f;
 
     /* Default variable values */
 
@@ -1003,7 +1003,7 @@ void ZamTubePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 	for (int i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
-		Vi.e = inputs[0][i]*tubedrive;
+		Vi.e = inputs[0][i]*from_dB(tubedrive);
 
 		//Step 2: propagate waves up to the triode and push values into triode element
 		I1.waveUp();
@@ -1072,7 +1072,7 @@ void ZamTubePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 		fRec22[0] = ((float)tubeout - (fSlow602 * (((fSlow600 * fRec22[2]) + (fSlow599 * fRec22[1])) + (fSlow597 * fRec22[3]))));
 		fRec23[0] = ((float)tubeout - (fSlow626 * (((fSlow624 * fRec23[2]) + (fSlow623 * fRec23[1])) + (fSlow621 * fRec23[3]))));
 		fRec24[0] = ((float)tubeout - (fSlow652 * (((fSlow650 * fRec24[2]) + (fSlow649 * fRec24[1])) + (fSlow647 * fRec24[3]))));
-		outputs[0][i] = (FAUSTFLOAT)((fSlow664 * ((fSlow663 * fRec24[0]) + ((fSlow662 * fRec24[1]) + ((fSlow660 * fRec24[3]) + (fSlow658 * fRec24[2]))))) + ((fSlow638 * ((fSlow637 * fRec23[0]) + ((fSlow636 * fRec23[1]) + ((fSlow634 * fRec23[3]) + (fSlow632 * fRec23[2]))))) + ((fSlow614 * ((fSlow613 * fRec22[0]) + ((fSlow612 * fRec22[1]) + ((fSlow610 * fRec22[3]) + (fSlow608 * fRec22[2]))))) + ((fSlow588 * ((fSlow587 * fRec21[0]) + ((fSlow586 * fRec21[1]) + ((fSlow584 * fRec21[3]) + (fSlow582 * fRec21[2]))))) + ((fSlow561 * ((fSlow560 * fRec20[0]) + ((fSlow559 * fRec20[1]) + ((fSlow558 * fRec20[3]) + (fSlow556 * fRec20[2]))))) + ((fSlow540 * ((fSlow539 * fRec19[0]) + ((fSlow538 * fRec19[1]) + ((fSlow537 * fRec19[3]) + (fSlow535 * fRec19[2]))))) + ((fSlow519 * ((fSlow518 * fRec18[0]) + ((fSlow517 * fRec18[1]) + ((fSlow515 * fRec18[3]) + (fSlow513 * fRec18[2]))))) + ((fSlow493 * ((fSlow492 * fRec17[0]) + ((fSlow491 * fRec17[1]) + ((fSlow489 * fRec17[3]) + (fSlow487 * fRec17[2]))))) + ((fSlow463 * ((fSlow462 * fRec16[0]) + ((fSlow461 * fRec16[1]) + ((fSlow459 * fRec16[3]) + (fSlow457 * fRec16[2]))))) + ((fSlow435 * ((fSlow434 * fRec15[0]) + ((fSlow433 * fRec15[1]) + ((fSlow431 * fRec15[3]) + (fSlow429 * fRec15[2]))))) + ((fSlow409 * ((fSlow408 * fRec14[0]) + ((fSlow407 * fRec14[1]) + ((fSlow405 * fRec14[3]) + (fSlow403 * fRec14[2]))))) + ((fSlow385 * ((fSlow384 * fRec13[0]) + ((fSlow383 * fRec13[1]) + ((fSlow381 * fRec13[3]) + (fSlow379 * fRec13[2]))))) + ((fSlow358 * ((fSlow357 * fRec12[0]) + ((fSlow356 * fRec12[1]) + ((fSlow354 * fRec12[3]) + (fSlow352 * fRec12[2]))))) + ((fSlow332 * ((fSlow331 * fRec11[0]) + ((fSlow330 * fRec11[1]) + ((fSlow328 * fRec11[3]) + (fSlow326 * fRec11[2]))))) + ((fSlow305 * ((fSlow304 * fRec10[0]) + ((fSlow303 * fRec10[1]) + ((fSlow301 * fRec10[3]) + (fSlow299 * fRec10[2]))))) + ((fSlow277 * ((fSlow276 * fRec9[0]) + ((fSlow275 * fRec9[1]) + ((fSlow273 * fRec9[3]) + (fSlow271 * fRec9[2]))))) + ((fSlow250 * ((fSlow249 * fRec8[0]) + ((fSlow248 * fRec8[1]) + ((fSlow246 * fRec8[3]) + (fSlow244 * fRec8[2]))))) + ((fSlow224 * ((fSlow223 * fRec7[0]) + ((fSlow222 * fRec7[1]) + ((fSlow220 * fRec7[3]) + (fSlow218 * fRec7[2]))))) + ((fSlow198 * ((fSlow197 * fRec6[0]) + ((fSlow196 * fRec6[1]) + ((fSlow194 * fRec6[3]) + (fSlow192 * fRec6[2]))))) + ((fSlow171 * ((fSlow170 * fRec5[0]) + ((fSlow169 * fRec5[1]) + ((fSlow167 * fRec5[3]) + (fSlow165 * fRec5[2]))))) + ((fSlow140 * ((fSlow139 * fRec4[0]) + ((fSlow138 * fRec4[1]) + ((fSlow136 * fRec4[3]) + (fSlow134 * fRec4[2]))))) + ((fSlow114 * ((fSlow113 * fRec3[0]) + ((fSlow112 * fRec3[1]) + ((fSlow110 * fRec3[3]) + (fSlow108 * fRec3[2]))))) + ((fSlow88 * ((fSlow87 * fRec2[0]) + ((fSlow86 * fRec2[1]) + ((fSlow84 * fRec2[3]) + (fSlow82 * fRec2[2]))))) + ((fSlow60 * ((fSlow59 * fRec1[0]) + ((fSlow58 * fRec1[1]) + ((fSlow56 * fRec1[3]) + (fSlow54 * fRec1[2]))))) + (fSlow32 * ((fSlow30 * fRec0[0]) + ((fSlow29 * fRec0[1]) + ((fSlow27 * fRec0[3]) + (fSlow25 * fRec0[2])))))))))))))))))))))))))))))* mastergain;
+		outputs[0][i] = (FAUSTFLOAT)((fSlow664 * ((fSlow663 * fRec24[0]) + ((fSlow662 * fRec24[1]) + ((fSlow660 * fRec24[3]) + (fSlow658 * fRec24[2]))))) + ((fSlow638 * ((fSlow637 * fRec23[0]) + ((fSlow636 * fRec23[1]) + ((fSlow634 * fRec23[3]) + (fSlow632 * fRec23[2]))))) + ((fSlow614 * ((fSlow613 * fRec22[0]) + ((fSlow612 * fRec22[1]) + ((fSlow610 * fRec22[3]) + (fSlow608 * fRec22[2]))))) + ((fSlow588 * ((fSlow587 * fRec21[0]) + ((fSlow586 * fRec21[1]) + ((fSlow584 * fRec21[3]) + (fSlow582 * fRec21[2]))))) + ((fSlow561 * ((fSlow560 * fRec20[0]) + ((fSlow559 * fRec20[1]) + ((fSlow558 * fRec20[3]) + (fSlow556 * fRec20[2]))))) + ((fSlow540 * ((fSlow539 * fRec19[0]) + ((fSlow538 * fRec19[1]) + ((fSlow537 * fRec19[3]) + (fSlow535 * fRec19[2]))))) + ((fSlow519 * ((fSlow518 * fRec18[0]) + ((fSlow517 * fRec18[1]) + ((fSlow515 * fRec18[3]) + (fSlow513 * fRec18[2]))))) + ((fSlow493 * ((fSlow492 * fRec17[0]) + ((fSlow491 * fRec17[1]) + ((fSlow489 * fRec17[3]) + (fSlow487 * fRec17[2]))))) + ((fSlow463 * ((fSlow462 * fRec16[0]) + ((fSlow461 * fRec16[1]) + ((fSlow459 * fRec16[3]) + (fSlow457 * fRec16[2]))))) + ((fSlow435 * ((fSlow434 * fRec15[0]) + ((fSlow433 * fRec15[1]) + ((fSlow431 * fRec15[3]) + (fSlow429 * fRec15[2]))))) + ((fSlow409 * ((fSlow408 * fRec14[0]) + ((fSlow407 * fRec14[1]) + ((fSlow405 * fRec14[3]) + (fSlow403 * fRec14[2]))))) + ((fSlow385 * ((fSlow384 * fRec13[0]) + ((fSlow383 * fRec13[1]) + ((fSlow381 * fRec13[3]) + (fSlow379 * fRec13[2]))))) + ((fSlow358 * ((fSlow357 * fRec12[0]) + ((fSlow356 * fRec12[1]) + ((fSlow354 * fRec12[3]) + (fSlow352 * fRec12[2]))))) + ((fSlow332 * ((fSlow331 * fRec11[0]) + ((fSlow330 * fRec11[1]) + ((fSlow328 * fRec11[3]) + (fSlow326 * fRec11[2]))))) + ((fSlow305 * ((fSlow304 * fRec10[0]) + ((fSlow303 * fRec10[1]) + ((fSlow301 * fRec10[3]) + (fSlow299 * fRec10[2]))))) + ((fSlow277 * ((fSlow276 * fRec9[0]) + ((fSlow275 * fRec9[1]) + ((fSlow273 * fRec9[3]) + (fSlow271 * fRec9[2]))))) + ((fSlow250 * ((fSlow249 * fRec8[0]) + ((fSlow248 * fRec8[1]) + ((fSlow246 * fRec8[3]) + (fSlow244 * fRec8[2]))))) + ((fSlow224 * ((fSlow223 * fRec7[0]) + ((fSlow222 * fRec7[1]) + ((fSlow220 * fRec7[3]) + (fSlow218 * fRec7[2]))))) + ((fSlow198 * ((fSlow197 * fRec6[0]) + ((fSlow196 * fRec6[1]) + ((fSlow194 * fRec6[3]) + (fSlow192 * fRec6[2]))))) + ((fSlow171 * ((fSlow170 * fRec5[0]) + ((fSlow169 * fRec5[1]) + ((fSlow167 * fRec5[3]) + (fSlow165 * fRec5[2]))))) + ((fSlow140 * ((fSlow139 * fRec4[0]) + ((fSlow138 * fRec4[1]) + ((fSlow136 * fRec4[3]) + (fSlow134 * fRec4[2]))))) + ((fSlow114 * ((fSlow113 * fRec3[0]) + ((fSlow112 * fRec3[1]) + ((fSlow110 * fRec3[3]) + (fSlow108 * fRec3[2]))))) + ((fSlow88 * ((fSlow87 * fRec2[0]) + ((fSlow86 * fRec2[1]) + ((fSlow84 * fRec2[3]) + (fSlow82 * fRec2[2]))))) + ((fSlow60 * ((fSlow59 * fRec1[0]) + ((fSlow58 * fRec1[1]) + ((fSlow56 * fRec1[3]) + (fSlow54 * fRec1[2]))))) + (fSlow32 * ((fSlow30 * fRec0[0]) + ((fSlow29 * fRec0[1]) + ((fSlow27 * fRec0[3]) + (fSlow25 * fRec0[2])))))))))))))))))))))))))))))* from_dB(mastergain);
 		// post processing
 		for (int i=3; i>0; i--) fRec24[i] = fRec24[i-1];
 		for (int i=3; i>0; i--) fRec23[i] = fRec23[i-1];
