@@ -16,6 +16,7 @@ plugins: libs
 	$(MAKE) -C plugins/ZamCompX2
 	$(MAKE) -C plugins/ZaMultiComp
 	$(MAKE) -C plugins/ZaMultiCompX2
+	$(MAKE) -C plugins/ZamTube
 
 
 gen: plugins libs/lv2_ttl_generator
@@ -36,6 +37,7 @@ clean:
 	$(MAKE) clean -C plugins/ZamCompX2
 	$(MAKE) clean -C plugins/ZaMultiComp
 	$(MAKE) clean -C plugins/ZaMultiCompX2
+	$(MAKE) clean -C plugins/ZamTube
 	$(MAKE) clean -C libs/lv2-ttl-generator
 
 # --------------------------------------------------------------

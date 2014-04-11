@@ -78,7 +78,7 @@ void ZamTubePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Treble";
         parameter.symbol     = "treb";
         parameter.unit       = " ";
-        parameter.ranges.def = 0.5f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
@@ -202,7 +202,7 @@ void ZamTubePlugin::d_setProgram(uint32_t index)
     tubedrive = 1.0f;
     bass = 0.5f;
     middle = 0.5f;
-    treble = 0.5f;
+    treble = 0.0f;
     cabinet = 0.0f;
     mastergain = 1.0f;
 
