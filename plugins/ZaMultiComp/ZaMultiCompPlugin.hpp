@@ -1,6 +1,6 @@
 /*
- * Wobble Juice Plugin
- * Copyright (C) 2014 Andre Sklenar <andre.sklenar@gmail.com>, www.juicelab.cz
+ * ZaMultiComp Plugin
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,8 +15,13 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#ifndef WOBBLEJUICEPLUGIN_HPP_INCLUDED
-#define WOBBLEJUICEPLUGIN_HPP_INCLUDED
+#ifndef ZAMULTICOMPPLUGIN_HPP_INCLUDED
+#define ZAMULTICOMPPLUGIN_HPP_INCLUDED
+
+#define MAX_FILT 8
+#define MAX_COMP 3
+#define ONEOVERROOT2 0.7071068f
+#define ROOT2 1.4142135f
 
 #include "DistrhoPlugin.hpp"
 
@@ -35,7 +40,18 @@ public:
         paramRatio,
         paramThresh,
         paramMakeup,
-        paramGainR,
+
+        paramXover1,
+        paramXover2,
+
+	paramGainR1,
+	paramGainR2,
+	paramGainR3,
+
+	paramToggle1,
+	paramToggle2,
+	paramToggle3,
+
         paramCount
     };
 
@@ -68,7 +84,7 @@ protected:
 
     long d_getUniqueId() const noexcept override
     {
-        return d_cconst('Z', 'C', 'M', 'P');
+        return d_cconst('Z', 'M', 'C', 'P');
     }
 
     // -------------------------------------------------------------------
@@ -104,6 +120,11 @@ protected:
 	        return (20.f*log10(g));
 	}
 
+    float run_comp(int k, float in);
+    float run_filter(int i, float in);
+    void set_lp_coeffs(float fc, float q, float sr, int i, float gain);
+    void set_hp_coeffs(float fc, float q, float sr, int i, float gain);
+
     void d_activate() override;
     void d_deactivate() override;
     void d_run(float** inputs, float** outputs, uint32_t frames) override;
@@ -111,12 +132,24 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup,gainr; //parameters
-    float old_yl, old_y1;
+    float attack,release,knee,ratio,thresdb,makeup;
+    float gainr[MAX_COMP],toggle[MAX_COMP],xover1,xover2;
+    float old_yl[MAX_COMP], old_y1[MAX_COMP];
+    // Crossover filter coefficients
+    float a0[MAX_FILT];
+    float a1[MAX_FILT];
+    float a2[MAX_FILT];
+    float b1[MAX_FILT];
+    float b2[MAX_FILT];
+
+    //Crossover filter states
+    float w1[MAX_FILT];
+    float w2[MAX_FILT];
 };
+
 
 // -----------------------------------------------------------------------
 
 END_NAMESPACE_DISTRHO
 
-#endif  // WOBBLEJUICE_HPP_INCLUDED
+#endif  // ZAMULTICOMP_HPP_INCLUDED

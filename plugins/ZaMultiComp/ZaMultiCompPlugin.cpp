@@ -96,14 +96,77 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 30.0f;
         break;
-    case paramGainR:
+    case paramGainR1:
         parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
-        parameter.name       = "Gain Reduction";
-        parameter.symbol     = "gr";
+        parameter.name       = "Gain Reduction 1";
+        parameter.symbol     = "gr1";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 20.0f;
+        break;
+    case paramGainR2:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
+        parameter.name       = "Gain Reduction 2";
+        parameter.symbol     = "gr2";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 20.0f;
+        break;
+    case paramGainR3:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
+        parameter.name       = "Gain Reduction 3";
+        parameter.symbol     = "gr3";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 20.0f;
+        break;
+    case paramXover1:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.name       = "Crossover freq 1";
+        parameter.symbol     = "xover1";
+        parameter.unit       = "Hz";
+        parameter.ranges.def = 500.0f;
+        parameter.ranges.min = 20.0f;
+        parameter.ranges.max = 20000.0f;
+        break;
+    case paramXover2:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.name       = "Crossover freq 2";
+        parameter.symbol     = "xover2";
+        parameter.unit       = "Hz";
+        parameter.ranges.def = 3000.0f;
+        parameter.ranges.min = 20.0f;
+        parameter.ranges.max = 20000.0f;
+        break;
+    case paramToggle1:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.name       = "ZamComp 1 ON";
+        parameter.symbol     = "toggle1";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
+    case paramToggle2:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.name       = "ZamComp 2 ON";
+        parameter.symbol     = "toggle2";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
+    case paramToggle3:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.name       = "ZamComp 3 ON";
+        parameter.symbol     = "toggle3";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
         break;
     }
 }
@@ -141,8 +204,29 @@ float ZaMultiCompPlugin::d_getParameterValue(uint32_t index) const
     case paramMakeup:
         return makeup;
         break;
-    case paramGainR:
-        return gainr;
+    case paramGainR1:
+        return gainr[0];
+        break;
+    case paramGainR2:
+        return gainr[1];
+        break;
+    case paramGainR3:
+        return gainr[2];
+        break;
+    case paramXover1:
+        return xover1;
+        break;
+    case paramXover2:
+        return xover2;
+        break;
+    case paramToggle1:
+        return toggle[0];
+        break;
+    case paramToggle2:
+        return toggle[1];
+        break;
+    case paramToggle3:
+        return toggle[2];
         break;
     default:
         return 0.0f;
@@ -171,8 +255,29 @@ void ZaMultiCompPlugin::d_setParameterValue(uint32_t index, float value)
     case paramMakeup:
         makeup = value;
         break;
-    case paramGainR:
-        gainr = value;
+    case paramGainR1:
+        gainr[0] = value;
+        break;
+    case paramGainR2:
+        gainr[1] = value;
+        break;
+    case paramGainR3:
+        gainr[2] = value;
+        break;
+    case paramXover1:
+        xover1 = value;
+        break;
+    case paramXover2:
+        xover2 = value;
+        break;
+    case paramToggle1:
+        toggle[0] = value;
+        break;
+    case paramToggle2:
+        toggle[1] = value;
+        break;
+    case paramToggle3:
+        toggle[2] = value;
         break;
     }
 }
@@ -189,7 +294,14 @@ void ZaMultiCompPlugin::d_setProgram(uint32_t index)
     ratio = 4.0f;
     thresdb = 0.0f;
     makeup = 0.0f;
-    gainr = 0.0f;
+    gainr[0] = 0.0f;
+    gainr[1] = 0.0f;
+    gainr[2] = 0.0f;
+    xover1 = 500.0f;
+    xover2 = 3000.0f;
+    toggle[0] = 0.0f;
+    toggle[1] = 0.0f;
+    toggle[2] = 0.0f;
 
     /* Default variable values */
 
@@ -202,6 +314,16 @@ void ZaMultiCompPlugin::d_setProgram(uint32_t index)
 
 void ZaMultiCompPlugin::d_activate()
 {
+        int i;
+        for (i = 0; i < MAX_COMP; i++) {
+                old_yl[i]=old_y1[i]=0.f;
+        }
+
+        for (i = 0; i < MAX_FILT; i++) {
+                a0[i] = a1[i] = a2[i] = 0.f;
+                b1[i] = b2[i] = 0.f;
+                w1[i] = w2[i] = 0.f;
+        }
 }
 
 void ZaMultiCompPlugin::d_deactivate()
@@ -209,54 +331,132 @@ void ZaMultiCompPlugin::d_deactivate()
     // all values to zero
 }
 
-void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
+float ZaMultiCompPlugin::run_filter(int i, float in)
+{
+        in = sanitize_denormal(in);
+        w1[i] = sanitize_denormal(w1[i]);
+        w2[i] = sanitize_denormal(w2[i]);
+
+        float tmp = in - w1[i] * b1[i] - w2[i] * b2[i];
+        float out = tmp * a0[i] + w1[i] * a1[i] + w2[i] * a2[i];
+        w2[i] = w1[i];
+        w1[i] = tmp;
+        return out;
+}
+
+void ZaMultiCompPlugin::set_lp_coeffs(float fc, float q, float sr, int i, float gain=1.0)
+{
+        float omega=(float)(2.f*M_PI*fc/sr);
+        float sn=sin(omega);
+        float cs=cos(omega);
+        float alpha=(float)(sn/(2.f*q));
+        float inv=(float)(1.0/(1.0+alpha));
+
+        a2[i] = a0[i] =  (float)(gain*inv*(1.f - cs)*0.5f);
+        a1[i] = a0[i] + a0[i];
+        b1[i] = (float)(-2.f*cs*inv);
+        b2[i] = (float)((1.f - alpha)*inv);
+}
+
+void ZaMultiCompPlugin::set_hp_coeffs(float fc, float q, float sr, int i, float gain=1.0) 
+{       
+        float omega=(float)(2.f*M_PI*fc/sr);
+        float sn=sin(omega);
+        float cs=cos(omega);
+        float alpha=(float)(sn/(2.f*q));
+        float inv=(float)(1.f/(1.f+alpha));
+        
+        a0[i] =  (float)(gain*inv*(1.f + cs)/2.f);
+        a1[i] =  -2.f * a0[i];
+        a2[i] =  a0[i];
+        b1[i] =  (float)(-2.f*cs*inv);
+        b2[i] =  (float)((1.f - alpha)*inv);
+}
+
+float ZaMultiCompPlugin::run_comp(int k, float in)
 {
 	float srate = d_getSampleRate();
+        float makeupgain = from_dB(makeup);
         float width=(knee-0.99f)*6.f;
-        float cdb=0.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
 
+        float cdb=0.f;
         float gain = 1.f;
         float xg, xl, yg, yl, y1;
-        int i;
+        float out;
 
-        for (i = 0; i < frames; i++) {
-                yg=0.f;
-                xg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
-                xg = sanitize_denormal(xg);
+        yg=0.f;
+        xg = (in==0.f) ? -160.f : to_dB(fabs(in));
+        xg = sanitize_denormal(xg);
 
 
-                if (2.f*(xg-thresdb)<-width) {
-                        yg = xg;
-                } else if (2.f*fabs(xg-thresdb)<=width) {
-                        yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
-                } else if (2.f*(xg-thresdb)>width) {
-                        yg = thresdb + (xg-thresdb)/ratio;
-                }
-                yg = sanitize_denormal(yg);
+        if (2.f*(xg-thresdb)<-width) {
+                yg = xg;
+        } else if (2.f*fabs(xg-thresdb)<=width) {
+                yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
+        } else if (2.f*(xg-thresdb)>width) {
+                yg = thresdb + (xg-thresdb)/ratio;
+        }
 
-                xl = xg - yg;
-                old_y1 = sanitize_denormal(old_y1);
-                old_yl = sanitize_denormal(old_yl);
+        yg = sanitize_denormal(yg);
 
-                y1 = fmaxf(xl, release_coeff * old_y1+(1.f-release_coeff)*xl);
-                yl = attack_coeff * old_yl+(1.f-attack_coeff)*y1;
-                y1 = sanitize_denormal(y1);
-                yl = sanitize_denormal(yl);
-		
-		cdb = -yl;
-                gain = from_dB(cdb);
+        xl = xg - yg;
+        old_y1[k] = sanitize_denormal(old_y1[k]);
+        old_yl[k] = sanitize_denormal(old_yl[k]);
 
-                gainr = yl;
+        y1 = fmaxf(xl, release_coeff * old_y1[k]+(1.f-release_coeff)*xl);
+        yl = attack_coeff * old_yl[k]+(1.f-attack_coeff)*y1;
+        y1 = sanitize_denormal(y1);
+        yl = sanitize_denormal(yl);
+
+        cdb = -yl;
+        gain = from_dB(cdb);
+        gainr[k] = yl;
+
+        out = in;
+        out *= gain * makeupgain;
+
+        old_yl[k] = yl;
+        old_y1[k] = y1;
+        return out;
+}
+
+void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
+{
+	float srate = d_getSampleRate();
+
+        int tog1 = (toggle[0] > 0.f) ? 1 : 0;
+        int tog2 = (toggle[1] > 0.f) ? 1 : 0;
+        int tog3 = (toggle[2] > 0.f) ? 1 : 0;
+
+        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 0);
+        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 1);
+        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 2);
+        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 3);
+        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 4);
+        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 5);
+        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 6);
+        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 7);
+
+        for (uint32_t i = 0; i < frames; ++i) {
+                float tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, fil1, fil2, fil3, fil4;
 
                 outputs[0][i] = inputs[0][i];
-                outputs[0][i] *= gain * from_dB(makeup);
-
-                old_yl = yl;
-                old_y1 = y1;
+                fil1 = run_filter(0, inputs[0][i]);
+                tmp1 = run_filter(1, fil1);
+                tmp2 = tog1 ? run_comp(0, tmp1) : tmp1;
+                fil2 = run_filter(2, inputs[0][i]);
+                tmp3 = run_filter(3, fil2);
+                fil3 = run_filter(4, tmp3);
+                tmp4 = run_filter(5, fil3);
+                tmp3 = tog2 ? run_comp(1, tmp4) : tmp4;
+                fil4 = run_filter(6, inputs[0][i]);
+                tmp5 = run_filter(7, fil4);
+                tmp6 = tog3 ? run_comp(2, tmp5) : tmp5;
+                outputs[0][i] = tmp2 + tmp3 + tmp6;
         }
-    }
+}
 
 // -----------------------------------------------------------------------
 
