@@ -1,6 +1,6 @@
 /*
- * Wobble Juice Plugin
- * Copyright (C) 2014 Andre Sklenar <andre.sklenar@gmail.com>, www.juicelab.cz
+ * ZamCompX2
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,8 +15,12 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#ifndef WOBBLEJUICEPLUGIN_HPP_INCLUDED
-#define WOBBLEJUICEPLUGIN_HPP_INCLUDED
+#ifndef ZAMCOMPX2PLUGIN_HPP_INCLUDED
+#define ZAMCOMPX2PLUGIN_HPP_INCLUDED
+
+#define STEREOLINK_UNCOUPLED 0
+#define STEREOLINK_AVERAGE 1
+#define STEREOLINK_MAX 2
 
 #include "DistrhoPlugin.hpp"
 
@@ -35,7 +39,9 @@ public:
         paramRatio,
         paramThresh,
         paramMakeup,
-        paramGainR,
+        paramGainRedL,
+        paramGainRedR,
+        paramStereo,
         paramCount
     };
 
@@ -68,7 +74,7 @@ protected:
 
     long d_getUniqueId() const noexcept override
     {
-        return d_cconst('Z', 'C', 'M', 'P');
+        return d_cconst('Z', 'C', 'P', '2');
     }
 
     // -------------------------------------------------------------------
@@ -111,12 +117,12 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup,gainr; //parameters
-    float old_yl, old_y1;
+    float attack,release,knee,ratio,thresdb,makeup,gainredL,gainredR,stereolink; //parameters
+    float oldL_yl, oldL_y1, oldR_yl, oldR_y1;
 };
 
 // -----------------------------------------------------------------------
 
 END_NAMESPACE_DISTRHO
 
-#endif  // WOBBLEJUICE_HPP_INCLUDED
+#endif  // ZAMCOMPX2_HPP_INCLUDED

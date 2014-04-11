@@ -96,14 +96,32 @@ void ZamCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 30.0f;
         break;
-    case paramGainR:
+    case paramGainRedL:
         parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
-        parameter.name       = "Gain Reduction";
-        parameter.symbol     = "gr";
+        parameter.name       = "Gain Reduction L";
+        parameter.symbol     = "gr_l";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 20.0f;
+        break;
+    case paramGainRedR:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
+        parameter.name       = "Gain Reduction R";
+        parameter.symbol     = "gr_r";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 20.0f;
+        break;
+    case paramStereo:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_INTEGER;
+        parameter.name       = "Stereolink";
+        parameter.symbol     = "stereo";
+        parameter.unit       = " ";
+        parameter.ranges.def = 1.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 2.0f;
         break;
     }
 }
@@ -141,8 +159,14 @@ float ZamCompX2Plugin::d_getParameterValue(uint32_t index) const
     case paramMakeup:
         return makeup;
         break;
-    case paramGainR:
-        return gainr;
+    case paramGainRedL:
+        return gainredL;
+        break;
+    case paramGainRedR:
+        return gainredR;
+        break;
+    case paramStereo:
+        return stereolink;
         break;
     default:
         return 0.0f;
@@ -171,8 +195,14 @@ void ZamCompX2Plugin::d_setParameterValue(uint32_t index, float value)
     case paramMakeup:
         makeup = value;
         break;
-    case paramGainR:
-        gainr = value;
+    case paramGainRedL:
+        gainredL = value;
+        break;
+    case paramGainRedR:
+        gainredR = value;
+        break;
+    case paramStereo:
+        stereolink = value;
         break;
     }
 }
@@ -189,7 +219,9 @@ void ZamCompX2Plugin::d_setProgram(uint32_t index)
     ratio = 4.0f;
     thresdb = 0.0f;
     makeup = 0.0f;
-    gainr = 0.0f;
+    gainredL = 0.0f;
+    gainredR = 0.0f;
+    stereolink = 1.0f;
 
     /* Default variable values */
 
@@ -202,6 +234,7 @@ void ZamCompX2Plugin::d_setProgram(uint32_t index)
 
 void ZamCompX2Plugin::d_activate()
 {
+	oldL_yl = oldL_y1 = oldR_yl = oldR_y1 = 0.f;
 }
 
 void ZamCompX2Plugin::d_deactivate()
@@ -216,45 +249,85 @@ void ZamCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
         float cdb=0.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
+	int stereo = (stereolink > 1.f) ? STEREOLINK_MAX : (stereolink > 0.f) ? STEREOLINK_AVERAGE : STEREOLINK_UNCOUPLED;
 
-        float gain = 1.f;
-        float xg, xl, yg, yl, y1;
-        int i;
+
+        float Lgain = 1.f;
+        float Rgain = 1.f;
+        float Lxg, Lxl, Lyg, Lyl, Ly1;
+        float Rxg, Rxl, Ryg, Ryl, Ry1;
+        uint32_t i;
 
         for (i = 0; i < frames; i++) {
-                yg=0.f;
-                xg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
-                xg = sanitize_denormal(xg);
+                Lyg = Ryg = 0.f;
+                Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
+                Rxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
+                Lxg = sanitize_denormal(Lxg);
+                Rxg = sanitize_denormal(Rxg);
 
 
-                if (2.f*(xg-thresdb)<-width) {
-                        yg = xg;
-                } else if (2.f*fabs(xg-thresdb)<=width) {
-                        yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
-                } else if (2.f*(xg-thresdb)>width) {
-                        yg = thresdb + (xg-thresdb)/ratio;
+                if (2.f*(Lxg-thresdb)<-width) {
+                        Lyg = Lxg;
+                } else if (2.f*fabs(Lxg-thresdb)<=width) {
+                        Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
+                } else if (2.f*(Lxg-thresdb)>width) {
+                        Lyg = thresdb + (Lxg-thresdb)/ratio;
                 }
-                yg = sanitize_denormal(yg);
 
-                xl = xg - yg;
-                old_y1 = sanitize_denormal(old_y1);
-                old_yl = sanitize_denormal(old_yl);
+                Lyg = sanitize_denormal(Lyg);
 
-                y1 = fmaxf(xl, release_coeff * old_y1+(1.f-release_coeff)*xl);
-                yl = attack_coeff * old_yl+(1.f-attack_coeff)*y1;
-                y1 = sanitize_denormal(y1);
-                yl = sanitize_denormal(yl);
-		
-		cdb = -yl;
-                gain = from_dB(cdb);
+                if (2.f*(Rxg-thresdb)<-width) {
+                        Ryg = Rxg;
+                } else if (2.f*fabs(Rxg-thresdb)<=width) {
+                        Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb+width/2.f)*(Rxg-thresdb+width/2.f)/(2.f*width);
+                } else if (2.f*(Rxg-thresdb)>width) {
+                        Ryg = thresdb + (Rxg-thresdb)/ratio;
+                }
 
-                gainr = yl;
+                Ryg = sanitize_denormal(Ryg);
+
+                if (stereo == STEREOLINK_UNCOUPLED) {
+                        Lxl = Lxg - Lyg;
+                        Rxl = Rxg - Ryg;
+                } else if (stereo == STEREOLINK_MAX) {
+                        Lxl = Rxl = fmaxf(Lxg - Lyg, Rxg - Ryg);
+                } else {
+                        Lxl = Rxl = (Lxg - Lyg + Rxg - Ryg) / 2.f;
+                }
+
+                oldL_y1 = sanitize_denormal(oldL_y1);
+                oldR_y1 = sanitize_denormal(oldR_y1);
+                oldL_yl = sanitize_denormal(oldL_yl);
+                oldR_yl = sanitize_denormal(oldR_yl);
+                Ly1 = fmaxf(Lxl, release_coeff * oldL_y1+(1.f-release_coeff)*Lxl);
+                Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Ly1;
+                Ly1 = sanitize_denormal(Ly1);
+                Lyl = sanitize_denormal(Lyl);
+
+                cdb = -Lyl;
+                Lgain = from_dB(cdb);
+
+                gainredL = Lyl;
+
+                Ry1 = fmaxf(Rxl, release_coeff * oldR_y1+(1.f-release_coeff)*Rxl);
+                Ryl = attack_coeff * oldR_yl+(1.f-attack_coeff)*Ry1;
+                Ry1 = sanitize_denormal(Ry1);
+                Ryl = sanitize_denormal(Ryl);
+
+                cdb = -Ryl;
+                Rgain = from_dB(cdb);
+
+                gainredR = Ryl;
 
                 outputs[0][i] = inputs[0][i];
-                outputs[0][i] *= gain * from_dB(makeup);
+                outputs[0][i] *= Lgain * from_dB(makeup);
+                outputs[1][i] = inputs[1][i];
+                outputs[1][i] *= Rgain * from_dB(makeup);
 
-                old_yl = yl;
-                old_y1 = y1;
+                oldL_yl = Lyl;
+                oldR_yl = Ryl;
+                oldL_y1 = Ly1;
+                oldR_y1 = Ry1;
         }
     }
 
