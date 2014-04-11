@@ -38,6 +38,23 @@ endif
 # TODO: MacOS VST bundle
 
 # --------------------------------------------------------------
+# Set distrho code files
+
+DISTRHO_PLUGIN_FILES = ../../libs/distrho/DistrhoPluginMain.cpp
+DISTRHO_UI_FILES     = ../../libs/distrho/DistrhoUIMain.cpp ../../libs/libdgl.a
+
+# --------------------------------------------------------------
+# Handle plugins without UI
+
+ifeq ($(TARGET_NOUI),true)
+dssi_ui =
+lv2_ui =
+DISTRHO_UI_FILES =
+DGL_LIBS =
+OBJS_UI =
+endif
+
+# --------------------------------------------------------------
 # Common
 
 %.c.o: %.c
@@ -55,7 +72,7 @@ clean:
 
 ladspa: $(ladspa_dsp)
 
-$(ladspa_dsp): $(OBJS_DSP) ../../libs/distrho/DistrhoPluginMain.cpp
+$(ladspa_dsp): $(OBJS_DSP) $(DISTRHO_PLUGIN_FILES)
 	mkdir -p $(shell dirname $@)
 	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(SHARED) -DDISTRHO_PLUGIN_TARGET_LADSPA -o $@
 
@@ -64,11 +81,11 @@ $(ladspa_dsp): $(OBJS_DSP) ../../libs/distrho/DistrhoPluginMain.cpp
 
 dssi: $(dssi_dsp) $(dssi_ui)
 
-$(dssi_dsp): $(OBJS_DSP) ../../libs/distrho/DistrhoPluginMain.cpp
+$(dssi_dsp): $(OBJS_DSP) $(DISTRHO_PLUGIN_FILES)
 	mkdir -p $(shell dirname $@)
 	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(SHARED) -DDISTRHO_PLUGIN_TARGET_DSSI -o $@
 
-$(dssi_ui): $(OBJS_UI) ../../libs/distrho/DistrhoUIMain.cpp ../../libs/libdgl.a
+$(dssi_ui): $(OBJS_UI) $(DISTRHO_UI_FILES)
 	mkdir -p $(shell dirname $@)
 	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(DGL_LIBS) $(shell pkg-config --cflags --libs liblo) -DDISTRHO_PLUGIN_TARGET_DSSI -o $@
 
@@ -77,11 +94,11 @@ $(dssi_ui): $(OBJS_UI) ../../libs/distrho/DistrhoUIMain.cpp ../../libs/libdgl.a
 
 lv2: $(lv2_dsp) $(lv2_ui)
 
-$(lv2_dsp): $(OBJS_DSP) ../../libs/distrho/DistrhoPluginMain.cpp
+$(lv2_dsp): $(OBJS_DSP) $(DISTRHO_PLUGIN_FILES)
 	mkdir -p $(shell dirname $@)
 	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(SHARED) -DDISTRHO_PLUGIN_TARGET_LV2 -o $@
 
-$(lv2_ui): $(OBJS_UI) ../../libs/distrho/DistrhoUIMain.cpp ../../libs/libdgl.a
+$(lv2_ui): $(OBJS_UI) $(DISTRHO_UI_FILES)
 	mkdir -p $(shell dirname $@)
 	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(DGL_LIBS) $(SHARED) -DDISTRHO_PLUGIN_TARGET_LV2 -o $@
 
@@ -90,7 +107,7 @@ $(lv2_ui): $(OBJS_UI) ../../libs/distrho/DistrhoUIMain.cpp ../../libs/libdgl.a
 
 vst: $(vst)
 
-$(vst): $(OBJS_DSP) $(OBJS_UI) ../../libs/distrho/DistrhoPluginMain.cpp ../../libs/distrho/DistrhoUIMain.cpp ../../libs/libdgl.a
+$(vst): $(OBJS_DSP) $(OBJS_UI) $(DISTRHO_PLUGIN_FILES) $(DISTRHO_UI_FILES)
 	mkdir -p $(shell dirname $@)
 	$(CXX) $^ $(BUILD_CXX_FLAGS) $(LINK_FLAGS) $(DGL_LIBS) $(SHARED) -DDISTRHO_PLUGIN_TARGET_VST -o $@
 

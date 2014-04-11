@@ -20,6 +20,11 @@ OBJS_UI  = \
 	ZamCompUI.cpp.o
 
 # --------------------------------------------------------------
+# No custom UI for now
+
+TARGET_NOUI = true
+
+# --------------------------------------------------------------
 # Do some magic
 
 include ../Makefile.mk
