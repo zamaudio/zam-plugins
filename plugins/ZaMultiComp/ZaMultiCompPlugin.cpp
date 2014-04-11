@@ -87,10 +87,28 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -80.0f;
         parameter.ranges.max = 0.0f;
         break;
-    case paramMakeup:
+    case paramMakeup1:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Makeup";
-        parameter.symbol     = "mak";
+        parameter.name       = "Makeup 1";
+        parameter.symbol     = "mak1";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 30.0f;
+        break;
+    case paramMakeup2:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.name       = "Makeup 2";
+        parameter.symbol     = "mak2";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 30.0f;
+        break;
+    case paramMakeup3:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.name       = "Makeup 3";
+        parameter.symbol     = "mak3";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
@@ -168,6 +186,15 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
+    case paramGlobalGain:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.name       = "Master Trim";
+        parameter.symbol     = "globalgain";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = -12.0f;
+        parameter.ranges.max = 12.0f;
+        break;
     }
 }
 
@@ -201,8 +228,14 @@ float ZaMultiCompPlugin::d_getParameterValue(uint32_t index) const
     case paramThresh:
         return thresdb;
         break;
-    case paramMakeup:
-        return makeup;
+    case paramMakeup1:
+        return makeup[0];
+        break;
+    case paramMakeup2:
+        return makeup[1];
+        break;
+    case paramMakeup3:
+        return makeup[2];
         break;
     case paramGainR1:
         return gainr[0];
@@ -228,6 +261,9 @@ float ZaMultiCompPlugin::d_getParameterValue(uint32_t index) const
     case paramToggle3:
         return toggle[2];
         break;
+    case paramGlobalGain:
+        return globalgain;
+        break;
     default:
         return 0.0f;
     }
@@ -252,8 +288,14 @@ void ZaMultiCompPlugin::d_setParameterValue(uint32_t index, float value)
     case paramThresh:
         thresdb = value;
         break;
-    case paramMakeup:
-        makeup = value;
+    case paramMakeup1:
+        makeup[0] = value;
+        break;
+    case paramMakeup2:
+        makeup[1] = value;
+        break;
+    case paramMakeup3:
+        makeup[2] = value;
         break;
     case paramGainR1:
         gainr[0] = value;
@@ -279,6 +321,9 @@ void ZaMultiCompPlugin::d_setParameterValue(uint32_t index, float value)
     case paramToggle3:
         toggle[2] = value;
         break;
+    case paramGlobalGain:
+        globalgain = value;
+        break;
     }
 }
 
@@ -293,7 +338,9 @@ void ZaMultiCompPlugin::d_setProgram(uint32_t index)
     knee = 0.0f;
     ratio = 4.0f;
     thresdb = 0.0f;
-    makeup = 0.0f;
+    makeup[0] = 0.0f;
+    makeup[1] = 0.0f;
+    makeup[2] = 0.0f;
     gainr[0] = 0.0f;
     gainr[1] = 0.0f;
     gainr[2] = 0.0f;
@@ -302,6 +349,7 @@ void ZaMultiCompPlugin::d_setProgram(uint32_t index)
     toggle[0] = 0.0f;
     toggle[1] = 0.0f;
     toggle[2] = 0.0f;
+    globalgain = 0.0f;
 
     /* Default variable values */
 
@@ -376,7 +424,7 @@ void ZaMultiCompPlugin::set_hp_coeffs(float fc, float q, float sr, int i, float 
 float ZaMultiCompPlugin::run_comp(int k, float in)
 {
 	float srate = d_getSampleRate();
-        float makeupgain = from_dB(makeup);
+        float makeupgain = from_dB(makeup[k]);
         float width=(knee-0.99f)*6.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
@@ -455,6 +503,7 @@ void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 tmp5 = run_filter(7, fil4);
                 tmp6 = tog3 ? run_comp(2, tmp5) : tmp5;
                 outputs[0][i] = tmp2 + tmp3 + tmp6;
+                outputs[0][i] *= from_dB(globalgain);
         }
 }
 

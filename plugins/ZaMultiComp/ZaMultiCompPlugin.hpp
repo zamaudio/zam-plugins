@@ -39,7 +39,10 @@ public:
         paramKnee,
         paramRatio,
         paramThresh,
-        paramMakeup,
+
+        paramMakeup1,
+        paramMakeup2,
+        paramMakeup3,
 
         paramXover1,
         paramXover2,
@@ -52,6 +55,7 @@ public:
 	paramToggle2,
 	paramToggle3,
 
+	paramGlobalGain,
         paramCount
     };
 
@@ -132,7 +136,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup;
+    float attack,release,knee,ratio,thresdb,makeup[MAX_COMP],globalgain;
     float gainr[MAX_COMP],toggle[MAX_COMP],xover1,xover2;
     float old_yl[MAX_COMP], old_y1[MAX_COMP];
     // Crossover filter coefficients
