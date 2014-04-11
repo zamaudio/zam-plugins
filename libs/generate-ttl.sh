@@ -28,5 +28,5 @@ for i in $FOLDERS; do
   cd $i
   FILE=`ls *.$EXT | sort | head -n 1`
   $GEN ./$FILE
-  cd ../..
+  cd ..
 done

@@ -19,7 +19,7 @@ BUILD_CXX_FLAGS += -I. -I../../libs/distrho -I../../libs/dgl
 # --------------------------------------------------------------
 # Enable all plugin types
 
-all: ladspa dssi lv2 vst
+all: ladspa lv2 vst dssi
 
 # --------------------------------------------------------------
 # Set plugin binary file targets
