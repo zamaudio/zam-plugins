@@ -15,17 +15,19 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#ifndef ZAMULTICOMPPLUGIN_HPP_INCLUDED
-#define ZAMULTICOMPPLUGIN_HPP_INCLUDED
+#ifndef ZAMULTICOMPX2PLUGIN_HPP_INCLUDED
+#define ZAMULTICOMPX2PLUGIN_HPP_INCLUDED
+
+#include "DistrhoPlugin.hpp"
+
+START_NAMESPACE_DISTRHO
 
 #define MAX_FILT 8
 #define MAX_COMP 3
 #define ONEOVERROOT2 0.7071068f
 #define ROOT2 1.4142135f
-
-#include "DistrhoPlugin.hpp"
-
-START_NAMESPACE_DISTRHO
+#define STEREOLINK_MAX 1
+#define STEREOLINK_AVERAGE 0
 
 // -----------------------------------------------------------------------
 
@@ -55,6 +57,7 @@ public:
 	paramToggle2,
 	paramToggle3,
 
+	paramStereoDet,
 	paramGlobalGain,
         paramCount
     };
@@ -88,7 +91,7 @@ protected:
 
     long d_getUniqueId() const noexcept override
     {
-        return d_cconst('Z', 'M', 'C', 'P');
+        return d_cconst('Z', 'M', 'M', '2');
     }
 
     // -------------------------------------------------------------------
@@ -124,10 +127,10 @@ protected:
 	        return (20.f*log10(g));
 	}
 
-    float run_comp(int k, float in);
-    float run_filter(int i, float in);
-    void set_lp_coeffs(float fc, float q, float sr, int i, float gain);
-    void set_hp_coeffs(float fc, float q, float sr, int i, float gain);
+    float run_comp(int k, int ch, float inL, float inR);
+    float run_filter(int i, int ch, float in);
+    void set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
+    void set_hp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
 
     void d_activate() override;
     void d_deactivate() override;
@@ -136,19 +139,19 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup[MAX_COMP],globalgain;
+    float attack,release,knee,ratio,thresdb,makeup[MAX_COMP],globalgain,stereodet;
     float gainr[MAX_COMP],toggle[MAX_COMP],xover1,xover2;
-    float old_yl[MAX_COMP], old_y1[MAX_COMP];
+    float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP];
     // Crossover filter coefficients
-    float a0[MAX_FILT];
-    float a1[MAX_FILT];
-    float a2[MAX_FILT];
-    float b1[MAX_FILT];
-    float b2[MAX_FILT];
+    float a0[2][MAX_FILT];
+    float a1[2][MAX_FILT];
+    float a2[2][MAX_FILT];
+    float b1[2][MAX_FILT];
+    float b2[2][MAX_FILT];
 
     //Crossover filter states
-    float w1[MAX_FILT];
-    float w2[MAX_FILT];
+    float w1[2][MAX_FILT];
+    float w2[2][MAX_FILT];
 };
 
 
@@ -156,4 +159,4 @@ private:
 
 END_NAMESPACE_DISTRHO
 
-#endif  // ZAMULTICOMP_HPP_INCLUDED
+#endif
