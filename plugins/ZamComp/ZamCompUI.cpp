@@ -33,7 +33,7 @@ ZamCompUI::ZamCompUI()
     fLedRedImg = Image(ZamCompArtwork::ledredData, ZamCompArtwork::ledredWidth, ZamCompArtwork::ledredHeight);
 
     // led values
-    fLedRedValue = 40.0f; // FIXME: set as 0.0f, this is just for testing
+    fLedRedValue = 0.0f; // FIXME: set as 0.0f, this is just for testing
 
     // knob
     Image knobImage(ZamCompArtwork::knobData, ZamCompArtwork::knobWidth, ZamCompArtwork::knobHeight);
@@ -209,10 +209,36 @@ void ZamCompUI::onDisplay()
     //static const int sYellowLedStaticY = 16;
     static const int sRedLedStaticY    = 45;
 
-    const int numRedLeds = (fLedRedValue/40.f)*12;
+    int numRedLeds;
 
-    for (int i=0; i<numRedLeds; ++i)
-        fLedRedImg.draw(sLedInitialX + i*sLedSpacing, sRedLedStaticY);
+	if (fLedRedValue >= 40.f)
+		numRedLeds = 12;
+	else if (fLedRedValue >= 30.f)
+		numRedLeds = 11;
+	else if (fLedRedValue >= 20.f)
+		numRedLeds = 10;
+	else if (fLedRedValue >= 15.f)
+		numRedLeds = 9;
+	else if (fLedRedValue >= 10.f)
+		numRedLeds = 8;
+	else if (fLedRedValue >= 8.f)
+		numRedLeds = 7;
+	else if (fLedRedValue >= 6.f)
+		numRedLeds = 6;
+	else if (fLedRedValue >= 5.f)
+		numRedLeds = 5;
+	else if (fLedRedValue >= 4.f)
+		numRedLeds = 4;
+	else if (fLedRedValue >= 3.f)
+		numRedLeds = 3;
+	else if (fLedRedValue >= 2.f)
+		numRedLeds = 2;
+	else if (fLedRedValue >= 1.f)
+		numRedLeds = 1;
+	else numRedLeds = 0;
+
+    for (int i=numRedLeds; i>0; --i)
+        fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
 }
 
 // -----------------------------------------------------------------------
