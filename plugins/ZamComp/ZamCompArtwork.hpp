@@ -21,7 +21,7 @@ namespace ZamCompArtwork
     const unsigned int ledyellowHeight   = 11;
 
     extern const char* zamcompData;
-    const unsigned int zamcompDataSize = 256800;
+    const unsigned int zamcompDataSize = 342400;
     const unsigned int zamcompWidth    = 800;
     const unsigned int zamcompHeight   = 107;
 }
