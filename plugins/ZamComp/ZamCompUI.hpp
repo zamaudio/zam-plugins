@@ -20,17 +20,12 @@
 
 #include "DistrhoUI.hpp"
 
-#include "ImageAboutWindow.hpp"
-#include "ImageButton.hpp"
 #include "ImageKnob.hpp"
-#include "ImageSlider.hpp"
 
 #include "ZamCompArtwork.hpp"
 #include "ZamCompPlugin.hpp"
 
 using DGL::Image;
-using DGL::ImageAboutWindow;
-using DGL::ImageButton;
 using DGL::ImageKnob;
 
 START_NAMESPACE_DISTRHO
@@ -38,7 +33,6 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamCompUI : public UI,
-                      public ImageButton::Callback,
                       public ImageKnob::Callback
 {
 public:
@@ -51,12 +45,12 @@ protected:
 
     unsigned int d_getWidth() const noexcept override
     {
-        return ZamCompArtwork::backgroundWidth;
+        return ZamCompArtwork::zamcompWidth;
     }
 
     unsigned int d_getHeight() const noexcept override
     {
-        return ZamCompArtwork::backgroundHeight;
+        return ZamCompArtwork::zamcompHeight;
     }
 
     // -------------------------------------------------------------------
@@ -68,7 +62,6 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageButtonClicked(ImageButton* button, int) override;
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
@@ -77,10 +70,12 @@ protected:
 
 private:
     Image fImgBackground;
-    ImageAboutWindow fAboutWindow;
-
     ImageKnob* fKnobAttack;
-    ImageButton* fButtonAbout;
+    ImageKnob* fKnobRelease;
+    ImageKnob* fKnobThresh;
+    ImageKnob* fKnobRatio;
+    ImageKnob* fKnobKnee;
+    ImageKnob* fKnobMakeup;
 };
 
 // -----------------------------------------------------------------------
