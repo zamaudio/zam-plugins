@@ -49,7 +49,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "ms";
         parameter.ranges.def = 10.0f;
         parameter.ranges.min = 0.1f;
-        parameter.ranges.max = 100.0f;
+        parameter.ranges.max = 200.0f;
         break;
     case paramRelease:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
@@ -57,7 +57,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
         parameter.ranges.def = 80.0f;
-        parameter.ranges.min = 1.0f;
+        parameter.ranges.min = 50.0f;
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
@@ -67,7 +67,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 9.0f;
+        parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
@@ -84,7 +84,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "thr";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -80.0f;
+        parameter.ranges.min = -60.0f;
         parameter.ranges.max = 0.0f;
         break;
     case paramMakeup:
@@ -93,7 +93,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "mak";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = 0.0f;
+        parameter.ranges.min = -30.0f;
         parameter.ranges.max = 30.0f;
         break;
     case paramGainR:
@@ -103,7 +103,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 20.0f;
+        parameter.ranges.max = 40.0f;
         break;
     }
 }

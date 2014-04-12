@@ -45,7 +45,7 @@ ZamCompUI::ZamCompUI()
     fKnobRelease->setPos(108, 45);
     fKnobRelease->setRange(50.0f, 500.0f);
     fKnobRelease->setStep(1.0f);
-    fKnobRelease->setValue(50.0f);
+    fKnobRelease->setValue(80.0f);
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
 
@@ -127,7 +127,7 @@ void ZamCompUI::d_programChanged(uint32_t index)
 
     // Default values
     fKnobAttack->setValue(10.0f);
-    fKnobRelease->setValue(50.0f);
+    fKnobRelease->setValue(80.0f);
     fKnobThresh->setValue(0.0f);
     fKnobRatio->setValue(4.0f);
     fKnobKnee->setValue(0.0f);
