@@ -1,35 +1,40 @@
 /* (Auto-generated binary data file). */
 
-#ifndef BINARY_WOBBLEJUICEARTWORK_HPP
-#define BINARY_WOBBLEJUICEARTWORK_HPP
+#ifndef BINARY_ZAMCOMPX2ARTWORK_HPP
+#define BINARY_ZAMCOMPX2ARTWORK_HPP
 
 namespace ZamCompX2Artwork
 {
-    extern const char* aboutData;
-    const unsigned int aboutDataSize = 180000;
-    const unsigned int aboutWidth    = 300;
-    const unsigned int aboutHeight   = 200;
-
-    extern const char* aboutButtonHoverData;
-    const unsigned int aboutButtonHoverDataSize = 5888;
-    const unsigned int aboutButtonHoverWidth    = 92;
-    const unsigned int aboutButtonHoverHeight   = 16;
-
-    extern const char* aboutButtonNormalData;
-    const unsigned int aboutButtonNormalDataSize = 5888;
-    const unsigned int aboutButtonNormalWidth    = 92;
-    const unsigned int aboutButtonNormalHeight   = 16;
-
-    extern const char* backgroundData;
-    const unsigned int backgroundDataSize = 450000;
-    const unsigned int backgroundWidth    = 500;
-    const unsigned int backgroundHeight   = 300;
-
     extern const char* knobData;
-    const unsigned int knobDataSize = 12544;
-    const unsigned int knobWidth    = 56;
-    const unsigned int knobHeight   = 56;
+    const unsigned int knobDataSize = 7056;
+    const unsigned int knobWidth    = 42;
+    const unsigned int knobHeight   = 42;
+
+    extern const char* ledredData;
+    const unsigned int ledredDataSize = 484;
+    const unsigned int ledredWidth    = 11;
+    const unsigned int ledredHeight   = 11;
+
+    extern const char* ledyellowData;
+    const unsigned int ledyellowDataSize = 484;
+    const unsigned int ledyellowWidth    = 11;
+    const unsigned int ledyellowHeight   = 11;
+
+    extern const char* toggleoffData;
+    const unsigned int toggleoffDataSize = 6480;
+    const unsigned int toggleoffWidth    = 30;
+    const unsigned int toggleoffHeight   = 54;
+
+    extern const char* toggleonData;
+    const unsigned int toggleonDataSize = 6600;
+    const unsigned int toggleonWidth    = 30;
+    const unsigned int toggleonHeight   = 55;
+
+    extern const char* zamcompData;
+    const unsigned int zamcompDataSize = 256800;
+    const unsigned int zamcompWidth    = 800;
+    const unsigned int zamcompHeight   = 107;
 }
 
-#endif // BINARY_WOBBLEJUICEARTWORK_HPP
+#endif // BINARY_ZAMCOMPX2ARTWORK_HPP
 
