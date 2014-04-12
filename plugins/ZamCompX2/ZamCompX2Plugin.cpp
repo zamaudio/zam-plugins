@@ -96,19 +96,10 @@ void ZamCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 30.0f;
         break;
-    case paramGainRedL:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
-        parameter.name       = "Gain Reduction L";
-        parameter.symbol     = "gr_l";
-        parameter.unit       = "dB";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 20.0f;
-        break;
-    case paramGainRedR:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
-        parameter.name       = "Gain Reduction R";
-        parameter.symbol     = "gr_r";
+    case paramGainRed:
+        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.name       = "Gain Reduction";
+        parameter.symbol     = "gr";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
@@ -122,6 +113,15 @@ void ZamCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.def = 1.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 2.0f;
+        break;
+    case paramOutputLevel:
+        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.name       = "Output Level";
+        parameter.symbol     = "outlevel";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -45.0f;
+        parameter.ranges.min = -45.0f;
+        parameter.ranges.max = 20.0f;
         break;
     }
 }
@@ -159,14 +159,14 @@ float ZamCompX2Plugin::d_getParameterValue(uint32_t index) const
     case paramMakeup:
         return makeup;
         break;
-    case paramGainRedL:
-        return gainredL;
-        break;
-    case paramGainRedR:
-        return gainredR;
+    case paramGainRed:
+        return gainred;
         break;
     case paramStereo:
         return stereolink;
+        break;
+    case paramOutputLevel:
+        return outlevel;
         break;
     default:
         return 0.0f;
@@ -195,14 +195,14 @@ void ZamCompX2Plugin::d_setParameterValue(uint32_t index, float value)
     case paramMakeup:
         makeup = value;
         break;
-    case paramGainRedL:
-        gainredL = value;
-        break;
-    case paramGainRedR:
-        gainredR = value;
+    case paramGainRed:
+        gainred = value;
         break;
     case paramStereo:
         stereolink = value;
+        break;
+    case paramOutputLevel:
+        outlevel = value;
         break;
     }
 }
@@ -219,9 +219,9 @@ void ZamCompX2Plugin::d_setProgram(uint32_t index)
     ratio = 4.0f;
     thresdb = 0.0f;
     makeup = 0.0f;
-    gainredL = 0.0f;
-    gainredR = 0.0f;
+    gainred = 0.0f;
     stereolink = 1.0f;
+    outlevel = -45.0f;
 
     /* Default variable values */
 
@@ -251,7 +251,7 @@ void ZamCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
         float release_coeff = exp(-1000.f/(release * srate));
 	int stereo = (stereolink > 1.f) ? STEREOLINK_MAX : (stereolink > 0.f) ? STEREOLINK_AVERAGE : STEREOLINK_UNCOUPLED;
 
-
+	float max = 0.f;
         float Lgain = 1.f;
         float Rgain = 1.f;
         float Lxg, Lxl, Lyg, Lyl, Ly1;
@@ -307,7 +307,7 @@ void ZamCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 cdb = -Lyl;
                 Lgain = from_dB(cdb);
 
-                gainredL = Lyl;
+                gainred = Lyl;
 
                 Ry1 = fmaxf(Rxl, release_coeff * oldR_y1+(1.f-release_coeff)*Rxl);
                 Ryl = attack_coeff * oldR_yl+(1.f-attack_coeff)*Ry1;
@@ -317,18 +317,20 @@ void ZamCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 cdb = -Ryl;
                 Rgain = from_dB(cdb);
 
-                gainredR = Ryl;
-
                 outputs[0][i] = inputs[0][i];
                 outputs[0][i] *= Lgain * from_dB(makeup);
                 outputs[1][i] = inputs[1][i];
                 outputs[1][i] *= Rgain * from_dB(makeup);
+		
+		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : max;
+		max = (fabsf(outputs[1][i]) > max) ? fabsf(outputs[1][i]) : max;
 
                 oldL_yl = Lyl;
                 oldR_yl = Ryl;
                 oldL_y1 = Ly1;
                 oldR_y1 = Ry1;
         }
+	outlevel = sanitize_denormal((max == 0.f) ? -45.f : to_dB(max));
     }
 
 // -----------------------------------------------------------------------

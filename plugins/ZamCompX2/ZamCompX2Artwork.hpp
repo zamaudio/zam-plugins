@@ -21,19 +21,19 @@ namespace ZamCompX2Artwork
     const unsigned int ledyellowHeight   = 11;
 
     extern const char* toggleoffData;
-    const unsigned int toggleoffDataSize = 6480;
-    const unsigned int toggleoffWidth    = 30;
-    const unsigned int toggleoffHeight   = 54;
+    const unsigned int toggleoffDataSize = 1056;
+    const unsigned int toggleoffWidth    = 12;
+    const unsigned int toggleoffHeight   = 22;
 
     extern const char* toggleonData;
-    const unsigned int toggleonDataSize = 6600;
-    const unsigned int toggleonWidth    = 30;
-    const unsigned int toggleonHeight   = 55;
+    const unsigned int toggleonDataSize = 1056;
+    const unsigned int toggleonWidth    = 12;
+    const unsigned int toggleonHeight   = 22;
 
-    extern const char* zamcompData;
-    const unsigned int zamcompDataSize = 256800;
-    const unsigned int zamcompWidth    = 800;
-    const unsigned int zamcompHeight   = 107;
+    extern const char* zamcompx2Data;
+    const unsigned int zamcompx2DataSize = 256800;
+    const unsigned int zamcompx2Width    = 800;
+    const unsigned int zamcompx2Height   = 107;
 }
 
 #endif // BINARY_ZAMCOMPX2ARTWORK_HPP
