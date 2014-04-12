@@ -31,9 +31,11 @@ ZamCompUI::ZamCompUI()
 
     // led images
     fLedRedImg = Image(ZamCompArtwork::ledredData, ZamCompArtwork::ledredWidth, ZamCompArtwork::ledredHeight);
+    fLedYellowImg = Image(ZamCompArtwork::ledyellowData, ZamCompArtwork::ledyellowWidth, ZamCompArtwork::ledyellowHeight);
 
     // led values
-    fLedRedValue = 0.0f; // FIXME: set as 0.0f, this is just for testing
+    fLedRedValue = 0.0f;
+    fLedYellowValue = 0.0f; 
 
     // knob
     Image knobImage(ZamCompArtwork::knobData, ZamCompArtwork::knobWidth, ZamCompArtwork::knobHeight);
@@ -130,6 +132,13 @@ void ZamCompUI::d_parameterChanged(uint32_t index, float value)
             repaint();
         }
         break;
+    case ZamCompPlugin::paramOutputLevel:
+        if (fLedYellowValue != value)
+        {
+            fLedYellowValue = value;
+            repaint();
+        }
+        break;
     }
 }
 
@@ -206,10 +215,11 @@ void ZamCompUI::onDisplay()
     static const float sLedSpacing  = 15.5f;
     static const int   sLedInitialX = 498;
 
-    //static const int sYellowLedStaticY = 16;
+    static const int sYellowLedStaticY = 16;
     static const int sRedLedStaticY    = 45;
 
     int numRedLeds;
+    int numYellowLeds;
 
 	if (fLedRedValue >= 40.f)
 		numRedLeds = 12;
@@ -239,6 +249,56 @@ void ZamCompUI::onDisplay()
 
     for (int i=numRedLeds; i>0; --i)
         fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
+
+	if (fLedYellowValue >= 20.f)
+		numYellowLeds = 19;
+	else if (fLedYellowValue >= 10.f)
+		numYellowLeds = 18;
+	else if (fLedYellowValue >= 8.f)
+		numYellowLeds = 17;
+	else if (fLedYellowValue >= 4.f)
+		numYellowLeds = 16;
+	else if (fLedYellowValue >= 2.f)
+		numYellowLeds = 15;
+	else if (fLedYellowValue >= 1.f)
+		numYellowLeds = 14;
+	else if (fLedYellowValue >= 0.f)
+		numYellowLeds = 13;
+	else if (fLedYellowValue >= -1.f)
+		numYellowLeds = 12;
+	else if (fLedYellowValue >= -2.f)
+		numYellowLeds = 11;
+	else if (fLedYellowValue >= -3.f)
+		numYellowLeds = 10;
+	else if (fLedYellowValue >= -4.f)
+		numYellowLeds = 9;
+	else if (fLedYellowValue >= -5.f)
+		numYellowLeds = 8;
+	else if (fLedYellowValue >= -6.f)
+		numYellowLeds = 7;
+	else if (fLedYellowValue >= -8.f)
+		numYellowLeds = 6;
+	else if (fLedYellowValue >= -10.f)
+		numYellowLeds = 5;
+	else if (fLedYellowValue >= -15.f)
+		numYellowLeds = 4;
+	else if (fLedYellowValue >= -20.f)
+		numYellowLeds = 3;
+	else if (fLedYellowValue >= -30.f)
+		numYellowLeds = 2;
+	else if (fLedYellowValue >= -40.f)
+		numYellowLeds = 1;
+	else numYellowLeds = 0;
+
+	if (numYellowLeds > 12) {
+		for (int i=12; i<numYellowLeds; ++i)
+			fLedRedImg.draw(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+		for (int i=0; i<12; ++i)
+			fLedYellowImg.draw(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+	} else {
+		for (int i=0; i<numYellowLeds; ++i)
+			fLedYellowImg.draw(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+	}
 }
 
 // -----------------------------------------------------------------------

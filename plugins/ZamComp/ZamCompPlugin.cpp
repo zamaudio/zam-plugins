@@ -97,13 +97,22 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramGainR:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
+        parameter.hints      = PARAMETER_IS_OUTPUT;
         parameter.name       = "Gain Reduction";
         parameter.symbol     = "gr";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 40.0f;
+        break;
+    case paramOutputLevel:
+        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.name       = "Output Level";
+        parameter.symbol     = "outlevel";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -45.0f;
+        parameter.ranges.min = -45.0f;
+        parameter.ranges.max = 20.0f;
         break;
     }
 }
@@ -144,6 +153,9 @@ float ZamCompPlugin::d_getParameterValue(uint32_t index) const
     case paramGainR:
         return gainr;
         break;
+    case paramOutputLevel:
+        return outlevel;
+        break;
     default:
         return 0.0f;
     }
@@ -174,6 +186,9 @@ void ZamCompPlugin::d_setParameterValue(uint32_t index, float value)
     case paramGainR:
         gainr = value;
         break;
+    case paramOutputLevel:
+        outlevel = value;
+        break;
     }
 }
 
@@ -190,6 +205,7 @@ void ZamCompPlugin::d_setProgram(uint32_t index)
     thresdb = 0.0f;
     makeup = 0.0f;
     gainr = 0.0f;
+    outlevel = -45.f;
 
     /* Default variable values */
 
@@ -252,6 +268,8 @@ void ZamCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
                 outputs[0][i] = inputs[0][i];
                 outputs[0][i] *= gain * from_dB(makeup);
+
+		outlevel = to_dB(outputs[0][i]);
 
                 old_yl = yl;
                 old_y1 = y1;

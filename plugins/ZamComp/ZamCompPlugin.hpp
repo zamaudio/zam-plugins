@@ -36,6 +36,7 @@ public:
         paramThresh,
         paramMakeup,
         paramGainR,
+        paramOutputLevel,
         paramCount
     };
 
@@ -111,7 +112,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup,gainr; //parameters
+    float attack,release,knee,ratio,thresdb,makeup,gainr,outlevel; //parameters
     float old_yl, old_y1;
 };
 

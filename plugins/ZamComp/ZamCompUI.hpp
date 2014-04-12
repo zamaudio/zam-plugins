@@ -79,6 +79,8 @@ private:
 
     Image fLedRedImg;
     float fLedRedValue;
+    Image fLedYellowImg;
+    float fLedYellowValue;
 };
 
 // -----------------------------------------------------------------------
