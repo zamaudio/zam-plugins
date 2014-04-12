@@ -33,7 +33,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamCompUI : public UI,
-                      public ImageKnob::Callback
+                  public ImageKnob::Callback
 {
 public:
     ZamCompUI();
@@ -56,8 +56,8 @@ protected:
     // -------------------------------------------------------------------
     // DSP Callbacks
 
-    void d_parameterChanged(uint32_t index, float value) ;
-    void d_programChanged(uint32_t index) ;
+    void d_parameterChanged(uint32_t index, float value) override;
+    void d_programChanged(uint32_t index) override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks
@@ -76,6 +76,9 @@ private:
     ImageKnob* fKnobRatio;
     ImageKnob* fKnobKnee;
     ImageKnob* fKnobMakeup;
+
+    Image fLedRedImg;
+    float fLedRedValue;
 };
 
 // -----------------------------------------------------------------------

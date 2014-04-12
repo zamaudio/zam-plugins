@@ -29,6 +29,12 @@ ZamCompUI::ZamCompUI()
     // background
     fImgBackground = Image(ZamCompArtwork::zamcompData, ZamCompArtwork::zamcompWidth, ZamCompArtwork::zamcompHeight, GL_BGR);
 
+    // led images
+    fLedRedImg = Image(ZamCompArtwork::ledredData, ZamCompArtwork::ledredWidth, ZamCompArtwork::ledredHeight);
+
+    // led values
+    fLedRedValue = 40.0f; // FIXME: set as 0.0f, this is just for testing
+
     // knob
     Image knobImage(ZamCompArtwork::knobData, ZamCompArtwork::knobWidth, ZamCompArtwork::knobHeight);
 
@@ -117,6 +123,13 @@ void ZamCompUI::d_parameterChanged(uint32_t index, float value)
     case ZamCompPlugin::paramMakeup:
         fKnobMakeup->setValue(value);
         break;
+    case ZamCompPlugin::paramGainR:
+        if (fLedRedValue != value)
+        {
+            fLedRedValue = value;
+            repaint();
+        }
+        break;
     }
 }
 
@@ -188,6 +201,18 @@ void ZamCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
 void ZamCompUI::onDisplay()
 {
     fImgBackground.draw();
+
+    // draw leds
+    static const float sLedSpacing  = 15.5f;
+    static const int   sLedInitialX = 498;
+
+    //static const int sYellowLedStaticY = 16;
+    static const int sRedLedStaticY    = 45;
+
+    const int numRedLeds = (fLedRedValue/40.f)*12;
+
+    for (int i=0; i<numRedLeds; ++i)
+        fLedRedImg.draw(sLedInitialX + i*sLedSpacing, sRedLedStaticY);
 }
 
 // -----------------------------------------------------------------------
