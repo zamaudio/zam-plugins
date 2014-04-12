@@ -23,6 +23,21 @@
   <defs
      id="defs4">
     <linearGradient
+       id="linearGradient4493">
+      <stop
+         style="stop-color:#bfff13;stop-opacity:1;"
+         offset="0"
+         id="stop4495" />
+      <stop
+         id="stop4501"
+         offset="0.22499999"
+         style="stop-color:#ffff00;stop-opacity:0.49803922;" />
+      <stop
+         style="stop-color:#ffff00;stop-opacity:1;"
+         offset="1"
+         id="stop4497" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient4525">
       <stop
          id="stop4527"
@@ -4602,14 +4617,14 @@
        gradientUnits="userSpaceOnUse" />
     <radialGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient4525"
-       id="radialGradient4523"
-       gradientUnits="userSpaceOnUse"
+       xlink:href="#linearGradient4493"
+       id="radialGradient4499"
        cx="572.85712"
        cy="81.843651"
        fx="572.85712"
        fy="81.843651"
-       r="7.1428571" />
+       r="7.1428571"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -4619,8 +4634,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="28.963094"
-     inkscape:cx="511.12693"
-     inkscape:cy="5.3227218"
+     inkscape:cx="497.88079"
+     inkscape:cy="-45.938363"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -6656,7 +6671,7 @@
        sodipodi:cy="81.843651"
        sodipodi:rx="7.1428571"
        sodipodi:ry="7.1428571"
-       d="m 579.99997,81.843651 a 7.1428571,7.1428571 0 1 1 -14.28571,0 7.1428571,7.1428571 0 1 1 14.28571,0 z"
+       d="m 579.99997,81.843651 c 0,3.944891 -3.19796,7.142857 -7.14285,7.142857 -3.94489,0 -7.14286,-3.197966 -7.14286,-7.142857 0,-3.944891 3.19797,-7.142857 7.14286,-7.142857 3.94489,0 7.14285,3.197966 7.14285,7.142857 z"
        transform="matrix(0.83925485,0,0,0.83925485,38.462809,1029.8266)"
        inkscape:export-filename="/home/damien/git/audio/zam-plugins-DPF/plugins/ZamComp/artwork/ledred.png"
        inkscape:export-xdpi="84.32"
@@ -6679,13 +6694,13 @@
        inkscape:export-xdpi="84.32"
        inkscape:export-filename="/home/damien/git/audio/zam-plugins-DPF/plugins/ZamComp/artwork/ledyellow.png"
        transform="matrix(0.83925485,0,0,0.83925485,24.462809,1029.8266)"
-       d="m 579.99997,81.843651 a 7.1428571,7.1428571 0 1 1 -14.28571,0 7.1428571,7.1428571 0 1 1 14.28571,0 z"
+       d="m 579.99997,81.843651 c 0,3.944891 -3.19796,7.142857 -7.14285,7.142857 -3.94489,0 -7.14286,-3.197966 -7.14286,-7.142857 0,-3.944891 3.19797,-7.142857 7.14286,-7.142857 3.94489,0 7.14285,3.197966 7.14285,7.142857 z"
        sodipodi:ry="7.1428571"
        sodipodi:rx="7.1428571"
        sodipodi:cy="81.843651"
        sodipodi:cx="572.85712"
        id="path4521"
-       style="fill:url(#radialGradient4523);fill-opacity:1.0;fill-rule:evenodd;stroke:none"
+       style="fill:url(#radialGradient4499);fill-opacity:1.0;fill-rule:evenodd;stroke:none"
        sodipodi:type="arc" />
   </g>
 </svg>
