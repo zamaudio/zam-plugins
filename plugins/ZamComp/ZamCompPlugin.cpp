@@ -236,6 +236,7 @@ void ZamCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
         float gain = 1.f;
         float xg, xl, yg, yl, y1;
         int i;
+	float max = 0.f;
 
         for (i = 0; i < frames; i++) {
                 yg=0.f;
@@ -268,12 +269,13 @@ void ZamCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
                 outputs[0][i] = inputs[0][i];
                 outputs[0][i] *= gain * from_dB(makeup);
-
-		outlevel = to_dB(outputs[0][i]);
+		
+		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : max;
 
                 old_yl = yl;
                 old_y1 = y1;
         }
+	outlevel = sanitize_denormal((max == 0.f) ? -45.f : to_dB(max));
     }
 
 // -----------------------------------------------------------------------
