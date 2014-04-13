@@ -34,7 +34,9 @@ ZaMultiCompUI::ZaMultiCompUI()
     fLedYellowImg = Image(ZaMultiCompArtwork::ledyellowData, ZaMultiCompArtwork::ledyellowWidth, ZaMultiCompArtwork::ledyellowHeight);
 
     // led values
-    fLedRedValue = 0.0f;
+    fLedRedValue1 = 0.0f;
+    fLedRedValue2 = 0.0f;
+    fLedRedValue3 = 0.0f;
     fLedYellowValue = 0.0f; 
 
     // knob
@@ -88,6 +90,110 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobGlobalGain->setValue(0.0f);
     fKnobGlobalGain->setRotationAngle(240);
     fKnobGlobalGain->setCallback(this);
+
+    fKnobXover2 = new ImageKnob(this, knobImage);
+    fKnobXover2->setPos(85, 121);
+    fKnobXover2->setRange(1400.f, 14000.f);
+    fKnobXover2->setStep(1.0f);
+    fKnobXover2->setValue(1400.f);
+    fKnobXover2->setRotationAngle(240);
+    fKnobXover2->setCallback(this);
+
+    fKnobXover1 = new ImageKnob(this, knobImage);
+    fKnobXover1->setPos(85, 176);
+    fKnobXover1->setRange(20.0f, 1400.0f);
+    fKnobXover1->setStep(1.0f);
+    fKnobXover1->setValue(250.0f);
+    fKnobXover1->setRotationAngle(240);
+    fKnobXover1->setCallback(this);
+
+    fKnobMakeup3 = new ImageKnob(this, knobImage);
+    fKnobMakeup3->setPos(168, 101);
+    fKnobMakeup3->setRange(0.0f, 30.0f);
+    fKnobMakeup3->setStep(0.1f);
+    fKnobMakeup3->setValue(0.0f);
+    fKnobMakeup3->setRotationAngle(240);
+    fKnobMakeup3->setCallback(this);
+
+    fKnobMakeup2 = new ImageKnob(this, knobImage);
+    fKnobMakeup2->setPos(168, 151);
+    fKnobMakeup2->setRange(0.0f, 30.0f);
+    fKnobMakeup2->setStep(0.1f);
+    fKnobMakeup2->setValue(0.0f);
+    fKnobMakeup2->setRotationAngle(240);
+    fKnobMakeup2->setCallback(this);
+
+    fKnobMakeup1 = new ImageKnob(this, knobImage);
+    fKnobMakeup1->setPos(168, 201);
+    fKnobMakeup1->setRange(0.0f, 30.0f);
+    fKnobMakeup1->setStep(0.1f);
+    fKnobMakeup1->setValue(0.0f);
+    fKnobMakeup1->setRotationAngle(240);
+    fKnobMakeup1->setCallback(this);
+
+    Image toggleImage(ZaMultiCompArtwork::togglesliderData, ZaMultiCompArtwork::togglesliderWidth, ZaMultiCompArtwork::togglesliderHeight);
+
+    Point<int> togglePosStart(248,109);
+    Point<int> togglePosEnd(248,109+11);
+
+    fToggleBypass3 = new ImageSlider(this, toggleImage);
+    fToggleBypass3->setStartPos(togglePosStart);
+    fToggleBypass3->setEndPos(togglePosEnd);
+    fToggleBypass3->setRange(0.f,1.f);
+    fToggleBypass3->setValue(0.f);
+    fToggleBypass3->setCallback(this);
+
+    togglePosStart.setY(159);
+    togglePosEnd.setY(159+11);
+
+    fToggleBypass2 = new ImageSlider(this, toggleImage);
+    fToggleBypass2->setStartPos(togglePosStart);
+    fToggleBypass2->setEndPos(togglePosEnd);
+    fToggleBypass2->setRange(0.f,1.f);
+    fToggleBypass2->setValue(0.f);
+    fToggleBypass2->setCallback(this);
+
+    togglePosStart.setY(209);
+    togglePosEnd.setY(209+11);
+
+    fToggleBypass1 = new ImageSlider(this, toggleImage);
+    fToggleBypass1->setStartPos(togglePosStart);
+    fToggleBypass1->setEndPos(togglePosEnd);
+    fToggleBypass1->setRange(0.f,1.f);
+    fToggleBypass1->setValue(0.f);
+    fToggleBypass1->setCallback(this);
+
+    togglePosStart.setX(277);
+    togglePosStart.setY(113);
+    togglePosEnd.setX(277+11);
+    togglePosEnd.setY(113);
+
+    fToggleListen3 = new ImageSlider(this, toggleImage);
+    fToggleListen3->setStartPos(togglePosStart);
+    fToggleListen3->setEndPos(togglePosEnd);
+    fToggleListen3->setRange(0.f,1.f);
+    fToggleListen3->setValue(0.f);
+    fToggleListen3->setCallback(this);
+
+    togglePosStart.setY(165);
+    togglePosEnd.setY(165);
+
+    fToggleListen2 = new ImageSlider(this, toggleImage);
+    fToggleListen2->setStartPos(togglePosStart);
+    fToggleListen2->setEndPos(togglePosEnd);
+    fToggleListen2->setRange(0.f,1.f);
+    fToggleListen2->setValue(0.f);
+    fToggleListen2->setCallback(this);
+
+    togglePosStart.setY(213);
+    togglePosEnd.setY(213);
+
+    fToggleListen1 = new ImageSlider(this, toggleImage);
+    fToggleListen1->setStartPos(togglePosStart);
+    fToggleListen1->setEndPos(togglePosEnd);
+    fToggleListen1->setRange(0.f,1.f);
+    fToggleListen1->setValue(0.f);
+    fToggleListen1->setCallback(this);
 }
 
 ZaMultiCompUI::~ZaMultiCompUI()
@@ -98,6 +204,17 @@ ZaMultiCompUI::~ZaMultiCompUI()
     delete fKnobRatio;
     delete fKnobKnee;
     delete fKnobGlobalGain;
+    delete fKnobMakeup1;
+    delete fKnobMakeup2;
+    delete fKnobMakeup3;
+    delete fKnobXover1;
+    delete fKnobXover2;
+    delete fToggleBypass1;
+    delete fToggleBypass2;
+    delete fToggleBypass3;
+    delete fToggleListen1;
+    delete fToggleListen2;
+    delete fToggleListen3;
 }
 
 // -----------------------------------------------------------------------
@@ -126,9 +243,23 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
         fKnobGlobalGain->setValue(value);
         break;
     case ZaMultiCompPlugin::paramGainR1:
-        if (fLedRedValue != value)
+        if (fLedRedValue1 != value)
         {
-            fLedRedValue = value;
+            fLedRedValue1 = value;
+            repaint();
+        }
+        break;
+    case ZaMultiCompPlugin::paramGainR2:
+        if (fLedRedValue2 != value)
+        {
+            fLedRedValue2 = value;
+            repaint();
+        }
+        break;
+    case ZaMultiCompPlugin::paramGainR3:
+        if (fLedRedValue3 != value)
+        {
+            fLedRedValue3 = value;
             repaint();
         }
         break;
@@ -138,6 +269,33 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
             fLedYellowValue = value;
             repaint();
         }
+        break;
+    case ZaMultiCompPlugin::paramMakeup1:
+        fKnobMakeup1->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramMakeup2:
+        fKnobMakeup2->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramMakeup3:
+        fKnobMakeup3->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramToggle1:
+        fToggleBypass1->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramToggle2:
+        fToggleBypass2->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramToggle3:
+        fToggleBypass3->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramListen1:
+        fToggleListen1->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramListen2:
+        fToggleListen2->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramListen3:
+        fToggleListen3->setValue(value);
         break;
     }
 }
@@ -154,6 +312,17 @@ void ZaMultiCompUI::d_programChanged(uint32_t index)
     fKnobRatio->setValue(4.0f);
     fKnobKnee->setValue(0.0f);
     fKnobGlobalGain->setValue(0.0f);
+    fKnobMakeup1->setValue(0.0f);
+    fKnobMakeup2->setValue(0.0f);
+    fKnobMakeup3->setValue(0.0f);
+    fKnobXover1->setValue(250.0f);
+    fKnobXover2->setValue(1400.0f);
+    fToggleBypass1->setValue(0.0f);
+    fToggleBypass2->setValue(0.0f);
+    fToggleBypass3->setValue(0.0f);
+    fToggleListen1->setValue(0.0f);
+    fToggleListen2->setValue(0.0f);
+    fToggleListen3->setValue(0.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -173,6 +342,16 @@ void ZaMultiCompUI::imageKnobDragStarted(ImageKnob* knob)
         d_editParameter(ZaMultiCompPlugin::paramKnee, true);
     else if (knob == fKnobGlobalGain)
         d_editParameter(ZaMultiCompPlugin::paramGlobalGain, true);
+    else if (knob == fKnobMakeup1)
+        d_editParameter(ZaMultiCompPlugin::paramMakeup1, true);
+    else if (knob == fKnobMakeup2)
+        d_editParameter(ZaMultiCompPlugin::paramMakeup2, true);
+    else if (knob == fKnobMakeup3)
+        d_editParameter(ZaMultiCompPlugin::paramMakeup3, true);
+    else if (knob == fKnobXover1)
+        d_editParameter(ZaMultiCompPlugin::paramXover1, true);
+    else if (knob == fKnobXover2)
+        d_editParameter(ZaMultiCompPlugin::paramXover2, true);
 }
 
 void ZaMultiCompUI::imageKnobDragFinished(ImageKnob* knob)
@@ -189,6 +368,16 @@ void ZaMultiCompUI::imageKnobDragFinished(ImageKnob* knob)
         d_editParameter(ZaMultiCompPlugin::paramKnee, false);
     else if (knob == fKnobGlobalGain)
         d_editParameter(ZaMultiCompPlugin::paramGlobalGain, false);
+    else if (knob == fKnobMakeup1)
+        d_editParameter(ZaMultiCompPlugin::paramMakeup1, false);
+    else if (knob == fKnobMakeup2)
+        d_editParameter(ZaMultiCompPlugin::paramMakeup2, false);
+    else if (knob == fKnobMakeup3)
+        d_editParameter(ZaMultiCompPlugin::paramMakeup3, false);
+    else if (knob == fKnobXover1)
+        d_editParameter(ZaMultiCompPlugin::paramXover1, false);
+    else if (knob == fKnobXover2)
+        d_editParameter(ZaMultiCompPlugin::paramXover2, false);
 }
 
 void ZaMultiCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
@@ -205,6 +394,67 @@ void ZaMultiCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(ZaMultiCompPlugin::paramKnee, value);
     else if (knob == fKnobGlobalGain)
         d_setParameterValue(ZaMultiCompPlugin::paramGlobalGain, value);
+    else if (knob == fKnobMakeup1)
+        d_setParameterValue(ZaMultiCompPlugin::paramMakeup1, value);
+    else if (knob == fKnobMakeup2)
+        d_setParameterValue(ZaMultiCompPlugin::paramMakeup2, value);
+    else if (knob == fKnobMakeup3)
+        d_setParameterValue(ZaMultiCompPlugin::paramMakeup3, value);
+    else if (knob == fKnobXover1)
+        d_setParameterValue(ZaMultiCompPlugin::paramXover1, value);
+    else if (knob == fKnobXover2)
+        d_setParameterValue(ZaMultiCompPlugin::paramXover2, value);
+}
+
+void ZaMultiCompUI::imageSliderDragStarted(ImageSlider* slider)
+{
+    if (slider == fToggleBypass1)
+        d_editParameter(ZaMultiCompPlugin::paramToggle1, true);
+    else if (slider == fToggleBypass2)
+        d_editParameter(ZaMultiCompPlugin::paramToggle2, true);
+    else if (slider == fToggleBypass3)
+        d_editParameter(ZaMultiCompPlugin::paramToggle3, true);
+    else if (slider == fToggleListen1)
+        d_editParameter(ZaMultiCompPlugin::paramListen1, true);
+    else if (slider == fToggleListen2)
+        d_editParameter(ZaMultiCompPlugin::paramListen2, true);
+    else if (slider == fToggleListen3)
+        d_editParameter(ZaMultiCompPlugin::paramListen3, true);
+}     
+
+void ZaMultiCompUI::imageSliderDragFinished(ImageSlider* slider)
+{
+    if (slider == fToggleBypass1)
+        d_editParameter(ZaMultiCompPlugin::paramToggle1, false);
+    else if (slider == fToggleBypass2)
+        d_editParameter(ZaMultiCompPlugin::paramToggle2, false);
+    else if (slider == fToggleBypass3)
+        d_editParameter(ZaMultiCompPlugin::paramToggle3, false);
+    else if (slider == fToggleListen1)
+        d_editParameter(ZaMultiCompPlugin::paramListen1, false);
+    else if (slider == fToggleListen2)
+        d_editParameter(ZaMultiCompPlugin::paramListen2, false);
+    else if (slider == fToggleListen3)
+        d_editParameter(ZaMultiCompPlugin::paramListen3, false);
+}
+
+void ZaMultiCompUI::imageSliderValueChanged(ImageSlider* slider, float value)
+{
+    float v = (value > 0.5) ? 1.f : 0.f;
+    slider->setValue(v);
+
+    if (slider == fToggleBypass1)
+        d_setParameterValue(ZaMultiCompPlugin::paramToggle1, v);
+    else if (slider == fToggleBypass2)
+        d_setParameterValue(ZaMultiCompPlugin::paramToggle2, v);
+    else if (slider == fToggleBypass3)
+        d_setParameterValue(ZaMultiCompPlugin::paramToggle3, v);
+    else if (slider == fToggleListen1)
+        d_setParameterValue(ZaMultiCompPlugin::paramListen1, v);
+    else if (slider == fToggleListen2)
+        d_setParameterValue(ZaMultiCompPlugin::paramListen2, v);
+    else if (slider == fToggleListen3)
+        d_setParameterValue(ZaMultiCompPlugin::paramListen3, v);
 }
 
 void ZaMultiCompUI::onDisplay()
@@ -213,42 +463,104 @@ void ZaMultiCompUI::onDisplay()
 
     // draw leds
     static const float sLedSpacing  = 15.5f;
-    static const int   sLedInitialX = 498;
+    static const int   sLedInitialX = 341;
 
-    static const int sYellowLedStaticY = 16;
-    static const int sRedLedStaticY    = 45;
+    static const int sYellowLedStaticY = 264;
+    static const int sRedLed1StaticY    = 213;
+    static const int sRedLed2StaticY    = 163;
+    static const int sRedLed3StaticY    = 113;
 
-    int numRedLeds;
+    int numRedLeds1;
+    int numRedLeds2;
+    int numRedLeds3;
     int numYellowLeds;
 
-	if (fLedRedValue >= 40.f)
-		numRedLeds = 12;
-	else if (fLedRedValue >= 30.f)
-		numRedLeds = 11;
-	else if (fLedRedValue >= 20.f)
-		numRedLeds = 10;
-	else if (fLedRedValue >= 15.f)
-		numRedLeds = 9;
-	else if (fLedRedValue >= 10.f)
-		numRedLeds = 8;
-	else if (fLedRedValue >= 8.f)
-		numRedLeds = 7;
-	else if (fLedRedValue >= 6.f)
-		numRedLeds = 6;
-	else if (fLedRedValue >= 5.f)
-		numRedLeds = 5;
-	else if (fLedRedValue >= 4.f)
-		numRedLeds = 4;
-	else if (fLedRedValue >= 3.f)
-		numRedLeds = 3;
-	else if (fLedRedValue >= 2.f)
-		numRedLeds = 2;
-	else if (fLedRedValue >= 1.f)
-		numRedLeds = 1;
-	else numRedLeds = 0;
+	if (fLedRedValue1 >= 40.f)
+		numRedLeds1 = 12;
+	else if (fLedRedValue1 >= 30.f)
+		numRedLeds1 = 11;
+	else if (fLedRedValue1 >= 20.f)
+		numRedLeds1 = 10;
+	else if (fLedRedValue1 >= 15.f)
+		numRedLeds1 = 9;
+	else if (fLedRedValue1 >= 10.f)
+		numRedLeds1 = 8;
+	else if (fLedRedValue1 >= 8.f)
+		numRedLeds1 = 7;
+	else if (fLedRedValue1 >= 6.f)
+		numRedLeds1 = 6;
+	else if (fLedRedValue1 >= 5.f)
+		numRedLeds1 = 5;
+	else if (fLedRedValue1 >= 4.f)
+		numRedLeds1 = 4;
+	else if (fLedRedValue1 >= 3.f)
+		numRedLeds1 = 3;
+	else if (fLedRedValue1 >= 2.f)
+		numRedLeds1 = 2;
+	else if (fLedRedValue1 >= 1.f)
+		numRedLeds1 = 1;
+	else numRedLeds1 = 0;
 
-    for (int i=numRedLeds; i>0; --i)
-        fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
+	if (fLedRedValue2 >= 40.f)
+		numRedLeds2 = 12;
+	else if (fLedRedValue2 >= 30.f)
+		numRedLeds2 = 11;
+	else if (fLedRedValue2 >= 20.f)
+		numRedLeds2 = 10;
+	else if (fLedRedValue2 >= 15.f)
+		numRedLeds2 = 9;
+	else if (fLedRedValue2 >= 10.f)
+		numRedLeds2 = 8;
+	else if (fLedRedValue2 >= 8.f)
+		numRedLeds2 = 7;
+	else if (fLedRedValue2 >= 6.f)
+		numRedLeds2 = 6;
+	else if (fLedRedValue2 >= 5.f)
+		numRedLeds2 = 5;
+	else if (fLedRedValue2 >= 4.f)
+		numRedLeds2 = 4;
+	else if (fLedRedValue2 >= 3.f)
+		numRedLeds2 = 3;
+	else if (fLedRedValue2 >= 2.f)
+		numRedLeds2 = 2;
+	else if (fLedRedValue2 >= 1.f)
+		numRedLeds2 = 1;
+	else numRedLeds2 = 0;
+
+	if (fLedRedValue3 >= 40.f)
+		numRedLeds3 = 12;
+	else if (fLedRedValue3 >= 30.f)
+		numRedLeds3 = 11;
+	else if (fLedRedValue3 >= 20.f)
+		numRedLeds3 = 10;
+	else if (fLedRedValue3 >= 15.f)
+		numRedLeds3 = 9;
+	else if (fLedRedValue3 >= 10.f)
+		numRedLeds3 = 8;
+	else if (fLedRedValue3 >= 8.f)
+		numRedLeds3 = 7;
+	else if (fLedRedValue3 >= 6.f)
+		numRedLeds3 = 6;
+	else if (fLedRedValue3 >= 5.f)
+		numRedLeds3 = 5;
+	else if (fLedRedValue3 >= 4.f)
+		numRedLeds3 = 4;
+	else if (fLedRedValue3 >= 3.f)
+		numRedLeds3 = 3;
+	else if (fLedRedValue3 >= 2.f)
+		numRedLeds3 = 2;
+	else if (fLedRedValue3 >= 1.f)
+		numRedLeds3 = 1;
+	else numRedLeds3 = 0;
+
+    for (int i=numRedLeds1; i>0; --i)
+        fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLed1StaticY);
+
+    for (int i=numRedLeds2; i>0; --i)
+        fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLed2StaticY);
+
+    for (int i=numRedLeds3; i>0; --i)
+        fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLed3StaticY);
 
 	if (fLedYellowValue >= 20.f)
 		numYellowLeds = 19;
