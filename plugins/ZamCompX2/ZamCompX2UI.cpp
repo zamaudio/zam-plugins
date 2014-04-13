@@ -29,9 +29,8 @@ ZamCompX2UI::ZamCompX2UI()
     // background
     fImgBackground = Image(ZamCompX2Artwork::zamcompx2Data, ZamCompX2Artwork::zamcompx2Width, ZamCompX2Artwork::zamcompx2Height, GL_BGR);
 
-    // toggle images
-    fImgToggleOn = Image(ZamCompX2Artwork::toggleonData, ZamCompX2Artwork::toggleonWidth, ZamCompX2Artwork::toggleonHeight, GL_BGRA);
-    fImgToggleOff = Image(ZamCompX2Artwork::toggleoffData, ZamCompX2Artwork::toggleoffWidth, ZamCompX2Artwork::toggleoffHeight, GL_BGRA);
+    // toggle image
+    fImgToggleSlider = Image(ZamCompX2Artwork::togglesliderData, ZamCompX2Artwork::togglesliderWidth, ZamCompX2Artwork::togglesliderHeight, GL_BGRA);
 
     // led images
     fLedRedImg = Image(ZamCompX2Artwork::ledredData, ZamCompX2Artwork::ledredWidth, ZamCompX2Artwork::ledredHeight);
@@ -93,6 +92,18 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobMakeup->setRotationAngle(240);
     fKnobMakeup->setCallback(this);
 
+    Image toggleImage(ZamCompX2Artwork::togglesliderData, ZamCompX2Artwork::togglesliderWidth, ZamCompX2Artwork::togglesliderHeight);
+
+    Point<int> togglePosStart(652,72);
+    Point<int> togglePosEnd(652,72+11);
+
+    fToggleStereo = new ImageSlider(this, toggleImage);
+    fToggleStereo->setStartPos(togglePosStart);
+    fToggleStereo->setEndPos(togglePosEnd);
+    fToggleStereo->setRange(1.f, 2.f);
+    fToggleStereo->setValue(1.f);
+    fToggleStereo->setCallback(this);
+
 }
 
 ZamCompX2UI::~ZamCompX2UI()
@@ -103,6 +114,7 @@ ZamCompX2UI::~ZamCompX2UI()
     delete fKnobRatio;
     delete fKnobKnee;
     delete fKnobMakeup;
+    delete fToggleStereo;
 }
 
 // -----------------------------------------------------------------------
@@ -144,6 +156,9 @@ void ZamCompX2UI::d_parameterChanged(uint32_t index, float value)
             repaint();
         }
         break;
+    case ZamCompX2Plugin::paramStereo:
+        fToggleStereo->setValue((int)value);
+	break;
     }
 }
 
@@ -159,6 +174,7 @@ void ZamCompX2UI::d_programChanged(uint32_t index)
     fKnobRatio->setValue(4.0f);
     fKnobKnee->setValue(0.0f);
     fKnobMakeup->setValue(0.0f);
+    fToggleStereo->setValue(1.f);
 }
 
 // -----------------------------------------------------------------------
@@ -210,6 +226,31 @@ void ZamCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(ZamCompX2Plugin::paramKnee, value);
     else if (knob == fKnobMakeup)
         d_setParameterValue(ZamCompX2Plugin::paramMakeup, value);
+}
+
+void ZamCompX2UI::imageSliderDragStarted(ImageSlider *slider)
+{
+    if (slider == fToggleStereo)
+        d_editParameter(ZamCompX2Plugin::paramStereo, true);
+}
+
+void ZamCompX2UI::imageSliderDragFinished(ImageSlider *slider)
+{
+    if (slider == fToggleStereo)
+        d_editParameter(ZamCompX2Plugin::paramStereo, false);
+}
+
+void ZamCompX2UI::imageSliderValueChanged(ImageSlider *slider, float value)
+{
+    if (slider == fToggleStereo) {
+        if (value > 1.5) {
+            d_setParameterValue(ZamCompX2Plugin::paramStereo, 2.f);
+	    fToggleStereo->setValue(2.f);
+	} else {
+            d_setParameterValue(ZamCompX2Plugin::paramStereo, 1.f);
+	    fToggleStereo->setValue(1.f);
+        }
+    }
 }
 
 void ZamCompX2UI::onDisplay()
