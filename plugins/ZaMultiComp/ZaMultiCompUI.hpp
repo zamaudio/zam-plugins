@@ -20,17 +20,12 @@
 
 #include "DistrhoUI.hpp"
 
-#include "ImageAboutWindow.hpp"
-#include "ImageButton.hpp"
 #include "ImageKnob.hpp"
-#include "ImageSlider.hpp"
 
 #include "ZaMultiCompArtwork.hpp"
 #include "ZaMultiCompPlugin.hpp"
 
 using DGL::Image;
-using DGL::ImageAboutWindow;
-using DGL::ImageButton;
 using DGL::ImageKnob;
 
 START_NAMESPACE_DISTRHO
@@ -38,8 +33,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZaMultiCompUI : public UI,
-                      public ImageButton::Callback,
-                      public ImageKnob::Callback
+                  public ImageKnob::Callback
 {
 public:
     ZaMultiCompUI();
@@ -51,24 +45,23 @@ protected:
 
     unsigned int d_getWidth() const noexcept override
     {
-        return ZaMultiCompArtwork::backgroundWidth;
+        return ZaMultiCompArtwork::zamulticompWidth;
     }
 
     unsigned int d_getHeight() const noexcept override
     {
-        return ZaMultiCompArtwork::backgroundHeight;
+        return ZaMultiCompArtwork::zamulticompHeight;
     }
 
     // -------------------------------------------------------------------
     // DSP Callbacks
 
-    void d_parameterChanged(uint32_t index, float value) ;
-    void d_programChanged(uint32_t index) ;
+    void d_parameterChanged(uint32_t index, float value) override;
+    void d_programChanged(uint32_t index) override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageButtonClicked(ImageButton* button, int) override;
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
@@ -77,10 +70,17 @@ protected:
 
 private:
     Image fImgBackground;
-    ImageAboutWindow fAboutWindow;
-
     ImageKnob* fKnobAttack;
-    ImageButton* fButtonAbout;
+    ImageKnob* fKnobRelease;
+    ImageKnob* fKnobThresh;
+    ImageKnob* fKnobRatio;
+    ImageKnob* fKnobKnee;
+    ImageKnob* fKnobGlobalGain;
+
+    Image fLedRedImg;
+    float fLedRedValue;
+    Image fLedYellowImg;
+    float fLedYellowValue;
 };
 
 // -----------------------------------------------------------------------

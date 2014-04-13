@@ -195,6 +195,15 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -12.0f;
         parameter.ranges.max = 12.0f;
         break;
+    case paramOutputLevel:
+        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.name       = "Output Level";
+        parameter.symbol     = "outlevel";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -45.0f;
+        parameter.ranges.min = -45.0f;
+        parameter.ranges.max = 20.0f;
+        break;
     }
 }
 
@@ -264,6 +273,9 @@ float ZaMultiCompPlugin::d_getParameterValue(uint32_t index) const
     case paramGlobalGain:
         return globalgain;
         break;
+    case paramOutputLevel:
+        return outlevel;
+        break;
     default:
         return 0.0f;
     }
@@ -324,6 +336,9 @@ void ZaMultiCompPlugin::d_setParameterValue(uint32_t index, float value)
     case paramGlobalGain:
         globalgain = value;
         break;
+    case paramOutputLevel:
+        outlevel = value;
+        break;
     }
 }
 
@@ -350,6 +365,7 @@ void ZaMultiCompPlugin::d_setProgram(uint32_t index)
     toggle[1] = 0.0f;
     toggle[2] = 0.0f;
     globalgain = 0.0f;
+    outlevel = -45.0f;
 
     /* Default variable values */
 
@@ -473,6 +489,7 @@ float ZaMultiCompPlugin::run_comp(int k, float in)
 void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = d_getSampleRate();
+	float max = 0.f;
 
         int tog1 = (toggle[0] > 0.f) ? 1 : 0;
         int tog2 = (toggle[1] > 0.f) ? 1 : 0;
@@ -504,7 +521,10 @@ void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 tmp6 = tog3 ? run_comp(2, tmp5) : tmp5;
                 outputs[0][i] = tmp2 + tmp3 + tmp6;
                 outputs[0][i] *= from_dB(globalgain);
+
+		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : max;
         }
+	outlevel = sanitize_denormal((max == 0.f) ? -45.f : to_dB(max));
 }
 
 // -----------------------------------------------------------------------
