@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZaMultiCompX2Plugin::ZaMultiCompX2Plugin()
-    : Plugin(paramCount, 1, 0) // 1 program, 0 states
+    : Plugin(paramCount, 1, 1) // 1 program, 0 states
 {
     // set default values
     d_setProgram(0);
@@ -386,21 +386,33 @@ void ZaMultiCompX2Plugin::d_setParameterValue(uint32_t index, float value)
         break;
     case paramToggle1:
         toggle[0] = value;
+        if (value == 0.f)
+	    gainr[0] = 0.f;
         break;
     case paramToggle2:
         toggle[1] = value;
+        if (value == 0.f)
+	    gainr[1] = 0.f;
         break;
     case paramToggle3:
         toggle[2] = value;
+        if (value == 0.f)
+	    gainr[2] = 0.f;
         break;
     case paramListen1:
         listen[0] = value;
+        if (value == 0.f)
+	    gainr[0] = 0.f;
         break;
     case paramListen2:
         listen[1] = value;
+        if (value == 0.f)
+	    gainr[1] = 0.f;
         break;
     case paramListen3:
         listen[2] = value;
+        if (value == 0.f)
+	    gainr[2] = 0.f;
         break;
     case paramGlobalGain:
         globalgain = value;
@@ -446,11 +458,23 @@ void ZaMultiCompX2Plugin::d_setProgram(uint32_t index)
     stereodet = 1.0f;
     outl = -45.f;
     outr = -45.f;
+    maxL = 0.f;
+    maxR = 0.f;
 
     /* Default variable values */
 
     /* reset filter values */
     d_activate();
+}
+
+void ZaMultiCompX2Plugin::d_setState(const char* key, const char* value)
+{
+    resetl = true;
+    resetr = true;
+}
+
+void ZaMultiCompX2Plugin::d_initStateKey(unsigned int key, d_string& val)
+{
 }
 
 // -----------------------------------------------------------------------
@@ -645,8 +669,6 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
 		float outR[MAX_COMP] = {0.f};
 
 		int listenmode = 0;
-		maxL = 0.f;
-		maxR = 0.f;
 
 		// Interleaved channel processing
                 fil1[0] = run_filter(0, 0, inputs[0][i]);
@@ -713,8 +735,18 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
                 outputs[0][i] *= from_dB(globalgain);
                 outputs[1][i] *= from_dB(globalgain);
 		
-		maxL = (fabsf(outputs[0][i]) > maxL) ? fabsf(outputs[0][i]) : maxL;
-		maxR = (fabsf(outputs[1][i]) > maxR) ? fabsf(outputs[1][i]) : maxR;
+		if (resetl) {
+			maxL = fabsf(outputs[0][i]);
+			resetl = false;
+		} else {
+			maxL = (fabsf(outputs[0][i]) > maxL) ? fabsf(outputs[0][i]) : maxL;
+		}
+		if (resetr) {
+			maxR = fabsf(outputs[1][i]);
+			resetr = false;
+		} else {
+			maxR = (fabsf(outputs[1][i]) > maxR) ? fabsf(outputs[1][i]) : maxR;
+		}
         }
 	outl = sanitize_denormal((maxL == 0.f) ? -45.f : to_dB(maxL));
 	outr = sanitize_denormal((maxR == 0.f) ? -45.f : to_dB(maxR));

@@ -20,6 +20,7 @@
 
 #include "DistrhoUI.hpp"
 
+#include "Geometry.hpp"
 #include "ImageKnob.hpp"
 #include "ImageSlider.hpp"
 
@@ -29,6 +30,7 @@
 using DGL::Image;
 using DGL::ImageKnob;
 using DGL::ImageSlider;
+using DGL::Rectangle;
 
 START_NAMESPACE_DISTRHO
 
@@ -61,6 +63,7 @@ protected:
 
     void d_parameterChanged(uint32_t index, float value) override;
     void d_programChanged(uint32_t index) override;
+    void d_stateChanged(const char*, const char*) override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks
@@ -94,6 +97,7 @@ private:
     ImageSlider* fToggleListen1;
     ImageSlider* fToggleListen2;
     ImageSlider* fToggleListen3;
+    ImageSlider* fToggleStereo;
 
     Image fLedRedImg;
     float fLedRedValue1;
@@ -102,6 +106,7 @@ private:
     Image fLedYellowImg;
     float fLedYellowValueL;
     float fLedYellowValueR;
+    Rectangle<int> fCanvasArea;
 };
 
 // -----------------------------------------------------------------------

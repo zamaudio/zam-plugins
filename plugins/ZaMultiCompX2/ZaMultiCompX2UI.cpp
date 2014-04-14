@@ -202,6 +202,22 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fToggleListen1->setStep(1.f);
     fToggleListen1->setValue(0.f);
     fToggleListen1->setCallback(this);
+
+    togglePosStart.setX(285.5);
+    togglePosEnd.setX(285.5);
+    togglePosStart.setY(254);
+    togglePosEnd.setY(254+11);
+
+    fToggleStereo = new ImageSlider(this, toggleImage);
+    fToggleStereo->setStartPos(togglePosStart);
+    fToggleStereo->setEndPos(togglePosEnd);
+    fToggleStereo->setRange(0.f,1.f);
+    fToggleStereo->setStep(1.f);
+    fToggleStereo->setValue(0.f);
+    fToggleStereo->setCallback(this);
+
+    fCanvasArea.setPos(530, 30);
+    fCanvasArea.setSize(110, 110);
 }
 
 ZaMultiCompX2UI::~ZaMultiCompX2UI()
@@ -223,6 +239,7 @@ ZaMultiCompX2UI::~ZaMultiCompX2UI()
     delete fToggleListen1;
     delete fToggleListen2;
     delete fToggleListen3;
+    delete fToggleStereo;
 }
 
 // -----------------------------------------------------------------------
@@ -338,6 +355,11 @@ void ZaMultiCompX2UI::d_programChanged(uint32_t index)
     fToggleListen1->setValue(0.0f);
     fToggleListen2->setValue(0.0f);
     fToggleListen3->setValue(0.0f);
+    fToggleStereo->setValue(0.0f);
+}
+
+void ZaMultiCompX2UI::d_stateChanged(const char*, const char*)
+{
 }
 
 // -----------------------------------------------------------------------
@@ -435,6 +457,8 @@ void ZaMultiCompX2UI::imageSliderDragStarted(ImageSlider* slider)
         d_editParameter(ZaMultiCompX2Plugin::paramListen2, true);
     else if (slider == fToggleListen3)
         d_editParameter(ZaMultiCompX2Plugin::paramListen3, true);
+    else if (slider == fToggleStereo)
+        d_editParameter(ZaMultiCompX2Plugin::paramStereoDet, true);
 }     
 
 void ZaMultiCompX2UI::imageSliderDragFinished(ImageSlider* slider)
@@ -451,13 +475,12 @@ void ZaMultiCompX2UI::imageSliderDragFinished(ImageSlider* slider)
         d_editParameter(ZaMultiCompX2Plugin::paramListen2, false);
     else if (slider == fToggleListen3)
         d_editParameter(ZaMultiCompX2Plugin::paramListen3, false);
+    else if (slider == fToggleStereo)
+        d_editParameter(ZaMultiCompX2Plugin::paramStereoDet, false);
 }
 
 void ZaMultiCompX2UI::imageSliderValueChanged(ImageSlider* slider, float v)
 {
-    //float v = (value > 0.5) ? 1.f : 0.f;
-    //slider->setValue(v);
-
     if (slider == fToggleBypass1)
         d_setParameterValue(ZaMultiCompX2Plugin::paramToggle1, v);
     else if (slider == fToggleBypass2)
@@ -470,18 +493,22 @@ void ZaMultiCompX2UI::imageSliderValueChanged(ImageSlider* slider, float v)
         d_setParameterValue(ZaMultiCompX2Plugin::paramListen2, 1.-v);
     else if (slider == fToggleListen3)
         d_setParameterValue(ZaMultiCompX2Plugin::paramListen3, 1.-v);
+    else if (slider == fToggleStereo)
+        d_setParameterValue(ZaMultiCompX2Plugin::paramStereoDet, v);
 }
 
 void ZaMultiCompX2UI::onDisplay()
 {
     fImgBackground.draw();
 
+    d_setState("stateMeterReset", "");
+
     // draw leds
     static const float sLedSpacing  = 15.5f;
     static const int   sLedInitialX = 343;
 
-    static const int sYellowLedStaticYL = 265;
-    static const int sYellowLedStaticYR = 285;
+    static const int sYellowLedStaticYL = 254.5;
+    static const int sYellowLedStaticYR = 269.5;
     static const int sRedLed1StaticY    = 215;
     static const int sRedLed2StaticY    = 164;
     static const int sRedLed3StaticY    = 113;
@@ -678,6 +705,55 @@ void ZaMultiCompX2UI::onDisplay()
 		for (int i=0; i<numYellowLedsR; ++i)
 			fLedYellowImg.draw(sLedInitialX + i*sLedSpacing, sYellowLedStaticYR);
 	}
+/*
+// TESTING - remove later
+// this paints the 'fCanvasArea' so we can clearly see its bounds
+{
+const int x = fCanvasArea.getX();
+const int y = fCanvasArea.getY();
+const int w = fCanvasArea.getWidth();
+const int h = fCanvasArea.getHeight();
+
+glColor4f(0.0f, 1.0f, 0.0f, 0.9f);
+
+glBegin(GL_QUADS);
+glTexCoord2f(0.0f, 0.0f);
+glVertex2i(x, y);
+
+glTexCoord2f(1.0f, 0.0f);
+glVertex2i(x+w, y);
+
+glTexCoord2f(1.0f, 1.0f);
+glVertex2i(x+w, y+h);
+
+glTexCoord2f(0.0f, 1.0f);
+glVertex2i(x, y+h);
+glEnd();
+
+// reset color
+glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+*/
+    float paramX = 0.5f;
+    float paramY = 0.5f;
+
+    // get x, y mapped to XY area
+    int x = fCanvasArea.getX() + paramX*fCanvasArea.getWidth();
+    int y = fCanvasArea.getY() + (1.f-paramY)*fCanvasArea.getHeight();
+
+    //draw lines, just for fun
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+    glLineWidth(4);
+    glBegin(GL_LINES);
+        glVertex2i(x , y);
+        glVertex2i(x+15, y+25);
+    glEnd();
+
+    // reset color
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
 }
 
 // -----------------------------------------------------------------------

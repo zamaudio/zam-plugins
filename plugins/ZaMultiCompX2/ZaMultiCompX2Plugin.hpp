@@ -67,9 +67,16 @@ public:
 	paramOutputLevelR,
         paramCount
     };
+    
+    enum States
+    {
+        stateReadMeter,
+	stateCount
+    };
 
     ZaMultiCompX2Plugin();
     ~ZaMultiCompX2Plugin() override;
+
 
 protected:
     // -------------------------------------------------------------------
@@ -105,6 +112,7 @@ protected:
 
     void d_initParameter(uint32_t index, Parameter& parameter) ;
     void d_initProgramName(uint32_t index, d_string& programName) ;
+    void d_initStateKey(uint32_t, d_string&) override;
 
     // -------------------------------------------------------------------
     // Internal data
@@ -112,6 +120,7 @@ protected:
     float d_getParameterValue(uint32_t index) const override;
     void  d_setParameterValue(uint32_t index, float value) override;
     void  d_setProgram(uint32_t index) ;
+    void  d_setState(const char* key, const char* value) override;
 
     // -------------------------------------------------------------------
     // Process
@@ -146,8 +155,10 @@ protected:
 
 private:
     float attack,release,knee,ratio,thresdb,makeup[MAX_COMP],globalgain,stereodet;
-    float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],outl,outr,xover1,xover2;
+    float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],maxL,maxR,outl,outr,xover1,xover2;
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP];
+    bool resetl;
+    bool resetr;
     // Crossover filter coefficients
     float a0[2][MAX_FILT];
     float a1[2][MAX_FILT];
