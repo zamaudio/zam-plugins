@@ -134,8 +134,8 @@ ZaMultiCompUI::ZaMultiCompUI()
 
     Image toggleImage(ZaMultiCompArtwork::togglesliderData, ZaMultiCompArtwork::togglesliderWidth, ZaMultiCompArtwork::togglesliderHeight);
 
-    Point<int> togglePosStart(248,109);
-    Point<int> togglePosEnd(248,109+11);
+    Point<int> togglePosStart(247,108);
+    Point<int> togglePosEnd(247,108+11);
 
     fToggleBypass3 = new ImageSlider(this, toggleImage);
     fToggleBypass3->setStartPos(togglePosStart);
@@ -145,8 +145,8 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleBypass3->setValue(0.f);
     fToggleBypass3->setCallback(this);
 
-    togglePosStart.setY(159);
-    togglePosEnd.setY(159+11);
+    togglePosStart.setY(158);
+    togglePosEnd.setY(158+11);
 
     fToggleBypass2 = new ImageSlider(this, toggleImage);
     fToggleBypass2->setStartPos(togglePosStart);
@@ -167,9 +167,9 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleBypass1->setValue(0.f);
     fToggleBypass1->setCallback(this);
 
-    togglePosStart.setX(277);
+    togglePosStart.setX(278);
     togglePosStart.setY(113);
-    togglePosEnd.setX(277+11);
+    togglePosEnd.setX(278+11);
     togglePosEnd.setY(113);
 
     fToggleListen3 = new ImageSlider(this, toggleImage);
@@ -180,8 +180,8 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleListen3->setValue(0.f);
     fToggleListen3->setCallback(this);
 
-    togglePosStart.setY(165);
-    togglePosEnd.setY(165);
+    togglePosStart.setY(164);
+    togglePosEnd.setY(164);
 
     fToggleListen2 = new ImageSlider(this, toggleImage);
     fToggleListen2->setStartPos(togglePosStart);
@@ -191,8 +191,8 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleListen2->setValue(0.f);
     fToggleListen2->setCallback(this);
 
-    togglePosStart.setY(213);
-    togglePosEnd.setY(213);
+    togglePosStart.setY(214);
+    togglePosEnd.setY(214);
 
     fToggleListen1 = new ImageSlider(this, toggleImage);
     fToggleListen1->setStartPos(togglePosStart);
@@ -470,12 +470,12 @@ void ZaMultiCompUI::onDisplay()
 
     // draw leds
     static const float sLedSpacing  = 15.5f;
-    static const int   sLedInitialX = 342;
+    static const int   sLedInitialX = 343;
 
     static const int sYellowLedStaticY = 265;
-    static const int sRedLed1StaticY    = 214;
+    static const int sRedLed1StaticY    = 215;
     static const int sRedLed2StaticY    = 164;
-    static const int sRedLed3StaticY    = 114;
+    static const int sRedLed3StaticY    = 113;
 
     int numRedLeds1;
     int numRedLeds2;
