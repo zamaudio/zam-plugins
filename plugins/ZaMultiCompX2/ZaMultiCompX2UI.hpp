@@ -20,8 +20,6 @@
 
 #include "DistrhoUI.hpp"
 
-#include "ImageAboutWindow.hpp"
-#include "ImageButton.hpp"
 #include "ImageKnob.hpp"
 #include "ImageSlider.hpp"
 
@@ -29,17 +27,16 @@
 #include "ZaMultiCompX2Plugin.hpp"
 
 using DGL::Image;
-using DGL::ImageAboutWindow;
-using DGL::ImageButton;
 using DGL::ImageKnob;
+using DGL::ImageSlider;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZaMultiCompX2UI : public UI,
-                      public ImageButton::Callback,
-                      public ImageKnob::Callback
+                  public ImageKnob::Callback,
+                  public ImageSlider::Callback
 {
 public:
     ZaMultiCompX2UI();
@@ -51,36 +48,60 @@ protected:
 
     unsigned int d_getWidth() const noexcept override
     {
-        return ZaMultiCompX2Artwork::backgroundWidth;
+        return ZaMultiCompX2Artwork::zamulticompx2Width;
     }
 
     unsigned int d_getHeight() const noexcept override
     {
-        return ZaMultiCompX2Artwork::backgroundHeight;
+        return ZaMultiCompX2Artwork::zamulticompx2Height;
     }
 
     // -------------------------------------------------------------------
     // DSP Callbacks
 
-    void d_parameterChanged(uint32_t index, float value) ;
-    void d_programChanged(uint32_t index) ;
+    void d_parameterChanged(uint32_t index, float value) override;
+    void d_programChanged(uint32_t index) override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageButtonClicked(ImageButton* button, int) override;
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
+
+    void imageSliderDragStarted(ImageSlider* slider) override;
+    void imageSliderDragFinished(ImageSlider* slider) override;
+    void imageSliderValueChanged(ImageSlider* slider, float value) override;
 
     void onDisplay() override;
 
 private:
     Image fImgBackground;
-    ImageAboutWindow fAboutWindow;
-
     ImageKnob* fKnobAttack;
-    ImageButton* fButtonAbout;
+    ImageKnob* fKnobRelease;
+    ImageKnob* fKnobThresh;
+    ImageKnob* fKnobRatio;
+    ImageKnob* fKnobKnee;
+    ImageKnob* fKnobGlobalGain;
+    ImageKnob* fKnobMakeup1;
+    ImageKnob* fKnobMakeup2;
+    ImageKnob* fKnobMakeup3;
+    ImageKnob* fKnobXover1;
+    ImageKnob* fKnobXover2;
+    ImageSlider* fToggleBypass1;
+    ImageSlider* fToggleBypass2;
+    ImageSlider* fToggleBypass3;
+    ImageSlider* fToggleListen1;
+    ImageSlider* fToggleListen2;
+    ImageSlider* fToggleListen3;
+
+    Image fLedRedImg;
+    float fLedRedValue1;
+    float fLedRedValue2;
+    float fLedRedValue3;
+    Image fLedYellowImg;
+    float fLedYellowValueL;
+    float fLedYellowValueR;
 };
 
 // -----------------------------------------------------------------------

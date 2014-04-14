@@ -57,8 +57,14 @@ public:
 	paramToggle2,
 	paramToggle3,
 
+	paramListen1,
+	paramListen2,
+	paramListen3,
+
 	paramStereoDet,
 	paramGlobalGain,
+	paramOutputLevelL,
+	paramOutputLevelR,
         paramCount
     };
 
@@ -140,7 +146,7 @@ protected:
 
 private:
     float attack,release,knee,ratio,thresdb,makeup[MAX_COMP],globalgain,stereodet;
-    float gainr[MAX_COMP],toggle[MAX_COMP],xover1,xover2;
+    float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],outl,outr,xover1,xover2;
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP];
     // Crossover filter coefficients
     float a0[2][MAX_FILT];

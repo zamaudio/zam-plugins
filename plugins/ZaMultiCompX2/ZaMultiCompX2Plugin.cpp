@@ -186,6 +186,33 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
+    case paramListen1:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.name       = "Listen 1";
+        parameter.symbol     = "listen1";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
+    case paramListen2:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.name       = "Listen 2";
+        parameter.symbol     = "listen2";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
+    case paramListen3:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.name       = "Listen 3";
+        parameter.symbol     = "listen3";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     case paramGlobalGain:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
         parameter.name       = "Master Trim";
@@ -203,6 +230,24 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.def = 1.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
+        break;
+    case paramOutputLevelL:
+        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.name       = "Output Left";
+        parameter.symbol     = "outl";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -45.0f;
+        parameter.ranges.min = -45.0f;
+        parameter.ranges.max = 20.0f;
+        break;
+    case paramOutputLevelR:
+        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.name       = "Output Right";
+        parameter.symbol     = "outr";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -45.0f;
+        parameter.ranges.min = -45.0f;
+        parameter.ranges.max = 20.0f;
         break;
     }
 }
@@ -270,11 +315,26 @@ float ZaMultiCompX2Plugin::d_getParameterValue(uint32_t index) const
     case paramToggle3:
         return toggle[2];
         break;
+    case paramListen1:
+        return listen[0];
+        break;
+    case paramListen2:
+        return listen[1];
+        break;
+    case paramListen3:
+        return listen[2];
+        break;
     case paramGlobalGain:
         return globalgain;
         break;
     case paramStereoDet:
         return stereodet;
+        break;
+    case paramOutputLevelL:
+        return outl;
+        break;
+    case paramOutputLevelR:
+        return outr;
         break;
     default:
         return 0.0f;
@@ -333,11 +393,26 @@ void ZaMultiCompX2Plugin::d_setParameterValue(uint32_t index, float value)
     case paramToggle3:
         toggle[2] = value;
         break;
+    case paramListen1:
+        listen[0] = value;
+        break;
+    case paramListen2:
+        listen[1] = value;
+        break;
+    case paramListen3:
+        listen[2] = value;
+        break;
     case paramGlobalGain:
         globalgain = value;
         break;
     case paramStereoDet:
         stereodet = value;
+        break;
+    case paramOutputLevelL:
+        outl = value;
+        break;
+    case paramOutputLevelR:
+        outr = value;
         break;
     }
 }
@@ -364,8 +439,13 @@ void ZaMultiCompX2Plugin::d_setProgram(uint32_t index)
     toggle[0] = 0.0f;
     toggle[1] = 0.0f;
     toggle[2] = 0.0f;
+    listen[0] = 0.0f;
+    listen[1] = 0.0f;
+    listen[2] = 0.0f;
     globalgain = 0.0f;
     stereodet = 1.0f;
+    outl = -45.f;
+    outr = -45.f;
 
     /* Default variable values */
 
@@ -442,7 +522,6 @@ void ZaMultiCompX2Plugin::set_hp_coeffs(float fc, float q, float sr, int i, int 
 void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, float *outR)
 {
 	float srate = d_getSampleRate();
-        float makeupgain = from_dB(makeup[k]);
         float width=(knee-0.99f)*6.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
@@ -503,8 +582,6 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         cdb = -Lyl;
         Lgain = from_dB(cdb);
         
-        gainr[k] = Lyl;
-
         Ry1 = fmaxf(Rxl, release_coeff * old_y1[1][k]+(1.f-release_coeff)*Rxl);
         Ryl = attack_coeff * old_yl[1][k]+(1.f-attack_coeff)*Ry1;
         Ry1 = sanitize_denormal(Ry1);
@@ -513,12 +590,16 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         cdb = -Ryl;
         Rgain = from_dB(cdb);
         
-        //gainr_r = Ryl;
+        
+        if (stereolink == STEREOLINK_MAX)
+		gainr[k] = fmaxf(Lyl, Ryl);
+	else
+        	gainr[k] = (Lyl + Ryl) / 2.f;
 
 	*outL = inL;
-	*outL *= Lgain * makeupgain;
+	*outL *= Lgain;
 	*outR = inR;
-	*outR *= Rgain * makeupgain;
+	*outR *= Rgain;
         
         old_yl[0][k] = Lyl;
         old_yl[1][k] = Ryl;
@@ -529,10 +610,15 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = d_getSampleRate();
+	float maxL, maxR;
 
-        int tog1 = (toggle[0] > 0.f) ? 1 : 0;
-        int tog2 = (toggle[1] > 0.f) ? 1 : 0;
-        int tog3 = (toggle[2] > 0.f) ? 1 : 0;
+        int tog1 = (toggle[0] > 0.5f) ? 1 : 0;
+        int tog2 = (toggle[1] > 0.5f) ? 1 : 0;
+        int tog3 = (toggle[2] > 0.5f) ? 1 : 0;
+
+        int listen1 = (listen[0] > 0.5f) ? 1 : 0;
+        int listen2 = (listen[1] > 0.5f) ? 1 : 0;
+        int listen3 = (listen[2] > 0.5f) ? 1 : 0;
 
         set_lp_coeffs(xover1, ONEOVERROOT2, srate, 0, 0);
         set_lp_coeffs(xover1, ONEOVERROOT2, srate, 1, 0);
@@ -555,19 +641,23 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
         for (uint32_t i = 0; i < frames; ++i) {
                 float tmp1[2], tmp2[2], tmp3[2], tmp4[2], tmp5[2], tmp6[2];
 		float fil1[2], fil2[2], fil3[2], fil4[2];
-		float outL, outR;
+		float outL[MAX_COMP] = {0.f};
+		float outR[MAX_COMP] = {0.f};
+
+		int listenmode = 0;
+		maxL = 0.f;
+		maxR = 0.f;
 
 		// Interleaved channel processing
-		outputs[0][i] = inputs[0][i];
-                outputs[1][i] = inputs[1][i];
                 fil1[0] = run_filter(0, 0, inputs[0][i]);
                 fil1[1] = run_filter(0, 1, inputs[1][i]);
                 tmp1[0] = run_filter(1, 0, fil1[0]);
                 tmp1[1] = run_filter(1, 1, fil1[1]);
+		if (tog1)
+			run_comp(0, tmp1[0], tmp1[1], &outL[0], &outR[0]);
 
-		run_comp(0, tmp1[0], tmp1[1], &outL, &outR);
-                tmp2[0] = tog1 ? outL : tmp1[0];
-                tmp2[1] = tog1 ? outR : tmp1[1];
+		tmp2[0] = tog1 ? outL[0] * from_dB(makeup[0]) : tmp1[0];
+                tmp2[1] = tog1 ? outR[0] * from_dB(makeup[0]) : tmp1[1];
 
                 fil2[0] = run_filter(2, 0, inputs[0][i]);
                 fil2[1] = run_filter(2, 1, inputs[1][i]);
@@ -577,25 +667,57 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
                 fil3[1] = run_filter(4, 1, tmp3[1]);
                 tmp4[0] = run_filter(5, 0, fil3[0]);
                 tmp4[1] = run_filter(5, 1, fil3[1]);
+		if (tog2)
+			run_comp(1, tmp4[0], tmp4[1], &outL[1], &outR[1]);
 
-		run_comp(1, tmp4[0], tmp4[1], &outL, &outR);
-                tmp3[0] = tog2 ? outL : tmp4[0];
-                tmp3[1] = tog2 ? outR : tmp4[1];
+                tmp3[0] = tog2 ? outL[1] * from_dB(makeup[1]) : tmp4[0];
+                tmp3[1] = tog2 ? outR[1] * from_dB(makeup[1]) : tmp4[1];
 
                 fil4[0] = run_filter(6, 0, inputs[0][i]);
                 fil4[1] = run_filter(6, 1, inputs[1][i]);
                 tmp5[0] = run_filter(7, 0, fil4[0]);
                 tmp5[1] = run_filter(7, 1, fil4[1]);
-		
-		run_comp(2, tmp5[0], tmp5[1], &outL, &outR);
-                tmp6[0] = tog3 ? outL : tmp5[0];
-                tmp6[1] = tog3 ? outR : tmp5[1];
+		if (tog3) 
+			run_comp(2, tmp5[0], tmp5[1], &outL[2], &outR[2]);
 
-                outputs[0][i] = tmp2[0] + tmp3[0] + tmp6[0];
-                outputs[1][i] = tmp2[1] + tmp3[1] + tmp6[1];
+                tmp6[0] = tog3 ? outL[2] * from_dB(makeup[2]) : tmp5[0];
+                tmp6[1] = tog3 ? outR[2] * from_dB(makeup[2]) : tmp5[1];
+
+
+		outputs[0][i] = outputs[1][i] = 0.f;	
+		if (listen1) {
+			listenmode = 1;
+			outputs[0][i] += outL[0] * tog1*from_dB(makeup[0])
+					+ (1.-tog1) * tmp1[0];
+			outputs[1][i] += outR[0] * tog1*from_dB(makeup[0])
+					+ (1.-tog1) * tmp1[1];
+		}
+		if (listen2) {
+			listenmode = 1;
+			outputs[0][i] += outL[1] * tog2*from_dB(makeup[1])
+					+ (1.-tog2) * tmp4[0];
+			outputs[1][i] += outR[1] * tog2*from_dB(makeup[1])
+					+ (1.-tog2) * tmp4[1];
+		}
+		if (listen3) {
+			listenmode = 1;
+			outputs[0][i] += outL[2] * tog3*from_dB(makeup[2])
+					+ (1.-tog3) * tmp5[0];
+			outputs[1][i] += outR[2] * tog3*from_dB(makeup[2])
+					+ (1.-tog3) * tmp5[1];
+		}
+		if (!listenmode) {
+                	outputs[0][i] = tmp2[0] + tmp3[0] + tmp6[0];
+                	outputs[1][i] = tmp2[1] + tmp3[1] + tmp6[1];
+		}
                 outputs[0][i] *= from_dB(globalgain);
                 outputs[1][i] *= from_dB(globalgain);
+		
+		maxL = (fabsf(outputs[0][i]) > maxL) ? fabsf(outputs[0][i]) : maxL;
+		maxR = (fabsf(outputs[1][i]) > maxR) ? fabsf(outputs[1][i]) : maxR;
         }
+	outl = sanitize_denormal((maxL == 0.f) ? -45.f : to_dB(maxL));
+	outr = sanitize_denormal((maxR == 0.f) ? -45.f : to_dB(maxR));
 }
 
 // -----------------------------------------------------------------------
