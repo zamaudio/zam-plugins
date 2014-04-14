@@ -544,13 +544,13 @@ void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 	float srate = d_getSampleRate();
 	float max = 0.f;
 
-        int tog1 = (toggle[0] > 0.f) ? 1 : 0;
-        int tog2 = (toggle[1] > 0.f) ? 1 : 0;
-        int tog3 = (toggle[2] > 0.f) ? 1 : 0;
+        int tog1 = (toggle[0] > 0.5f) ? 1 : 0;
+        int tog2 = (toggle[1] > 0.5f) ? 1 : 0;
+        int tog3 = (toggle[2] > 0.5f) ? 1 : 0;
 
-        int listen1 = (listen[0] > 0.f) ? 1 : 0;
-        int listen2 = (listen[1] > 0.f) ? 1 : 0;
-        int listen3 = (listen[2] > 0.f) ? 1 : 0;
+        int listen1 = (listen[0] > 0.5f) ? 1 : 0;
+        int listen2 = (listen[1] > 0.5f) ? 1 : 0;
+        int listen3 = (listen[2] > 0.5f) ? 1 : 0;
 
         set_lp_coeffs(xover1, ONEOVERROOT2, srate, 0);
         set_lp_coeffs(xover1, ONEOVERROOT2, srate, 1);
@@ -578,18 +578,21 @@ void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
         	outputs[0][i] = 0.f;
 		if (listen1) {
 			noise = 1;
-			outputs[0][i] += tmp2 * from_dB(makeup[0]);
+			outputs[0][i] += tmp2 * ~tog1*from_dB(makeup[0]);
 		}
 		if (listen2) {
 			noise = 1;
-			outputs[0][i] += tmp3 * from_dB(makeup[1]);
+			outputs[0][i] += tmp3 * ~tog2*from_dB(makeup[1]);
 		}
 		if (listen3) {
 			noise = 1;
-			outputs[0][i] += tmp6 * from_dB(makeup[2]);
+			outputs[0][i] += tmp6 * ~tog3*from_dB(makeup[2]);
 		}
 		if (noise == 0) {
-			outputs[0][i] = inputs[0][i];
+			outputs[0][i] = 0.f;
+			outputs[0][i] += tmp2 * from_dB(makeup[0]);
+			outputs[0][i] += tmp3 * from_dB(makeup[1]);
+			outputs[0][i] += tmp6 * from_dB(makeup[2]);
 		}
                 outputs[0][i] *= from_dB(globalgain);
 

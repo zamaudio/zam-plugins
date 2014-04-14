@@ -140,6 +140,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleBypass3->setStartPos(togglePosStart);
     fToggleBypass3->setEndPos(togglePosEnd);
     fToggleBypass3->setRange(0.f,1.f);
+    fToggleBypass3->setStep(1.f);
     fToggleBypass3->setValue(0.f);
     fToggleBypass3->setCallback(this);
 
@@ -150,6 +151,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleBypass2->setStartPos(togglePosStart);
     fToggleBypass2->setEndPos(togglePosEnd);
     fToggleBypass2->setRange(0.f,1.f);
+    fToggleBypass2->setStep(1.f);
     fToggleBypass2->setValue(0.f);
     fToggleBypass2->setCallback(this);
 
@@ -160,6 +162,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleBypass1->setStartPos(togglePosStart);
     fToggleBypass1->setEndPos(togglePosEnd);
     fToggleBypass1->setRange(0.f,1.f);
+    fToggleBypass1->setStep(1.f);
     fToggleBypass1->setValue(0.f);
     fToggleBypass1->setCallback(this);
 
@@ -172,6 +175,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleListen3->setStartPos(togglePosStart);
     fToggleListen3->setEndPos(togglePosEnd);
     fToggleListen3->setRange(0.f,1.f);
+    fToggleListen3->setStep(1.f);
     fToggleListen3->setValue(0.f);
     fToggleListen3->setCallback(this);
 
@@ -182,6 +186,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleListen2->setStartPos(togglePosStart);
     fToggleListen2->setEndPos(togglePosEnd);
     fToggleListen2->setRange(0.f,1.f);
+    fToggleListen2->setStep(1.f);
     fToggleListen2->setValue(0.f);
     fToggleListen2->setCallback(this);
 
@@ -192,6 +197,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleListen1->setStartPos(togglePosStart);
     fToggleListen1->setEndPos(togglePosEnd);
     fToggleListen1->setRange(0.f,1.f);
+    fToggleListen1->setStep(1.f);
     fToggleListen1->setValue(0.f);
     fToggleListen1->setCallback(this);
 }
@@ -438,10 +444,10 @@ void ZaMultiCompUI::imageSliderDragFinished(ImageSlider* slider)
         d_editParameter(ZaMultiCompPlugin::paramListen3, false);
 }
 
-void ZaMultiCompUI::imageSliderValueChanged(ImageSlider* slider, float value)
+void ZaMultiCompUI::imageSliderValueChanged(ImageSlider* slider, float v)
 {
-    float v = (value > 0.5) ? 1.f : 0.f;
-    slider->setValue(v);
+    //float v = (value > 0.5) ? 1.f : 0.f;
+    //slider->setValue(v);
 
     if (slider == fToggleBypass1)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle1, v);
@@ -463,12 +469,12 @@ void ZaMultiCompUI::onDisplay()
 
     // draw leds
     static const float sLedSpacing  = 15.5f;
-    static const int   sLedInitialX = 341;
+    static const int   sLedInitialX = 342;
 
-    static const int sYellowLedStaticY = 264;
-    static const int sRedLed1StaticY    = 213;
-    static const int sRedLed2StaticY    = 163;
-    static const int sRedLed3StaticY    = 113;
+    static const int sYellowLedStaticY = 265;
+    static const int sRedLed1StaticY    = 214;
+    static const int sRedLed2StaticY    = 164;
+    static const int sRedLed3StaticY    = 114;
 
     int numRedLeds1;
     int numRedLeds2;
