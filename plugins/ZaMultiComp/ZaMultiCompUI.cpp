@@ -16,6 +16,7 @@
  */
 
 #include "ZaMultiCompUI.hpp"
+#include <stdio.h>
 
 using DGL::Point;
 
@@ -44,7 +45,7 @@ ZaMultiCompUI::ZaMultiCompUI()
 
     // knob 
     fKnobAttack = new ImageKnob(this, knobImage);
-    fKnobAttack->setPos(24, 45);
+    fKnobAttack->setPos(24, 43);
     fKnobAttack->setRange(0.1f, 200.0f);
     fKnobAttack->setStep(0.1f);
     fKnobAttack->setValue(10.0f);
@@ -52,7 +53,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack->setCallback(this);
 
     fKnobRelease = new ImageKnob(this, knobImage);
-    fKnobRelease->setPos(108, 45);
+    fKnobRelease->setPos(108, 43);
     fKnobRelease->setRange(50.0f, 500.0f);
     fKnobRelease->setStep(1.0f);
     fKnobRelease->setValue(80.0f);
@@ -60,7 +61,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease->setCallback(this);
 
     fKnobThresh = new ImageKnob(this, knobImage);
-    fKnobThresh->setPos(191.5, 45);
+    fKnobThresh->setPos(191.5, 43);
     fKnobThresh->setRange(-60.0f, 0.0f);
     fKnobThresh->setStep(1.0f);
     fKnobThresh->setValue(0.0f);
@@ -68,7 +69,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh->setCallback(this);
 
     fKnobRatio = new ImageKnob(this, knobImage);
-    fKnobRatio->setPos(270, 45);
+    fKnobRatio->setPos(270, 43);
     fKnobRatio->setRange(1.0f, 20.0f);
     fKnobRatio->setStep(0.1f);
     fKnobRatio->setValue(4.0f);
@@ -76,7 +77,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio->setCallback(this);
 
     fKnobKnee = new ImageKnob(this, knobImage);
-    fKnobKnee->setPos(348.5, 45);
+    fKnobKnee->setPos(348.5, 43);
     fKnobKnee->setRange(0.0f, 8.0f);
     fKnobKnee->setStep(0.1f);
     fKnobKnee->setValue(0.0f);
@@ -84,7 +85,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee->setCallback(this);
 
     fKnobGlobalGain = new ImageKnob(this, knobImage);
-    fKnobGlobalGain->setPos(427.3, 45);
+    fKnobGlobalGain->setPos(427.3, 43);
     fKnobGlobalGain->setRange(-30.0f, 30.0f);
     fKnobGlobalGain->setStep(1.0f);
     fKnobGlobalGain->setValue(0.0f);
@@ -92,7 +93,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobGlobalGain->setCallback(this);
 
     fKnobXover2 = new ImageKnob(this, knobImage);
-    fKnobXover2->setPos(85, 121);
+    fKnobXover2->setPos(84, 121);
     fKnobXover2->setRange(1400.f, 14000.f);
     fKnobXover2->setStep(1.0f);
     fKnobXover2->setValue(1400.f);
@@ -100,7 +101,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover2->setCallback(this);
 
     fKnobXover1 = new ImageKnob(this, knobImage);
-    fKnobXover1->setPos(85, 176);
+    fKnobXover1->setPos(84, 176);
     fKnobXover1->setRange(20.0f, 1400.0f);
     fKnobXover1->setStep(1.0f);
     fKnobXover1->setValue(250.0f);
@@ -108,7 +109,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover1->setCallback(this);
 
     fKnobMakeup3 = new ImageKnob(this, knobImage);
-    fKnobMakeup3->setPos(168, 101);
+    fKnobMakeup3->setPos(167.75, 99.5);
     fKnobMakeup3->setRange(0.0f, 30.0f);
     fKnobMakeup3->setStep(0.1f);
     fKnobMakeup3->setValue(0.0f);
@@ -116,7 +117,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup3->setCallback(this);
 
     fKnobMakeup2 = new ImageKnob(this, knobImage);
-    fKnobMakeup2->setPos(168, 151);
+    fKnobMakeup2->setPos(167.75, 150.25);
     fKnobMakeup2->setRange(0.0f, 30.0f);
     fKnobMakeup2->setStep(0.1f);
     fKnobMakeup2->setValue(0.0f);
@@ -124,7 +125,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup2->setCallback(this);
 
     fKnobMakeup1 = new ImageKnob(this, knobImage);
-    fKnobMakeup1->setPos(168, 201);
+    fKnobMakeup1->setPos(167.75, 201.4);
     fKnobMakeup1->setRange(0.0f, 30.0f);
     fKnobMakeup1->setStep(0.1f);
     fKnobMakeup1->setValue(0.0f);
@@ -295,13 +296,13 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
         fToggleBypass3->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen1:
-        fToggleListen1->setValue(value);
+        fToggleListen1->setValue(1.-value);
         break;
     case ZaMultiCompPlugin::paramListen2:
-        fToggleListen2->setValue(value);
+        fToggleListen2->setValue(1.-value);
         break;
     case ZaMultiCompPlugin::paramListen3:
-        fToggleListen3->setValue(value);
+        fToggleListen3->setValue(1.-value);
         break;
     }
 }
@@ -456,11 +457,11 @@ void ZaMultiCompUI::imageSliderValueChanged(ImageSlider* slider, float v)
     else if (slider == fToggleBypass3)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle3, v);
     else if (slider == fToggleListen1)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen1, v);
+        d_setParameterValue(ZaMultiCompPlugin::paramListen1, 1.-v);
     else if (slider == fToggleListen2)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen2, v);
+        d_setParameterValue(ZaMultiCompPlugin::paramListen2, 1.-v);
     else if (slider == fToggleListen3)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen3, v);
+        d_setParameterValue(ZaMultiCompPlugin::paramListen3, 1.-v);
 }
 
 void ZaMultiCompUI::onDisplay()

@@ -377,12 +377,18 @@ void ZaMultiCompPlugin::d_setParameterValue(uint32_t index, float value)
         break;
     case paramListen1:
         listen[0] = value;
+	if (value == 0.f)
+	    gainr[0] = 0.f;
         break;
     case paramListen2:
         listen[1] = value;
+	if (value == 0.f)
+	    gainr[1] = 0.f;
         break;
     case paramListen3:
         listen[2] = value;
+	if (value == 0.f)
+	    gainr[2] = 0.f;
         break;
     case paramGlobalGain:
         globalgain = value;
@@ -563,36 +569,43 @@ void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
         for (uint32_t i = 0; i < frames; ++i) {
                 float tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, fil1, fil2, fil3, fil4;
-		int noise = 0;
+		float cmp1, cmp2, cmp3;
+		int listenmode = 0;
                 fil1 = run_filter(0, inputs[0][i]);
                 tmp1 = run_filter(1, fil1);
-                tmp2 = (tog1) ? run_comp(0, tmp1) : tmp1;
+		cmp1 = (!tog1 && !listen1) ? 0.f : run_comp(0, tmp1);
+                tmp2 = tog1 ? cmp1 * from_dB(makeup[0]) : tmp1;
                 fil2 = run_filter(2, inputs[0][i]);
                 tmp3 = run_filter(3, fil2);
                 fil3 = run_filter(4, tmp3);
                 tmp4 = run_filter(5, fil3);
-                tmp3 = (tog2) ? run_comp(1, tmp4) : tmp4;
+		cmp2 = (!tog2 && !listen2) ? 0.f : run_comp(1, tmp4);
+                tmp3 = (tog2) ? cmp2 * from_dB(makeup[1]) : tmp4;
                 fil4 = run_filter(6, inputs[0][i]);
                 tmp5 = run_filter(7, fil4);
-                tmp6 = (tog3) ? run_comp(2, tmp5) : tmp5;
+		cmp3 = (!tog3 && !listen3) ? 0.f : run_comp(2, tmp5);
+                tmp6 = (tog3) ? cmp3 * from_dB(makeup[2]) : tmp5;
         	outputs[0][i] = 0.f;
 		if (listen1) {
-			noise = 1;
-			outputs[0][i] += tmp2 * ~tog1*from_dB(makeup[0]);
+			listenmode = 1;
+			outputs[0][i] += cmp1 * tog1*from_dB(makeup[0])
+					+ (1.-tog1) * tmp1;
 		}
 		if (listen2) {
-			noise = 1;
-			outputs[0][i] += tmp3 * ~tog2*from_dB(makeup[1]);
+			listenmode = 1;
+			outputs[0][i] += cmp2 * tog2*from_dB(makeup[1])
+					+ (1.-tog2) * tmp4;
 		}
 		if (listen3) {
-			noise = 1;
-			outputs[0][i] += tmp6 * ~tog3*from_dB(makeup[2]);
+			listenmode = 1;
+			outputs[0][i] += cmp3 * tog3*from_dB(makeup[2])
+					+ (1.-tog3) * tmp5;
 		}
-		if (noise == 0) {
+		if (!listenmode) {
 			outputs[0][i] = 0.f;
-			outputs[0][i] += tmp2 * from_dB(makeup[0]);
-			outputs[0][i] += tmp3 * from_dB(makeup[1]);
-			outputs[0][i] += tmp6 * from_dB(makeup[2]);
+			outputs[0][i] += tmp2;
+			outputs[0][i] += tmp3;
+			outputs[0][i] += tmp6;
 		}
                 outputs[0][i] *= from_dB(globalgain);
 
