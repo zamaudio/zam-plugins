@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZaMultiCompX2Plugin::ZaMultiCompX2Plugin()
-    : Plugin(paramCount, 1, 1) // 1 program, 0 states
+    : Plugin(paramCount, 1, 1) // 1 program, 1 state
 {
     // set default values
     d_setProgram(0);
@@ -636,7 +636,8 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = d_getSampleRate();
-	float maxL, maxR;
+	float maxxL = maxL;
+	float maxxR = maxR;
 
         int tog1 = (toggle[0] > 0.5f) ? 1 : 0;
         int tog2 = (toggle[1] > 0.5f) ? 1 : 0;
@@ -744,17 +745,17 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
 			maxL = fabsf(outputs[0][i]);
 			resetl = false;
 		} else {
-			maxL = (fabsf(outputs[0][i]) > maxL) ? fabsf(outputs[0][i]) : maxL;
+			maxxL = (fabsf(outputs[0][i]) > maxxL) ? fabsf(outputs[0][i]) : maxxL;
 		}
 		if (resetr) {
 			maxR = fabsf(outputs[1][i]);
 			resetr = false;
 		} else {
-			maxR = (fabsf(outputs[1][i]) > maxR) ? fabsf(outputs[1][i]) : maxR;
+			maxxR = (fabsf(outputs[1][i]) > maxxR) ? fabsf(outputs[1][i]) : maxxR;
 		}
         }
-	outl = sanitize_denormal((maxL <= 0.f) ? -160.f : to_dB(maxL));
-	outr = sanitize_denormal((maxR <= 0.f) ? -160.f : to_dB(maxR));
+	outl = sanitize_denormal((maxxL <= 0.f) ? -160.f : to_dB(maxxL));
+	outr = sanitize_denormal((maxxR <= 0.f) ? -160.f : to_dB(maxxR));
 }
 
 // -----------------------------------------------------------------------
