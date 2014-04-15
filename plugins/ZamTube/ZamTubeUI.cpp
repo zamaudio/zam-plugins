@@ -45,7 +45,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobTube->setCallback(this);
 
     fKnobBass = new ImageKnob(this, knobImage);
-    fKnobBass->setPos(63, 141);
+    fKnobBass->setPos(63, 140.5);
     fKnobBass->setRange(0.f, 1.0f);
     fKnobBass->setStep(0.01f);
     fKnobBass->setValue(0.5f);
