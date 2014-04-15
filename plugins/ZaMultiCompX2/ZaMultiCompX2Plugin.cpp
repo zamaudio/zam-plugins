@@ -500,7 +500,7 @@ void ZaMultiCompX2Plugin::d_activate()
 void ZaMultiCompX2Plugin::d_deactivate()
 {
     // all values to zero
-    maxL = maxR = 0.f;
+    d_activate();
 }
 
 float ZaMultiCompX2Plugin::run_filter(int i, int ch, float in)
