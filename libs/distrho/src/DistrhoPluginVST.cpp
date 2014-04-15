@@ -533,7 +533,7 @@ public:
 
                     // found, set value
                     stateValue = &state[i+1];
-                    setSharedState(stateKey, stateValue);
+                    setStateFromUi(stateKey, stateValue);
 
                     if (fVstUi != nullptr)
                         fVstUi->setStateFromPlugin(stateKey, stateValue);
@@ -752,6 +752,10 @@ private:
     {
         fPlugin.setState(newKey, newValue);
 
+        // check if we want to save this key
+        if (! fPlugin.wantsStateKey(key))
+            return;
+
         // check if key already exists
         for (auto it = fStateMap.begin(), end = fStateMap.end(); it != end; ++it)
         {
@@ -764,7 +768,7 @@ private:
             }
         }
 
-        // add a new one then
+        // nope, add a new one then
         d_string d_key(newKey);
         fStateMap[d_key] = newValue;
     }
