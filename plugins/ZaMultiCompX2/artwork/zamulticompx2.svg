@@ -4699,9 +4699,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.28"
-     inkscape:cx="292.32379"
-     inkscape:cy="138.42697"
+     inkscape:zoom="3.6203867"
+     inkscape:cx="84.350354"
+     inkscape:cy="128.67233"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -4723,7 +4723,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -5672,14 +5672,14 @@
        sodipodi:linespacing="125%"
        id="text3729"
        y="754.85669"
-       x="575.13391"
+       x="567.13391"
        style="font-size:30.79458618px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Amperzand;-inkscape-font-specification:Amperzand"
        xml:space="preserve"><tspan
          style="font-size:16.93702126px"
          y="754.85669"
-         x="575.13391"
+         x="567.13391"
          id="tspan3731"
-         sodipodi:role="line">ZaMultiComp</tspan></text>
+         sodipodi:role="line">ZaMultiCompx2</tspan></text>
     <g
        id="g4957"
        transform="translate(0,-202)"
@@ -6196,7 +6196,7 @@
        sodipodi:cy="104.69824"
        sodipodi:cx="478.30722"
        id="path4614"
-       style="fill:#800000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       style="fill:#00ccff;fill-opacity:1;fill-rule:evenodd;stroke:none"
        sodipodi:type="arc" />
     <use
        height="1052.3622"
@@ -6338,7 +6338,7 @@
          sodipodi:role="line">1.4k</tspan></text>
     <path
        sodipodi:type="arc"
-       style="fill:#800000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       style="fill:#ff6600;fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="path4664"
        sodipodi:cx="478.30722"
        sodipodi:cy="104.69824"
@@ -6512,7 +6512,7 @@
          sodipodi:role="line">Low (Hz)</tspan></text>
     <path
        sodipodi:type="arc"
-       style="fill:#008000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       style="fill:#3d3dff;fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="path4746"
        sodipodi:cx="478.30722"
        sodipodi:cy="104.69824"
@@ -6670,7 +6670,7 @@
        sodipodi:cy="104.69824"
        sodipodi:cx="478.30722"
        id="path4782"
-       style="fill:#008000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       style="fill:#3cff3c;fill-opacity:1;fill-rule:evenodd;stroke:none"
        sodipodi:type="arc" />
     <use
        height="1052.3622"
@@ -6812,7 +6812,7 @@
          sodipodi:role="line">0</tspan></text>
     <path
        sodipodi:type="arc"
-       style="fill:#008000;fill-opacity:1;fill-rule:evenodd;stroke:none"
+       style="fill:#ff3c3c;fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="path4818"
        sodipodi:cx="478.30722"
        sodipodi:cy="104.69824"
@@ -8517,7 +8517,7 @@
        ry="6.0766964"
        rx="6.0767293" />
     <path
-       style="fill:none;stroke:#01943e;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 1;stroke-dashoffset:0"
+       style="fill:none;stroke:#01943e;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.20524018;stroke-dasharray:2, 1;stroke-dashoffset:0"
        d="M 567.68541,881.86932 684.24755,765.85962"
        id="path6670"
        inkscape:connector-curvature="0" />

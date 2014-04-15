@@ -884,7 +884,7 @@ glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glLineWidth(2);
     int i,k;
     for (k = 0; k < MAX_COMP; ++k) {
-        glColor4f((k==0)?1.f:0.f, (k==1)?1.f:0.f, (k==2)?1.f:0.f, 0.75f);
+        glColor4f((k==0)?1.f:0.235f, (k==1)?1.f:0.235f, (k==2)?1.f:0.235f, 1.0f);
         for (i = 2; i < COMPOINTS; ++i) {
             glBegin(GL_LINES);
                 glVertex2i(compx[k][i-1], compy[k][i-1]);
