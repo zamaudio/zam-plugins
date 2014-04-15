@@ -1,6 +1,6 @@
 /*
- * Wobble Juice Plugin
- * Copyright (C) 2014 Andre Sklenar <andre.sklenar@gmail.com>, www.juicelab.cz
+ * ZamTube triode WDF distortion model 
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com> 
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,8 +15,8 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#ifndef WOBBLEJUICEUI_HPP_INCLUDED
-#define WOBBLEJUICEUI_HPP_INCLUDED
+#ifndef ZAMTUBEUI_HPP_INCLUDED
+#define ZAMTUBEUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
 
@@ -87,4 +87,4 @@ private:
 
 END_NAMESPACE_DISTRHO
 
-#endif // WOBBLEJUICEUI_HPP_INCLUDED
+#endif // ZAMTUBEUI_HPP_INCLUDED

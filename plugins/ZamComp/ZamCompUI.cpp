@@ -1,6 +1,6 @@
 /*
- * Wobble Juice Plugin
- * Copyright (C) 2014 Andre Sklenar <andre.sklenar@gmail.com>, www.juicelab.cz
+ * ZamComp mono compressor
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com> 
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

@@ -1,6 +1,6 @@
 /*
- * Wobble Juice Plugin
- * Copyright (C) 2014 Andre Sklenar <andre.sklenar@gmail.com>, www.juicelab.cz
+ * ZaMultiCompX2 stereo multiband compressor 
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,8 +15,8 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#ifndef WOBBLEJUICEUI_HPP_INCLUDED
-#define WOBBLEJUICEUI_HPP_INCLUDED
+#ifndef ZAMULTICOMPUI_HPP_INCLUDED
+#define ZAMULTICOMPUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
 
@@ -144,4 +144,4 @@ private:
 
 END_NAMESPACE_DISTRHO
 
-#endif // WOBBLEJUICEUI_HPP_INCLUDED
+#endif // ZAMULTICOMPUI_HPP_INCLUDED

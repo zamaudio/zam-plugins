@@ -1,5 +1,5 @@
 /*
- * ZaMultiCompX2 Plugin
+ * ZaMultiCompX2 stereo multiband compressor
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
