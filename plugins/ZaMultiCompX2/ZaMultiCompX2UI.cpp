@@ -218,6 +218,23 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
 
     fCanvasArea.setPos(530, 30);
     fCanvasArea.setSize(110, 110);
+    fAttack = 1.f;
+    fRelease = 1.f;
+    fThresh = -20.f;
+    fRatio = 4.f;
+    fKnee = 0.f;
+    fMakeup[0] = 0.f;
+    fMakeup[1] = 3.f;
+    fMakeup[2] = 6.f;
+    int i,k;
+
+    for (k = 0; k < MAX_COMP; ++k) {
+        for (i = 0; i < COMPOINTS; ++i) {
+                compx[k][i] = fCanvasArea.getX();
+		compy[k][i] = fCanvasArea.getY() + fCanvasArea.getHeight();
+	}
+    }
+
 }
 
 ZaMultiCompX2UI::~ZaMultiCompX2UI()
@@ -242,6 +259,65 @@ ZaMultiCompX2UI::~ZaMultiCompX2UI()
     delete fToggleStereo;
 }
 
+void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
+        float knee = fKnee;
+        float ratio = fRatio;
+        float makeup = fMakeup[k];
+        float thresdb = fThresh;
+        float width=((knee+1.f)-0.99f)*6.f;
+        float xg, yg;
+
+        yg = 0.f;
+        xg = (in==0.f) ? -160.f : to_dB(fabs(in));
+        xg = sanitize_denormal(xg);
+
+        if (2.f*(xg-thresdb)<-width) {
+                yg = xg;
+        } else if (2.f*fabs(xg-thresdb)<=width) {
+                yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
+        } else if (2.f*(xg-thresdb)>width) {
+                yg = thresdb + (xg-thresdb)/ratio;
+        }
+        yg = sanitize_denormal(yg);
+
+        *outy = (yg + makeup + 1.) / 55. + 1.;
+        *outx = (to_dB(in) + 1.) / 55. + 1.;
+	//printf("x = %f  y = %f\n",*outx,*outy);
+}
+
+void ZaMultiCompX2UI::calc_compcurves() {
+        float max_x = 1.f;
+        float min_x = 0.f;
+        float x2;
+	for (int k = 0; k < MAX_COMP; ++k) {
+	        for (int i = 0; i < COMPOINTS; ++i) {
+	                x2 = (max_x - min_x) / COMPOINTS * i + min_x;
+	                compcurve(x2, k, &compx[k][i], &compy[k][i]);
+                        compx[k][i] = fCanvasArea.getX() + compx[k][i]*fCanvasArea.getWidth();
+                        compy[k][i] = fCanvasArea.getY() + (1.-compy[k][i])*fCanvasArea.getHeight();
+			if (compx[k][i] > fCanvasArea.getX() + fCanvasArea.getWidth())
+			    compx[k][i] = fCanvasArea.getX() + fCanvasArea.getWidth();
+			if (compx[k][i] < fCanvasArea.getX())
+			    compx[k][i] = fCanvasArea.getX();
+
+			if (compy[k][i] > fCanvasArea.getY() + fCanvasArea.getHeight())
+			    compy[k][i] = fCanvasArea.getY() + fCanvasArea.getHeight();
+			if (compy[k][i] < fCanvasArea.getY())
+			    compy[k][i] = fCanvasArea.getY();
+		}        
+	       	 //dot follows curve:
+	        //compcurve(from_dB(-ui->gainred), k, &dotx[0], &doty[0]);
+	        //dotx[0] = -(1-dotx[0])*280. + 280.;
+	        //doty[0] = (1.-doty[0])*280.; 
+	
+	        //dot follows centre:
+	        //dotx[0] = -(1.- from_dB(-gainred))*280. + 280.;
+	        //doty[0] = (1.- from_dB(-gainred))*280.;
+	
+	        //printf("gainr=%.2f x=%.2f y=%.2f\n",ui->gainred, ui->dotx[0], ui->doty[0]);
+	}
+}
+
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
@@ -257,12 +333,24 @@ void ZaMultiCompX2UI::d_parameterChanged(uint32_t index, float value)
         break;
     case ZaMultiCompX2Plugin::paramThresh:
         fKnobThresh->setValue(value);
+        if (fThresh != value)
+        {
+            fThresh = value;
+        }
         break;
     case ZaMultiCompX2Plugin::paramRatio:
         fKnobRatio->setValue(value);
+        if (fRatio != value)
+        {
+            fRatio = value;
+        }
         break;
     case ZaMultiCompX2Plugin::paramKnee:
         fKnobKnee->setValue(value);
+        if (fKnee != value)
+        {
+            fKnee = value;
+        }
         break;
     case ZaMultiCompX2Plugin::paramGlobalGain:
         fKnobGlobalGain->setValue(value);
@@ -304,12 +392,27 @@ void ZaMultiCompX2UI::d_parameterChanged(uint32_t index, float value)
         break;
     case ZaMultiCompX2Plugin::paramMakeup1:
         fKnobMakeup1->setValue(value);
+        if (fMakeup[0] != value)
+        {
+            fMakeup[0] = value;
+            repaint();
+        }
         break;
     case ZaMultiCompX2Plugin::paramMakeup2:
         fKnobMakeup2->setValue(value);
+        if (fMakeup[1] != value)
+        {
+            fMakeup[1] = value;
+            repaint();
+        }
         break;
     case ZaMultiCompX2Plugin::paramMakeup3:
         fKnobMakeup3->setValue(value);
+        if (fMakeup[2] != value)
+        {
+            fMakeup[2] = value;
+            repaint();
+        }
         break;
     case ZaMultiCompX2Plugin::paramToggle1:
         fToggleBypass1->setValue(value);
@@ -423,20 +526,32 @@ void ZaMultiCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(ZaMultiCompX2Plugin::paramAttack, value);
     else if (knob == fKnobRelease)
         d_setParameterValue(ZaMultiCompX2Plugin::paramRelease, value);
-    else if (knob == fKnobThresh)
+    else if (knob == fKnobThresh) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramThresh, value);
-    else if (knob == fKnobRatio)
+	fThresh = value;
+    }
+    else if (knob == fKnobRatio) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramRatio, value);
-    else if (knob == fKnobKnee)
-        d_setParameterValue(ZaMultiCompX2Plugin::paramKnee, value);
+        fRatio = value;
+    }
+    else if (knob == fKnobKnee) {
+    d_setParameterValue(ZaMultiCompX2Plugin::paramKnee, value);
+	fKnee = value;
+    }
     else if (knob == fKnobGlobalGain)
         d_setParameterValue(ZaMultiCompX2Plugin::paramGlobalGain, value);
-    else if (knob == fKnobMakeup1)
+    else if (knob == fKnobMakeup1) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramMakeup1, value);
-    else if (knob == fKnobMakeup2)
+        fMakeup[0] = value;
+    }
+    else if (knob == fKnobMakeup2) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramMakeup2, value);
-    else if (knob == fKnobMakeup3)
+        fMakeup[1] = value;
+    }
+    else if (knob == fKnobMakeup3) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramMakeup3, value);
+        fMakeup[2] = value;
+    }
     else if (knob == fKnobXover1)
         d_setParameterValue(ZaMultiCompX2Plugin::paramXover1, value);
     else if (knob == fKnobXover2)
@@ -734,23 +849,24 @@ glEnd();
 glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 */
-    float paramX = 0.5f;
-    float paramY = 0.5f;
 
-    // get x, y mapped to XY area
-    int x = fCanvasArea.getX() + paramX*fCanvasArea.getWidth();
-    int y = fCanvasArea.getY() + (1.f-paramY)*fCanvasArea.getHeight();
+    calc_compcurves();
 
-    //draw lines, just for fun
+    //draw comp curves
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-    glLineWidth(4);
-    glBegin(GL_LINES);
-        glVertex2i(x , y);
-        glVertex2i(x+15, y+25);
-    glEnd();
-
+    glLineWidth(2);
+    int i,k;
+    for (k = 0; k < MAX_COMP; ++k) {
+        glColor4f((k==0)?1.f:0.f, (k==1)?1.f:0.f, (k==2)?1.f:0.f, 0.75f);
+        for (i = 2; i < COMPOINTS; ++i) {
+            glBegin(GL_LINES);
+                glVertex2i(compx[k][i-1], compy[k][i-1]);
+                glVertex2i(compx[k][i], compy[k][i]);
+		//printf("x = %f  y = %f\n",compx[k][i],compy[k][i]);
+            glEnd();
+        }
+    }
     // reset color
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 

@@ -24,6 +24,8 @@
 #include "ImageKnob.hpp"
 #include "ImageSlider.hpp"
 
+#define COMPOINTS 1000
+#define MAX_COMP 3
 #include "ZaMultiCompX2Artwork.hpp"
 #include "ZaMultiCompX2Plugin.hpp"
 
@@ -58,6 +60,9 @@ protected:
         return ZaMultiCompX2Artwork::zamulticompx2Height;
     }
 
+    void compcurve(float in, int k, float* x, float* y);
+    void calc_compcurves(void);
+
     // -------------------------------------------------------------------
     // DSP Callbacks
 
@@ -77,6 +82,24 @@ protected:
     void imageSliderValueChanged(ImageSlider* slider, float value) override;
 
     void onDisplay() override;
+
+inline double
+to_dB(double g) {
+        return (20.*log10(g));
+}
+
+inline double
+from_dB(double gdb) {
+        return (exp(gdb/20.*log(10.)));
+}
+
+inline double
+sanitize_denormal(double value) {
+        if (!std::isnormal(value)) {
+                return (0.);
+        }
+        return value;
+}
 
 private:
     Image fImgBackground;
@@ -107,6 +130,14 @@ private:
     float fLedYellowValueL;
     float fLedYellowValueR;
     Rectangle<int> fCanvasArea;
+    float fAttack;
+    float fRelease;
+    float fThresh;
+    float fRatio;
+    float fKnee;
+    float fMakeup[MAX_COMP];
+    float compx[MAX_COMP][COMPOINTS];
+    float compy[MAX_COMP][COMPOINTS];
 };
 
 // -----------------------------------------------------------------------
