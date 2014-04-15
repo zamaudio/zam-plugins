@@ -20,8 +20,6 @@
 
 #include "DistrhoUI.hpp"
 
-#include "ImageAboutWindow.hpp"
-#include "ImageButton.hpp"
 #include "ImageKnob.hpp"
 #include "ImageSlider.hpp"
 
@@ -29,17 +27,16 @@
 #include "ZamTubePlugin.hpp"
 
 using DGL::Image;
-using DGL::ImageAboutWindow;
-using DGL::ImageButton;
 using DGL::ImageKnob;
+using DGL::ImageSlider;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZamTubeUI : public UI,
-                      public ImageButton::Callback,
-                      public ImageKnob::Callback
+                      public ImageKnob::Callback,
+                      public ImageSlider::Callback
 {
 public:
     ZamTubeUI();
@@ -51,12 +48,12 @@ protected:
 
     unsigned int d_getWidth() const noexcept override
     {
-        return ZamTubeArtwork::backgroundWidth;
+        return ZamTubeArtwork::zamtubeWidth;
     }
 
     unsigned int d_getHeight() const noexcept override
     {
-        return ZamTubeArtwork::backgroundHeight;
+        return ZamTubeArtwork::zamtubeHeight;
     }
 
     // -------------------------------------------------------------------
@@ -68,19 +65,24 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageButtonClicked(ImageButton* button, int) override;
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
+
+    void imageSliderDragStarted(ImageSlider* slider) override;
+    void imageSliderDragFinished(ImageSlider* slider) override;
+    void imageSliderValueChanged(ImageSlider* slider, float value) override;
 
     void onDisplay() override;
 
 private:
     Image fImgBackground;
-    ImageAboutWindow fAboutWindow;
-
-    ImageKnob* fKnobAttack;
-    ImageButton* fButtonAbout;
+    ImageKnob* fKnobTube;
+    ImageKnob* fKnobBass;
+    ImageKnob* fKnobMids;
+    ImageKnob* fKnobTreb;
+    ImageKnob* fKnobGain;
+    ImageSlider* fSliderNotch;
 };
 
 // -----------------------------------------------------------------------
