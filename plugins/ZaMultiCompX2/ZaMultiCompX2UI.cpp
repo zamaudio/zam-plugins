@@ -261,7 +261,7 @@ ZaMultiCompX2UI::~ZaMultiCompX2UI()
 void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
         float knee = fKnee;
         float ratio = fRatio;
-        float makeup = fMakeup[k] + fMaster/3.;
+        float makeup = fMakeup[k] + fMaster;
         float thresdb = fThresh;
         float width=((knee+1.f)-0.99f)*6.f;
         float xg, yg;
@@ -280,7 +280,7 @@ void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
         yg = sanitize_denormal(yg);
 
         *outx = (to_dB(in) + 1.) / 55. + 1.;
-        *outy = !fBypass[k] ? (to_dB(in) + fMaster/3. + 1.) / 55. + 1. : (yg + makeup + 1.) / 55. + 1.;
+        *outy = !fBypass[k] ? (to_dB(in) + fMaster + 1.) / 55. + 1. : (yg + makeup + 1.) / 55. + 1.;
 	//printf("x = %f  y = %f\n",*outx,*outy);
 }
 
@@ -895,7 +895,6 @@ glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     }
     // reset color
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
 }
 
 // -----------------------------------------------------------------------

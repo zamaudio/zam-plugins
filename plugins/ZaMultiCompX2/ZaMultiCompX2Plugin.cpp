@@ -494,11 +494,13 @@ void ZaMultiCompX2Plugin::d_activate()
                 	w1[j][i] = w2[j][i] = 0.f;
 		}
         }
+	maxL = maxR = 0.f;
 }
 
 void ZaMultiCompX2Plugin::d_deactivate()
 {
     // all values to zero
+    maxL = maxR = 0.f;
 }
 
 float ZaMultiCompX2Plugin::run_filter(int i, int ch, float in)
@@ -735,6 +737,9 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
                 outputs[0][i] *= from_dB(globalgain);
                 outputs[1][i] *= from_dB(globalgain);
 		
+                outputs[0][i] = sanitize_denormal(outputs[0][i]);
+                outputs[1][i] = sanitize_denormal(outputs[1][i]);
+
 		if (resetl) {
 			maxL = fabsf(outputs[0][i]);
 			resetl = false;
@@ -748,8 +753,8 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
 			maxR = (fabsf(outputs[1][i]) > maxR) ? fabsf(outputs[1][i]) : maxR;
 		}
         }
-	outl = sanitize_denormal((maxL == 0.f) ? -45.f : to_dB(maxL));
-	outr = sanitize_denormal((maxR == 0.f) ? -45.f : to_dB(maxR));
+	outl = sanitize_denormal((maxL <= 0.f) ? -160.f : to_dB(maxL));
+	outr = sanitize_denormal((maxR <= 0.f) ? -160.f : to_dB(maxR));
 }
 
 // -----------------------------------------------------------------------
