@@ -218,14 +218,13 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
 
     fCanvasArea.setPos(530, 30);
     fCanvasArea.setSize(110, 110);
-    fAttack = 1.f;
-    fRelease = 1.f;
     fThresh = -20.f;
     fRatio = 4.f;
     fKnee = 0.f;
     fMakeup[0] = 0.f;
-    fMakeup[1] = 3.f;
-    fMakeup[2] = 6.f;
+    fMakeup[1] = 0.f;
+    fMakeup[2] = 0.f;
+    fMaster = 0.f;
     int i,k;
 
     for (k = 0; k < MAX_COMP; ++k) {
@@ -262,7 +261,7 @@ ZaMultiCompX2UI::~ZaMultiCompX2UI()
 void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
         float knee = fKnee;
         float ratio = fRatio;
-        float makeup = fMakeup[k];
+        float makeup = fMakeup[k] + fMaster/3.;
         float thresdb = fThresh;
         float width=((knee+1.f)-0.99f)*6.f;
         float xg, yg;
@@ -280,8 +279,8 @@ void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
         }
         yg = sanitize_denormal(yg);
 
-        *outy = (yg + makeup + 1.) / 55. + 1.;
         *outx = (to_dB(in) + 1.) / 55. + 1.;
+        *outy = !fBypass[k] ? (to_dB(in) + fMaster/3. + 1.) / 55. + 1. : (yg + makeup + 1.) / 55. + 1.;
 	//printf("x = %f  y = %f\n",*outx,*outy);
 }
 
@@ -354,6 +353,10 @@ void ZaMultiCompX2UI::d_parameterChanged(uint32_t index, float value)
         break;
     case ZaMultiCompX2Plugin::paramGlobalGain:
         fKnobGlobalGain->setValue(value);
+        if (fMaster != value)
+        {
+            fMaster = value;
+        }
         break;
     case ZaMultiCompX2Plugin::paramGainR1:
         if (fLedRedValue1 != value)
@@ -416,12 +419,27 @@ void ZaMultiCompX2UI::d_parameterChanged(uint32_t index, float value)
         break;
     case ZaMultiCompX2Plugin::paramToggle1:
         fToggleBypass1->setValue(value);
+        if (fBypass[0] != value)
+        {
+            fBypass[0] = value;
+            repaint();
+        }
         break;
     case ZaMultiCompX2Plugin::paramToggle2:
         fToggleBypass2->setValue(value);
+        if (fBypass[1] != value)
+        {
+            fBypass[1] = value;
+            repaint();
+        }
         break;
     case ZaMultiCompX2Plugin::paramToggle3:
         fToggleBypass3->setValue(value);
+        if (fBypass[2] != value)
+        {
+            fBypass[2] = value;
+            repaint();
+        }
         break;
     case ZaMultiCompX2Plugin::paramListen1:
         fToggleListen1->setValue(1.-value);
@@ -535,11 +553,13 @@ void ZaMultiCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
         fRatio = value;
     }
     else if (knob == fKnobKnee) {
-    d_setParameterValue(ZaMultiCompX2Plugin::paramKnee, value);
+        d_setParameterValue(ZaMultiCompX2Plugin::paramKnee, value);
 	fKnee = value;
     }
-    else if (knob == fKnobGlobalGain)
+    else if (knob == fKnobGlobalGain) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramGlobalGain, value);
+        fMaster = value;
+    }
     else if (knob == fKnobMakeup1) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramMakeup1, value);
         fMakeup[0] = value;
@@ -596,12 +616,18 @@ void ZaMultiCompX2UI::imageSliderDragFinished(ImageSlider* slider)
 
 void ZaMultiCompX2UI::imageSliderValueChanged(ImageSlider* slider, float v)
 {
-    if (slider == fToggleBypass1)
+    if (slider == fToggleBypass1) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramToggle1, v);
-    else if (slider == fToggleBypass2)
+        fBypass[0] = v;
+    }
+    else if (slider == fToggleBypass2) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramToggle2, v);
-    else if (slider == fToggleBypass3)
+        fBypass[1] = v;
+    }
+    else if (slider == fToggleBypass3) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramToggle3, v);
+        fBypass[2] = v;
+    }
     else if (slider == fToggleListen1)
         d_setParameterValue(ZaMultiCompX2Plugin::paramListen1, 1.-v);
     else if (slider == fToggleListen2)

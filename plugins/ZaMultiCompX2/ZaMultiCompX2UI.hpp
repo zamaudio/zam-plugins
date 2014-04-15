@@ -130,12 +130,12 @@ private:
     float fLedYellowValueL;
     float fLedYellowValueR;
     Rectangle<int> fCanvasArea;
-    float fAttack;
-    float fRelease;
     float fThresh;
     float fRatio;
     float fKnee;
     float fMakeup[MAX_COMP];
+    float fBypass[MAX_COMP];
+    float fMaster;
     float compx[MAX_COMP][COMPOINTS];
     float compy[MAX_COMP][COMPOINTS];
 };
