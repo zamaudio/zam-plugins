@@ -473,6 +473,8 @@ void ZamEQ2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 y2a = y1a;
                 x1a = tmp;
                 y1a = outputs[0][i];        
+
+                outputs[0][i] *= from_dB(-master);
 	}
 }
 
