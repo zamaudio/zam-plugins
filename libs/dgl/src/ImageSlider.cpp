@@ -163,11 +163,11 @@ void ImageSlider::onDisplay()
     if (fStartPos.getX() == fEndPos.getX())
     {
         x = fStartPos.getX();
-        y = fEndPos.getY() - static_cast<int>(normValue*static_cast<float>(fEndPos.getY()-fStartPos.getY()));
+        y = fStartPos.getY() + static_cast<int>(normValue*static_cast<float>(fEndPos.getY()-fStartPos.getY()));
     }
     else if (fStartPos.getY() == fEndPos.getY())
     {
-        x = fEndPos.getX() - static_cast<int>(normValue*static_cast<float>(fEndPos.getX()-fStartPos.getX()));
+        x = fStartPos.getX() + static_cast<int>(normValue*static_cast<float>(fEndPos.getX()-fStartPos.getX()));
         y = fStartPos.getY();
     }
     else
@@ -203,7 +203,7 @@ bool ImageSlider::onMouse(int button, bool press, int x, int y)
 
         float value;
 
-        value = fMaximum - vper * (fMaximum - fMinimum);
+        value = fMinimum + vper * (fMaximum - fMinimum);
 
         if (value < fMinimum)
         {
@@ -252,24 +252,25 @@ bool ImageSlider::onMotion(int x, int y)
 
     bool horizontal = fStartPos.getY() == fEndPos.getY();
 
+    float vper;
+
+    if (horizontal)
+    {
+        // horizontal
+        vper = float(x - fSliderArea.getX()) / float(fSliderArea.getWidth());
+    }
+    else
+    {
+        // vertical
+        vper = float(y - fSliderArea.getY()) / float(fSliderArea.getHeight());
+    }
+
+    float value;
+
+    value = fMinimum + vper * (fMaximum - fMinimum);
+
     if ((horizontal && fSliderArea.containsX(x)) || (fSliderArea.containsY(y) && ! horizontal))
     {
-        float vper;
-
-        if (horizontal)
-        {
-            // horizontal
-            vper = float(x - fSliderArea.getX()) / float(fSliderArea.getWidth());
-        }
-        else
-        {
-            // vertical
-            vper = float(y - fSliderArea.getY()) / float(fSliderArea.getHeight());
-        }
-
-        float value;
-
-        value = fMaximum - vper * (fMaximum - fMinimum);
 
         if (value < fMinimum)
         {
@@ -290,15 +291,26 @@ bool ImageSlider::onMotion(int x, int y)
 
         setValue(value, true);
     }
-    else if (y < fSliderArea.getY())
-    {
-        setValue(fMaximum, true);
+    else if (horizontal && x < fSliderArea.getX()) {
+    	value = fMinimum;
+        fValueTmp = value;
+        setValue(value, true);
     }
-    else
-    {
-        setValue(fMinimum, true);
+    else if (horizontal && x > fSliderArea.getX()) {
+        value = fMaximum;
+        fValueTmp = value;
+        setValue(value, true);
     }
-
+    else if (!horizontal && y < fSliderArea.getY()) {
+        value = fMinimum;
+        fValueTmp = value;
+        setValue(value, true);
+    }
+    else {
+        value = fMaximum;
+        fValueTmp = value;
+        setValue(value, true);
+    }
     return true;
 }
 

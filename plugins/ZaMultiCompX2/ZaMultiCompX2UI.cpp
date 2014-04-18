@@ -141,7 +141,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fToggleBypass3 = new ImageSlider(this, toggleImage);
     fToggleBypass3->setStartPos(togglePosStart);
     fToggleBypass3->setEndPos(togglePosEnd);
-    fToggleBypass3->setRange(0.f,1.f);
+    fToggleBypass3->setRange(1.f,0.f);
     fToggleBypass3->setStep(1.f);
     fToggleBypass3->setValue(0.f);
     fToggleBypass3->setCallback(this);
@@ -152,7 +152,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fToggleBypass2 = new ImageSlider(this, toggleImage);
     fToggleBypass2->setStartPos(togglePosStart);
     fToggleBypass2->setEndPos(togglePosEnd);
-    fToggleBypass2->setRange(0.f,1.f);
+    fToggleBypass2->setRange(1.f,0.f);
     fToggleBypass2->setStep(1.f);
     fToggleBypass2->setValue(0.f);
     fToggleBypass2->setCallback(this);
@@ -163,7 +163,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fToggleBypass1 = new ImageSlider(this, toggleImage);
     fToggleBypass1->setStartPos(togglePosStart);
     fToggleBypass1->setEndPos(togglePosEnd);
-    fToggleBypass1->setRange(0.f,1.f);
+    fToggleBypass1->setRange(1.f,0.f);
     fToggleBypass1->setStep(1.f);
     fToggleBypass1->setValue(0.f);
     fToggleBypass1->setCallback(this);
@@ -442,13 +442,13 @@ void ZaMultiCompX2UI::d_parameterChanged(uint32_t index, float value)
         }
         break;
     case ZaMultiCompX2Plugin::paramListen1:
-        fToggleListen1->setValue(1.-value);
+        fToggleListen1->setValue(value);
         break;
     case ZaMultiCompX2Plugin::paramListen2:
-        fToggleListen2->setValue(1.-value);
+        fToggleListen2->setValue(value);
         break;
     case ZaMultiCompX2Plugin::paramListen3:
-        fToggleListen3->setValue(1.-value);
+        fToggleListen3->setValue(value);
         break;
     }
 }
@@ -629,11 +629,11 @@ void ZaMultiCompX2UI::imageSliderValueChanged(ImageSlider* slider, float v)
         fBypass[2] = v;
     }
     else if (slider == fToggleListen1)
-        d_setParameterValue(ZaMultiCompX2Plugin::paramListen1, 1.-v);
+        d_setParameterValue(ZaMultiCompX2Plugin::paramListen1, v);
     else if (slider == fToggleListen2)
-        d_setParameterValue(ZaMultiCompX2Plugin::paramListen2, 1.-v);
+        d_setParameterValue(ZaMultiCompX2Plugin::paramListen2, v);
     else if (slider == fToggleListen3)
-        d_setParameterValue(ZaMultiCompX2Plugin::paramListen3, 1.-v);
+        d_setParameterValue(ZaMultiCompX2Plugin::paramListen3, v);
     else if (slider == fToggleStereo)
         d_setParameterValue(ZaMultiCompX2Plugin::paramStereoDet, v);
 }
@@ -881,6 +881,9 @@ glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     //draw comp curves
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
     glLineWidth(2);
     int i,k;
     for (k = 0; k < MAX_COMP; ++k) {

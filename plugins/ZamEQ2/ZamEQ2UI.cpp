@@ -128,6 +128,7 @@ ZamEQ2UI::ZamEQ2UI()
     fSliderMaster->setEndPos(masterPosEnd);
     fSliderMaster->setRange(-12.f,12.f);
     fSliderMaster->setValue(0.f);
+    fSliderMaster->setStep(6.f);
     fSliderMaster->setCallback(this);
     
     fCanvasArea.setPos(165,10);
@@ -450,7 +451,7 @@ void ZamEQ2UI::calceqcurve(float x[], float y[])
                 //phaseH = carg(H);
 
                 //y[i] = (to_dB(freqH)-12.04)/12. + 0.5;
-                y[i] = (to_dB(freqH/4.)/10.)-(fSliderMaster->getValue())/24.f+0.5;
+                y[i] = (to_dB(freqH/4.)/10.)+(fSliderMaster->getValue())/24.f+0.5;
 		//printf("%.4f\n",y[i]);
 		x[i] = fCanvasArea.getX() + x[i]*fCanvasArea.getWidth();
 		y[i] = fCanvasArea.getY() + (1.-y[i])*fCanvasArea.getHeight();
