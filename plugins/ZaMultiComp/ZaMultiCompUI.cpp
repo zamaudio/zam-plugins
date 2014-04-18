@@ -140,7 +140,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleBypass3 = new ImageSlider(this, toggleImage);
     fToggleBypass3->setStartPos(togglePosStart);
     fToggleBypass3->setEndPos(togglePosEnd);
-    fToggleBypass3->setRange(0.f,1.f);
+    fToggleBypass3->setRange(1.f,0.f);
     fToggleBypass3->setStep(1.f);
     fToggleBypass3->setValue(0.f);
     fToggleBypass3->setCallback(this);
@@ -151,7 +151,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleBypass2 = new ImageSlider(this, toggleImage);
     fToggleBypass2->setStartPos(togglePosStart);
     fToggleBypass2->setEndPos(togglePosEnd);
-    fToggleBypass2->setRange(0.f,1.f);
+    fToggleBypass2->setRange(1.f,0.f);
     fToggleBypass2->setStep(1.f);
     fToggleBypass2->setValue(0.f);
     fToggleBypass2->setCallback(this);
@@ -162,7 +162,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleBypass1 = new ImageSlider(this, toggleImage);
     fToggleBypass1->setStartPos(togglePosStart);
     fToggleBypass1->setEndPos(togglePosEnd);
-    fToggleBypass1->setRange(0.f,1.f);
+    fToggleBypass1->setRange(1.f,0.f);
     fToggleBypass1->setStep(1.f);
     fToggleBypass1->setValue(0.f);
     fToggleBypass1->setCallback(this);
@@ -296,13 +296,13 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
         fToggleBypass3->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen1:
-        fToggleListen1->setValue(1.-value);
+        fToggleListen1->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen2:
-        fToggleListen2->setValue(1.-value);
+        fToggleListen2->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen3:
-        fToggleListen3->setValue(1.-value);
+        fToggleListen3->setValue(value);
         break;
     }
 }
@@ -447,9 +447,6 @@ void ZaMultiCompUI::imageSliderDragFinished(ImageSlider* slider)
 
 void ZaMultiCompUI::imageSliderValueChanged(ImageSlider* slider, float v)
 {
-    //float v = (value > 0.5) ? 1.f : 0.f;
-    //slider->setValue(v);
-
     if (slider == fToggleBypass1)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle1, v);
     else if (slider == fToggleBypass2)
@@ -457,11 +454,11 @@ void ZaMultiCompUI::imageSliderValueChanged(ImageSlider* slider, float v)
     else if (slider == fToggleBypass3)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle3, v);
     else if (slider == fToggleListen1)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen1, 1.-v);
+        d_setParameterValue(ZaMultiCompPlugin::paramListen1, v);
     else if (slider == fToggleListen2)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen2, 1.-v);
+        d_setParameterValue(ZaMultiCompPlugin::paramListen2, v);
     else if (slider == fToggleListen3)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen3, 1.-v);
+        d_setParameterValue(ZaMultiCompPlugin::paramListen3, v);
 }
 
 void ZaMultiCompUI::onDisplay()
