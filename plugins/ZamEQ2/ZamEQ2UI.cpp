@@ -466,6 +466,9 @@ void ZamEQ2UI::onDisplay()
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    
     glLineWidth(2);
     int i;
     glColor4f(1.f, 1.f, 0.235f, 1.0f);
