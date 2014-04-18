@@ -29,6 +29,7 @@ ImageKnob::ImageKnob(Window& parent, const Image& image, Orientation orientation
       fMinimum(0.0f),
       fMaximum(1.0f),
       fStep(0.0f),
+      fLog(false),
       fValue(0.5f),
       fValueTmp(fValue),
       fOrientation(orientation),
@@ -52,6 +53,7 @@ ImageKnob::ImageKnob(Widget* widget, const Image& image, Orientation orientation
       fMinimum(0.0f),
       fMaximum(1.0f),
       fStep(0.0f),
+      fLog(false),
       fValue(0.5f),
       fValueTmp(fValue),
       fOrientation(orientation),
@@ -75,6 +77,7 @@ ImageKnob::ImageKnob(const ImageKnob& imageKnob)
       fMinimum(imageKnob.fMinimum),
       fMaximum(imageKnob.fMaximum),
       fStep(imageKnob.fStep),
+      fLog(imageKnob.fLog),
       fValue(imageKnob.fValue),
       fValueTmp(fValue),
       fOrientation(imageKnob.fOrientation),
@@ -140,6 +143,34 @@ void ImageKnob::setStep(float step)
     fStep = step;
 }
 
+void ImageKnob::setLogScale(bool yesNo)
+{
+    fLog = yesNo;
+}
+
+float ImageKnob::logscale(float value)
+{
+	if (fLog) {
+		float b = log(fMaximum/fMinimum)/(fMaximum-fMinimum);
+		float a = fMaximum/exp(fMaximum*b);
+		float logval = a * exp(b*value);
+		return logval;
+	}
+	return value;
+}
+
+float ImageKnob::invlogscale(float value)
+{
+	if (fLog) {
+		float b = log(fMaximum/fMinimum)/(fMaximum-fMinimum);
+		float a = fMaximum/exp(fMaximum*b);
+		float logval = log(value/a)/b;
+		return logval;
+		
+	}
+	return value;
+}
+
 void ImageKnob::setValue(float value, bool sendCallback)
 {
     if (fValue == value)
@@ -201,6 +232,7 @@ void ImageKnob::setCallback(Callback* callback)
 void ImageKnob::onDisplay()
 {
     const float normValue = (fValue - fMinimum) / (fMaximum - fMinimum);
+    const float logValue = (invlogscale(fValue) - fMinimum) / (fMaximum - fMinimum);
 
     if (fRotationAngle != 0)
     {
@@ -225,7 +257,7 @@ void ImageKnob::onDisplay()
         const GLint h2 = getHeight()/2;
 
         glTranslatef(static_cast<float>(getX()+w2), static_cast<float>(getY()+h2), 0.0f);
-        glRotatef(normValue*static_cast<float>(fRotationAngle), 0.0f, 0.0f, 1.0f);
+        glRotatef(logValue*static_cast<float>(fRotationAngle), 0.0f, 0.0f, 1.0f);
 
         glBegin(GL_QUADS);
           glTexCoord2f(0.0f, 0.0f);
@@ -303,7 +335,7 @@ bool ImageKnob::onMotion(int x, int y)
         if (int movX = x - fLastX)
         {
             d     = (getModifiers() & MODIFIER_SHIFT) ? 2000.0f : 200.0f;
-            value = fValueTmp + (float(fMaximum - fMinimum) / d * float(movX));
+            value = (fValueTmp) + (float(fMaximum - fMinimum) / d * float((movX)));
             doVal = true;
         }
     }
@@ -312,7 +344,7 @@ bool ImageKnob::onMotion(int x, int y)
         if (int movY = fLastY - y)
         {
             d     = (getModifiers() & MODIFIER_SHIFT) ? 2000.0f : 200.0f;
-            value = fValueTmp + (float(fMaximum - fMinimum) / d * float(movY));
+            value = (fValueTmp) + (float(fMaximum - fMinimum) / d * float((movY)));
             doVal = true;
         }
     }
@@ -337,7 +369,7 @@ bool ImageKnob::onMotion(int x, int y)
         value = value - rest + (rest > fStep/2.0f ? fStep : 0.0f);
     }
 
-    setValue(value, true);
+    setValue(logscale(value), true);
 
     fLastX = x;
     fLastY = y;

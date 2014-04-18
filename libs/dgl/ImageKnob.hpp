@@ -49,6 +49,7 @@ public:
 
     void setOrientation(Orientation orientation);
     void setRange(float min, float max);
+    void setLogScale(bool log = false);
     void setStep(float step);
     void setValue(float value, bool sendCallback = false);
     void setRotationAngle(int angle);
@@ -61,12 +62,15 @@ protected:
      bool onMotion(int x, int y) override;
      void onReshape(int width, int height) override;
      void onClose() override;
+     float logscale(float value);
+     float invlogscale(float value);
 
 private:
     Image fImage;
     float fMinimum;
     float fMaximum;
     float fStep;
+    float fLog;
     float fValue;
     float fValueTmp;
     Orientation fOrientation;
