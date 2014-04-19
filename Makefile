@@ -10,7 +10,7 @@ OPTIMIZATIONS ?= -O2 -ffast-math
 # Raspberry Pi
 #OPTIMIZATIONS ?= -O2 -ffast-math -march=armv6 -mfpu=vfp -mfloat-abi=hard
 
-NAME    = zam-plugins-DPF
+NAME    = zam-plugins
 VERSION = $(shell cat .version)
 
 PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZaMultiCompX2 ZamTube ZamEQ2
