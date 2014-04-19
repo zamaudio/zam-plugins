@@ -31,19 +31,29 @@ $(PLUGINS): libs
 
 install: all
 	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa \
-		$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2
+		$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2 ; \
 	if test 'x$(OPTIMIZATIONS)' != 'x'; then \
 		optimizations='OPTIMIZATIONS=$(OPTIMIZATIONS)'; \
 	else \
 		optimizations=''; \
 	fi; \
 	for plugin in $(PLUGINS); do \
-		$(MAKE) PREFIX="$(PREFIX)" LIBDIR="$(LIBDIR)" $$optimizations \
-			-C "$$plugin"; \
-	done
-	install -f bin/*.lv2 ${DESTDIR}${PREFIX}/${LIBDIR}/lv2
+		$(MAKE) PREFIX="$(PREFIX)" LIBDIR="$(LIBDIR)" "$$optimizations" \
+			-C plugins/"$$plugin"; \
+		install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
+		install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 \
+			bin/"$$plugin".lv2/* ; \
+	done; \
+	install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa bin/*-ladspa.so
 
-plugins: FORCE 
+uninstall:
+	for plugin in $(PLUGINS); do \
+		rm -rf $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
+		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa.so ; \
+	done
+
+
+plugins: FORCE
 
 
 clean: FORCE
