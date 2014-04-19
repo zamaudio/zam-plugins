@@ -70,7 +70,8 @@ private:
     float fMinimum;
     float fMaximum;
     float fStep;
-    float fLog;
+    bool  fLog;
+    bool  fFirst;
     float fValue;
     float fValueTmp;
     Orientation fOrientation;

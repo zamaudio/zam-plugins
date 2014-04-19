@@ -30,6 +30,7 @@ ImageKnob::ImageKnob(Window& parent, const Image& image, Orientation orientation
       fMaximum(1.0f),
       fStep(0.0f),
       fLog(false),
+      fFirst(true),
       fValue(0.5f),
       fValueTmp(fValue),
       fOrientation(orientation),
@@ -54,6 +55,7 @@ ImageKnob::ImageKnob(Widget* widget, const Image& image, Orientation orientation
       fMaximum(1.0f),
       fStep(0.0f),
       fLog(false),
+      fFirst(true),
       fValue(0.5f),
       fValueTmp(fValue),
       fOrientation(orientation),
@@ -78,6 +80,7 @@ ImageKnob::ImageKnob(const ImageKnob& imageKnob)
       fMaximum(imageKnob.fMaximum),
       fStep(imageKnob.fStep),
       fLog(imageKnob.fLog),
+      fFirst(true),
       fValue(imageKnob.fValue),
       fValueTmp(fValue),
       fOrientation(imageKnob.fOrientation),
@@ -176,10 +179,12 @@ void ImageKnob::setValue(float value, bool sendCallback)
     if (fValue == value)
         return;
 
-    fValue = value;
+    fValue = logscale(value);
 
-    if (fStep == 0.0f)
+    if (fStep == 0.0f || fFirst) {
+        fFirst = false;
         fValueTmp = value;
+    }
 
     repaint();
 
@@ -329,25 +334,18 @@ bool ImageKnob::onMotion(int x, int y)
 
     bool doVal = false;
     float d, value;
+    int movX, movY, movR;
+    movX = x - fLastX;
+    movY = fLastY - y;
+    movR = (movX + movY);
 
-    if (fOrientation == ImageKnob::Horizontal)
-    {
-        if (int movX = x - fLastX)
+        if (movR)
         {
-            d     = (getModifiers() & MODIFIER_SHIFT) ? 2000.0f : 200.0f;
-            value = (fValueTmp) + (float(fMaximum - fMinimum) / d * float((movX)));
+	    printf("movR=%d\n",movR);
+	    d     = (getModifiers() & MODIFIER_SHIFT) ? 2000.0f : 200.0f;
+            value = (fValueTmp) + (float(fMaximum - fMinimum) / d * float((movR)));
             doVal = true;
         }
-    }
-    else if (fOrientation == ImageKnob::Vertical)
-    {
-        if (int movY = fLastY - y)
-        {
-            d     = (getModifiers() & MODIFIER_SHIFT) ? 2000.0f : 200.0f;
-            value = (fValueTmp) + (float(fMaximum - fMinimum) / d * float((movY)));
-            doVal = true;
-        }
-    }
 
     if (! doVal)
         return false;
@@ -369,7 +367,7 @@ bool ImageKnob::onMotion(int x, int y)
         value = value - rest + (rest > fStep/2.0f ? fStep : 0.0f);
     }
 
-    setValue(logscale(value), true);
+    setValue(value, true);
 
     fLastX = x;
     fLastY = y;
