@@ -333,19 +333,19 @@ bool ImageKnob::onMotion(int x, int y)
         return false;
 
     bool doVal = false;
-    float d, value;
-    int movX, movY, movR;
+    float d, value, r, movR;
+    int movX, movY;
     movX = x - fLastX;
     movY = fLastY - y;
-    movR = (movX + movY);
+    r = sqrt(movX*movX + movY*movY);
+    movR = ((movX + movY) > 0) ? r : -r;
 
-        if (movR)
-        {
-	    printf("movR=%d\n",movR);
-	    d     = (getModifiers() & MODIFIER_SHIFT) ? 2000.0f : 200.0f;
-            value = (fValueTmp) + (float(fMaximum - fMinimum) / d * float((movR)));
-            doVal = true;
-        }
+    if (movR)
+    {
+        d     = (getModifiers() & MODIFIER_SHIFT) ? 2000.0f : 200.0f;
+        value = (fValueTmp) + (float(fMaximum - fMinimum) / d * float((movR)));
+        doVal = true;
+    }
 
     if (! doVal)
         return false;
