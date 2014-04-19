@@ -52,6 +52,8 @@ public:
     void setLogScale(bool log = false);
     void setStep(float step);
     void setValue(float value, bool sendCallback = false);
+    void setDefault(float value);
+    void resetDefault(void);
     void setRotationAngle(int angle);
 
     void setCallback(Callback* callback);
@@ -73,6 +75,7 @@ private:
     bool  fLog;
     bool  fFirst;
     float fValue;
+    float fValueDef;
     float fValueTmp;
     Orientation fOrientation;
 

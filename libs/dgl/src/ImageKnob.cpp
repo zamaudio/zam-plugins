@@ -33,6 +33,7 @@ ImageKnob::ImageKnob(Window& parent, const Image& image, Orientation orientation
       fFirst(true),
       fValue(0.5f),
       fValueTmp(fValue),
+      fValueDef(fValue),
       fOrientation(orientation),
       fRotationAngle(0),
       fDragging(false),
@@ -58,6 +59,7 @@ ImageKnob::ImageKnob(Widget* widget, const Image& image, Orientation orientation
       fFirst(true),
       fValue(0.5f),
       fValueTmp(fValue),
+      fValueDef(fValue),
       fOrientation(orientation),
       fRotationAngle(0),
       fDragging(false),
@@ -83,6 +85,7 @@ ImageKnob::ImageKnob(const ImageKnob& imageKnob)
       fFirst(true),
       fValue(imageKnob.fValue),
       fValueTmp(fValue),
+      fValueDef(imageKnob.fValueDef),
       fOrientation(imageKnob.fOrientation),
       fRotationAngle(imageKnob.fRotationAngle),
       fDragging(false),
@@ -172,6 +175,21 @@ float ImageKnob::invlogscale(float value)
 		
 	}
 	return value;
+}
+
+void ImageKnob::setDefault(float value)
+{
+    fValueDef = value;
+    if (fFirst) {
+        resetDefault();
+	fFirst = false;
+    }
+}
+
+void ImageKnob::resetDefault()
+{
+    fFirst = true;
+    setValue(fValueDef, true);
 }
 
 void ImageKnob::setValue(float value, bool sendCallback)
@@ -305,6 +323,11 @@ bool ImageKnob::onMouse(int button, bool press, int x, int y)
     {
         if (! getArea().contains(x, y))
             return false;
+        
+	if (getModifiers() & MODIFIER_CTRL) {
+	    resetDefault();
+	    return false;
+	}
 
         fDragging = true;
         fLastX = x;
