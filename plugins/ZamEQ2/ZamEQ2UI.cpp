@@ -39,85 +39,77 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGain1 = new ImageKnob(this, knobImage);
     fKnobGain1->setPos(91, 172);
     fKnobGain1->setRange(-50.f, 20.0f);
-    fKnobGain1->setStep(1.f);
-    fKnobGain1->setValue(0.0f);
     fKnobGain1->setRotationAngle(240);
+    fKnobGain1->setDefault(0.0f);
     fKnobGain1->setCallback(this);
 
     fKnobQ1 = new ImageKnob(this, knobImage);
     fKnobQ1->setPos(91, 122);
     fKnobQ1->setRange(0.1f, 6.0f);
-    fKnobQ1->setStep(0.1f);
-    fKnobQ1->setValue(1.0f);
+    fKnobQ1->setLogScale(true);
     fKnobQ1->setRotationAngle(240);
+    fKnobQ1->setDefault(2.0f);
     fKnobQ1->setCallback(this);
 
     fKnobFreq1 = new ImageKnob(this, knobImage);
     fKnobFreq1->setPos(23, 144);
     fKnobFreq1->setRange(20.f, 14000.0f);
     fKnobFreq1->setLogScale(true);
-    fKnobFreq1->setStep(1.f);
-    fKnobFreq1->setValue(500.0f);
     fKnobFreq1->setRotationAngle(240);
+    fKnobFreq1->setDefault(500.0f);
     fKnobFreq1->setCallback(this);
 
     fKnobGain2 = new ImageKnob(this, knobImage);
     fKnobGain2->setPos(567, 172);
     fKnobGain2->setRange(-50.f, 20.0f);
-    fKnobGain2->setStep(1.f);
-    fKnobGain2->setValue(0.0f);
     fKnobGain2->setRotationAngle(240);
+    fKnobGain2->setDefault(0.0f);
     fKnobGain2->setCallback(this);
 
     fKnobQ2 = new ImageKnob(this, knobImage);
     fKnobQ2->setPos(567, 122);
     fKnobQ2->setRange(0.1f, 6.0f);
-    fKnobQ2->setStep(0.1f);
-    fKnobQ2->setValue(1.0f);
+    fKnobQ2->setLogScale(true);
     fKnobQ2->setRotationAngle(240);
+    fKnobQ2->setDefault(2.0f);
     fKnobQ2->setCallback(this);
 
     fKnobFreq2 = new ImageKnob(this, knobImage);
     fKnobFreq2->setPos(499, 144);
     fKnobFreq2->setRange(20.f, 14000.0f);
-    fKnobFreq2->setStep(1.f);
     fKnobFreq2->setLogScale(true);
-    fKnobFreq2->setValue(500.0f);
     fKnobFreq2->setRotationAngle(240);
+    fKnobFreq2->setDefault(3000.0f);
     fKnobFreq2->setCallback(this);
 
     fKnobGainL = new ImageKnob(this, knobImage);
     fKnobGainL->setPos(91, 52);
     fKnobGainL->setRange(-50.f, 20.0f);
-    fKnobGainL->setStep(1.f);
-    fKnobGainL->setValue(0.0f);
     fKnobGainL->setRotationAngle(240);
+    fKnobGainL->setDefault(0.0f);
     fKnobGainL->setCallback(this);
 
     fKnobFreqL = new ImageKnob(this, knobImage);
     fKnobFreqL->setPos(23, 23);
     fKnobFreqL->setRange(20.f, 14000.0f);
-    fKnobFreqL->setStep(1.f);
     fKnobFreqL->setLogScale(true);
-    fKnobFreqL->setValue(500.0f);
     fKnobFreqL->setRotationAngle(240);
+    fKnobFreqL->setDefault(250.0f);
     fKnobFreqL->setCallback(this);
 
     fKnobGainH = new ImageKnob(this, knobImage);
     fKnobGainH->setPos(567, 53);
     fKnobGainH->setRange(-50.f, 20.0f);
-    fKnobGainH->setStep(1.f);
-    fKnobGainH->setValue(0.0f);
     fKnobGainH->setRotationAngle(240);
+    fKnobGainH->setDefault(0.0f);
     fKnobGainH->setCallback(this);
 
     fKnobFreqH = new ImageKnob(this, knobImage);
     fKnobFreqH->setPos(499, 24);
     fKnobFreqH->setRange(20.f, 14000.0f);
-    fKnobFreqH->setStep(1.f);
     fKnobFreqH->setLogScale(true);
-    fKnobFreqH->setValue(500.0f);
     fKnobFreqH->setRotationAngle(240);
+    fKnobFreqH->setDefault(8000.0f);
     fKnobFreqH->setCallback(this);
 
     Point<int> masterPosStart(211,204);
@@ -199,16 +191,18 @@ void ZamEQ2UI::d_programChanged(uint32_t index)
         return;
 
     // Default values
-    fKnobGain1->setValue(0.0f);
-    fKnobQ1->setValue(1.0f);
-    fKnobFreq1->setValue(500.0f);
-    fKnobGain2->setValue(0.0f);
-    fKnobQ2->setValue(1.0f);
-    fKnobFreq2->setValue(3000.0f);
-    fKnobGainL->setValue(0.0f);
-    fKnobFreqL->setValue(250.0f);
-    fKnobGainH->setValue(0.0f);
-    fKnobFreqH->setValue(8000.0f);
+/*
+    fKnobGain1->resetDefault();
+    fKnobQ1->resetDefault();
+    fKnobFreq1->resetDefault();
+    fKnobGain2->resetDefault();
+    fKnobQ2->resetDefault();
+    fKnobFreq2->resetDefault();
+    fKnobGainL->resetDefault();
+    fKnobFreqL->resetDefault();
+    fKnobGainH->resetDefault();
+    fKnobFreqH->resetDefault();
+*/
     fSliderMaster->setValue(0.f);
 }
 
@@ -345,7 +339,7 @@ void ZamEQ2UI::peq(double G0, double G, double GB, double w0, double Dw,
 }
 
 
-void ZamEQ2UI::lowshelfeq(double G0, double G, double GB, double w0, double Dw, double q, double B[], double A[]) {
+void ZamEQ2UI::lowshelfeq(double, double G, double, double w0, double, double q, double B[], double A[]) {
         double alpha,b0,b1,b2,a0,a1,a2;
         G = powf(10.f,G/20.f);
         double AA  = sqrt(G);
@@ -366,7 +360,7 @@ void ZamEQ2UI::lowshelfeq(double G0, double G, double GB, double w0, double Dw, 
         A[2] = a2/a0;
 }
 
-void ZamEQ2UI::highshelfeq(double G0, double G, double GB, double w0, double Dw, double q,  double B[], double A[]) {
+void ZamEQ2UI::highshelfeq(double, double G, double, double w0, double, double q,  double B[], double A[]) {
         double alpha,b0,b1,b2,a0,a1,a2;
         G = powf(10.f,G/20.f);
         double AA  = sqrt(G);

@@ -56,9 +56,9 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bandwidth 1";
         parameter.symbol     = "bw1";
         parameter.unit       = " ";
-        parameter.ranges.def = 1.0f;
+        parameter.ranges.def = 2.0f;
         parameter.ranges.min = 0.1f;
-        parameter.ranges.max = 7.0f;
+        parameter.ranges.max = 6.0f;
         break;
     case paramFreq1:
         parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
@@ -67,7 +67,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "Hz";
         parameter.ranges.def = 500.0f;
         parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 20000.0f;
+        parameter.ranges.max = 14000.0f;
         break;
     case paramGain2:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
@@ -83,9 +83,9 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bandwidth 2";
         parameter.symbol     = "bw2";
         parameter.unit       = " ";
-        parameter.ranges.def = 1.0f;
+        parameter.ranges.def = 2.0f;
         parameter.ranges.min = 0.1f;
-        parameter.ranges.max = 7.0f;
+        parameter.ranges.max = 6.0f;
         break;
     case paramFreq2:
         parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
@@ -94,7 +94,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "Hz";
         parameter.ranges.def = 3000.0f;
         parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 20000.0f;
+        parameter.ranges.max = 14000.0f;
         break;
     case paramGainL:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
@@ -112,7 +112,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "Hz";
         parameter.ranges.def = 250.0f;
         parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 20000.0f;
+        parameter.ranges.max = 14000.0f;
         break;
     case paramGainH:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
@@ -130,7 +130,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "Hz";
         parameter.ranges.def = 8000.0f;
         parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 20000.0f;
+        parameter.ranges.max = 14000.0f;
         break;
     case paramMaster:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
@@ -341,7 +341,7 @@ void ZamEQ2Plugin::peq(double G0, double G, double GB, double w0, double Dw,
         if (!std::isnormal(*b0)) { *b0 = 1.f; }
 }
 
-void ZamEQ2Plugin::lowshelfeq(double G0, double G, double GB, double w0, double Dw, double q, double B[], double A[]) {
+void ZamEQ2Plugin::lowshelfeq(double, double G, double, double w0, double, double q, double B[], double A[]) {
         double alpha,b0,b1,b2,a0,a1,a2;
         G = powf(10.f,G/20.f);
         double AA  = sqrt(G);
@@ -362,7 +362,7 @@ void ZamEQ2Plugin::lowshelfeq(double G0, double G, double GB, double w0, double 
         A[2] = a2/a0;
 }       
 
-void ZamEQ2Plugin::highshelfeq(double G0, double G, double GB, double w0, double Dw, double q, double B[], double A[]) {
+void ZamEQ2Plugin::highshelfeq(double, double G, double, double w0, double, double q, double B[], double A[]) {
         double alpha,b0,b1,b2,a0,a1,a2;
         G = powf(10.f,G/20.f);
         double AA  = sqrt(G);
@@ -468,13 +468,14 @@ void ZamEQ2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 y1 = tmp;
                  
                 //parametric2
+                outputs[0][i] = inputs[0][i];
                 outputs[0][i] = tmp * b0y + x1a * b1y + x2a * b2y - y1a * a1y - y2a * a2y;
                 x2a = x1a;
                 y2a = y1a;
                 x1a = tmp;
                 y1a = outputs[0][i];        
 
-                outputs[0][i] *= from_dB(-master);
+                outputs[0][i] *= from_dB(master);
 	}
 }
 

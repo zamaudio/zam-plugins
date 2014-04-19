@@ -48,7 +48,8 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack->setPos(24, 43);
     fKnobAttack->setRange(0.1f, 200.0f);
     fKnobAttack->setStep(0.1f);
-    fKnobAttack->setValue(10.0f);
+    fKnobAttack->setLogScale(true);
+    fKnobAttack->setDefault(10.0f);
     fKnobAttack->setRotationAngle(240);
     fKnobAttack->setCallback(this);
 
@@ -56,7 +57,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease->setPos(108, 43);
     fKnobRelease->setRange(50.0f, 500.0f);
     fKnobRelease->setStep(1.0f);
-    fKnobRelease->setValue(80.0f);
+    fKnobRelease->setDefault(80.0f);
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
 
@@ -64,7 +65,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh->setPos(191.5, 43);
     fKnobThresh->setRange(-60.0f, 0.0f);
     fKnobThresh->setStep(1.0f);
-    fKnobThresh->setValue(0.0f);
+    fKnobThresh->setDefault(0.0f);
     fKnobThresh->setRotationAngle(240);
     fKnobThresh->setCallback(this);
 
@@ -72,7 +73,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio->setPos(270, 43);
     fKnobRatio->setRange(1.0f, 20.0f);
     fKnobRatio->setStep(0.1f);
-    fKnobRatio->setValue(4.0f);
+    fKnobRatio->setDefault(4.0f);
     fKnobRatio->setRotationAngle(240);
     fKnobRatio->setCallback(this);
 
@@ -80,7 +81,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee->setPos(348.5, 43);
     fKnobKnee->setRange(0.0f, 8.0f);
     fKnobKnee->setStep(0.1f);
-    fKnobKnee->setValue(0.0f);
+    fKnobKnee->setDefault(0.0f);
     fKnobKnee->setRotationAngle(240);
     fKnobKnee->setCallback(this);
 
@@ -88,7 +89,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobGlobalGain->setPos(427.3, 43);
     fKnobGlobalGain->setRange(-30.0f, 30.0f);
     fKnobGlobalGain->setStep(1.0f);
-    fKnobGlobalGain->setValue(0.0f);
+    fKnobGlobalGain->setDefault(0.0f);
     fKnobGlobalGain->setRotationAngle(240);
     fKnobGlobalGain->setCallback(this);
 
@@ -96,7 +97,8 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover2->setPos(84, 121);
     fKnobXover2->setRange(1400.f, 14000.f);
     fKnobXover2->setStep(1.0f);
-    fKnobXover2->setValue(1400.f);
+    fKnobXover2->setLogScale(true);
+    fKnobXover2->setDefault(1400.f);
     fKnobXover2->setRotationAngle(240);
     fKnobXover2->setCallback(this);
 
@@ -104,7 +106,8 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover1->setPos(84, 176);
     fKnobXover1->setRange(20.0f, 1400.0f);
     fKnobXover1->setStep(1.0f);
-    fKnobXover1->setValue(250.0f);
+    fKnobXover1->setLogScale(true);
+    fKnobXover1->setDefault(250.0f);
     fKnobXover1->setRotationAngle(240);
     fKnobXover1->setCallback(this);
 
@@ -112,7 +115,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup3->setPos(167.75, 99.5);
     fKnobMakeup3->setRange(0.0f, 30.0f);
     fKnobMakeup3->setStep(0.1f);
-    fKnobMakeup3->setValue(0.0f);
+    fKnobMakeup3->setDefault(0.0f);
     fKnobMakeup3->setRotationAngle(240);
     fKnobMakeup3->setCallback(this);
 
@@ -120,7 +123,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup2->setPos(167.75, 150.25);
     fKnobMakeup2->setRange(0.0f, 30.0f);
     fKnobMakeup2->setStep(0.1f);
-    fKnobMakeup2->setValue(0.0f);
+    fKnobMakeup2->setDefault(0.0f);
     fKnobMakeup2->setRotationAngle(240);
     fKnobMakeup2->setCallback(this);
 
@@ -128,7 +131,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup1->setPos(167.75, 201.4);
     fKnobMakeup1->setRange(0.0f, 30.0f);
     fKnobMakeup1->setStep(0.1f);
-    fKnobMakeup1->setValue(0.0f);
+    fKnobMakeup1->setDefault(0.0f);
     fKnobMakeup1->setRotationAngle(240);
     fKnobMakeup1->setCallback(this);
 

@@ -45,7 +45,8 @@ ZamCompUI::ZamCompUI()
     fKnobAttack->setPos(24, 45);
     fKnobAttack->setRange(0.1f, 200.0f);
     fKnobAttack->setStep(0.1f);
-    fKnobAttack->setValue(10.0f);
+    fKnobAttack->setLogScale(true);
+    fKnobAttack->setDefault(10.0f);
     fKnobAttack->setRotationAngle(240);
     fKnobAttack->setCallback(this);
 
@@ -53,7 +54,7 @@ ZamCompUI::ZamCompUI()
     fKnobRelease->setPos(108, 45);
     fKnobRelease->setRange(50.0f, 500.0f);
     fKnobRelease->setStep(1.0f);
-    fKnobRelease->setValue(80.0f);
+    fKnobRelease->setDefault(80.0f);
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
 
@@ -61,7 +62,7 @@ ZamCompUI::ZamCompUI()
     fKnobThresh->setPos(191.5, 45);
     fKnobThresh->setRange(-60.0f, 0.0f);
     fKnobThresh->setStep(1.0f);
-    fKnobThresh->setValue(0.0f);
+    fKnobThresh->setDefault(0.0f);
     fKnobThresh->setRotationAngle(240);
     fKnobThresh->setCallback(this);
 
@@ -69,7 +70,7 @@ ZamCompUI::ZamCompUI()
     fKnobRatio->setPos(270, 45);
     fKnobRatio->setRange(1.0f, 20.0f);
     fKnobRatio->setStep(0.1f);
-    fKnobRatio->setValue(4.0f);
+    fKnobRatio->setDefault(4.0f);
     fKnobRatio->setRotationAngle(240);
     fKnobRatio->setCallback(this);
 
@@ -77,7 +78,7 @@ ZamCompUI::ZamCompUI()
     fKnobKnee->setPos(348.5, 45);
     fKnobKnee->setRange(0.0f, 8.0f);
     fKnobKnee->setStep(0.1f);
-    fKnobKnee->setValue(0.0f);
+    fKnobKnee->setDefault(0.0f);
     fKnobKnee->setRotationAngle(240);
     fKnobKnee->setCallback(this);
 
@@ -85,7 +86,7 @@ ZamCompUI::ZamCompUI()
     fKnobMakeup->setPos(427.3, 45);
     fKnobMakeup->setRange(-30.0f, 30.0f);
     fKnobMakeup->setStep(1.0f);
-    fKnobMakeup->setValue(0.0f);
+    fKnobMakeup->setDefault(0.0f);
     fKnobMakeup->setRotationAngle(240);
     fKnobMakeup->setCallback(this);
 }
@@ -147,13 +148,14 @@ void ZamCompUI::d_programChanged(uint32_t index)
     if (index != 0)
         return;
 
-    // Default values
-    fKnobAttack->setValue(10.0f);
-    fKnobRelease->setValue(80.0f);
-    fKnobThresh->setValue(0.0f);
-    fKnobRatio->setValue(4.0f);
-    fKnobKnee->setValue(0.0f);
-    fKnobMakeup->setValue(0.0f);
+    /* Default values
+    fKnobAttack->setDefault(10.0f);
+    fKnobRelease->setDefault(80.0f);
+    fKnobThresh->setDefault(0.0f);
+    fKnobRatio->setDefault(4.0f);
+    fKnobKnee->setDefault(0.0f);
+    fKnobMakeup->setDefault(0.0f);
+    */
 }
 
 // -----------------------------------------------------------------------

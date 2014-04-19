@@ -30,7 +30,6 @@ ImageKnob::ImageKnob(Window& parent, const Image& image, Orientation orientation
       fMaximum(1.0f),
       fStep(0.0f),
       fLog(false),
-      fFirst(true),
       fValue(0.5f),
       fValueTmp(fValue),
       fValueDef(fValue),
@@ -56,7 +55,6 @@ ImageKnob::ImageKnob(Widget* widget, const Image& image, Orientation orientation
       fMaximum(1.0f),
       fStep(0.0f),
       fLog(false),
-      fFirst(true),
       fValue(0.5f),
       fValueTmp(fValue),
       fValueDef(fValue),
@@ -82,10 +80,9 @@ ImageKnob::ImageKnob(const ImageKnob& imageKnob)
       fMaximum(imageKnob.fMaximum),
       fStep(imageKnob.fStep),
       fLog(imageKnob.fLog),
-      fFirst(true),
       fValue(imageKnob.fValue),
       fValueTmp(fValue),
-      fValueDef(imageKnob.fValueDef),
+      fValueDef(fValue),
       fOrientation(imageKnob.fOrientation),
       fRotationAngle(imageKnob.fRotationAngle),
       fDragging(false),
@@ -180,16 +177,17 @@ float ImageKnob::invlogscale(float value)
 void ImageKnob::setDefault(float value)
 {
     fValueDef = value;
-    if (fFirst) {
-        resetDefault();
-	fFirst = false;
-    }
+    fValueTmp = value;
+    resetDefault();
 }
 
 void ImageKnob::resetDefault()
 {
-    fFirst = true;
-    setValue(fValueDef, true);
+    fValueTmp = invlogscale(fValueDef);
+    fValue = fValueDef;
+    if (fCallback != nullptr)
+        fCallback->imageKnobValueChanged(this, fValue);
+    repaint();
 }
 
 void ImageKnob::setValue(float value, bool sendCallback)
@@ -199,8 +197,7 @@ void ImageKnob::setValue(float value, bool sendCallback)
 
     fValue = logscale(value);
 
-    if (fStep == 0.0f || fFirst) {
-        fFirst = false;
+    if (fStep == 0.0f) {
         fValueTmp = value;
     }
 

@@ -40,7 +40,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobTube->setPos(177, 76);
     fKnobTube->setRange(0.f, 30.0f);
     fKnobTube->setStep(0.1f);
-    fKnobTube->setValue(0.0f);
+    fKnobTube->setDefault(0.0f);
     fKnobTube->setRotationAngle(240);
     fKnobTube->setCallback(this);
 
@@ -48,7 +48,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobBass->setPos(63, 140.5);
     fKnobBass->setRange(0.f, 1.0f);
     fKnobBass->setStep(0.01f);
-    fKnobBass->setValue(0.5f);
+    fKnobBass->setDefault(0.5f);
     fKnobBass->setRotationAngle(240);
     fKnobBass->setCallback(this);
 
@@ -56,7 +56,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobMids->setPos(63, 87);
     fKnobMids->setRange(0.f, 1.0f);
     fKnobMids->setStep(0.01f);
-    fKnobMids->setValue(0.5f);
+    fKnobMids->setDefault(0.5f);
     fKnobMids->setRotationAngle(240);
     fKnobMids->setCallback(this);
 
@@ -64,7 +64,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobTreb->setPos(63, 33);
     fKnobTreb->setRange(0.f, 1.0f);
     fKnobTreb->setStep(0.01f);
-    fKnobTreb->setValue(0.0f);
+    fKnobTreb->setDefault(0.0f);
     fKnobTreb->setRotationAngle(240);
     fKnobTreb->setCallback(this);
 
@@ -72,7 +72,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobGain->setPos(63, 231);
     fKnobGain->setRange(-30.f, 30.0f);
     fKnobGain->setStep(1.f);
-    fKnobGain->setValue(0.0f);
+    fKnobGain->setDefault(0.0f);
     fKnobGain->setRotationAngle(240);
     fKnobGain->setCallback(this);
 

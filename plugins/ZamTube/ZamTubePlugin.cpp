@@ -1000,7 +1000,7 @@ void ZamTubePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
 	float tubeout = 0.f;
 	
-	for (int i = 0; i < frames; ++i) {
+	for (uint32_t i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
 		Vi.e = inputs[0][i]*from_dB(tubedrive);

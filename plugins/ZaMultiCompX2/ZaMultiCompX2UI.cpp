@@ -458,6 +458,7 @@ void ZaMultiCompX2UI::d_programChanged(uint32_t index)
         return;
 
     // Default values
+    /*
     fKnobAttack->setValue(10.0f);
     fKnobRelease->setValue(80.0f);
     fKnobThresh->setValue(0.0f);
@@ -469,6 +470,7 @@ void ZaMultiCompX2UI::d_programChanged(uint32_t index)
     fKnobMakeup3->setValue(0.0f);
     fKnobXover1->setValue(250.0f);
     fKnobXover2->setValue(1400.0f);
+    */
     fToggleBypass1->setValue(0.0f);
     fToggleBypass2->setValue(0.0f);
     fToggleBypass3->setValue(0.0f);

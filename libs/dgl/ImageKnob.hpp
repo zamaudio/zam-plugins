@@ -73,10 +73,9 @@ private:
     float fMaximum;
     float fStep;
     bool  fLog;
-    bool  fFirst;
     float fValue;
-    float fValueDef;
     float fValueTmp;
+    float fValueDef;
     Orientation fOrientation;
 
     int  fRotationAngle;

@@ -235,7 +235,7 @@ void ZamCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
         float gain = 1.f;
         float xg, xl, yg, yl, y1;
-        int i;
+        uint32_t i;
 	float max = 0.f;
 
         for (i = 0; i < frames; i++) {
