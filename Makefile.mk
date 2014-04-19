@@ -23,8 +23,9 @@ endif
 # --------------------------------------------------------------
 # Common build and link flags
 
+
 BASE_FLAGS = -Wall -Wextra -pipe
-BASE_OPTS  = -O2 -ffast-math -mtune=generic -msse -msse2 -mfpmath=sse -fdata-sections -ffunction-sections
+BASE_OPTS  = $(OPTIMIZATIONS) -fdata-sections -ffunction-sections
 LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,-O1 -Wl,--as-needed -Wl,--gc-sections -Wl,--strip-all
 
 ifeq ($(MACOS),true)
@@ -34,7 +35,7 @@ endif
 
 ifeq ($(RASPPI),true)
 # Raspberry-Pi optimization flags
-BASE_OPTS  = -O2 -ffast-math -march=armv6 -mfpu=vfp -mfloat-abi=hard
+BASE_OPTS  = $(OPTIMIZATIONS) 
 LINK_OPTS  = -Wl,-O1 -Wl,--as-needed -Wl,--strip-all
 endif
 
