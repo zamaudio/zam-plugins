@@ -487,12 +487,11 @@ void ZaMultiCompX2Plugin::d_activate()
         	for (j = 0; j < 2; j++)
                 	old_yl[j][i]=old_y1[j][i]=0.f;
 
-        for (i = 0; i < MAX_BANDS; i++) {
+        for (i = 0; i < MAX_FILT; i++) {
         	for (j = 0; j < 2; j++) {
-                	F1[j][i] = Q1[j][i] = 0.f;
-			w1[j][i] = w2[j][i] = 0.f;
-                	w3[j][i] = w4[j][i] = 0.f;
-                	w5[j][i] = w6[j][i] = 0.f;
+                	a0[j][i] = a1[j][i] = a2[j][i] = 0.f;
+                	b1[j][i] = b2[j][i] = 0.f;
+                	w1[j][i] = w2[j][i] = 0.f;
 		}
         }
 	maxL = maxR = 0.f;
@@ -503,119 +502,36 @@ void ZaMultiCompX2Plugin::d_deactivate()
     // all values to zero
     d_activate();
 }
-void ZaMultiCompX2Plugin::run_filter(int i, int ch, float in, float *outl, float *outh)
+
+float ZaMultiCompX2Plugin::run_filter(int i, int ch, float in)
 {
-	float x, yl1, yl2, yb1, yb2, yh1, yh2, z1, z2, z3, z4;
-
-        z1 = w1[ch][i];
-        z2 = w2[ch][i];
-        z3 = w3[ch][i];
-        z4 = w4[ch][i]; 
-
-	x = sanitize_denormal(in);
-	yh1 = x - z1 - Q1[ch][i] * z2;
-	yb1 = yh1 * F1[ch][i] + z3;
-	yl1 = F1[ch][i] * yb1 + z4;
-
-	//yh1 = x - yl2 - Q1[ch][i] * yb2;
-	//yb1 = (x - yl2 - Q1[ch][i] * yb2) * F1[ch][i] + yb2;
-	//yl1 = F1[ch][i] * yb1 + yl2;
-
-	*outl = sanitize_denormal(yl1);
-	*outh = sanitize_denormal(yh1);
-	
-	z1 = yl1;
-	z2 = yb1;
-	z3 = yb1;
-	z4 = yl1;
-
-        w1[ch][i] = sanitize_denormal(z1);
-        w2[ch][i] = sanitize_denormal(z2);
-        w3[ch][i] = sanitize_denormal(z3);
-        w4[ch][i] = sanitize_denormal(z4);
-}
-
-
-
-
-/*
-void ZaMultiCompX2Plugin::run_filter(int i, int ch, float in, float *outl, float *outh)
-{
-	float x, y, glo, ghi, ww1, ww2, ww3, ww4, ww5, ww6;
         in = sanitize_denormal(in);
+        w1[ch][i] = sanitize_denormal(w1[ch][i]);
+        w2[ch][i] = sanitize_denormal(w2[ch][i]);
 
-        ww1 = w1[ch][i];
-        ww2 = w2[ch][i];
-        ww3 = w3[ch][i];
-        ww4 = w4[ch][i]; 
-	ww5 = w5[ch][i];
-	ww6 = w6[ch][i];
-	
-	glo = gl[ch][i];
-	ghi = gh[ch][i];
-
-	x = in;
-	x -= c1[ch][i] * ww1 + c2[ch][i] * ww2 + 1e-20;
-	y = x + 4. * (ww1 + ww2);
-	ww2 += ww1;
-	ww1 += x;
-	x -= c3[ch][i] * ww3 + c4[ch][i] * ww4 - 1e-20;
-	*outh = ghi * x;
-	ww4 += ww3;
-	ww3 += x;
-	y -= c3[ch][i] * ww5 + c4[ch][i] * ww6 - 1e-20;
-	x = y + 4. * (ww5 + ww6);
-	*outl = glo * x;
-	ww6 += ww5;
-	ww5 += y;
-
-	w1[ch][i] = ww1;
-	w2[ch][i] = ww2;
-	w3[ch][i] = ww3;
-	w4[ch][i] = ww4;
-	w5[ch][i] = ww5;
-	w6[ch][i] = ww6;
-}
-*/
-void ZaMultiCompX2Plugin::set_coeffs(float fc, int i, int ch)
-{
-	float sr;
-	sr = d_getSampleRate();
-	F1[ch][i] = 2. * sinf(M_PI * fc / sr);
-	Q1[ch][i] = ROOT2;
+        float tmp = in - w1[ch][i] * b1[ch][i] - w2[ch][i] * b2[ch][i];
+        float out = tmp * a0[ch][i] + w1[ch][i] * a1[ch][i] + w2[ch][i] * a2[ch][i];
+        w2[ch][i] = w1[ch][i];
+        w1[ch][i] = tmp;
+        return out;
 }
 
-
-/*
-void ZaMultiCompX2Plugin::set_coeffs(float fc, int i, int ch)
+void ZaMultiCompX2Plugin::set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain=1.0)
 {
-    float a, b, d1, d2, r, p, s;
-    s = powf(2, 0.465f);
-    d1 = 2. * cosf((2.+s) * M_PI / 8.);
-    d1 = 2. * cosf((2.-s) * M_PI / 8.);
-    a = tanf ( M_PI * fc / d_getSampleRate());
-    b = a * a;
+        float omega=(float)(2.f*M_PI*fc/sr);
+        float sn=sin(omega);
+        float cs=cos(omega);
+        float alpha=(float)(sn/(2.f*q));
+        float inv=(float)(1.0/(1.0+alpha));
 
-    r = a/d1;
-    p = r*b;
-    s = p + r + b;
-    c1[ch][i] = (4 * p + 2 * b) / s;
-    c2[ch][i] = (4 * p) / s;
-    gl[ch][i] = p/s;
-    gh[ch][i] = r/s;
-
-    r = a/d2;
-    p = r*b;
-    s = p + r + b;
-    c3[ch][i] = (4 * p + 2 * b) / s;
-    c4[ch][i] = (4 * p) / s;
-    gl[ch][i] *= p/s;
-    gh[ch][i] *= r/s;
+        a2[ch][i] = a0[ch][i] =  (float)(gain*inv*(1.f - cs)*0.5f);
+        a1[ch][i] = a0[ch][i] + a0[ch][i];
+        b1[ch][i] = (float)(-2.f*cs*inv);
+        b2[ch][i] = (float)((1.f - alpha)*inv);
 }
-*/
-void ZaMultiCompX2Plugin::set_hp_coeffs(float fc, float q, float sr, int i, int ch, float gain=1.0)
-{
-/*
+
+void ZaMultiCompX2Plugin::set_hp_coeffs(float fc, float q, float sr, int i, int ch, float gain=1.0) 
+{       
         float omega=(float)(2.f*M_PI*fc/sr);
         float sn=sin(omega);
         float cs=cos(omega);
@@ -627,16 +543,6 @@ void ZaMultiCompX2Plugin::set_hp_coeffs(float fc, float q, float sr, int i, int 
         a2[ch][i] =  a0[ch][i];
         b1[ch][i] =  (float)(-2.f*cs*inv);
         b2[ch][i] =  (float)((1.f - alpha)*inv);
-	
-	float ff = fc / sr;
-
-    const float ita = 1.0 / tan(M_PI*ff);
-    a0[ch][i] = 1.0 / (1.0 + q*ita + ita*ita);
-    a1[ch][i] = -2.0*a0[ch][i];
-    a2[ch][i] = a0[ch][i];
-    b1[ch][i] = 2.0 * (ita*ita - 1.0) * a0[ch][i];
-    b2[ch][i] = -(1.0 - q*ita + ita*ita) * a0[ch][i];
-*/
 }
 
 void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, float *outR)
@@ -741,16 +647,26 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
         int listen2 = (listen[1] > 0.5f) ? 1 : 0;
         int listen3 = (listen[2] > 0.5f) ? 1 : 0;
 
-        set_coeffs(xover1, 0, 0);
-        set_coeffs(xover2, 1, 0);
-        set_coeffs(xover2, 2, 0);
-        set_coeffs(xover1, 0, 1);
-        set_coeffs(xover2, 1, 1);
-        set_coeffs(xover2, 2, 1);
+        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 0, 0);
+        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 1, 0);
+        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 2, 0);
+        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 3, 0);
+        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 4, 0);
+        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 5, 0);
+        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 6, 0);
+        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 7, 0);
+
+        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 0, 1);
+        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 1, 1);
+        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 2, 1);
+        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 3, 1);
+        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 4, 1);
+        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 5, 1);
+        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 6, 1);
+        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 7, 1);
 
         for (uint32_t i = 0; i < frames; ++i) {
-                float tmp1[2];
-		float bnd1[2], bnd2[2], bnd3[2];
+                float tmp1[2], tmp2[2], tmp3[2], tmp4[2], tmp5[2], tmp6[2];
 		float fil1[2], fil2[2], fil3[2], fil4[2];
 		float outL[MAX_COMP] = {0.f};
 		float outR[MAX_COMP] = {0.f};
@@ -758,59 +674,66 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
 		int listenmode = 0;
 
 		// Interleaved channel processing
-                run_filter(0, 0, inputs[0][i], &fil1[0], &fil2[0]);
-                run_filter(0, 1, inputs[1][i], &fil1[1], &fil2[1]);
+                fil1[0] = run_filter(0, 0, inputs[0][i]);
+                fil1[1] = run_filter(0, 1, inputs[1][i]);
+                tmp1[0] = run_filter(1, 0, fil1[0]);
+                tmp1[1] = run_filter(1, 1, fil1[1]);
 		if (tog1)
-			run_comp(0, fil1[0], fil1[1], &outL[0], &outR[0]);
+			run_comp(0, tmp1[0], tmp1[1], &outL[0], &outR[0]);
 
-		bnd1[0] = tog1 ? outL[0] * from_dB(makeup[0]) : fil1[0];
-                bnd1[1] = tog1 ? outR[0] * from_dB(makeup[0]) : fil1[1];
+		tmp2[0] = tog1 ? outL[0] * from_dB(makeup[0]) : tmp1[0];
+                tmp2[1] = tog1 ? outR[0] * from_dB(makeup[0]) : tmp1[1];
 
-                run_filter(1, 0, fil2[0], &fil3[0], &tmp1[0]);
-                run_filter(1, 1, fil2[1], &fil3[1], &tmp1[1]);
-                //run_filter(1, 0, inputs[0][i], &fil3[0], &tmp1[0]);
-                //run_filter(1, 1, inputs[1][i], &fil3[1], &tmp1[1]);
-
+                fil2[0] = run_filter(2, 0, inputs[0][i]);
+                fil2[1] = run_filter(2, 1, inputs[1][i]);
+                tmp3[0] = run_filter(3, 0, fil2[0]);
+                tmp3[1] = run_filter(3, 1, fil2[1]);
+                fil3[0] = run_filter(4, 0, tmp3[0]);
+                fil3[1] = run_filter(4, 1, tmp3[1]);
+                tmp4[0] = run_filter(5, 0, fil3[0]);
+                tmp4[1] = run_filter(5, 1, fil3[1]);
 		if (tog2)
-			run_comp(1, fil3[0], fil3[1], &outL[1], &outR[1]);
+			run_comp(1, tmp4[0], tmp4[1], &outL[1], &outR[1]);
 
-		bnd2[0] = tog2 ? outL[1] * from_dB(makeup[1]) : fil3[0];
-                bnd2[1] = tog2 ? outR[1] * from_dB(makeup[1]) : fil3[1];
+                tmp3[0] = tog2 ? outL[1] * from_dB(makeup[1]) : tmp4[0];
+                tmp3[1] = tog2 ? outR[1] * from_dB(makeup[1]) : tmp4[1];
 
-		run_filter(2, 0, inputs[0][i], &tmp1[0], &fil4[0]);
-		run_filter(2, 1, inputs[1][i], &tmp1[1], &fil4[1]);
-
+                fil4[0] = run_filter(6, 0, inputs[0][i]);
+                fil4[1] = run_filter(6, 1, inputs[1][i]);
+                tmp5[0] = run_filter(7, 0, fil4[0]);
+                tmp5[1] = run_filter(7, 1, fil4[1]);
 		if (tog3) 
-			run_comp(2, fil4[0], fil4[1], &outL[2], &outR[2]);
+			run_comp(2, tmp5[0], tmp5[1], &outL[2], &outR[2]);
 
-                bnd3[0] = tog3 ? outL[2] * from_dB(makeup[2]) : fil4[0];
-                bnd3[1] = tog3 ? outR[2] * from_dB(makeup[2]) : fil4[1];
+                tmp6[0] = tog3 ? outL[2] * from_dB(makeup[2]) : tmp5[0];
+                tmp6[1] = tog3 ? outR[2] * from_dB(makeup[2]) : tmp5[1];
+
 
 		outputs[0][i] = outputs[1][i] = 0.f;	
 		if (listen1) {
 			listenmode = 1;
 			outputs[0][i] += outL[0] * tog1*from_dB(makeup[0])
-					+ (1.-tog1) * bnd1[0];
+					+ (1.-tog1) * tmp1[0];
 			outputs[1][i] += outR[0] * tog1*from_dB(makeup[0])
-					+ (1.-tog1) * bnd1[1];
+					+ (1.-tog1) * tmp1[1];
 		}
 		if (listen2) {
 			listenmode = 1;
 			outputs[0][i] += outL[1] * tog2*from_dB(makeup[1])
-					+ (1.-tog2) * bnd2[0];
+					+ (1.-tog2) * tmp4[0];
 			outputs[1][i] += outR[1] * tog2*from_dB(makeup[1])
-					+ (1.-tog2) * bnd2[1];
+					+ (1.-tog2) * tmp4[1];
 		}
 		if (listen3) {
 			listenmode = 1;
 			outputs[0][i] += outL[2] * tog3*from_dB(makeup[2])
-					+ (1.-tog3) * bnd3[0];
+					+ (1.-tog3) * tmp5[0];
 			outputs[1][i] += outR[2] * tog3*from_dB(makeup[2])
-					+ (1.-tog3) * bnd3[1];
+					+ (1.-tog3) * tmp5[1];
 		}
 		if (!listenmode) {
-                	outputs[0][i] = bnd1[0];//bnd1[0] + bnd2[0] + bnd3[0];
-                	outputs[1][i] = bnd1[1];//bnd1[1] + bnd2[1] + bnd3[1];
+                	outputs[0][i] = tmp2[0] + tmp3[0] + tmp6[0];
+                	outputs[1][i] = tmp2[1] + tmp3[1] + tmp6[1];
 		}
                 outputs[0][i] *= from_dB(globalgain);
                 outputs[1][i] *= from_dB(globalgain);
