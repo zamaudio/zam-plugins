@@ -119,7 +119,7 @@ public:
           fEffect(effect),
           fUiHelper(uiHelper),
           fPlugin(plugin),
-          fUI(this, winId, editParameterCallback, setParameterCallback, setStateCallback, sendNoteCallback, uiResizeCallback)
+          fUI(this, winId, editParameterCallback, setParameterCallback, setStateCallback, sendNoteCallback, uiResizeCallback, plugin->getInstancePointer())
     {
     }
 
@@ -753,7 +753,7 @@ private:
         fPlugin.setState(newKey, newValue);
 
         // check if we want to save this key
-        if (! fPlugin.wantsStateKey(key))
+        if (! fPlugin.wantsStateKey(newKey))
             return;
 
         // check if key already exists
