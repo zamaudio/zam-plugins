@@ -61,6 +61,7 @@ public:
 protected:
      void onDisplay() override;
      bool onMouse(int button, bool press, int x, int y) override;
+     bool onScroll(int x, int y, float dx, float dy) override;
      bool onMotion(int x, int y) override;
      void onReshape(int width, int height) override;
      void onClose() override;

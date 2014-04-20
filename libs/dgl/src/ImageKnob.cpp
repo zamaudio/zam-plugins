@@ -311,6 +311,37 @@ void ImageKnob::onDisplay()
     }
 }
 
+bool ImageKnob::onScroll(int x, int y, float, float dy)
+{
+    float d, value;
+
+    if (! getArea().contains(x,y))
+        return false;
+
+    d     = (getModifiers() & MODIFIER_CTRL) ? 2000.0f : 200.0f;
+    value = (fValueTmp) + (float(fMaximum - fMinimum) / d * 10.f * dy );
+
+    if (value < fMinimum)
+    {
+        value = fMinimum;
+        fValueTmp = value;
+    }
+    else if (value > fMaximum)
+    {
+        value = fMaximum;
+        fValueTmp = value;
+    }
+    else if (fStep != 0.0f)
+    {
+        fValueTmp = value;
+        const float rest = std::fmod(value, fStep);
+        value = value - rest + (rest > fStep/2.0f ? fStep : 0.0f);
+    }
+
+    setValue(value, true);
+    return true; 
+}
+
 bool ImageKnob::onMouse(int button, bool press, int x, int y)
 {
     if (button != 1)
