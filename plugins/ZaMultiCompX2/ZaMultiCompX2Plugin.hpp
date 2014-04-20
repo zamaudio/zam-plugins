@@ -24,6 +24,7 @@ START_NAMESPACE_DISTRHO
 
 #define MAX_FILT 8
 #define MAX_COMP 3
+#define MAX_BANDS 3
 #define ONEOVERROOT2 0.7071068f
 #define ROOT2 1.4142135f
 #define STEREOLINK_MAX 1
@@ -143,8 +144,8 @@ protected:
 	}
 
     void run_comp(int k, float inL, float inR, float *outL, float *outR);
-    float run_filter(int i, int ch, float in);
-    void set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
+    void run_filter(int i, int ch, float in, float *outl, float *outh);
+    void set_coeffs(float fc, int i, int ch);
     void set_hp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
 
     void d_activate() override;
@@ -160,15 +161,24 @@ private:
     bool resetl;
     bool resetr;
     // Crossover filter coefficients
-    float a0[2][MAX_FILT];
-    float a1[2][MAX_FILT];
-    float a2[2][MAX_FILT];
-    float b1[2][MAX_FILT];
-    float b2[2][MAX_FILT];
+/*
+    float c1[2][MAX_BANDS];
+    float c2[2][MAX_BANDS];
+    float c3[2][MAX_BANDS];
+    float c4[2][MAX_BANDS];
+    float gl[2][MAX_BANDS];
+    float gh[2][MAX_BANDS];
+*/
+    float F1[2][MAX_BANDS];
+    float Q1[2][MAX_BANDS];
 
     //Crossover filter states
-    float w1[2][MAX_FILT];
-    float w2[2][MAX_FILT];
+    float w1[2][MAX_BANDS];
+    float w2[2][MAX_BANDS];
+    float w3[2][MAX_BANDS];
+    float w4[2][MAX_BANDS];
+    float w5[2][MAX_BANDS];
+    float w6[2][MAX_BANDS];
 };
 
 
