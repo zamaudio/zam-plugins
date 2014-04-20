@@ -321,7 +321,7 @@ bool ImageKnob::onMouse(int button, bool press, int x, int y)
         if (! getArea().contains(x, y))
             return false;
         
-	if (getModifiers() & MODIFIER_CTRL) {
+	if (getModifiers() & MODIFIER_SHIFT) {
 	    resetDefault();
 	    return false;
 	}
@@ -362,7 +362,7 @@ bool ImageKnob::onMotion(int x, int y)
 
     if (movR)
     {
-        d     = (getModifiers() & MODIFIER_SHIFT) ? 2000.0f : 200.0f;
+        d     = (getModifiers() & MODIFIER_CTRL) ? 2000.0f : 200.0f;
         value = (fValueTmp) + (float(fMaximum - fMinimum) / d * float((movR)));
         doVal = true;
     }
