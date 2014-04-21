@@ -48,7 +48,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobQ1->setRange(0.1f, 6.0f);
     fKnobQ1->setLogScale(true);
     fKnobQ1->setRotationAngle(240);
-    fKnobQ1->setDefault(2.0f);
+    fKnobQ1->setDefault(1.0f);
     fKnobQ1->setCallback(this);
 
     fKnobFreq1 = new ImageKnob(this, knobImage);
@@ -71,7 +71,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobQ2->setRange(0.1f, 6.0f);
     fKnobQ2->setLogScale(true);
     fKnobQ2->setRotationAngle(240);
-    fKnobQ2->setDefault(2.0f);
+    fKnobQ2->setDefault(1.0f);
     fKnobQ2->setCallback(this);
 
     fKnobFreq2 = new ImageKnob(this, knobImage);
