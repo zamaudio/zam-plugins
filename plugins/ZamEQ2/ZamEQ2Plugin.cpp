@@ -379,12 +379,14 @@ void ZamEQ2Plugin::peq(int i, int ch, float srate, float fc, float g, float bw)
 float ZamEQ2Plugin::run_filter(int i, int ch, double in)
 {
 	double out;
+	in = sanitize_denormal(in);
 	out = in * b0[ch][i] 	+ x1[ch][i] * b1[ch][i] 
 				+ x2[ch][i] * b2[ch][i]
 				- y1[ch][i] * a1[ch][i]
 				- y2[ch][i] * a2[ch][i] + 1e-20f;
-	x2[ch][i] = x1[ch][i];
-	y2[ch][i] = y1[ch][i];
+	out = sanitize_denormal(out);
+	x2[ch][i] = sanitize_denormal(x1[ch][i]);
+	y2[ch][i] = sanitize_denormal(y1[ch][i]);
 	x1[ch][i] = in;
 	y1[ch][i] = out;
 
