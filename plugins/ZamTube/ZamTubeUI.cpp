@@ -184,17 +184,17 @@ void ZamTubeUI::imageKnobValueChanged(ImageKnob* knob, float value)
 
 void ZamTubeUI::imageSliderDragStarted(ImageSlider*)
 {
-    d_editParameter(ZamTubePlugin::paramCabinet, true);
+    d_editParameter(ZamTubePlugin::paramToneStack, true);
 }
 
 void ZamTubeUI::imageSliderDragFinished(ImageSlider*)
 {
-    d_editParameter(ZamTubePlugin::paramCabinet, false);
+    d_editParameter(ZamTubePlugin::paramToneStack, false);
 }
 
 void ZamTubeUI::imageSliderValueChanged(ImageSlider*, float value)
 {
-    d_setParameterValue(ZamTubePlugin::paramCabinet, value);
+    d_setParameterValue(ZamTubePlugin::paramToneStack, value);
 }
 
 void ZamTubeUI::onDisplay()

@@ -13,6 +13,9 @@
  * GNU General Public License for more details.
  *
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
+ *
+ * Tone Stacks from David Yeh's faust implementation.
+ *
  */
 
 #include "ZamTubePlugin.hpp"
@@ -82,37 +85,10 @@ void ZamTubePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
-        /*
-	lv2:scalePoint [ rdfs:label "1959 Bassman 5F6-A"; rdf:value 0 ] ;
-        lv2:scalePoint [ rdfs:label "Mesa Boogie Mark"; rdf:value 1 ] ;
-        lv2:scalePoint [ rdfs:label "1969 Twin Reverb AA270"; rdf:value 2 ] ;
-        lv2:scalePoint [ rdfs:label "1964 Princeton AA1164"; rdf:value 3 ] ;
-        lv2:scalePoint [ rdfs:label "1959/81 JCM-800 Lead 100"; rdf:value 4 ] ;
-        lv2:scalePoint [ rdfs:label "1981 JCM-2000 Lead"; rdf:value 5 ] ;
-        lv2:scalePoint [ rdfs:label "JTM 45"; rdf:value 6 ] ;
-        lv2:scalePoint [ rdfs:label "1967 Major Lead 200"; rdf:value 7 ] ;
-        lv2:scalePoint [ rdfs:label "M2199 30W"; rdf:value 8 ] ;
-        lv2:scalePoint [ rdfs:label "1959/86 AC-30"; rdf:value 9 ] ;
-        lv2:scalePoint [ rdfs:label "VOX AC-15"; rdf:value 10 ] ;
-        lv2:scalePoint [ rdfs:label "Soldano SLO 100"; rdf:value 11 ] ;
-        lv2:scalePoint [ rdfs:label "Sovtek MIG 100 H"; rdf:value 12 ] ;
-        lv2:scalePoint [ rdfs:label "Peavey C20"; rdf:value 13 ] ;
-        lv2:scalePoint [ rdfs:label "Ibanez GX20"; rdf:value 14 ] ;
-        lv2:scalePoint [ rdfs:label "Roland Cube 60"; rdf:value 15 ] ;
-        lv2:scalePoint [ rdfs:label "Ampeg VL 501"; rdf:value 16 ] ;
-        lv2:scalePoint [ rdfs:label "Ampeg Reverb Rocket"; rdf:value 17 ] ;
-        lv2:scalePoint [ rdfs:label "Bogner Triple Giant Preamp"; rdf:value 18 ] ;
-        lv2:scalePoint [ rdfs:label "Groove Trio Preamp"; rdf:value 19 ] ;
-        lv2:scalePoint [ rdfs:label "Hughes&Kettner"; rdf:value 20 ] ;
-        lv2:scalePoint [ rdfs:label "Fender Blues Junior"; rdf:value 21 ] ;
-        lv2:scalePoint [ rdfs:label "Fender"; rdf:value 22 ] ;
-        lv2:scalePoint [ rdfs:label "Fender Hot Rod"; rdf:value 23 ] ;
-        lv2:scalePoint [ rdfs:label "Gibsen GS12 Reverb Rocket"; rdf:value 24 ] ;
-	*/
-    case paramCabinet:
+    case paramToneStack:
         parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_INTEGER;
-        parameter.name       = "Cabinet Model";
-        parameter.symbol     = "cab";
+        parameter.name       = "Tone Stack Model";
+        parameter.symbol     = "tonestack";
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
@@ -157,8 +133,8 @@ float ZamTubePlugin::d_getParameterValue(uint32_t index) const
     case paramTreble:
         return treble;
         break;
-    case paramCabinet:
-        return cabinet;
+    case paramToneStack:
+        return tonestack;
         break;
     case paramGain:
         return mastergain;
@@ -184,8 +160,8 @@ void ZamTubePlugin::d_setParameterValue(uint32_t index, float value)
     case paramTreble:
         treble = value;
         break;
-    case paramCabinet:
-        cabinet = value;
+    case paramToneStack:
+        tonestack = value;
         break;
     case paramGain:
         mastergain = value;
@@ -203,7 +179,7 @@ void ZamTubePlugin::d_setProgram(uint32_t index)
     bass = 0.5f;
     middle = 0.5f;
     treble = 0.0f;
-    cabinet = 0.0f;
+    tonestack = 0.0f;
     mastergain = 0.0f;
 
     /* Default variable values */
@@ -363,7 +339,7 @@ void ZamTubePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 	float 	fSlow28 = (fConst1 * (0 - fSlow23));
 	float 	fSlow29 = (fSlow28 + (fConst2 * (fSlow20 + fSlow19)));
 	float 	fSlow30 = (fSlow28 - (fConst2 * (fSlow20 + fSlow26)));
-	float 	fSlow31 = cabinet;
+	float 	fSlow31 = tonestack;
 	float 	fSlow32 = ((fSlow31 == 23) / fSlow15);
 	float 	fSlow33 = (1.0607618000000002e-05f * fSlow0);
 	float 	fSlow34 = (3.1187760000000004e-05f + ((0.00032604000000000004f * fSlow2) + (fSlow0 * (((0.00011284700000000001f * fSlow2) - 1.9801382e-05f) - fSlow33))));
@@ -1046,7 +1022,7 @@ void ZamTubePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 		I1.setWD(v.G.WU);
 		I3.setWD(v.K.WU);
 		
-		//Cabinet sim
+		//Tone Stack sim
 		fRec0[0] = ((float)tubeout - (fSlow16 * (((fSlow14 * fRec0[2]) + (fSlow13 * fRec0[1])) + (fSlow11 * fRec0[3]))));
 		fRec1[0] = ((float)tubeout - (fSlow47 * (((fSlow45 * fRec1[2]) + (fSlow44 * fRec1[1])) + (fSlow42 * fRec1[3]))));
 		fRec2[0] = ((float)tubeout - (fSlow75 * (((fSlow73 * fRec2[2]) + (fSlow72 * fRec2[1])) + (fSlow70 * fRec2[3]))));

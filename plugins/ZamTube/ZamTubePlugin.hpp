@@ -112,7 +112,7 @@ public:
         paramBass,
         paramMiddle,
         paramTreble,
-        paramCabinet,
+        paramToneStack,
         paramGain,
         paramCount
     };
@@ -189,7 +189,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float tubedrive,bass,middle,treble,cabinet,mastergain; //parameters
+    float tubedrive,bass,middle,treble,tonestack,mastergain; //parameters
 };
 
 // -----------------------------------------------------------------------
