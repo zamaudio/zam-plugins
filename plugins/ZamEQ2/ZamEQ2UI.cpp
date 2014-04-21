@@ -420,11 +420,7 @@ void ZamEQ2UI::calceqcurve(float x[], float y[])
                 H += (1. + a1[0][3]*expiw + a2[0][3]*exp2iw)/(b0[0][3] + b1[0][3]*expiw + b2[0][3]*exp2iw);
 
                 freqH = std::abs(H);
-                //phaseH = carg(H);
-
-                //y[i] = (to_dB(freqH)-12.04)/12. + 0.5;
                 y[i] = (to_dB(freqH/4.)/5.)-(fSliderMaster->getValue())/24.f+0.5;
-		//printf("%.4f\n",y[i]);
 		x[i] = fCanvasArea.getX() + x[i]*fCanvasArea.getWidth();
 		y[i] = fCanvasArea.getY() + y[i]*fCanvasArea.getHeight();
         }
@@ -447,9 +443,13 @@ void ZamEQ2UI::onDisplay()
     glColor4f(1.f, 1.f, 0.235f, 1.0f);
     for (i = 1; i < EQPOINTS; ++i) {
         glBegin(GL_LINES);
-            glVertex2i(eqx[i-1], eqy[i-1]);
-            glVertex2i(eqx[i], eqy[i]);
-            //printf("x = %f  y = %f\n",compx[k][i],compy[k][i]);
+            if (eqy[i-1] < fCanvasArea.getY() + fCanvasArea.getHeight()
+			&& eqy[i] < fCanvasArea.getY() + fCanvasArea.getHeight() 
+			&& eqy[i-1] > fCanvasArea.getY()
+			&& eqy[i] > fCanvasArea.getY()) {
+                glVertex2i(eqx[i-1], eqy[i-1]);
+                glVertex2i(eqx[i], eqy[i]);
+	    }
         glEnd();
     }
     // reset color

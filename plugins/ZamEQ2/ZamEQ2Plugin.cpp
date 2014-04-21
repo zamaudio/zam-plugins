@@ -382,7 +382,7 @@ float ZamEQ2Plugin::run_filter(int i, int ch, double in)
 	out = in * b0[ch][i] 	+ x1[ch][i] * b1[ch][i] 
 				+ x2[ch][i] * b2[ch][i]
 				- y1[ch][i] * a1[ch][i]
-				- y2[ch][i] * a2[ch][i];
+				- y2[ch][i] * a2[ch][i] + 1e-20f;
 	x2[ch][i] = x1[ch][i];
 	y2[ch][i] = y1[ch][i];
 	x1[ch][i] = in;
@@ -406,16 +406,16 @@ void ZamEQ2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 in = sanitize_denormal(in);
 
                 //lowshelf
-                tmpl = run_filter(0, 0, in);
+                tmpl = (gainl == 0.f) ? in : run_filter(0, 0, in);
 
                 //highshelf
-                tmph = run_filter(1, 0, tmpl);
+                tmph = (gainh == 0.f) ? tmpl : run_filter(3, 0, tmpl);
 
                 //parametric1
-                tmp = run_filter(2, 0, tmph);
+                tmp = (gain1 == 0.f) ? tmph : run_filter(1, 0, tmph);
 
 		//parametric2
-		tmpl = run_filter(3, 0, tmp);
+		tmpl = (gain2 == 0.f) ? tmp : run_filter(2, 0, tmp);
 
                 outputs[0][i] = inputs[0][i];
                 outputs[0][i] = (float) tmpl;
