@@ -20,6 +20,8 @@
 
 #include "DistrhoPlugin.hpp"
 
+#define MAX_FILT 4
+
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
@@ -118,27 +120,17 @@ protected:
     void d_deactivate() override;
     void d_run(float** inputs, float** outputs, uint32_t frames) override;
 
-    void peq(double G0, double G, double GB, double w0, double Dw, 
-		double *a0, double *a1, double *a2, 
-		double *b0, double *b1, double *b2, double *gn);
-    void lowshelfeq(double G0, double G, double GB, 
-    		double w0, double Dw, double q, double B[], double A[]);
-    void highshelfeq(double G0, double G, double GB, 
-    		double w0, double Dw, double q, double B[], double A[]);
+    void peq(int i, int ch, float srate, float fc, float g, float bw);
+    void lowshelf(int i, int ch, float srate, float fc, float g);
+    void highshelf(int i, int ch, float srate, float fc, float g);
+    float run_filter(int i, int ch, double in);
+        double x1[1][MAX_FILT], x2[1][MAX_FILT], y1[1][MAX_FILT], y2[1][MAX_FILT];
+        double b0[1][MAX_FILT], b1[1][MAX_FILT], b2[1][MAX_FILT];
+        double a1[1][MAX_FILT], a2[1][MAX_FILT];
     // -------------------------------------------------------------------
 
 private:
     float gain1,q1,freq1,gain2,q2,freq2,gainl,freql,gainh,freqh,master,togglepeaks; //parameters
-        double x1,x2,y1,y2;
-        double x1a,x2a,y1a,y2a;
-        double zln1,zln2,zld1,zld2;
-        double zhn1,zhn2,zhd1,zhd2;
-        double a0x,a1x,a2x,b0x,b1x,b2x,gainx;
-        double a0y,a1y,a2y,b0y,b1y,b2y,gainy;
-        double Bl[3];
-        double Al[3];
-        double Bh[3];
-        double Ah[3];
 };
 
 // -----------------------------------------------------------------------
