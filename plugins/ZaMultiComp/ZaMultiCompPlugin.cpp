@@ -458,14 +458,14 @@ void ZaMultiCompPlugin::d_deactivate()
 float ZaMultiCompPlugin::run_filter(int i, float in)
 {
         in = sanitize_denormal(in);
-        w1[i] = sanitize_denormal(w1[i]);
-        w2[i] = sanitize_denormal(w2[i]);
+	w1[i] = sanitize_denormal(w1[i]);
+	w2[i] = sanitize_denormal(w2[i]);
 
         float tmp = in - w1[i] * b1[i] - w2[i] * b2[i];
-        float out = tmp * a0[i] + w1[i] * a1[i] + w2[i] * a2[i];
+        float out = tmp * a0[i] + w1[i] * a1[i] + w2[i] * a2[i] + 1e-20f;
         w2[i] = w1[i];
-        w1[i] = tmp;
-        return out;
+        w1[i] = sanitize_denormal(tmp);
+        return sanitize_denormal(out - 1e-20f);
 }
 
 void ZaMultiCompPlugin::set_lp_coeffs(float fc, float q, float sr, int i, float gain=1.0)
@@ -510,9 +510,9 @@ float ZaMultiCompPlugin::run_comp(int k, float in)
         float out;
 
         yg=0.f;
+	in = sanitize_denormal(in);
         xg = (in==0.f) ? -160.f : to_dB(fabs(in));
-        xg = sanitize_denormal(xg);
-
+	xg = sanitize_denormal(xg);
 
         if (2.f*(xg-thresdb)<-width) {
                 yg = xg;
@@ -542,7 +542,7 @@ float ZaMultiCompPlugin::run_comp(int k, float in)
 
         old_yl[k] = yl;
         old_y1[k] = y1;
-        return out;
+        return sanitize_denormal(out);
 }
 
 void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
@@ -569,19 +569,21 @@ void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 
         for (uint32_t i = 0; i < frames; ++i) {
                 float tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, fil1, fil2, fil3, fil4;
-		float cmp1, cmp2, cmp3;
+		float cmp1, cmp2, cmp3, in;
 		int listenmode = 0;
-                fil1 = run_filter(0, inputs[0][i]);
+		in = sanitize_denormal(inputs[0][i]);
+		in = (fabs(in) < DANGER) ? in : 0.f;
+                fil1 = run_filter(0, in);
                 tmp1 = run_filter(1, fil1);
 		cmp1 = (!tog1 && !listen1) ? 0.f : run_comp(0, tmp1);
                 tmp2 = tog1 ? cmp1 * from_dB(makeup[0]) : tmp1;
-                fil2 = run_filter(2, inputs[0][i]);
+                fil2 = run_filter(2, in);
                 tmp3 = run_filter(3, fil2);
                 fil3 = run_filter(4, tmp3);
                 tmp4 = run_filter(5, fil3);
 		cmp2 = (!tog2 && !listen2) ? 0.f : run_comp(1, tmp4);
                 tmp3 = (tog2) ? cmp2 * from_dB(makeup[1]) : tmp4;
-                fil4 = run_filter(6, inputs[0][i]);
+                fil4 = run_filter(6, in);
                 tmp5 = run_filter(7, fil4);
 		cmp3 = (!tog3 && !listen3) ? 0.f : run_comp(2, tmp5);
                 tmp6 = (tog3) ? cmp3 * from_dB(makeup[2]) : tmp5;
@@ -607,11 +609,12 @@ void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 			outputs[0][i] += tmp3;
 			outputs[0][i] += tmp6;
 		}
+		outputs[0][i] = sanitize_denormal(outputs[0][i]);
                 outputs[0][i] *= from_dB(globalgain);
 
-		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : max;
+		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : sanitize_denormal(max);
         }
-	outlevel = sanitize_denormal((max == 0.f) ? -45.f : to_dB(max));
+	outlevel = (max == 0.f) ? -45.f : to_dB(max);
 }
 
 // -----------------------------------------------------------------------

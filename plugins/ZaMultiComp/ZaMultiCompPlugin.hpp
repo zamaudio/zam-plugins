@@ -22,6 +22,7 @@
 #define MAX_COMP 3
 #define ONEOVERROOT2 0.7071068f
 #define ROOT2 1.4142135f
+#define DANGER 100000.f
 
 #include "DistrhoPlugin.hpp"
 
@@ -114,7 +115,7 @@ protected:
 
 	static inline float
 	sanitize_denormal(float v) {
-	        if(!std::isnormal(v))
+	        if(!std::isnormal(v) || !std::isfinite(v))
 	                return 0.f;
 	        return v;
 	}
