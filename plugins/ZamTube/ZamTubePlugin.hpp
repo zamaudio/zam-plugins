@@ -39,6 +39,7 @@ template <> 	 inline int faustpower<1>(int x) 		{ return x; }
 typedef long double quad;
 
 #define TOLERANCE 1e-6
+#define DANGER 1000.f
 
 class ZamTubePlugin : public Plugin
 {
@@ -167,7 +168,7 @@ protected:
 
 	static inline float
 	sanitize_denormal(float v) {
-	        if(!std::isnormal(v))
+	        if(!std::isnormal(v) || !std::isfinite(v))
 	                return 0.f;
 	        return v;
 	}

@@ -295,7 +295,6 @@ void ZamTubePlugin::d_deactivate()
 
 void ZamTubePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = d_getSampleRate();
 	T tubetone = 0.f;
 	
 	//12AX7 triode tube mod
@@ -979,44 +978,50 @@ void ZamTubePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 	for (uint32_t i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
-		Vi.e = inputs[0][i]*from_dB(tubedrive);
+		float in = sanitize_denormal(inputs[0][i]);
+
+		// protect against overflowing circuit
+		in = fabs(in) < DANGER ? in : 0.f; 
+
+		Vi.e = in*from_dB(tubedrive);
 
 		//Step 2: propagate waves up to the triode and push values into triode element
 		I1.waveUp();
 		I3.waveUp();
 		P2.waveUp();
-		v.G.WD = I1.WU;
-		v.K.WD = I3.WU; 
-		v.P.WD = P2.WU;
+		v.G.WD = sanitize_denormal(I1.WU);
+		v.K.WD = sanitize_denormal(I3.WU); 
+		v.P.WD = sanitize_denormal(P2.WU);
 		v.vg = v.G.WD;
 		v.vk = v.K.WD;
 		v.vp = v.P.WD;
-		v.G.PortRes = I1.PortRes;
-		v.K.PortRes = I3.PortRes;
-		v.P.PortRes = P2.PortRes;
+		v.G.PortRes = sanitize_denormal(I1.PortRes);
+		v.K.PortRes = sanitize_denormal(I3.PortRes);
+		v.P.PortRes = sanitize_denormal(P2.PortRes);
 
 		//Step 3: compute wave reflections inside the triode
 		T vg0, vg1, vp0, vp1;
 
 		vg0 = -10.0;
 		vg1 = 10.0;
-		v.vg = v.zeroffg(vg0,vg1,TOLERANCE);
+		v.vg = sanitize_denormal(v.zeroffg(vg0,vg1,TOLERANCE));
 		//v.vg = v.secantfg(&vg0,&vg1);
 
 		vp0 = e;
 		vp1 = 0.0;
-		v.vp = v.zeroffp(vp0,vp1,TOLERANCE);
+		v.vp = sanitize_denormal(v.zeroffp(vp0,vp1,TOLERANCE));
 		//v.vp = v.secantfp(&vp0,&vp1);
 
-		v.vk = v.ffk();
+		v.vk = sanitize_denormal(v.ffk());
 
-		v.G.WU = 2.0*v.vg-v.G.WD;
-		v.K.WU = 2.0*v.vk-v.K.WD;
-		v.P.WU = 2.0*v.vp-v.P.WD;
+		v.G.WU = sanitize_denormal(2.0*v.vg-v.G.WD);
+		v.K.WU = sanitize_denormal(2.0*v.vk-v.K.WD);
+		v.P.WU = sanitize_denormal(2.0*v.vp-v.P.WD);
 		
-		outputs[0][i] = inputs[0][i];
+		outputs[0][i] = in;
 		
 		tubeout = -Ro.Voltage()/e; //invert signal and rescale
+		tubeout = sanitize_denormal(tubeout);
 
 		P2.setWD(v.P.WU); 
 		I1.setWD(v.G.WU);
@@ -1049,32 +1054,34 @@ void ZamTubePlugin::d_run(float** inputs, float** outputs, uint32_t frames)
 		fRec23[0] = ((float)tubeout - (fSlow626 * (((fSlow624 * fRec23[2]) + (fSlow623 * fRec23[1])) + (fSlow621 * fRec23[3]))));
 		fRec24[0] = ((float)tubeout - (fSlow652 * (((fSlow650 * fRec24[2]) + (fSlow649 * fRec24[1])) + (fSlow647 * fRec24[3]))));
 		outputs[0][i] = (FAUSTFLOAT)((fSlow664 * ((fSlow663 * fRec24[0]) + ((fSlow662 * fRec24[1]) + ((fSlow660 * fRec24[3]) + (fSlow658 * fRec24[2]))))) + ((fSlow638 * ((fSlow637 * fRec23[0]) + ((fSlow636 * fRec23[1]) + ((fSlow634 * fRec23[3]) + (fSlow632 * fRec23[2]))))) + ((fSlow614 * ((fSlow613 * fRec22[0]) + ((fSlow612 * fRec22[1]) + ((fSlow610 * fRec22[3]) + (fSlow608 * fRec22[2]))))) + ((fSlow588 * ((fSlow587 * fRec21[0]) + ((fSlow586 * fRec21[1]) + ((fSlow584 * fRec21[3]) + (fSlow582 * fRec21[2]))))) + ((fSlow561 * ((fSlow560 * fRec20[0]) + ((fSlow559 * fRec20[1]) + ((fSlow558 * fRec20[3]) + (fSlow556 * fRec20[2]))))) + ((fSlow540 * ((fSlow539 * fRec19[0]) + ((fSlow538 * fRec19[1]) + ((fSlow537 * fRec19[3]) + (fSlow535 * fRec19[2]))))) + ((fSlow519 * ((fSlow518 * fRec18[0]) + ((fSlow517 * fRec18[1]) + ((fSlow515 * fRec18[3]) + (fSlow513 * fRec18[2]))))) + ((fSlow493 * ((fSlow492 * fRec17[0]) + ((fSlow491 * fRec17[1]) + ((fSlow489 * fRec17[3]) + (fSlow487 * fRec17[2]))))) + ((fSlow463 * ((fSlow462 * fRec16[0]) + ((fSlow461 * fRec16[1]) + ((fSlow459 * fRec16[3]) + (fSlow457 * fRec16[2]))))) + ((fSlow435 * ((fSlow434 * fRec15[0]) + ((fSlow433 * fRec15[1]) + ((fSlow431 * fRec15[3]) + (fSlow429 * fRec15[2]))))) + ((fSlow409 * ((fSlow408 * fRec14[0]) + ((fSlow407 * fRec14[1]) + ((fSlow405 * fRec14[3]) + (fSlow403 * fRec14[2]))))) + ((fSlow385 * ((fSlow384 * fRec13[0]) + ((fSlow383 * fRec13[1]) + ((fSlow381 * fRec13[3]) + (fSlow379 * fRec13[2]))))) + ((fSlow358 * ((fSlow357 * fRec12[0]) + ((fSlow356 * fRec12[1]) + ((fSlow354 * fRec12[3]) + (fSlow352 * fRec12[2]))))) + ((fSlow332 * ((fSlow331 * fRec11[0]) + ((fSlow330 * fRec11[1]) + ((fSlow328 * fRec11[3]) + (fSlow326 * fRec11[2]))))) + ((fSlow305 * ((fSlow304 * fRec10[0]) + ((fSlow303 * fRec10[1]) + ((fSlow301 * fRec10[3]) + (fSlow299 * fRec10[2]))))) + ((fSlow277 * ((fSlow276 * fRec9[0]) + ((fSlow275 * fRec9[1]) + ((fSlow273 * fRec9[3]) + (fSlow271 * fRec9[2]))))) + ((fSlow250 * ((fSlow249 * fRec8[0]) + ((fSlow248 * fRec8[1]) + ((fSlow246 * fRec8[3]) + (fSlow244 * fRec8[2]))))) + ((fSlow224 * ((fSlow223 * fRec7[0]) + ((fSlow222 * fRec7[1]) + ((fSlow220 * fRec7[3]) + (fSlow218 * fRec7[2]))))) + ((fSlow198 * ((fSlow197 * fRec6[0]) + ((fSlow196 * fRec6[1]) + ((fSlow194 * fRec6[3]) + (fSlow192 * fRec6[2]))))) + ((fSlow171 * ((fSlow170 * fRec5[0]) + ((fSlow169 * fRec5[1]) + ((fSlow167 * fRec5[3]) + (fSlow165 * fRec5[2]))))) + ((fSlow140 * ((fSlow139 * fRec4[0]) + ((fSlow138 * fRec4[1]) + ((fSlow136 * fRec4[3]) + (fSlow134 * fRec4[2]))))) + ((fSlow114 * ((fSlow113 * fRec3[0]) + ((fSlow112 * fRec3[1]) + ((fSlow110 * fRec3[3]) + (fSlow108 * fRec3[2]))))) + ((fSlow88 * ((fSlow87 * fRec2[0]) + ((fSlow86 * fRec2[1]) + ((fSlow84 * fRec2[3]) + (fSlow82 * fRec2[2]))))) + ((fSlow60 * ((fSlow59 * fRec1[0]) + ((fSlow58 * fRec1[1]) + ((fSlow56 * fRec1[3]) + (fSlow54 * fRec1[2]))))) + (fSlow32 * ((fSlow30 * fRec0[0]) + ((fSlow29 * fRec0[1]) + ((fSlow27 * fRec0[3]) + (fSlow25 * fRec0[2])))))))))))))))))))))))))))))* from_dB(mastergain);
+		outputs[0][i] = sanitize_denormal(outputs[0][i]);
+
 		// post processing
-		for (int i=3; i>0; i--) fRec24[i] = fRec24[i-1];
-		for (int i=3; i>0; i--) fRec23[i] = fRec23[i-1];
-		for (int i=3; i>0; i--) fRec22[i] = fRec22[i-1];
-		for (int i=3; i>0; i--) fRec21[i] = fRec21[i-1];
-		for (int i=3; i>0; i--) fRec20[i] = fRec20[i-1];
-		for (int i=3; i>0; i--) fRec19[i] = fRec19[i-1];
-		for (int i=3; i>0; i--) fRec18[i] = fRec18[i-1];
-		for (int i=3; i>0; i--) fRec17[i] = fRec17[i-1];
-		for (int i=3; i>0; i--) fRec16[i] = fRec16[i-1];
-		for (int i=3; i>0; i--) fRec15[i] = fRec15[i-1];
-		for (int i=3; i>0; i--) fRec14[i] = fRec14[i-1];
-		for (int i=3; i>0; i--) fRec13[i] = fRec13[i-1];
-		for (int i=3; i>0; i--) fRec12[i] = fRec12[i-1];
-		for (int i=3; i>0; i--) fRec11[i] = fRec11[i-1];
-		for (int i=3; i>0; i--) fRec10[i] = fRec10[i-1];
-		for (int i=3; i>0; i--) fRec9[i] = fRec9[i-1];
-		for (int i=3; i>0; i--) fRec8[i] = fRec8[i-1];
-		for (int i=3; i>0; i--) fRec7[i] = fRec7[i-1];
-		for (int i=3; i>0; i--) fRec6[i] = fRec6[i-1];
-		for (int i=3; i>0; i--) fRec5[i] = fRec5[i-1];
-		for (int i=3; i>0; i--) fRec4[i] = fRec4[i-1];
-		for (int i=3; i>0; i--) fRec3[i] = fRec3[i-1];
-		for (int i=3; i>0; i--) fRec2[i] = fRec2[i-1];
-		for (int i=3; i>0; i--) fRec1[i] = fRec1[i-1];
-		for (int i=3; i>0; i--) fRec0[i] = fRec0[i-1];
+		for (int i=3; i>0; i--) fRec24[i] = sanitize_denormal(fRec24[i-1]);
+		for (int i=3; i>0; i--) fRec23[i] = sanitize_denormal(fRec23[i-1]);
+		for (int i=3; i>0; i--) fRec22[i] = sanitize_denormal(fRec22[i-1]);
+		for (int i=3; i>0; i--) fRec21[i] = sanitize_denormal(fRec21[i-1]);
+		for (int i=3; i>0; i--) fRec20[i] = sanitize_denormal(fRec20[i-1]);
+		for (int i=3; i>0; i--) fRec19[i] = sanitize_denormal(fRec19[i-1]);
+		for (int i=3; i>0; i--) fRec18[i] = sanitize_denormal(fRec18[i-1]);
+		for (int i=3; i>0; i--) fRec17[i] = sanitize_denormal(fRec17[i-1]);
+		for (int i=3; i>0; i--) fRec16[i] = sanitize_denormal(fRec16[i-1]);
+		for (int i=3; i>0; i--) fRec15[i] = sanitize_denormal(fRec15[i-1]);
+		for (int i=3; i>0; i--) fRec14[i] = sanitize_denormal(fRec14[i-1]);
+		for (int i=3; i>0; i--) fRec13[i] = sanitize_denormal(fRec13[i-1]);
+		for (int i=3; i>0; i--) fRec12[i] = sanitize_denormal(fRec12[i-1]);
+		for (int i=3; i>0; i--) fRec11[i] = sanitize_denormal(fRec11[i-1]);
+		for (int i=3; i>0; i--) fRec10[i] = sanitize_denormal(fRec10[i-1]);
+		for (int i=3; i>0; i--) fRec9[i] = sanitize_denormal(fRec9[i-1]);
+		for (int i=3; i>0; i--) fRec8[i] = sanitize_denormal(fRec8[i-1]);
+		for (int i=3; i>0; i--) fRec7[i] = sanitize_denormal(fRec7[i-1]);
+		for (int i=3; i>0; i--) fRec6[i] = sanitize_denormal(fRec6[i-1]);
+		for (int i=3; i>0; i--) fRec5[i] = sanitize_denormal(fRec5[i-1]);
+		for (int i=3; i>0; i--) fRec4[i] = sanitize_denormal(fRec4[i-1]);
+		for (int i=3; i>0; i--) fRec3[i] = sanitize_denormal(fRec3[i-1]);
+		for (int i=3; i>0; i--) fRec2[i] = sanitize_denormal(fRec2[i-1]);
+		for (int i=3; i>0; i--) fRec1[i] = sanitize_denormal(fRec1[i-1]);
+		for (int i=3; i>0; i--) fRec0[i] = sanitize_denormal(fRec0[i-1]);
 	}
 }
 
