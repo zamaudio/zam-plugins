@@ -322,15 +322,15 @@ void ZamCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames)
                 outputs[1][i] = inputs[1][i];
                 outputs[1][i] *= Rgain * from_dB(makeup);
 		
-		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : max;
-		max = (fabsf(outputs[1][i]) > max) ? fabsf(outputs[1][i]) : max;
+		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : sanitize_denormal(max);
+		max = (fabsf(outputs[1][i]) > max) ? fabsf(outputs[1][i]) : sanitize_denormal(max);
 
                 oldL_yl = Lyl;
                 oldR_yl = Ryl;
                 oldL_y1 = Ly1;
                 oldR_y1 = Ry1;
         }
-	outlevel = sanitize_denormal((max == 0.f) ? -45.f : to_dB(max));
+	outlevel = (max == 0.f) ? -45.f : to_dB(max);
     }
 
 // -----------------------------------------------------------------------
