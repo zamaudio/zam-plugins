@@ -28,6 +28,7 @@ START_NAMESPACE_DISTRHO
 #define ROOT2 1.4142135f
 #define STEREOLINK_MAX 1
 #define STEREOLINK_AVERAGE 0
+#define DANGER 100000.f
 
 // -----------------------------------------------------------------------
 

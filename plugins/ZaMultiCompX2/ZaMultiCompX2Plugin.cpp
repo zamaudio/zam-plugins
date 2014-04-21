@@ -512,8 +512,8 @@ float ZaMultiCompX2Plugin::run_filter(int i, int ch, float in)
         float tmp = in - w1[ch][i] * b1[ch][i] - w2[ch][i] * b2[ch][i];
         float out = tmp * a0[ch][i] + w1[ch][i] * a1[ch][i] + w2[ch][i] * a2[ch][i];
         w2[ch][i] = w1[ch][i];
-        w1[ch][i] = tmp;
-        return out;
+        w1[ch][i] = sanitize_denormal(tmp);
+        return sanitize_denormal(out);
 }
 
 void ZaMultiCompX2Plugin::set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain=1.0)
@@ -562,6 +562,8 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         float Rxl, Ryl, Ry1;
 
         Lyg = Ryg = 0.f;
+	inL = sanitize_denormal(inL);
+	inR = sanitize_denormal(inR);
         Lxg = (inL==0.f) ? -160.f : to_dB(fabs(inL));
         Rxg = (inR==0.f) ? -160.f : to_dB(fabs(inR));
         Lxg = sanitize_denormal(Lxg);
@@ -616,7 +618,6 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         cdb = -Ryl;
         Rgain = from_dB(cdb);
         
-        
         if (stereolink == STEREOLINK_MAX)
 		gainr[k] = fmaxf(Lyl, Ryl);
 	else
@@ -670,12 +671,16 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
 		float fil1[2], fil2[2], fil3[2], fil4[2];
 		float outL[MAX_COMP] = {0.f};
 		float outR[MAX_COMP] = {0.f};
+		float inl = sanitize_denormal(inputs[0][i]);
+		float inr = sanitize_denormal(inputs[1][i]);
+		inl = (fabs(inl) < DANGER) ? inl : 0.f;
+		inr = (fabs(inr) < DANGER) ? inr : 0.f;
 
 		int listenmode = 0;
 
 		// Interleaved channel processing
-                fil1[0] = run_filter(0, 0, inputs[0][i]);
-                fil1[1] = run_filter(0, 1, inputs[1][i]);
+                fil1[0] = run_filter(0, 0, inl);
+                fil1[1] = run_filter(0, 1, inr);
                 tmp1[0] = run_filter(1, 0, fil1[0]);
                 tmp1[1] = run_filter(1, 1, fil1[1]);
 		if (tog1)
@@ -684,8 +689,8 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
 		tmp2[0] = tog1 ? outL[0] * from_dB(makeup[0]) : tmp1[0];
                 tmp2[1] = tog1 ? outR[0] * from_dB(makeup[0]) : tmp1[1];
 
-                fil2[0] = run_filter(2, 0, inputs[0][i]);
-                fil2[1] = run_filter(2, 1, inputs[1][i]);
+                fil2[0] = run_filter(2, 0, inl);
+                fil2[1] = run_filter(2, 1, inr);
                 tmp3[0] = run_filter(3, 0, fil2[0]);
                 tmp3[1] = run_filter(3, 1, fil2[1]);
                 fil3[0] = run_filter(4, 0, tmp3[0]);
@@ -698,8 +703,8 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
                 tmp3[0] = tog2 ? outL[1] * from_dB(makeup[1]) : tmp4[0];
                 tmp3[1] = tog2 ? outR[1] * from_dB(makeup[1]) : tmp4[1];
 
-                fil4[0] = run_filter(6, 0, inputs[0][i]);
-                fil4[1] = run_filter(6, 1, inputs[1][i]);
+                fil4[0] = run_filter(6, 0, inl);
+                fil4[1] = run_filter(6, 1, inr);
                 tmp5[0] = run_filter(7, 0, fil4[0]);
                 tmp5[1] = run_filter(7, 1, fil4[1]);
 		if (tog3) 
@@ -735,27 +740,26 @@ void ZaMultiCompX2Plugin::d_run(float** inputs, float** outputs, uint32_t frames
                 	outputs[0][i] = tmp2[0] + tmp3[0] + tmp6[0];
                 	outputs[1][i] = tmp2[1] + tmp3[1] + tmp6[1];
 		}
-                outputs[0][i] *= from_dB(globalgain);
-                outputs[1][i] *= from_dB(globalgain);
-		
                 outputs[0][i] = sanitize_denormal(outputs[0][i]);
                 outputs[1][i] = sanitize_denormal(outputs[1][i]);
+                outputs[0][i] *= from_dB(globalgain);
+                outputs[1][i] *= from_dB(globalgain);
 
 		if (resetl) {
 			maxL = fabsf(outputs[0][i]);
 			resetl = false;
 		} else {
-			maxxL = (fabsf(outputs[0][i]) > maxxL) ? fabsf(outputs[0][i]) : maxxL;
+			maxxL = (fabsf(outputs[0][i]) > maxxL) ? fabsf(outputs[0][i]) : sanitize_denormal(maxxL);
 		}
 		if (resetr) {
 			maxR = fabsf(outputs[1][i]);
 			resetr = false;
 		} else {
-			maxxR = (fabsf(outputs[1][i]) > maxxR) ? fabsf(outputs[1][i]) : maxxR;
+			maxxR = (fabsf(outputs[1][i]) > maxxR) ? fabsf(outputs[1][i]) : sanitize_denormal(maxxR);
 		}
         }
-	outl = sanitize_denormal((maxxL <= 0.f) ? -160.f : to_dB(maxxL));
-	outr = sanitize_denormal((maxxR <= 0.f) ? -160.f : to_dB(maxxR));
+	outl = (maxxL <= 0.f) ? -160.f : to_dB(maxxL);
+	outr = (maxxR <= 0.f) ? -160.f : to_dB(maxxR);
 }
 
 // -----------------------------------------------------------------------
