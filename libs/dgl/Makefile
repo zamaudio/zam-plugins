@@ -20,6 +20,7 @@ OBJS = \
 	src/Image.cpp.o \
 	src/ImageAboutWindow.cpp.o \
 	src/ImageButton.cpp.o \
+	src/ImageToggle.cpp.o \
 	src/ImageKnob.cpp.o \
 	src/ImageSlider.cpp.o \
 	src/Geometry.cpp.o \

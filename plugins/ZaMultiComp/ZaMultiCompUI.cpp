@@ -135,74 +135,46 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup1->setRotationAngle(240);
     fKnobMakeup1->setCallback(this);
 
-    Image toggleImage(ZaMultiCompArtwork::togglesliderData, ZaMultiCompArtwork::togglesliderWidth, ZaMultiCompArtwork::togglesliderHeight);
+    Image toggleonImage(ZaMultiCompArtwork::toggleonData, ZaMultiCompArtwork::toggleonWidth, ZaMultiCompArtwork::toggleonHeight);
+    Image toggleoffImage(ZaMultiCompArtwork::toggleoffData, ZaMultiCompArtwork::toggleoffWidth, ZaMultiCompArtwork::toggleoffHeight);
+    Image toggleonhImage(ZaMultiCompArtwork::toggleonhorizData, ZaMultiCompArtwork::toggleonhorizWidth, ZaMultiCompArtwork::toggleonhorizHeight);
+    Image toggleoffhImage(ZaMultiCompArtwork::toggleoffhorizData, ZaMultiCompArtwork::toggleoffhorizWidth, ZaMultiCompArtwork::toggleoffhorizHeight);
 
-    Point<int> togglePosStart(247,108);
-    Point<int> togglePosEnd(247,108+11);
+    Point<int> togglePosStart(247,109);
 
-    fToggleBypass3 = new ImageSlider(this, toggleImage);
-    fToggleBypass3->setStartPos(togglePosStart);
-    fToggleBypass3->setEndPos(togglePosEnd);
-    fToggleBypass3->setRange(1.f,0.f);
-    fToggleBypass3->setStep(1.f);
-    fToggleBypass3->setValue(0.f);
+    fToggleBypass3 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fToggleBypass3->setPos(togglePosStart);
     fToggleBypass3->setCallback(this);
 
     togglePosStart.setY(158);
-    togglePosEnd.setY(158+11);
 
-    fToggleBypass2 = new ImageSlider(this, toggleImage);
-    fToggleBypass2->setStartPos(togglePosStart);
-    fToggleBypass2->setEndPos(togglePosEnd);
-    fToggleBypass2->setRange(1.f,0.f);
-    fToggleBypass2->setStep(1.f);
-    fToggleBypass2->setValue(0.f);
+    fToggleBypass2 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fToggleBypass2->setPos(togglePosStart);
     fToggleBypass2->setCallback(this);
 
     togglePosStart.setY(209);
-    togglePosEnd.setY(209+11);
 
-    fToggleBypass1 = new ImageSlider(this, toggleImage);
-    fToggleBypass1->setStartPos(togglePosStart);
-    fToggleBypass1->setEndPos(togglePosEnd);
-    fToggleBypass1->setRange(1.f,0.f);
-    fToggleBypass1->setStep(1.f);
-    fToggleBypass1->setValue(0.f);
+    fToggleBypass1 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fToggleBypass1->setPos(togglePosStart);
     fToggleBypass1->setCallback(this);
 
     togglePosStart.setX(278);
     togglePosStart.setY(113);
-    togglePosEnd.setX(278+11);
-    togglePosEnd.setY(113);
 
-    fToggleListen3 = new ImageSlider(this, toggleImage);
-    fToggleListen3->setStartPos(togglePosStart);
-    fToggleListen3->setEndPos(togglePosEnd);
-    fToggleListen3->setRange(0.f,1.f);
-    fToggleListen3->setStep(1.f);
-    fToggleListen3->setValue(0.f);
+    fToggleListen3 = new ImageToggle(this,  toggleoffhImage, toggleoffhImage, toggleonhImage);
+    fToggleListen3->setPos(togglePosStart);
     fToggleListen3->setCallback(this);
 
     togglePosStart.setY(164);
-    togglePosEnd.setY(164);
 
-    fToggleListen2 = new ImageSlider(this, toggleImage);
-    fToggleListen2->setStartPos(togglePosStart);
-    fToggleListen2->setEndPos(togglePosEnd);
-    fToggleListen2->setRange(0.f,1.f);
-    fToggleListen2->setStep(1.f);
-    fToggleListen2->setValue(0.f);
+    fToggleListen2 = new ImageToggle(this, toggleoffhImage, toggleoffhImage, toggleonhImage); 
+    fToggleListen2->setPos(togglePosStart);
     fToggleListen2->setCallback(this);
 
     togglePosStart.setY(214);
-    togglePosEnd.setY(214);
 
-    fToggleListen1 = new ImageSlider(this, toggleImage);
-    fToggleListen1->setStartPos(togglePosStart);
-    fToggleListen1->setEndPos(togglePosEnd);
-    fToggleListen1->setRange(0.f,1.f);
-    fToggleListen1->setStep(1.f);
-    fToggleListen1->setValue(0.f);
+    fToggleListen1 = new ImageToggle(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
+    fToggleListen1->setPos(togglePosStart);
     fToggleListen1->setCallback(this);
 }
 
@@ -290,22 +262,22 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
         fKnobMakeup3->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle1:
-        fToggleBypass1->setValue(value);
+        //fToggleBypass1->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle2:
-        fToggleBypass2->setValue(value);
+        //fToggleBypass2->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle3:
-        fToggleBypass3->setValue(value);
+        //fToggleBypass3->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen1:
-        fToggleListen1->setValue(value);
+        //fToggleListen1->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen2:
-        fToggleListen2->setValue(value);
+        //fToggleListen2->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen3:
-        fToggleListen3->setValue(value);
+        //fToggleListen3->setValue(value);
         break;
     }
 }
@@ -327,12 +299,12 @@ void ZaMultiCompUI::d_programChanged(uint32_t index)
     fKnobMakeup3->setValue(0.0f);
     fKnobXover1->setValue(250.0f);
     fKnobXover2->setValue(1400.0f);
-    fToggleBypass1->setValue(0.0f);
-    fToggleBypass2->setValue(0.0f);
-    fToggleBypass3->setValue(0.0f);
-    fToggleListen1->setValue(0.0f);
-    fToggleListen2->setValue(0.0f);
-    fToggleListen3->setValue(0.0f);
+    fToggleBypass1->setValue(1.0f);
+    fToggleBypass2->setValue(1.0f);
+    fToggleBypass3->setValue(1.0f);
+    fToggleListen1->setValue(1.0f);
+    fToggleListen2->setValue(1.0f);
+    fToggleListen3->setValue(1.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -416,51 +388,20 @@ void ZaMultiCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(ZaMultiCompPlugin::paramXover2, value);
 }
 
-void ZaMultiCompUI::imageSliderDragStarted(ImageSlider* slider)
+void ZaMultiCompUI::imageToggleClicked(ImageToggle* toggle, int)
 {
-    if (slider == fToggleBypass1)
-        d_editParameter(ZaMultiCompPlugin::paramToggle1, true);
-    else if (slider == fToggleBypass2)
-        d_editParameter(ZaMultiCompPlugin::paramToggle2, true);
-    else if (slider == fToggleBypass3)
-        d_editParameter(ZaMultiCompPlugin::paramToggle3, true);
-    else if (slider == fToggleListen1)
-        d_editParameter(ZaMultiCompPlugin::paramListen1, true);
-    else if (slider == fToggleListen2)
-        d_editParameter(ZaMultiCompPlugin::paramListen2, true);
-    else if (slider == fToggleListen3)
-        d_editParameter(ZaMultiCompPlugin::paramListen3, true);
-}     
-
-void ZaMultiCompUI::imageSliderDragFinished(ImageSlider* slider)
-{
-    if (slider == fToggleBypass1)
-        d_editParameter(ZaMultiCompPlugin::paramToggle1, false);
-    else if (slider == fToggleBypass2)
-        d_editParameter(ZaMultiCompPlugin::paramToggle2, false);
-    else if (slider == fToggleBypass3)
-        d_editParameter(ZaMultiCompPlugin::paramToggle3, false);
-    else if (slider == fToggleListen1)
-        d_editParameter(ZaMultiCompPlugin::paramListen1, false);
-    else if (slider == fToggleListen2)
-        d_editParameter(ZaMultiCompPlugin::paramListen2, false);
-    else if (slider == fToggleListen3)
-        d_editParameter(ZaMultiCompPlugin::paramListen3, false);
-}
-
-void ZaMultiCompUI::imageSliderValueChanged(ImageSlider* slider, float v)
-{
-    if (slider == fToggleBypass1)
+    float v = toggle->getValue();
+    if (toggle == fToggleBypass1)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle1, v);
-    else if (slider == fToggleBypass2)
+    else if (toggle == fToggleBypass2)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle2, v);
-    else if (slider == fToggleBypass3)
+    else if (toggle == fToggleBypass3)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle3, v);
-    else if (slider == fToggleListen1)
+    else if (toggle == fToggleListen1)
         d_setParameterValue(ZaMultiCompPlugin::paramListen1, v);
-    else if (slider == fToggleListen2)
+    else if (toggle == fToggleListen2)
         d_setParameterValue(ZaMultiCompPlugin::paramListen2, v);
-    else if (slider == fToggleListen3)
+    else if (toggle == fToggleListen3)
         d_setParameterValue(ZaMultiCompPlugin::paramListen3, v);
 }
 

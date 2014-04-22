@@ -21,14 +21,14 @@
 #include "DistrhoUI.hpp"
 
 #include "ImageKnob.hpp"
-#include "ImageSlider.hpp"
+#include "ImageToggle.hpp"
 
 #include "ZaMultiCompArtwork.hpp"
 #include "ZaMultiCompPlugin.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageSlider;
+using DGL::ImageToggle;
 
 START_NAMESPACE_DISTRHO
 
@@ -36,7 +36,7 @@ START_NAMESPACE_DISTRHO
 
 class ZaMultiCompUI : public UI,
                   public ImageKnob::Callback,
-                  public ImageSlider::Callback
+                  public ImageToggle::Callback
 {
 public:
     ZaMultiCompUI();
@@ -69,9 +69,7 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void imageSliderDragStarted(ImageSlider* slider) override;
-    void imageSliderDragFinished(ImageSlider* slider) override;
-    void imageSliderValueChanged(ImageSlider* slider, float value) override;
+    void imageToggleClicked(ImageToggle* slider, int button) override;
 
     void onDisplay() override;
 
@@ -88,12 +86,12 @@ private:
     ImageKnob* fKnobMakeup3;
     ImageKnob* fKnobXover1;
     ImageKnob* fKnobXover2;
-    ImageSlider* fToggleBypass1;
-    ImageSlider* fToggleBypass2;
-    ImageSlider* fToggleBypass3;
-    ImageSlider* fToggleListen1;
-    ImageSlider* fToggleListen2;
-    ImageSlider* fToggleListen3;
+    ImageToggle* fToggleBypass1;
+    ImageToggle* fToggleBypass2;
+    ImageToggle* fToggleBypass3;
+    ImageToggle* fToggleListen1;
+    ImageToggle* fToggleListen2;
+    ImageToggle* fToggleListen3;
 
     Image fLedRedImg;
     float fLedRedValue1;
