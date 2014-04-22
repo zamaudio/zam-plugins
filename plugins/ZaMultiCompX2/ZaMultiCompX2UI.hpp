@@ -103,7 +103,9 @@ private:
     Image fImgBackground;
     ImageKnob* fKnobAttack;
     ImageKnob* fKnobRelease;
-    ImageKnob* fKnobThresh;
+    ImageKnob* fKnobThresh1;
+    ImageKnob* fKnobThresh2;
+    ImageKnob* fKnobThresh3;
     ImageKnob* fKnobRatio;
     ImageKnob* fKnobKnee;
     ImageKnob* fKnobGlobalGain;
@@ -128,7 +130,7 @@ private:
     float fLedYellowValueL;
     float fLedYellowValueR;
     Rectangle<int> fCanvasArea;
-    float fThresh;
+    float fThresh[MAX_COMP];
     float fRatio;
     float fKnee;
     float fMakeup[MAX_COMP];

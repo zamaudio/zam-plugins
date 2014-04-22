@@ -61,22 +61,36 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
 
-    fKnobThresh = new ImageKnob(this, knobImage);
-    fKnobThresh->setPos(191.5, 43);
-    fKnobThresh->setRange(-60.0f, 0.0f);
-    fKnobThresh->setDefault(-12.0f);
-    fKnobThresh->setRotationAngle(240);
-    fKnobThresh->setCallback(this);
+    fKnobThresh3 = new ImageKnob(this, knobImage);
+    fKnobThresh3->setPos(94.5, 99);
+    fKnobThresh3->setRange(-60.0f, 0.0f);
+    fKnobThresh3->setDefault(-16.0f);
+    fKnobThresh3->setRotationAngle(240);
+    fKnobThresh3->setCallback(this);
+
+    fKnobThresh2 = new ImageKnob(this, knobImage);
+    fKnobThresh2->setPos(94.5, 150);
+    fKnobThresh2->setRange(-60.0f, 0.0f);
+    fKnobThresh2->setDefault(-18.0f);
+    fKnobThresh2->setRotationAngle(240);
+    fKnobThresh2->setCallback(this);
+
+    fKnobThresh1 = new ImageKnob(this, knobImage);
+    fKnobThresh1->setPos(94.5, 201);
+    fKnobThresh1->setRange(-60.0f, 0.0f);
+    fKnobThresh1->setDefault(-20.0f);
+    fKnobThresh1->setRotationAngle(240);
+    fKnobThresh1->setCallback(this);
 
     fKnobRatio = new ImageKnob(this, knobImage);
-    fKnobRatio->setPos(270, 43);
+    fKnobRatio->setPos(191.5, 43);
     fKnobRatio->setRange(1.0f, 20.0f);
     fKnobRatio->setDefault(4.0f);
     fKnobRatio->setRotationAngle(240);
     fKnobRatio->setCallback(this);
 
     fKnobKnee = new ImageKnob(this, knobImage);
-    fKnobKnee->setPos(348.5, 43);
+    fKnobKnee->setPos(273, 43);
     fKnobKnee->setRange(0.0f, 8.0f);
     fKnobKnee->setDefault(0.0f);
     fKnobKnee->setRotationAngle(240);
@@ -90,7 +104,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fKnobGlobalGain->setCallback(this);
 
     fKnobXover2 = new ImageKnob(this, knobImage);
-    fKnobXover2->setPos(84, 121);
+    fKnobXover2->setPos(23, 121);
     fKnobXover2->setRange(1400.f, 14000.f);
     fKnobXover2->setLogScale(true);
     fKnobXover2->setDefault(1400.f);
@@ -99,7 +113,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fKnobXover2->setCallback(this);
 
     fKnobXover1 = new ImageKnob(this, knobImage);
-    fKnobXover1->setPos(84, 176);
+    fKnobXover1->setPos(23, 175.5);
     fKnobXover1->setRange(20.0f, 1400.0f);
     fKnobXover1->setLogScale(true);
     fKnobXover1->setDefault(250.0f);
@@ -179,7 +193,9 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
 
     fCanvasArea.setPos(540, 32);
     fCanvasArea.setSize(102, 102);
-    fThresh = -12.f;
+    fThresh[0] = -20.f;
+    fThresh[1] = -18.f;
+    fThresh[2] = -16.f;
     fRatio = 4.f;
     fKnee = 0.f;
     fMakeup[0] = 0.f;
@@ -205,7 +221,9 @@ ZaMultiCompX2UI::~ZaMultiCompX2UI()
 {
     delete fKnobAttack;
     delete fKnobRelease;
-    delete fKnobThresh;
+    delete fKnobThresh1;
+    delete fKnobThresh2;
+    delete fKnobThresh3;
     delete fKnobRatio;
     delete fKnobKnee;
     delete fKnobGlobalGain;
@@ -227,7 +245,7 @@ void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
         float knee = fKnee;
         float ratio = fRatio;
         float makeup = fMakeup[k] + fMaster;
-        float thresdb = fThresh;
+        float thresdb = fThresh[k];
         float width=((knee+1.f)-0.99f)*6.f;
         float xg, yg;
 
@@ -286,9 +304,17 @@ void ZaMultiCompX2UI::d_parameterChanged(uint32_t index, float value)
     case ZaMultiCompX2Plugin::paramRelease:
         fKnobRelease->setValue(value);
         break;
-    case ZaMultiCompX2Plugin::paramThresh:
-        fKnobThresh->setValue(value);
-        fThresh = value;
+    case ZaMultiCompX2Plugin::paramThresh1:
+        fKnobThresh1->setValue(value);
+        fThresh[0] = value;
+        break;
+    case ZaMultiCompX2Plugin::paramThresh2:
+        fKnobThresh2->setValue(value);
+        fThresh[1] = value;
+        break;
+    case ZaMultiCompX2Plugin::paramThresh3:
+        fKnobThresh3->setValue(value);
+        fThresh[2] = value;
         break;
     case ZaMultiCompX2Plugin::paramRatio:
         fKnobRatio->setValue(value);
@@ -438,8 +464,12 @@ void ZaMultiCompX2UI::imageKnobDragStarted(ImageKnob* knob)
         d_editParameter(ZaMultiCompX2Plugin::paramAttack, true);
     else if (knob == fKnobRelease)
         d_editParameter(ZaMultiCompX2Plugin::paramRelease, true);
-    else if (knob == fKnobThresh)
-        d_editParameter(ZaMultiCompX2Plugin::paramThresh, true);
+    else if (knob == fKnobThresh1)
+        d_editParameter(ZaMultiCompX2Plugin::paramThresh1, true);
+    else if (knob == fKnobThresh2)
+        d_editParameter(ZaMultiCompX2Plugin::paramThresh2, true);
+    else if (knob == fKnobThresh3)
+        d_editParameter(ZaMultiCompX2Plugin::paramThresh3, true);
     else if (knob == fKnobRatio)
         d_editParameter(ZaMultiCompX2Plugin::paramRatio, true);
     else if (knob == fKnobKnee)
@@ -464,8 +494,12 @@ void ZaMultiCompX2UI::imageKnobDragFinished(ImageKnob* knob)
         d_editParameter(ZaMultiCompX2Plugin::paramAttack, false);
     else if (knob == fKnobRelease)
         d_editParameter(ZaMultiCompX2Plugin::paramRelease, false);
-    else if (knob == fKnobThresh)
-        d_editParameter(ZaMultiCompX2Plugin::paramThresh, false);
+    else if (knob == fKnobThresh1)
+        d_editParameter(ZaMultiCompX2Plugin::paramThresh1, false);
+    else if (knob == fKnobThresh2)
+        d_editParameter(ZaMultiCompX2Plugin::paramThresh2, false);
+    else if (knob == fKnobThresh3)
+        d_editParameter(ZaMultiCompX2Plugin::paramThresh3, false);
     else if (knob == fKnobRatio)
         d_editParameter(ZaMultiCompX2Plugin::paramRatio, false);
     else if (knob == fKnobKnee)
@@ -490,9 +524,17 @@ void ZaMultiCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(ZaMultiCompX2Plugin::paramAttack, value);
     else if (knob == fKnobRelease)
         d_setParameterValue(ZaMultiCompX2Plugin::paramRelease, value);
-    else if (knob == fKnobThresh) {
-        d_setParameterValue(ZaMultiCompX2Plugin::paramThresh, value);
-	fThresh = value;
+    else if (knob == fKnobThresh1) {
+        d_setParameterValue(ZaMultiCompX2Plugin::paramThresh1, value);
+	fThresh[0] = value;
+    }
+    else if (knob == fKnobThresh2) {
+        d_setParameterValue(ZaMultiCompX2Plugin::paramThresh2, value);
+	fThresh[1] = value;
+    }
+    else if (knob == fKnobThresh3) {
+        d_setParameterValue(ZaMultiCompX2Plugin::paramThresh3, value);
+	fThresh[2] = value;
     }
     else if (knob == fKnobRatio) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramRatio, value);

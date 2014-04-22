@@ -41,7 +41,9 @@ public:
         paramRelease,
         paramKnee,
         paramRatio,
-        paramThresh,
+        paramThresh1,
+        paramThresh2,
+        paramThresh3,
 
         paramMakeup1,
         paramMakeup2,
@@ -155,7 +157,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup[MAX_COMP],globalgain,stereodet;
+    float attack,release,knee,ratio,thresdb[MAX_COMP],makeup[MAX_COMP],globalgain,stereodet;
     float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],maxL,maxR,outl,outr,xover1,xover2;
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP];
     bool resetl;

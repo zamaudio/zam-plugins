@@ -78,12 +78,30 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 1.0f;
         parameter.ranges.max = 20.0f;
         break;
-    case paramThresh:
+    case paramThresh1:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Threshold";
-        parameter.symbol     = "thr";
+        parameter.name       = "Threshold 1";
+        parameter.symbol     = "thr1";
         parameter.unit       = "dB";
-        parameter.ranges.def = -12.0f;
+        parameter.ranges.def = -20.0f;
+        parameter.ranges.min = -60.0f;
+        parameter.ranges.max = 0.0f;
+        break;
+    case paramThresh2:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.name       = "Threshold 2";
+        parameter.symbol     = "thr2";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -18.0f;
+        parameter.ranges.min = -60.0f;
+        parameter.ranges.max = 0.0f;
+        break;
+    case paramThresh3:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.name       = "Threshold 3";
+        parameter.symbol     = "thr3";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -16.0f;
         parameter.ranges.min = -60.0f;
         parameter.ranges.max = 0.0f;
         break;
@@ -279,8 +297,14 @@ float ZaMultiCompX2Plugin::d_getParameterValue(uint32_t index) const
     case paramRatio:
         return ratio;
         break;
-    case paramThresh:
-        return thresdb;
+    case paramThresh1:
+        return thresdb[0];
+        break;
+    case paramThresh2:
+        return thresdb[1];
+        break;
+    case paramThresh3:
+        return thresdb[2];
         break;
     case paramMakeup1:
         return makeup[0];
@@ -357,8 +381,14 @@ void ZaMultiCompX2Plugin::d_setParameterValue(uint32_t index, float value)
     case paramRatio:
         ratio = value;
         break;
-    case paramThresh:
-        thresdb = value;
+    case paramThresh1:
+        thresdb[0] = value;
+        break;
+    case paramThresh2:
+        thresdb[1] = value;
+        break;
+    case paramThresh3:
+        thresdb[2] = value;
         break;
     case paramMakeup1:
         makeup[0] = value;
@@ -439,7 +469,9 @@ void ZaMultiCompX2Plugin::d_setProgram(uint32_t index)
     release = 80.0f;
     knee = 0.0f;
     ratio = 4.0f;
-    thresdb = -12.0f;
+    thresdb[0] = -20.0f;
+    thresdb[1] = -18.0f;
+    thresdb[2] = -16.0f;
     makeup[0] = 0.0f;
     makeup[1] = 0.0f;
     makeup[2] = 0.0f;
@@ -570,22 +602,22 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         Rxg = sanitize_denormal(Rxg); 
         
         
-        if (2.f*(Lxg-thresdb)<-width) {
+        if (2.f*(Lxg-thresdb[k])<-width) {
                 Lyg = Lxg;
-        } else if (2.f*fabs(Lxg-thresdb)<=width) {
-                Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
-        } else if (2.f*(Lxg-thresdb)>width) {
-                Lyg = thresdb + (Lxg-thresdb)/ratio;
+        } else if (2.f*fabs(Lxg-thresdb[k])<=width) {
+                Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb[k]+width/2.f)*(Lxg-thresdb[k]+width/2.f)/(2.f*width);
+        } else if (2.f*(Lxg-thresdb[k])>width) {
+                Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio;
         }
         
         Lyg = sanitize_denormal(Lyg); 
         
-        if (2.f*(Rxg-thresdb)<-width) {
+        if (2.f*(Rxg-thresdb[k])<-width) {
                 Ryg = Rxg;
-        } else if (2.f*fabs(Rxg-thresdb)<=width) {
-                Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb+width/2.f)*(Rxg-thresdb+width/2.f)/(2.f*width);
-        } else if (2.f*(Rxg-thresdb)>width) {
-                Ryg = thresdb + (Rxg-thresdb)/ratio;
+        } else if (2.f*fabs(Rxg-thresdb[k])<=width) {
+                Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb[k]+width/2.f)*(Rxg-thresdb[k]+width/2.f)/(2.f*width);
+        } else if (2.f*(Rxg-thresdb[k])>width) {
+                Ryg = thresdb[k] + (Rxg-thresdb[k])/ratio;
         }
         
         Ryg = sanitize_denormal(Ryg); 
