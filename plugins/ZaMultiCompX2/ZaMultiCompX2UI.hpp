@@ -22,7 +22,7 @@
 
 #include "Geometry.hpp"
 #include "ImageKnob.hpp"
-#include "ImageSlider.hpp"
+#include "ImageToggle.hpp"
 
 #define COMPOINTS 1000
 #define MAX_COMP 3
@@ -31,7 +31,7 @@
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageSlider;
+using DGL::ImageToggle;
 using DGL::Rectangle;
 
 START_NAMESPACE_DISTRHO
@@ -40,7 +40,7 @@ START_NAMESPACE_DISTRHO
 
 class ZaMultiCompX2UI : public UI,
                   public ImageKnob::Callback,
-                  public ImageSlider::Callback
+                  public ImageToggle::Callback
 {
 public:
     ZaMultiCompX2UI();
@@ -77,9 +77,7 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void imageSliderDragStarted(ImageSlider* slider) override;
-    void imageSliderDragFinished(ImageSlider* slider) override;
-    void imageSliderValueChanged(ImageSlider* slider, float value) override;
+    void imageToggleClicked(ImageToggle* toggle, int button) override;
 
     void onDisplay() override;
 
@@ -114,13 +112,13 @@ private:
     ImageKnob* fKnobMakeup3;
     ImageKnob* fKnobXover1;
     ImageKnob* fKnobXover2;
-    ImageSlider* fToggleBypass1;
-    ImageSlider* fToggleBypass2;
-    ImageSlider* fToggleBypass3;
-    ImageSlider* fToggleListen1;
-    ImageSlider* fToggleListen2;
-    ImageSlider* fToggleListen3;
-    ImageSlider* fToggleStereo;
+    ImageToggle* fToggleBypass1;
+    ImageToggle* fToggleBypass2;
+    ImageToggle* fToggleBypass3;
+    ImageToggle* fToggleListen1;
+    ImageToggle* fToggleListen2;
+    ImageToggle* fToggleListen3;
+    ImageToggle* fToggleStereo;
 
     Image fLedRedImg;
     float fLedRedValue1;

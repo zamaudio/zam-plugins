@@ -64,7 +64,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fKnobThresh = new ImageKnob(this, knobImage);
     fKnobThresh->setPos(191.5, 43);
     fKnobThresh->setRange(-60.0f, 0.0f);
-    fKnobThresh->setDefault(0.0f);
+    fKnobThresh->setDefault(-12.0f);
     fKnobThresh->setRotationAngle(240);
     fKnobThresh->setCallback(this);
 
@@ -128,92 +128,58 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fKnobMakeup1->setRotationAngle(240);
     fKnobMakeup1->setCallback(this);
 
-    Image toggleImage(ZaMultiCompX2Artwork::togglesliderData, ZaMultiCompX2Artwork::togglesliderWidth, ZaMultiCompX2Artwork::togglesliderHeight);
+    Image toggleonImage(ZaMultiCompX2Artwork::toggleonData, ZaMultiCompX2Artwork::toggleonWidth, ZaMultiCompX2Artwork::toggleonHeight);
+    Image toggleoffImage(ZaMultiCompX2Artwork::toggleoffData, ZaMultiCompX2Artwork::toggleoffWidth, ZaMultiCompX2Artwork::toggleoffHeight);
+    Image toggleonhImage(ZaMultiCompX2Artwork::toggleonhorizData, ZaMultiCompX2Artwork::toggleonhorizWidth, ZaMultiCompX2Artwork::toggleonhorizHeight);
+    Image toggleoffhImage(ZaMultiCompX2Artwork::toggleoffhorizData, ZaMultiCompX2Artwork::toggleoffhorizWidth, ZaMultiCompX2Artwork::toggleoffhorizHeight);
 
     Point<int> togglePosStart(247,108);
-    Point<int> togglePosEnd(247,108+11);
 
-    fToggleBypass3 = new ImageSlider(this, toggleImage);
-    fToggleBypass3->setStartPos(togglePosStart);
-    fToggleBypass3->setEndPos(togglePosEnd);
-    fToggleBypass3->setRange(1.f,0.f);
-    fToggleBypass3->setStep(1.f);
-    fToggleBypass3->setValue(0.f);
+    fToggleBypass3 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fToggleBypass3->setPos(togglePosStart);
     fToggleBypass3->setCallback(this);
 
     togglePosStart.setY(158);
-    togglePosEnd.setY(158+11);
 
-    fToggleBypass2 = new ImageSlider(this, toggleImage);
-    fToggleBypass2->setStartPos(togglePosStart);
-    fToggleBypass2->setEndPos(togglePosEnd);
-    fToggleBypass2->setRange(1.f,0.f);
-    fToggleBypass2->setStep(1.f);
-    fToggleBypass2->setValue(0.f);
+    fToggleBypass2 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fToggleBypass2->setPos(togglePosStart);
     fToggleBypass2->setCallback(this);
 
     togglePosStart.setY(209);
-    togglePosEnd.setY(209+11);
 
-    fToggleBypass1 = new ImageSlider(this, toggleImage);
-    fToggleBypass1->setStartPos(togglePosStart);
-    fToggleBypass1->setEndPos(togglePosEnd);
-    fToggleBypass1->setRange(1.f,0.f);
-    fToggleBypass1->setStep(1.f);
-    fToggleBypass1->setValue(0.f);
+    fToggleBypass1 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fToggleBypass1->setPos(togglePosStart);
     fToggleBypass1->setCallback(this);
 
     togglePosStart.setX(278);
     togglePosStart.setY(113);
-    togglePosEnd.setX(278+11);
-    togglePosEnd.setY(113);
 
-    fToggleListen3 = new ImageSlider(this, toggleImage);
-    fToggleListen3->setStartPos(togglePosStart);
-    fToggleListen3->setEndPos(togglePosEnd);
-    fToggleListen3->setRange(0.f,1.f);
-    fToggleListen3->setStep(1.f);
-    fToggleListen3->setValue(0.f);
+    fToggleListen3 = new ImageToggle(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
+    fToggleListen3->setPos(togglePosStart);
     fToggleListen3->setCallback(this);
 
     togglePosStart.setY(164);
-    togglePosEnd.setY(164);
 
-    fToggleListen2 = new ImageSlider(this, toggleImage);
-    fToggleListen2->setStartPos(togglePosStart);
-    fToggleListen2->setEndPos(togglePosEnd);
-    fToggleListen2->setRange(0.f,1.f);
-    fToggleListen2->setStep(1.f);
-    fToggleListen2->setValue(0.f);
+    fToggleListen2 = new ImageToggle(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
+    fToggleListen2->setPos(togglePosStart);
     fToggleListen2->setCallback(this);
 
     togglePosStart.setY(214);
-    togglePosEnd.setY(214);
 
-    fToggleListen1 = new ImageSlider(this, toggleImage);
-    fToggleListen1->setStartPos(togglePosStart);
-    fToggleListen1->setEndPos(togglePosEnd);
-    fToggleListen1->setRange(0.f,1.f);
-    fToggleListen1->setStep(1.f);
-    fToggleListen1->setValue(0.f);
+    fToggleListen1 = new ImageToggle(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
+    fToggleListen1->setPos(togglePosStart);
     fToggleListen1->setCallback(this);
 
     togglePosStart.setX(285.5);
-    togglePosEnd.setX(285.5);
     togglePosStart.setY(254);
-    togglePosEnd.setY(254+11);
 
-    fToggleStereo = new ImageSlider(this, toggleImage);
-    fToggleStereo->setStartPos(togglePosStart);
-    fToggleStereo->setEndPos(togglePosEnd);
-    fToggleStereo->setRange(0.f,1.f);
-    fToggleStereo->setStep(1.f);
-    fToggleStereo->setValue(0.f);
+    fToggleStereo = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fToggleStereo->setPos(togglePosStart);
     fToggleStereo->setCallback(this);
 
-    fCanvasArea.setPos(530, 30);
-    fCanvasArea.setSize(110, 110);
-    fThresh = 0.f;
+    fCanvasArea.setPos(540, 32);
+    fCanvasArea.setSize(102, 102);
+    fThresh = -12.f;
     fRatio = 4.f;
     fKnee = 0.f;
     fMakeup[0] = 0.f;
@@ -293,15 +259,6 @@ void ZaMultiCompX2UI::calc_compcurves() {
 	                compcurve(x2, k, &compx[k][i], &compy[k][i]);
                         compx[k][i] = fCanvasArea.getX() + compx[k][i]*fCanvasArea.getWidth();
                         compy[k][i] = fCanvasArea.getY() + (1.-compy[k][i])*fCanvasArea.getHeight();
-			if (compx[k][i] > fCanvasArea.getX() + fCanvasArea.getWidth())
-			    compx[k][i] = fCanvasArea.getX() + fCanvasArea.getWidth();
-			if (compx[k][i] < fCanvasArea.getX())
-			    compx[k][i] = fCanvasArea.getX();
-
-			if (compy[k][i] > fCanvasArea.getY() + fCanvasArea.getHeight())
-			    compy[k][i] = fCanvasArea.getY() + fCanvasArea.getHeight();
-			if (compy[k][i] < fCanvasArea.getY())
-			    compy[k][i] = fCanvasArea.getY();
 		}        
 	       	 //dot follows curve:
 	        //compcurve(from_dB(-ui->gainred), k, &dotx[0], &doty[0]);
@@ -331,31 +288,19 @@ void ZaMultiCompX2UI::d_parameterChanged(uint32_t index, float value)
         break;
     case ZaMultiCompX2Plugin::paramThresh:
         fKnobThresh->setValue(value);
-        if (fThresh != value)
-        {
-            fThresh = value;
-        }
+        fThresh = value;
         break;
     case ZaMultiCompX2Plugin::paramRatio:
         fKnobRatio->setValue(value);
-        if (fRatio != value)
-        {
-            fRatio = value;
-        }
+        fRatio = value;
         break;
     case ZaMultiCompX2Plugin::paramKnee:
         fKnobKnee->setValue(value);
-        if (fKnee != value)
-        {
-            fKnee = value;
-        }
+        fKnee = value;
         break;
     case ZaMultiCompX2Plugin::paramGlobalGain:
         fKnobGlobalGain->setValue(value);
-        if (fMaster != value)
-        {
-            fMaster = value;
-        }
+        fMaster = value;
         break;
     case ZaMultiCompX2Plugin::paramGainR1:
         if (fLedRedValue1 != value)
@@ -458,10 +403,10 @@ void ZaMultiCompX2UI::d_programChanged(uint32_t index)
         return;
 
     // Default values
-    /*
     fKnobAttack->setValue(10.0f);
     fKnobRelease->setValue(80.0f);
-    fKnobThresh->setValue(0.0f);
+/*
+ * fKnobThresh->setValue(-6.0f);
     fKnobRatio->setValue(4.0f);
     fKnobKnee->setValue(0.0f);
     fKnobGlobalGain->setValue(0.0f);
@@ -470,7 +415,7 @@ void ZaMultiCompX2UI::d_programChanged(uint32_t index)
     fKnobMakeup3->setValue(0.0f);
     fKnobXover1->setValue(250.0f);
     fKnobXover2->setValue(1400.0f);
-    */
+   */
     fToggleBypass1->setValue(0.0f);
     fToggleBypass2->setValue(0.0f);
     fToggleBypass3->setValue(0.0f);
@@ -579,63 +524,28 @@ void ZaMultiCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(ZaMultiCompX2Plugin::paramXover2, value);
 }
 
-void ZaMultiCompX2UI::imageSliderDragStarted(ImageSlider* slider)
+void ZaMultiCompX2UI::imageToggleClicked(ImageToggle* toggle, int)
 {
-    if (slider == fToggleBypass1)
-        d_editParameter(ZaMultiCompX2Plugin::paramToggle1, true);
-    else if (slider == fToggleBypass2)
-        d_editParameter(ZaMultiCompX2Plugin::paramToggle2, true);
-    else if (slider == fToggleBypass3)
-        d_editParameter(ZaMultiCompX2Plugin::paramToggle3, true);
-    else if (slider == fToggleListen1)
-        d_editParameter(ZaMultiCompX2Plugin::paramListen1, true);
-    else if (slider == fToggleListen2)
-        d_editParameter(ZaMultiCompX2Plugin::paramListen2, true);
-    else if (slider == fToggleListen3)
-        d_editParameter(ZaMultiCompX2Plugin::paramListen3, true);
-    else if (slider == fToggleStereo)
-        d_editParameter(ZaMultiCompX2Plugin::paramStereoDet, true);
-}     
-
-void ZaMultiCompX2UI::imageSliderDragFinished(ImageSlider* slider)
-{
-    if (slider == fToggleBypass1)
-        d_editParameter(ZaMultiCompX2Plugin::paramToggle1, false);
-    else if (slider == fToggleBypass2)
-        d_editParameter(ZaMultiCompX2Plugin::paramToggle2, false);
-    else if (slider == fToggleBypass3)
-        d_editParameter(ZaMultiCompX2Plugin::paramToggle3, false);
-    else if (slider == fToggleListen1)
-        d_editParameter(ZaMultiCompX2Plugin::paramListen1, false);
-    else if (slider == fToggleListen2)
-        d_editParameter(ZaMultiCompX2Plugin::paramListen2, false);
-    else if (slider == fToggleListen3)
-        d_editParameter(ZaMultiCompX2Plugin::paramListen3, false);
-    else if (slider == fToggleStereo)
-        d_editParameter(ZaMultiCompX2Plugin::paramStereoDet, false);
-}
-
-void ZaMultiCompX2UI::imageSliderValueChanged(ImageSlider* slider, float v)
-{
-    if (slider == fToggleBypass1) {
+    float v = toggle->getValue();
+    if (toggle == fToggleBypass1) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramToggle1, v);
         fBypass[0] = v;
     }
-    else if (slider == fToggleBypass2) {
+    else if (toggle == fToggleBypass2) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramToggle2, v);
         fBypass[1] = v;
     }
-    else if (slider == fToggleBypass3) {
+    else if (toggle == fToggleBypass3) {
         d_setParameterValue(ZaMultiCompX2Plugin::paramToggle3, v);
         fBypass[2] = v;
     }
-    else if (slider == fToggleListen1)
+    else if (toggle == fToggleListen1)
         d_setParameterValue(ZaMultiCompX2Plugin::paramListen1, v);
-    else if (slider == fToggleListen2)
+    else if (toggle == fToggleListen2)
         d_setParameterValue(ZaMultiCompX2Plugin::paramListen2, v);
-    else if (slider == fToggleListen3)
+    else if (toggle == fToggleListen3)
         d_setParameterValue(ZaMultiCompX2Plugin::paramListen3, v);
-    else if (slider == fToggleStereo)
+    else if (toggle == fToggleStereo)
         d_setParameterValue(ZaMultiCompX2Plugin::paramStereoDet, v);
 }
 
@@ -891,10 +801,14 @@ glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glColor4f((k==0)?1.f:0.235f, (k==1)?1.f:0.235f, (k==2)?1.f:0.235f, 1.0f);
         for (i = 2; i < COMPOINTS; ++i) {
             glBegin(GL_LINES);
-                glVertex2i(compx[k][i-1], compy[k][i-1]);
-                glVertex2i(compx[k][i], compy[k][i]);
-		//printf("x = %f  y = %f\n",compx[k][i],compy[k][i]);
-            glEnd();
+                if (compy[k][i-1] < fCanvasArea.getY() + fCanvasArea.getHeight()
+			&& compy[k][i-1] > fCanvasArea.getY()
+                	&& compy[k][i] < fCanvasArea.getY() + fCanvasArea.getHeight()
+			&& compy[k][i] > fCanvasArea.getY()) {
+                    glVertex2i(compx[k][i-1], compy[k][i-1]);
+                    glVertex2i(compx[k][i], compy[k][i]);
+                }
+	    glEnd();
         }
     }
     // reset color

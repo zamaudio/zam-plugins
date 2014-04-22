@@ -83,8 +83,8 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Threshold";
         parameter.symbol     = "thr";
         parameter.unit       = "dB";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -80.0f;
+        parameter.ranges.def = -12.0f;
+        parameter.ranges.min = -60.0f;
         parameter.ranges.max = 0.0f;
         break;
     case paramMakeup1:
@@ -439,7 +439,7 @@ void ZaMultiCompX2Plugin::d_setProgram(uint32_t index)
     release = 80.0f;
     knee = 0.0f;
     ratio = 4.0f;
-    thresdb = 0.0f;
+    thresdb = -12.0f;
     makeup[0] = 0.0f;
     makeup[1] = 0.0f;
     makeup[2] = 0.0f;

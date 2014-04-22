@@ -185,9 +185,9 @@ void ImageKnob::resetDefault()
 {
     fValueTmp = invlogscale(fValueDef);
     fValue = fValueDef;
+    repaint();
     if (fCallback != nullptr)
         fCallback->imageKnobValueChanged(this, fValue);
-    repaint();
 }
 
 void ImageKnob::setValue(float value, bool sendCallback)
