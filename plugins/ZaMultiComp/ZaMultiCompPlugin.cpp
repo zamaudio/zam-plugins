@@ -83,7 +83,7 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Threshold";
         parameter.symbol     = "thr";
         parameter.unit       = "dB";
-        parameter.ranges.def = 0.0f;
+        parameter.ranges.def = -16.0f;
         parameter.ranges.min = -80.0f;
         parameter.ranges.max = 0.0f;
         break;
@@ -409,7 +409,7 @@ void ZaMultiCompPlugin::d_setProgram(uint32_t index)
     release = 80.0f;
     knee = 0.0f;
     ratio = 4.0f;
-    thresdb = 0.0f;
+    thresdb = -16.0f;
     makeup[0] = 0.0f;
     makeup[1] = 0.0f;
     makeup[2] = 0.0f;
@@ -447,6 +447,7 @@ void ZaMultiCompPlugin::d_activate()
                 a0[i] = a1[i] = a2[i] = 0.f;
                 b1[i] = b2[i] = 0.f;
                 w1[i] = w2[i] = 0.f;
+                z1[i] = z2[i] = 0.f;
         }
 }
 
@@ -460,12 +461,17 @@ float ZaMultiCompPlugin::run_filter(int i, float in)
         in = sanitize_denormal(in);
 	w1[i] = sanitize_denormal(w1[i]);
 	w2[i] = sanitize_denormal(w2[i]);
+	z1[i] = sanitize_denormal(z1[i]);
+	z2[i] = sanitize_denormal(z2[i]);
 
-        float tmp = in - w1[i] * b1[i] - w2[i] * b2[i];
-        float out = tmp * a0[i] + w1[i] * a1[i] + w2[i] * a2[i] + 1e-20f;
+        float out = in * a0[i] + w1[i] * a1[i] + w2[i] * a2[i]
+			- z1[i] * b1[i] - z2[i] * b2[i];
+	out = sanitize_denormal(out);
         w2[i] = w1[i];
-        w1[i] = sanitize_denormal(tmp);
-        return sanitize_denormal(out - 1e-20f);
+        z2[i] = z1[i];
+	w1[i] = in;
+        z1[i] = out;
+        return out;
 }
 
 void ZaMultiCompPlugin::set_lp_coeffs(float fc, float q, float sr, int i, float gain=1.0)

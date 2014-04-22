@@ -172,6 +172,8 @@ private:
     //Crossover filter states
     float w1[2][MAX_FILT];
     float w2[2][MAX_FILT];
+    float z1[2][MAX_FILT];
+    float z2[2][MAX_FILT];
 };
 
 

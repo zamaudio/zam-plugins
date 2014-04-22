@@ -524,6 +524,7 @@ void ZaMultiCompX2Plugin::d_activate()
                 	a0[j][i] = a1[j][i] = a2[j][i] = 0.f;
                 	b1[j][i] = b2[j][i] = 0.f;
                 	w1[j][i] = w2[j][i] = 0.f;
+                	z1[j][i] = z2[j][i] = 0.f;
 		}
         }
 	maxL = maxR = 0.f;
@@ -540,12 +541,17 @@ float ZaMultiCompX2Plugin::run_filter(int i, int ch, float in)
         in = sanitize_denormal(in);
         w1[ch][i] = sanitize_denormal(w1[ch][i]);
         w2[ch][i] = sanitize_denormal(w2[ch][i]);
+	z1[ch][i] = sanitize_denormal(z1[ch][i]);
+	z2[ch][i] = sanitize_denormal(z2[ch][i]);
 
-        float tmp = in - w1[ch][i] * b1[ch][i] - w2[ch][i] * b2[ch][i];
-        float out = tmp * a0[ch][i] + w1[ch][i] * a1[ch][i] + w2[ch][i] * a2[ch][i];
+        float out = in * a0[ch][i] 	+ w1[ch][i] * a1[ch][i] + w2[ch][i] * a2[ch][i]
+					- z1[ch][i] * b1[ch][i] - z2[ch][i] * b2[ch][i];
+	out = sanitize_denormal(out);
         w2[ch][i] = w1[ch][i];
-        w1[ch][i] = sanitize_denormal(tmp);
-        return sanitize_denormal(out);
+        z2[ch][i] = z1[ch][i];
+        w1[ch][i] = in;
+	z1[ch][i] = out;
+        return out;
 }
 
 void ZaMultiCompX2Plugin::set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain=1.0)
