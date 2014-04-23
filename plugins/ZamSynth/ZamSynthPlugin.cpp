@@ -1,5 +1,5 @@
 /*
- * ZamSynth polyphonic synth
+ * ZamSynth polyphonic synthesiser
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamSynthPlugin::ZamSynthPlugin()
-    : Plugin(paramCount, 1, 0) // 1 program, 0 states
+    : Plugin(paramCount, 1, 1) // 1 program, 1 state
 {
     // set default values
     d_setProgram(0);
@@ -42,14 +42,14 @@ void ZamSynthPlugin::d_initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
-    case paramAttack:
+    case paramGain:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Attack";
-        parameter.symbol     = "att";
-        parameter.unit       = "ms";
-        parameter.ranges.def = 10.0f;
-        parameter.ranges.min = 0.1f;
-        parameter.ranges.max = 200.0f;
+        parameter.name       = "Gain";
+        parameter.symbol     = "gain";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = -30.0f;
+        parameter.ranges.max = 30.0f;
         break;
     }
 }
@@ -69,8 +69,8 @@ float ZamSynthPlugin::d_getParameterValue(uint32_t index) const
 {
     switch (index)
     {
-    case paramAttack:
-        return attack;
+    case paramGain:
+        return gain;
         break;
     default:
         return 0.0f;
@@ -81,8 +81,8 @@ void ZamSynthPlugin::d_setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
-    case paramAttack:
-        attack = value;
+    case paramGain:
+        gain = value;
         break;
     }
 }
@@ -93,7 +93,7 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
         return;
 
     /* Default parameter values */
-    attack = 10.0f;
+    gain = 0.0f;
 
     /* Default variable values */
     for (int i = 0; i < 127; i++) {
@@ -103,8 +103,33 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
         voice[i] = 0;
     }
 
+    for (int i = 0; i < AREAHEIGHT; i++) {
+        wave_y[i] = 0.f;
+    }
+
     /* reset filter values */
     d_activate();
+}
+
+void ZamSynthPlugin::d_setState(const char*, const char* value)
+{
+	char* tmp;
+	char* saveptr;
+	int i = 0;
+	char tmpbuf[4*AREAHEIGHT+1] = {0};
+	snprintf(tmpbuf, 4*AREAHEIGHT, "%s", value);
+	tmp = strtok(tmpbuf, " ");
+	while ((tmp != NULL) && (i < AREAHEIGHT)) {
+		wave_y[i] = ((float) atoi(tmp))/AREAHEIGHT - 0.5;
+		i++;
+		//printf("dsp wave_y[%d]=%.2f ", i, wave_y[i]);
+		tmp = strtok(NULL, " ");
+	}
+}
+
+void ZamSynthPlugin::d_initStateKey(unsigned int key, d_string& val)
+{
+
 }
 
 // -----------------------------------------------------------------------
@@ -117,6 +142,14 @@ void ZamSynthPlugin::d_activate()
 void ZamSynthPlugin::d_deactivate()
 {
     // all values to zero
+}
+
+
+float ZamSynthPlugin::wavetable(float in)
+{
+	int index = (int) ((in / (2.0 * M_PI) + 1.0) / 2.0 * (AREAHEIGHT-1.0));
+	return (wave_y[index]);
+	//return (sin(in));
 }
 
 void ZamSynthPlugin::d_run(float** inputs, float** outputs, uint32_t frames,
@@ -146,7 +179,7 @@ void ZamSynthPlugin::d_run(float** inputs, float** outputs, uint32_t frames,
 			*ptrvoice = num;
 
 			printf("Note ON: %d totalv=%d\n", num, totalvoices);
-			rampfreq[*ptrvoice] = 440.0*powf(2.0, (num-49.0)/12);
+			rampfreq[*ptrvoice] = 440.0*powf(2.0, (num-48.0-24)/12.);
 			amp[*ptrvoice] = vel / 127.f;
 		}
 		else if (type == 0x80 && chan == 0x00) {
@@ -169,26 +202,41 @@ void ZamSynthPlugin::d_run(float** inputs, float** outputs, uint32_t frames,
 		}
 	}
 	
+	float power;
+	bool signal;
+	float wave;
+	float outl;
+	float outr;
 	for (i = 0; i < frames; i++) {
-		float totalamp = 1.f;
-		outputs[0][i] = 0.f;
-		float wave;
+		signal = false;
+		outl = outr = 0.f;
+		power = 0.f;
 		for (j = 0; j < 128; j++) {
 			if (amp[j] < 0.01f) continue;
+			signal = true;
 
 			// ramp sawtooth
-			RD_0 = 1.4247585730565955E-4*rampfreq[j] + rampstate[j];
+			RD_0 = 1.4247585730565955E-4*srate/44100.*rampfreq[j] + rampstate[j];
 			if (RD_0>6.283185307179586) {RD_0 -= 6.283185307179586;}
 			if (RD_0<-6.283185307179586) {RD_0 += 6.283185307179586;}
 			rampstate[j] = RD_0;
 
 			// wavetable
-			wave = sin(rampstate[j]);
+			wave = wavetable(rampstate[j]);
+			power += sqrt(amp[j]);
 
-			outputs[0][i] += wave*amp[j];
-			totalamp += amp[j];
+			outl += wave*amp[j];
+			outr += wave*amp[j];
 		}
-		outputs[0][i] /= totalamp;
+		if (signal) {
+			outl *= (totalvoices)/(10. * power);
+			outr *= (totalvoices)/(10. * power);
+			outputs[0][i] = outl;
+			outputs[1][i] = outr;
+		} else {
+			outputs[0][i] = 0.f;
+			outputs[1][i] = 0.f;
+		}
 	}
 }
 

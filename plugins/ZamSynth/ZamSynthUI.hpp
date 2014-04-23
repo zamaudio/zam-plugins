@@ -1,5 +1,5 @@
 /*
- * ZamSynth mono compressor
+ * ZamSynth polyphonic synthesiser
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com> 
  *
  * This program is free software; you can redistribute it and/or
@@ -15,11 +15,12 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#ifndef ZAMCOMPUI_HPP_INCLUDED
-#define ZAMCOMPUI_HPP_INCLUDED
+#ifndef ZAMSYNTHUI_HPP_INCLUDED
+#define ZAMSYNTHUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
 
+#include "Geometry.hpp"
 #include "ImageKnob.hpp"
 
 #include "ZamSynthArtwork.hpp"
@@ -27,6 +28,9 @@
 
 using DGL::Image;
 using DGL::ImageKnob;
+using DGL::Rectangle;
+
+#define AREAHEIGHT 250
 
 START_NAMESPACE_DISTRHO
 
@@ -45,12 +49,12 @@ protected:
 
     unsigned int d_getWidth() const noexcept override
     {
-        return ZamSynthArtwork::zamcompWidth;
+        return ZamSynthArtwork::zamsynthWidth;
     }
 
     unsigned int d_getHeight() const noexcept override
     {
-        return ZamSynthArtwork::zamcompHeight;
+        return ZamSynthArtwork::zamsynthHeight;
     }
 
     // -------------------------------------------------------------------
@@ -58,6 +62,7 @@ protected:
 
     void d_parameterChanged(uint32_t index, float value) override;
     void d_programChanged(uint32_t index) override;
+    void d_stateChanged(const char*, const char*) override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks
@@ -67,24 +72,21 @@ protected:
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
     void onDisplay() override;
+    bool onMouse(int, bool, int, int) override;
+    bool onMotion(int, int) override;
 
 private:
     Image fImgBackground;
     ImageKnob* fKnobAttack;
-    ImageKnob* fKnobRelease;
-    ImageKnob* fKnobThresh;
-    ImageKnob* fKnobRatio;
-    ImageKnob* fKnobKnee;
-    ImageKnob* fKnobMakeup;
+    float wave_y[AREAHEIGHT];
 
-    Image fLedRedImg;
-    float fLedRedValue;
-    Image fLedYellowImg;
-    float fLedYellowValue;
+    bool fDragging;
+    bool fDragValid;
+    Rectangle<int> fCanvasArea;
 };
 
 // -----------------------------------------------------------------------
 
 END_NAMESPACE_DISTRHO
 
-#endif // ZAMCOMPUI_HPP_INCLUDED
+#endif // ZAMSYNTHUI_HPP_INCLUDED

@@ -1,5 +1,5 @@
 /*
- * ZamSynth mono compressor 
+ * ZamSynth polyphonic synthesiser 
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -18,8 +18,10 @@
 #ifndef ZAMSYNTHPLUGIN_HPP_INCLUDED
 #define ZAMSYNTHPLUGIN_HPP_INCLUDED
 
+#include <string.h>
 #include "DistrhoPlugin.hpp"
 #define MAX_VOICES 64
+#define AREAHEIGHT 250
 
 START_NAMESPACE_DISTRHO
 
@@ -30,7 +32,7 @@ class ZamSynthPlugin : public Plugin
 public:
     enum Parameters
     {
-        paramAttack = 0,
+        paramGain,
         paramCount
     };
 
@@ -63,7 +65,7 @@ protected:
 
     long d_getUniqueId() const noexcept override
     {
-        return d_cconst('Z', 'C', 'M', 'P');
+        return d_cconst('Z', 'S', 'T', 'H');
     }
 
     // -------------------------------------------------------------------
@@ -99,21 +101,23 @@ protected:
 	        return (20.f*log10(g));
 	}
 
+    float wavetable(float in);
     void d_activate() override;
     void d_deactivate() override;
     void d_run(float** inputs, float** outputs, uint32_t frames,
     		const MidiEvent* midievent, uint32_t midicount) override;
-
+    void d_setState(const char* key, const char* value) override;
+    void d_initStateKey(unsigned int key, d_string& val) override;
     // -------------------------------------------------------------------
 
 private:
-    float attack;
-    float old_yl, old_y1;
+    float gain;
     float rampstate[128], rampfreq[128], amp[128];
     int noteon[128];
     int noteoff[128];
     int voice[128];
     int totalvoices;
+    float wave_y[AREAHEIGHT];
 };
 
 // -----------------------------------------------------------------------
