@@ -13,7 +13,7 @@ OPTIMIZATIONS ?= -O2 -ffast-math
 NAME    = zam-plugins
 VERSION = $(shell cat .version)
 
-PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZaMultiCompX2 ZamTube ZamEQ2
+PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZaMultiCompX2 ZamTube ZamEQ2 ZamSynth
 
 all: libs $(PLUGINS) gen
 
