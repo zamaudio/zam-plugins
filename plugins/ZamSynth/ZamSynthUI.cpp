@@ -45,6 +45,9 @@ ZamSynthUI::ZamSynthUI()
 */
     fCanvasArea.setPos(10,10);
     fCanvasArea.setSize(AREAHEIGHT,AREAHEIGHT);
+    for (int i = 0; i < AREAHEIGHT; i++) {
+        wave_y[i] = -(AREAHEIGHT*(sin(2.*i*M_PI/AREAHEIGHT)-1.0))/2.;
+    }
 }
 
 ZamSynthUI::~ZamSynthUI()
@@ -147,7 +150,7 @@ bool ZamSynthUI::onMotion(int x, int y)
     if (x < 10) x = 10;
     if (y < 10) y = 10;
 
-    wave_y[x-10] = y-10;
+    wave_y[x-10] = (y-10);
     repaint();
 
     return true;
@@ -162,7 +165,7 @@ void ZamSynthUI::onDisplay()
 	int i;
 	for(i = 0; i < AREAHEIGHT; i++) {
 		char wavestr[5] = {0};
-		snprintf(wavestr, sizeof(wavestr), "%03d ", (int) wave_y[i]);
+		snprintf(wavestr, sizeof(wavestr), "%03d ", (int) (fCanvasArea.getHeight()-wave_y[i]));
 		strcat(tmp, wavestr);
 		//printf("wavestr=%4s",wavestr);
 	}

@@ -104,7 +104,7 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     }
 
     for (int i = 0; i < AREAHEIGHT; i++) {
-        wave_y[i] = 0.f;
+        wave_y[i] = sin(i*2.*M_PI/d_getSampleRate()*1000.);
     }
 
     /* reset filter values */
@@ -147,7 +147,8 @@ void ZamSynthPlugin::d_deactivate()
 
 float ZamSynthPlugin::wavetable(float in)
 {
-	int index = (int) ((in / (2.0 * M_PI) + 1.0) / 2.0 * (AREAHEIGHT-1.0));
+	//int index = (int) ((in / (2.0 * M_PI) + 1.0) / 2.0 * (AREAHEIGHT-1.0));
+	int index = (int) ((in / (2.0 * M_PI)) * (AREAHEIGHT-1.0));
 	return (wave_y[index]);
 	//return (sin(in));
 }
@@ -248,5 +249,4 @@ Plugin* createPlugin()
 }
 
 // -----------------------------------------------------------------------
-
 END_NAMESPACE_DISTRHO
