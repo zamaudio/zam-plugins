@@ -22,12 +22,14 @@
 
 #include "Geometry.hpp"
 #include "ImageKnob.hpp"
+#include "ImageButton.hpp"
 
 #include "ZamSynthArtwork.hpp"
 #include "ZamSynthPlugin.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
+using DGL::ImageButton;
 using DGL::Rectangle;
 
 #define AREAHEIGHT 250
@@ -37,7 +39,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamSynthUI : public UI,
-                  public ImageKnob::Callback
+                  public ImageKnob::Callback,
+                  public ImageButton::Callback
 {
 public:
     ZamSynthUI();
@@ -57,6 +60,8 @@ protected:
         return ZamSynthArtwork::zamsynthHeight;
     }
 
+    void gaussiansmooth(float* smoothed, float* xs, float* ys, int n, int radius);
+    
     // -------------------------------------------------------------------
     // DSP Callbacks
 
@@ -71,6 +76,8 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
+    void imageButtonClicked(ImageButton* button, int) override;
+
     void onDisplay() override;
     bool onMouse(int, bool, int, int) override;
     bool onMotion(int, int) override;
@@ -78,6 +85,7 @@ protected:
 private:
     Image fImgBackground;
     ImageKnob* fKnobGain;
+    ImageButton* fButtonSmooth;
     float wave_y[AREAHEIGHT];
 
     bool fDragging;

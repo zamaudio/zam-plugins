@@ -151,7 +151,6 @@ void ZamSynthPlugin::d_deactivate()
 
 float ZamSynthPlugin::wavetable(float in)
 {
-	//int index = (int) ((in / (2.0 * M_PI) + 1.0) / 2.0 * (AREAHEIGHT-1.0));
 	int index = (int) ((in / (2.0 * M_PI)) * (AREAHEIGHT-1.0));
 	return (wave_y[index]);
 	//return (sin(in));
@@ -184,7 +183,7 @@ void ZamSynthPlugin::d_run(float** inputs, float** outputs, uint32_t frames,
 			*ptrvoice = num;
 
 			//printf("Note ON: %d totalv=%d\n", num, totalvoices);
-			rampfreq[*ptrvoice] = 440.0*powf(2.0, (num-48.0-24)/12.);
+			rampfreq[*ptrvoice] = 440.0*powf(2.0, (num-48.0-36)/12.);
 			amp[*ptrvoice] = vel / 127.f;
 		}
 		else if (type == 0x80 && chan == 0x00) {

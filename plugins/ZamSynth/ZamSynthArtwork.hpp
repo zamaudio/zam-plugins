@@ -10,6 +10,16 @@ namespace ZamSynthArtwork
     const unsigned int knobWidth    = 42;
     const unsigned int knobHeight   = 42;
 
+    extern const char* smoothrData;
+    const unsigned int smoothrDataSize = 6864;
+    const unsigned int smoothrWidth    = 78;
+    const unsigned int smoothrHeight   = 22;
+
+    extern const char* smoothyData;
+    const unsigned int smoothyDataSize = 6864;
+    const unsigned int smoothyWidth    = 78;
+    const unsigned int smoothyHeight   = 22;
+
     extern const char* zamsynthData;
     const unsigned int zamsynthDataSize = 315000;
     const unsigned int zamsynthWidth    = 350;

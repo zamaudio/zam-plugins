@@ -31,6 +31,8 @@ ZamSynthUI::ZamSynthUI()
 
     // knob
     Image knobImage(ZamSynthArtwork::knobData, ZamSynthArtwork::knobWidth, ZamSynthArtwork::knobHeight);
+    Image smoothrImage(ZamSynthArtwork::smoothrData, ZamSynthArtwork::smoothrWidth, ZamSynthArtwork::smoothrHeight);
+    Image smoothyImage(ZamSynthArtwork::smoothyData, ZamSynthArtwork::smoothyWidth, ZamSynthArtwork::smoothyHeight);
 
     // knob 
 
@@ -41,6 +43,11 @@ ZamSynthUI::ZamSynthUI()
     fKnobGain->setRotationAngle(240);
     fKnobGain->setCallback(this);
 
+    // button
+    fButtonSmooth = new ImageButton(this, smoothrImage, smoothrImage, smoothyImage);
+    fButtonSmooth->setPos(265, 55);
+    fButtonSmooth->setCallback(this);
+
     fCanvasArea.setPos(10,10);
     fCanvasArea.setSize(AREAHEIGHT,AREAHEIGHT);
     for (int i = 0; i < AREAHEIGHT; i++) {
@@ -50,7 +57,8 @@ ZamSynthUI::ZamSynthUI()
 
 ZamSynthUI::~ZamSynthUI()
 {
-	//delete fKnobAttack;
+	delete fKnobGain;
+	delete fButtonSmooth;
 }
 
 void ZamSynthUI::d_stateChanged(const char*, const char*)
@@ -98,6 +106,36 @@ void ZamSynthUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobGain)
         d_setParameterValue(ZamSynthPlugin::paramGain, value);
+}
+
+void ZamSynthUI::imageButtonClicked(ImageButton* button, int)
+{
+	float wavesmooth[AREAHEIGHT];
+	float xs[AREAHEIGHT];
+	int i;
+	for (i = 0; i < AREAHEIGHT; i++) {
+		xs[i] = i;
+	}
+	gaussiansmooth(wavesmooth, xs, wave_y, AREAHEIGHT, 4);
+	memcpy(wave_y, wavesmooth, AREAHEIGHT*sizeof(float));
+}
+
+void ZamSynthUI::gaussiansmooth(float* smoothed, float* xs, float* ys, int n, int radius)
+{
+	int i,j;
+	float numer;
+	float denom;
+	float kernel;
+	for (i = 0; i < n; i++) {
+		numer = 0.f;
+		denom = 0.f;
+		for (j = 0; j < n; j++) {
+			kernel = expf(-(i - xs[j])*(i - xs[j]) / (2. * radius));
+			numer += kernel * ys[j];
+			denom += kernel;
+		}
+		smoothed[i] = numer / denom;
+	}
 }
 
 bool ZamSynthUI::onMouse(int button, bool press, int x, int y)
