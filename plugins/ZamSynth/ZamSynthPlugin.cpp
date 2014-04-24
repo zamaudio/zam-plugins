@@ -111,8 +111,10 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     d_activate();
 }
 
-void ZamSynthPlugin::d_setState(const char*, const char* value)
+void ZamSynthPlugin::d_setState(const char* key, const char* value)
 {
+	if (strcmp(key, "waveform") != 0) return;
+
 	char* tmp;
 	char* saveptr;
 	int i = 0;
@@ -127,9 +129,11 @@ void ZamSynthPlugin::d_setState(const char*, const char* value)
 	}
 }
 
-void ZamSynthPlugin::d_initStateKey(unsigned int key, d_string& val)
+void ZamSynthPlugin::d_initStateKey(unsigned int index, d_string& key)
 {
-
+	if (index != 0)
+		return;
+	key = "waveform";
 }
 
 // -----------------------------------------------------------------------
@@ -179,7 +183,7 @@ void ZamSynthPlugin::d_run(float** inputs, float** outputs, uint32_t frames,
 			}
 			*ptrvoice = num;
 
-			printf("Note ON: %d totalv=%d\n", num, totalvoices);
+			//printf("Note ON: %d totalv=%d\n", num, totalvoices);
 			rampfreq[*ptrvoice] = 440.0*powf(2.0, (num-48.0-24)/12.);
 			amp[*ptrvoice] = vel / 127.f;
 		}
@@ -197,7 +201,7 @@ void ZamSynthPlugin::d_run(float** inputs, float** outputs, uint32_t frames,
 			}
 			*ptrvoice = num;
 
-			printf("Note OFF: %d totalv=%d\n", num, totalvoices);
+			//printf("Note OFF: %d totalv=%d\n", num, totalvoices);
 			amp[*ptrvoice] = 0.f;
 			rampfreq[*ptrvoice] = 1.f;
 		}
@@ -232,8 +236,8 @@ void ZamSynthPlugin::d_run(float** inputs, float** outputs, uint32_t frames,
 		if (signal) {
 			outl *= (totalvoices)/(10. * power);
 			outr *= (totalvoices)/(10. * power);
-			outputs[0][i] = outl;
-			outputs[1][i] = outr;
+			outputs[0][i] = outl*from_dB(gain);
+			outputs[1][i] = outr*from_dB(gain);
 		} else {
 			outputs[0][i] = 0.f;
 			outputs[1][i] = 0.f;

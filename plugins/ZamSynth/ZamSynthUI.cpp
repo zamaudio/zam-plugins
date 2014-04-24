@@ -30,19 +30,17 @@ ZamSynthUI::ZamSynthUI()
     fImgBackground = Image(ZamSynthArtwork::zamsynthData, ZamSynthArtwork::zamsynthWidth, ZamSynthArtwork::zamsynthHeight, GL_BGR);
 
     // knob
-    //Image knobImage(ZamSynthArtwork::knobData, ZamSynthArtwork::knobWidth, ZamSynthArtwork::knobHeight);
+    Image knobImage(ZamSynthArtwork::knobData, ZamSynthArtwork::knobWidth, ZamSynthArtwork::knobHeight);
 
     // knob 
-/*
-    fKnobAttack = new ImageKnob(this, knobImage);
-    fKnobAttack->setPos(24, 45);
-    fKnobAttack->setRange(0.1f, 200.0f);
-    fKnobAttack->setStep(0.1f);
-    fKnobAttack->setLogScale(true);
-    fKnobAttack->setDefault(10.0f);
-    fKnobAttack->setRotationAngle(240);
-    fKnobAttack->setCallback(this);
-*/
+
+    fKnobGain = new ImageKnob(this, knobImage);
+    fKnobGain->setPos(284, 240);
+    fKnobGain->setRange(-30.f, 30.0f);
+    fKnobGain->setDefault(0.0f);
+    fKnobGain->setRotationAngle(240);
+    fKnobGain->setCallback(this);
+
     fCanvasArea.setPos(10,10);
     fCanvasArea.setSize(AREAHEIGHT,AREAHEIGHT);
     for (int i = 0; i < AREAHEIGHT; i++) {
@@ -65,12 +63,12 @@ void ZamSynthUI::d_stateChanged(const char*, const char*)
 
 void ZamSynthUI::d_parameterChanged(uint32_t index, float value)
 {
-//    switch (index)
-//    {
-//    case ZamSynthPlugin::paramAttack:
-//       fKnobAttack->setValue(value);
-//        break;
-//    }
+	switch (index)
+	{
+	case ZamSynthPlugin::paramGain:
+		fKnobGain->setValue(value);
+		break;
+	}
 }
 
 void ZamSynthUI::d_programChanged(uint32_t index)
@@ -78,14 +76,7 @@ void ZamSynthUI::d_programChanged(uint32_t index)
     if (index != 0)
         return;
 
-    /* Default values
-    fKnobAttack->setDefault(10.0f);
-    fKnobRelease->setDefault(80.0f);
-    fKnobThresh->setDefault(0.0f);
-    fKnobRatio->setDefault(4.0f);
-    fKnobKnee->setDefault(0.0f);
-    fKnobMakeup->setDefault(0.0f);
-    */
+    fKnobGain->setDefault(0.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -93,20 +84,20 @@ void ZamSynthUI::d_programChanged(uint32_t index)
 
 void ZamSynthUI::imageKnobDragStarted(ImageKnob* knob)
 {
-//    if (knob == fKnobAttack)
-//        d_editParameter(ZamSynthPlugin::paramAttack, true);
+    if (knob == fKnobGain)
+        d_editParameter(ZamSynthPlugin::paramGain, true);
 }
 
 void ZamSynthUI::imageKnobDragFinished(ImageKnob* knob)
 {
-//    if (knob == fKnobAttack)
-//        d_editParameter(ZamSynthPlugin::paramAttack, false);
+    if (knob == fKnobGain)
+        d_editParameter(ZamSynthPlugin::paramGain, false);
 }
 
 void ZamSynthUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-//    if (knob == fKnobAttack)
-//        d_setParameterValue(ZamSynthPlugin::paramAttack, value);
+    if (knob == fKnobGain)
+        d_setParameterValue(ZamSynthPlugin::paramGain, value);
 }
 
 bool ZamSynthUI::onMouse(int button, bool press, int x, int y)
@@ -167,10 +158,9 @@ void ZamSynthUI::onDisplay()
 		char wavestr[5] = {0};
 		snprintf(wavestr, sizeof(wavestr), "%03d ", (int) (fCanvasArea.getHeight()-wave_y[i]));
 		strcat(tmp, wavestr);
-		//printf("wavestr=%4s",wavestr);
 	}
 
-	d_setState("",tmp);
+	d_setState("waveform",tmp);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -5,6 +5,11 @@
 
 namespace ZamSynthArtwork
 {
+    extern const char* knobData;
+    const unsigned int knobDataSize = 7056;
+    const unsigned int knobWidth    = 42;
+    const unsigned int knobHeight   = 42;
+
     extern const char* zamsynthData;
     const unsigned int zamsynthDataSize = 315000;
     const unsigned int zamsynthWidth    = 350;

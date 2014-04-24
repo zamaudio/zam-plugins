@@ -77,7 +77,7 @@ protected:
 
 private:
     Image fImgBackground;
-    ImageKnob* fKnobAttack;
+    ImageKnob* fKnobGain;
     float wave_y[AREAHEIGHT];
 
     bool fDragging;
