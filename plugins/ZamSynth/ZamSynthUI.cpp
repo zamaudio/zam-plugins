@@ -72,7 +72,7 @@ void ZamSynthUI::d_stateChanged(const char* key, const char* value)
         snprintf(tmpbuf, 4*AREAHEIGHT, "%s", value);
         tmp = strtok(tmpbuf, " ");
         while ((tmp != NULL) && (i < AREAHEIGHT)) {
-                wave_y[i] = ((float) atoi(tmp))/AREAHEIGHT - 0.5;
+                wave_y[i] = AREAHEIGHT-((float)atoi(tmp));
                 i++;
                 //printf("reload dsp wave_y[%d]=%.2f ", i, wave_y[i]);
                 tmp = strtok(NULL, " ");
