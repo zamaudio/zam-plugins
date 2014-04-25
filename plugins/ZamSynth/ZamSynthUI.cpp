@@ -118,6 +118,15 @@ void ZamSynthUI::imageButtonClicked(ImageButton* button, int)
 	}
 	gaussiansmooth(wavesmooth, xs, wave_y, AREAHEIGHT, 4);
 	memcpy(wave_y, wavesmooth, AREAHEIGHT*sizeof(float));
+	
+	char tmp[4*AREAHEIGHT+1] = {0};
+	for(i = 0; i < AREAHEIGHT; i++) {
+		char wavestr[5] = {0};
+		snprintf(wavestr, sizeof(wavestr), "%03d ", (int) (fCanvasArea.getHeight()-wave_y[i]));
+		strcat(tmp, wavestr);
+	}
+
+	d_setState("waveform", tmp);
 }
 
 void ZamSynthUI::gaussiansmooth(float* smoothed, float* xs, float* ys, int n, int radius)
@@ -179,8 +188,19 @@ bool ZamSynthUI::onMotion(int x, int y)
     if (x < 10) x = 10;
     if (y < 10) y = 10;
 
-    wave_y[x-10] = (y-10);
-    repaint();
+    if (wave_y[x-10] != (y-10)) {
+	char tmp[4*AREAHEIGHT+1] = {0};
+	int i;
+	for(i = 0; i < AREAHEIGHT; i++) {
+		char wavestr[5] = {0};
+		snprintf(wavestr, sizeof(wavestr), "%03d ", (int) (fCanvasArea.getHeight()-wave_y[i]));
+		strcat(tmp, wavestr);
+	}
+
+        wave_y[x-10] = y-10;
+        d_setState("waveform",tmp);
+        repaint();
+    }
 
     return true;
 }
@@ -190,22 +210,13 @@ void ZamSynthUI::onDisplay()
 {
 	fImgBackground.draw();
 
-	char tmp[4*AREAHEIGHT+1] = {0};
-	int i;
-	for(i = 0; i < AREAHEIGHT; i++) {
-		char wavestr[5] = {0};
-		snprintf(wavestr, sizeof(wavestr), "%03d ", (int) (fCanvasArea.getHeight()-wave_y[i]));
-		strcat(tmp, wavestr);
-	}
-
-	d_setState("waveform",tmp);
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
     glLineWidth(2);
+    int i;
         glColor4f(0.235f, 1.f, 0.235f, 1.0f);
         for (i = 2; i < AREAHEIGHT; ++i) {
             glBegin(GL_LINES);
