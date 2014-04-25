@@ -34,6 +34,7 @@
 #endif
 
 #include <map>
+#include <string>
 
 #ifndef DISTRHO_PLUGIN_URI
 # error DISTRHO_PLUGIN_URI undefined!

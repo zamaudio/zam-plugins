@@ -46,8 +46,10 @@ public:
     {
         fUiResize->ui_resize(fUiResize->handle, fUI.getWidth(), fUI.getHeight());
 
+#if DISTRHO_PLUGIN_WANT_STATE
         // tell the DSP we're ready to receive msgs
         setState("__dpf_ui_data__", "");
+#endif
     }
 
     // -------------------------------------------------------------------
@@ -66,6 +68,7 @@ public:
             const float value(*(const float*)buffer);
             fUI.parameterChanged(rindex-parameterOffset, value);
         }
+#if DISTRHO_PLUGIN_WANT_STATE
         else if (format == fEventTransferURID)
         {
             const LV2_Atom* const atom((const LV2_Atom*)buffer);
@@ -75,6 +78,7 @@ public:
             d_stdout("Got MSG in UI from DSP ==> %s | %s", stateKey, stateValue);
             fUI.stateChanged(stateKey, stateValue);
         }
+#endif
     }
 
     // -------------------------------------------------------------------
