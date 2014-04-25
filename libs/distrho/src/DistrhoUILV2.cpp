@@ -40,9 +40,14 @@ public:
           fUiResize(uiResz),
           fUiTouch(uiTouch),
           fController(controller),
-          fWriteFunction(writeFunc)
+          fWriteFunction(writeFunc),
+          fEventTransferURID(uridMap->map(uridMap->handle, LV2_ATOM__eventTransfer)),
+          fKeyValueURID(uridMap->map(uridMap->handle, "urn:distrho:keyValueState"))
     {
         fUiResize->ui_resize(fUiResize->handle, fUI.getWidth(), fUI.getHeight());
+
+        // tell the DSP we're ready to receive msgs
+        setState("__dpf_ui_data__", "");
     }
 
     // -------------------------------------------------------------------
@@ -61,9 +66,14 @@ public:
             const float value(*(const float*)buffer);
             fUI.parameterChanged(rindex-parameterOffset, value);
         }
-        else
+        else if (format == fEventTransferURID)
         {
-            //fUI.stateChanged(key, value);
+            const LV2_Atom* const atom((const LV2_Atom*)buffer);
+            const char* const stateKey((const char*)LV2_ATOM_BODY_CONST(atom));
+            const char* const stateValue(stateKey+std::strlen(stateKey)+1);
+
+            d_stdout("Got MSG in UI from DSP ==> %s | %s", stateKey, stateValue);
+            fUI.stateChanged(stateKey, stateValue);
         }
     }
 
@@ -125,13 +135,13 @@ protected:
         // set atom info
         LV2_Atom* const atom((LV2_Atom*)atomBuf);
         atom->size = msgSize;
-        atom->type = fUridMap->map(fUridMap->handle, "urn:distrho:keyValueState");
+        atom->type = fKeyValueURID;
 
         // set atom data
         std::memcpy(atomBuf + sizeof(LV2_Atom), tmpStr.data(), msgSize-1);
 
         // send to DSP side
-        fWriteFunction(fController, eventInPortIndex, atomSize, fUridMap->map(fUridMap->handle, LV2_ATOM__eventTransfer), atom);
+        fWriteFunction(fController, eventInPortIndex, atomSize, fEventTransferURID, atom);
     }
 
     void sendNote(const uint8_t /*channel*/, const uint8_t /*note*/, const uint8_t /*velocity*/)
@@ -155,6 +165,10 @@ private:
     // LV2 UI stuff
     const LV2UI_Controller     fController;
     const LV2UI_Write_Function fWriteFunction;
+
+    // Need to save this
+    const LV2_URID fEventTransferURID;
+    const LV2_URID fKeyValueURID;
 
     // -------------------------------------------------------------------
     // Callbacks
