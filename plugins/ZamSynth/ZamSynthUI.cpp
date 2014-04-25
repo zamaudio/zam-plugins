@@ -61,9 +61,22 @@ ZamSynthUI::~ZamSynthUI()
 	delete fButtonSmooth;
 }
 
-void ZamSynthUI::d_stateChanged(const char*, const char*)
+void ZamSynthUI::d_stateChanged(const char* key, const char* value)
 {
+        if (strcmp(key, "waveform") != 0) return;
 
+        char* tmp;
+        char* saveptr;
+        int i = 0;
+        char tmpbuf[4*AREAHEIGHT+1] = {0};
+        snprintf(tmpbuf, 4*AREAHEIGHT, "%s", value);
+        tmp = strtok(tmpbuf, " ");
+        while ((tmp != NULL) && (i < AREAHEIGHT)) {
+                wave_y[i] = ((float) atoi(tmp))/AREAHEIGHT - 0.5;
+                i++;
+                //printf("reload dsp wave_y[%d]=%.2f ", i, wave_y[i]);
+                tmp = strtok(NULL, " ");
+        }
 }
 
 // -----------------------------------------------------------------------
