@@ -130,6 +130,7 @@ void lv2_generate_ttl(const char* const basename)
         pluginString += "@prefix doap: <http://usefulinc.com/ns/doap#> .\n";
         pluginString += "@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n";
         pluginString += "@prefix lv2:  <" LV2_CORE_PREFIX "> .\n";
+        pluginString += "@prefix resizeatom:  <http://lv2plug.in/ns/ext/resize-port#> .\n";
 #if DISTRHO_PLUGIN_HAS_UI
         pluginString += "@prefix ui:   <" LV2_UI_PREFIX "> .\n";
 #endif
@@ -150,6 +151,9 @@ void lv2_generate_ttl(const char* const basename)
 #if DISTRHO_PLUGIN_WANT_STATE
         pluginString += ",\n                      <" LV2_OPTIONS__interface "> ";
         pluginString += ",\n                      <" LV2_WORKER__interface "> ";
+#endif
+#if DISTRHO_LV2_USE_EVENTS_IN || DISTRHO_LV2_USE_EVENTS_OUT
+        pluginString += ",\n                      resizeatom:interface ";
 #endif
 #if DISTRHO_PLUGIN_WANT_PROGRAMS
         pluginString += ",\n                      <" LV2_PROGRAMS__Interface "> ";
@@ -227,6 +231,7 @@ void lv2_generate_ttl(const char* const basename)
             pluginString += "        lv2:name \"Events Input\" ;\n";
             pluginString += "        lv2:symbol \"lv2_events_in\" ;\n";
             pluginString += "        atom:bufferType atom:Sequence ;\n";
+            pluginString += "        resizeatom:minimumSize 2048 ;\n";
 # if (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI)
             pluginString += "        atom:supports <" LV2_ATOM__String "> ;\n";
 # endif
@@ -247,6 +252,7 @@ void lv2_generate_ttl(const char* const basename)
             pluginString += "        lv2:index " + d_string(portIndex) + " ;\n";
             pluginString += "        lv2:name \"Events Output\" ;\n";
             pluginString += "        lv2:symbol \"lv2_events_out\" ;\n";
+            pluginString += "        resizeatom:minimumSize 2048 ;\n";
             pluginString += "        atom:bufferType atom:Sequence ;\n";
             pluginString += "        atom:supports <" LV2_ATOM__String "> ;\n";
             pluginString += "    ] ;\n\n";
