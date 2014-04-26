@@ -31,6 +31,7 @@ ImageSlider::ImageSlider(Window& parent, const Image& image)
       fValue(0.5f),
       fValueTmp(fValue),
       fDragging(false),
+      fInverted(false),
       fStartedX(0),
       fStartedY(0),
       fCallback(nullptr)
@@ -47,6 +48,7 @@ ImageSlider::ImageSlider(Widget* widget, const Image& image)
       fValue(0.5f),
       fValueTmp(fValue),
       fDragging(false),
+      fInverted(false),
       fStartedX(0),
       fStartedY(0),
       fCallback(nullptr)
@@ -63,6 +65,7 @@ ImageSlider::ImageSlider(const ImageSlider& imageSlider)
       fValue(imageSlider.fValue),
       fValueTmp(fValue),
       fDragging(false),
+      fInverted(imageSlider.fInverted),
       fStartedX(0),
       fStartedY(0),
       fCallback(imageSlider.fCallback),
@@ -98,6 +101,15 @@ void ImageSlider::setEndPos(const Point<int>& endPos)
 void ImageSlider::setEndPos(int x, int y)
 {
     setEndPos(Point<int>(x, y));
+}
+
+void ImageSlider::setInverted(bool inverted)
+{
+    if (fInverted == inverted)
+        return;
+
+    fInverted = inverted;
+    repaint();
 }
 
 void ImageSlider::setRange(float min, float max)
@@ -154,24 +166,33 @@ void ImageSlider::onDisplay()
 #if 0 // DEBUG, paints slider area
     glColor3f(0.4f, 0.5f, 0.1f);
     glRecti(fSliderArea.getX(), fSliderArea.getY(), fSliderArea.getX()+fSliderArea.getWidth(), fSliderArea.getY()+fSliderArea.getHeight());
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 #endif
 
     float normValue = (fValue - fMinimum) / (fMaximum - fMinimum);
 
     int x, y;
 
-    if (fStartPos.getX() == fEndPos.getX())
+    if (fStartPos.getY() == fEndPos.getY())
     {
-        x = fStartPos.getX();
-        y = fStartPos.getY() + static_cast<int>(normValue*static_cast<float>(fEndPos.getY()-fStartPos.getY()));
-    }
-    else if (fStartPos.getY() == fEndPos.getY())
-    {
-        x = fStartPos.getX() + static_cast<int>(normValue*static_cast<float>(fEndPos.getX()-fStartPos.getX()));
+        // horizontal
+        if (fInverted)
+            x = fEndPos.getX() - static_cast<int>(normValue*static_cast<float>(fEndPos.getX()-fStartPos.getX()));
+        else
+            x = fStartPos.getX() + static_cast<int>(normValue*static_cast<float>(fEndPos.getX()-fStartPos.getX()));
+
         y = fStartPos.getY();
     }
     else
-        return;
+    {
+        // vertical
+        x = fStartPos.getX();
+
+        if (fInverted)
+            y = fEndPos.getY() - static_cast<int>(normValue*static_cast<float>(fEndPos.getY()-fStartPos.getY()));
+        else
+            y = fStartPos.getY() + static_cast<int>(normValue*static_cast<float>(fEndPos.getY()-fStartPos.getY()));
+    }
 
     fImage.draw(x, y);
 }
@@ -188,22 +209,23 @@ bool ImageSlider::onMouse(int button, bool press, int x, int y)
 
         float vper;
 
-        if (fStartPos.getX() == fEndPos.getX())
-        {
-            // vertical
-            vper = float(y - fSliderArea.getY()) / float(fSliderArea.getHeight());
-        }
-        else if (fStartPos.getY() == fEndPos.getY())
+        if (fStartPos.getY() == fEndPos.getY())
         {
             // horizontal
             vper = float(x - fSliderArea.getX()) / float(fSliderArea.getWidth());
         }
         else
-            return false;
+        {
+            // vertical
+            vper = float(y - fSliderArea.getY()) / float(fSliderArea.getHeight());
+        }
 
         float value;
 
-        value = fMinimum + vper * (fMaximum - fMinimum);
+        if (fInverted)
+            value = fMaximum - vper * (fMaximum - fMinimum);
+        else
+            value = fMinimum + vper * (fMaximum - fMinimum);
 
         if (value < fMinimum)
         {
@@ -250,27 +272,29 @@ bool ImageSlider::onMotion(int x, int y)
     if (! fDragging)
         return false;
 
-    bool horizontal = fStartPos.getY() == fEndPos.getY();
-
-    float vper;
-
-    if (horizontal)
-    {
-        // horizontal
-        vper = float(x - fSliderArea.getX()) / float(fSliderArea.getWidth());
-    }
-    else
-    {
-        // vertical
-        vper = float(y - fSliderArea.getY()) / float(fSliderArea.getHeight());
-    }
-
-    float value;
-
-    value = fMinimum + vper * (fMaximum - fMinimum);
+    const bool horizontal = fStartPos.getY() == fEndPos.getY();
 
     if ((horizontal && fSliderArea.containsX(x)) || (fSliderArea.containsY(y) && ! horizontal))
     {
+        float vper;
+
+        if (horizontal)
+        {
+            // horizontal
+            vper = float(x - fSliderArea.getX()) / float(fSliderArea.getWidth());
+        }
+        else
+        {
+            // vertical
+            vper = float(y - fSliderArea.getY()) / float(fSliderArea.getHeight());
+        }
+
+        float value;
+
+        if (fInverted)
+            value = fMaximum - vper * (fMaximum - fMinimum);
+        else
+            value = fMinimum + vper * (fMaximum - fMinimum);
 
         if (value < fMinimum)
         {
@@ -291,44 +315,41 @@ bool ImageSlider::onMotion(int x, int y)
 
         setValue(value, true);
     }
-    else if (horizontal && x < fSliderArea.getX()) {
-    	value = fMinimum;
-        fValueTmp = value;
-        setValue(value, true);
+    else if (horizontal)
+    {
+        if (x < fSliderArea.getX())
+            setValue(fInverted ? fMaximum : fMinimum, true);
+        else
+            setValue(fInverted ? fMinimum : fMaximum, true);
     }
-    else if (horizontal && x > fSliderArea.getX()) {
-        value = fMaximum;
-        fValueTmp = value;
-        setValue(value, true);
+    else
+    {
+        if (y < fSliderArea.getY())
+            setValue(fInverted ? fMaximum : fMinimum, true);
+        else
+            setValue(fInverted ? fMinimum : fMaximum, true);
     }
-    else if (!horizontal && y < fSliderArea.getY()) {
-        value = fMinimum;
-        fValueTmp = value;
-        setValue(value, true);
-    }
-    else {
-        value = fMaximum;
-        fValueTmp = value;
-        setValue(value, true);
-    }
+
     return true;
 }
 
 void ImageSlider::_recheckArea()
 {
-    if (fStartPos.getX() == fEndPos.getX())
+    if (fStartPos.getY() == fEndPos.getY())
     {
-        fSliderArea = Rectangle<int>(fStartPos.getX(),
-                                     fStartPos.getY(),
-                                     fImage.getWidth(),
-                                     fEndPos.getY() + fImage.getHeight() - fStartPos.getY());
-    }
-    else if (fStartPos.getY() == fEndPos.getY())
-    {
+        // horizontal
         fSliderArea = Rectangle<int>(fStartPos.getX(),
                                      fStartPos.getY(),
                                      fEndPos.getX() + fImage.getWidth() - fStartPos.getX(),
                                      fImage.getHeight());
+    }
+    else
+    {
+        // vertical
+        fSliderArea = Rectangle<int>(fStartPos.getX(),
+                                     fStartPos.getY(),
+                                     fImage.getWidth(),
+                                     fEndPos.getY() + fImage.getHeight() - fStartPos.getY());
     }
 }
 
