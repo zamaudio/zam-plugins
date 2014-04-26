@@ -1,15 +1,6 @@
 PREFIX ?= /usr/local
 LIBDIR ?= lib
 
-# No heavy optimisations
-OPTIMIZATIONS ?= -O2 -ffast-math
-
-# Heavy optimisations
-#OPTIMIZATIONS ?= -O2 -ffast-math -mtune=generic -msse -msse2 -mfpmath=sse
-
-# Raspberry Pi
-#OPTIMIZATIONS ?= -O2 -ffast-math -march=armv6 -mfpu=vfp -mfloat-abi=hard
-
 NAME    = zam-plugins
 VERSION = $(shell cat .version)
 
@@ -32,14 +23,7 @@ $(PLUGINS): libs
 install: all
 	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa \
 		$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2 ; \
-	if test 'x$(OPTIMIZATIONS)' != 'x'; then \
-		optimizations='OPTIMIZATIONS=$(OPTIMIZATIONS)'; \
-	else \
-		optimizations=''; \
-	fi; \
 	for plugin in $(PLUGINS); do \
-		$(MAKE) PREFIX="$(PREFIX)" LIBDIR="$(LIBDIR)" "$$optimizations" \
-			-C plugins/"$$plugin"; \
 		install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
 		install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 \
 			bin/"$$plugin".lv2/* ; \
@@ -49,7 +33,7 @@ install: all
 uninstall:
 	for plugin in $(PLUGINS); do \
 		rm -rf $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
-		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa.so ; \
+		#rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa.so ;
 	done
 
 
