@@ -45,7 +45,8 @@ public:
           fKeyValueURID(uridMap->map(uridMap->handle, "urn:distrho:keyValueState")),
           fWinIdWasNull(winId == 0)
     {
-        fUiResize->ui_resize(fUiResize->handle, fUI.getWidth(), fUI.getHeight());
+        if (fUiResize != nullptr && winId != 0)
+            fUiResize->ui_resize(fUiResize->handle, fUI.getWidth(), fUI.getHeight());
 
 #if DISTRHO_PLUGIN_WANT_STATE
         // tell the DSP we're ready to receive msgs
@@ -171,7 +172,9 @@ protected:
     void uiResize(const uint width, const uint height)
     {
         fUI.setSize(width, height);
-        fUiResize->ui_resize(fUiResize->handle, width, height);
+
+        if (fUiResize != nullptr && ! fWinIdWasNull)
+            fUiResize->ui_resize(fUiResize->handle, width, height);
     }
 
 private:
@@ -279,12 +282,6 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
     if (uridMap == nullptr)
     {
         d_stderr("URID Map feature missing, cannot continue!");
-        return nullptr;
-    }
-
-    if (uiResize == nullptr)
-    {
-        d_stderr("UI Resize feature missing, cannot continue!");
         return nullptr;
     }
 
