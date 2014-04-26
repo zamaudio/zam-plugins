@@ -32,7 +32,6 @@
 using DGL::Image;
 using DGL::ImageKnob;
 using DGL::ImageSlider;
-using DGL::Rectangle;
 
 START_NAMESPACE_DISTRHO
 
@@ -140,7 +139,7 @@ private:
     ImageSlider* fSliderMaster;
     float eqx[EQPOINTS];
     float eqy[EQPOINTS];
-    Rectangle<int> fCanvasArea;
+    DGL::Rectangle<int> fCanvasArea;
     double a1[1][MAX_FILT], a2[1][MAX_FILT], b0[1][MAX_FILT], b1[1][MAX_FILT], b2[1][MAX_FILT];
 };
 

@@ -30,7 +30,6 @@
 using DGL::Image;
 using DGL::ImageKnob;
 using DGL::ImageButton;
-using DGL::Rectangle;
 
 #define AREAHEIGHT 250
 
@@ -90,7 +89,7 @@ private:
 
     bool fDragging;
     bool fDragValid;
-    Rectangle<int> fCanvasArea;
+    DGL::Rectangle<int> fCanvasArea;
 };
 
 // -----------------------------------------------------------------------

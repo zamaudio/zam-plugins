@@ -32,7 +32,6 @@
 using DGL::Image;
 using DGL::ImageKnob;
 using DGL::ImageToggle;
-using DGL::Rectangle;
 
 START_NAMESPACE_DISTRHO
 
@@ -129,7 +128,7 @@ private:
     Image fLedYellowImg;
     float fLedYellowValueL;
     float fLedYellowValueR;
-    Rectangle<int> fCanvasArea;
+    DGL::Rectangle<int> fCanvasArea;
     float fThresh[MAX_COMP];
     float fRatio;
     float fKnee;
