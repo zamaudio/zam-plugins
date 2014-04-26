@@ -1,2 +1,5 @@
-== zam-plugins-dpf - Zam plugins using DISTRHO Plugin Framework ==
+zam-plugins-DPF
+===============
+
+Zam plugins using Distrho Plugin Framework
 
