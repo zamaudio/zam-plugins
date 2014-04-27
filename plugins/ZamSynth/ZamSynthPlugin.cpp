@@ -97,18 +97,20 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
 
     /* Default variable values */
     for (int i = 0; i < 127; i++) {
-        amp[i] = 0.f;
-        rampstate[i] = 0.f;
-        rampfreq[i] = 0.f;
-	envpos[i] = 0;
+        voice[i].playing = false;
+	voice[i].notenum = 0;
+	voice[i].envpos = 0;
+	voice[i].curamp = 0.f;
+	voice[i].vi = 0.f;
+        voice[i].rampstate = 0.f;
     }
+    
+    curvoice = voice; //ptr to first voice
 
     for (int i = 0; i < AREAHEIGHT; i++) {
         wave_y[i] = sin(i*2.*M_PI/d_getSampleRate()*1000.);
         env_y[i] = sin(i*2.*M_PI/d_getSampleRate()*1000./2.);
     }
-    for (int i = 0; i < MAX_ENVCOUNTER; i++)
-        envcounter[i] = 0;
 
     /* reset filter values */
     d_activate();
@@ -165,51 +167,58 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 	float max_envcounter = srate / 5; // 1/20th of a second for both attack and release
 	uint32_t i,j;
 	float RD_0;
+	int vn;
 
 	for (i = 0; i < midicount; i++) {
-		int *ptrvoice = voice;
 		int type = midievent[i].buf[0] & 0xF0;
 		int chan = midievent[i].buf[0] & 0x0F;
 		int num = midievent[i].buf[1];
 		int vel = midievent[i].buf[2];
-		if (type == 0x90 && chan == 0x00) {
+		if (type == 0x90 && chan == 0x0) {
 			// NOTE ON
-			envpos[num] = 1; // begin attack
-			if (noteon[num] == true) {
-				continue;
+			//find voice with current notenum
+			vn = -1;
+			for (int k = 0; k < 128; k++) {
+				if (voice[k].playing && voice[k].notenum == num) {
+					vn = k;
+					break;
+				}
 			}
-			noteon[num] = true;
-			noteoff[num] = false;
-			ptrvoice++;
-			if (totalvoices++ > MAX_VOICES) {
-				ptrvoice = voice;
-				totalvoices--;
+			if (vn != -1) {
+				printf("voice already playing XXXXXXXXXXXXXXXXXXXXXXXX\n");
+				continue; // voice already playing
 			}
-			*ptrvoice = num;
-
-			printf("Note ON: %d totalv=%d\n", num, totalvoices);
-			rampfreq[*ptrvoice] = 440.0*powf(2.0, (num-48.0-36)/12.);
-			vi[*ptrvoice] = vel / 127.f;
-
+			printf("Note ON: %d nvoices=%d\n", vn, nvoices);
+			curvoice++;
+			if (nvoices++ > MAX_VOICES) {
+				printf("steal first voice\n");
+				curvoice = voice; // steal first voice
+				nvoices--;
+			}
+			printf("begin attack\n");
+			curvoice->envpos = 1; // begin attack
+			curvoice->playing = true;
+			curvoice->notenum = num;
+			curvoice->vi = vel / 127.f;
+			curvoice->curamp = curvoice->vi;
+			curvoice->rampstate = 0;
 		}
-		else if (type == 0x80 && chan == 0x00) {
+		else if (type == 0x80 && chan == 0x0) {
 			// NOTE OFF
-			envpos[num] = MAX_ENV / 2 + 1; // begin release
-			if (noteoff[num] == true)
-				envpos[num] = 0; // silence if already off
-				continue;
-			noteoff[num] = true;
-			noteon[num] = false;
-
-			ptrvoice--;
-			if (totalvoices-- < 0) {
-				ptrvoice = voice + MAX_VOICES;
-				totalvoices++;
+			//find voice with current notenum
+			vn = -1;
+			for (int k = 0; k < 128; k++) {
+				if (voice[k].playing && voice[k].notenum == num) {
+					vn = k;
+				}
 			}
-			*ptrvoice = num;
-
-			rampfreq[num] = 1.f; // clear freq for noteoff
-			printf("Note OFF: %d totalv=%d\n", num, totalvoices);
+			printf("Note OFF: %d nvoices=%d\n", vn, nvoices);
+			if (vn == -1) {
+				printf("voice already off\n");
+				continue; // voice already off
+			}
+			voice[vn].envpos = MAX_ENV / 2 + 1; // begin release;
+			printf("begin release\n");
 		}
 	}
 	
@@ -222,67 +231,66 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		signal = false;
 		outl = outr = 0.f;
 		power = 0.f;
-		int j,k;
+		int k;
+		Voice* j;
 		// process envelope positions per sample
-		for (k = 0; k < totalvoices; k++) {
-			j = voice[k];
-			if (j > 0) {
-				if (envpos[j] == 0) {
+		for (k = 0; k < 128; k++) {
+			j = &voice[k];
+			if (j->playing) {
+				if (j->envpos == 0) {
 					//silence
-					amp[j] = 0.f;
-				} else if (envpos[j] > 0 && envpos[j] < MAX_ENV / 2) {
+					j->curamp = 0.f;
+					j->playing = false;
+				} else if (j->envpos > 0 && j->envpos < MAX_ENV / 2) {
 					//attack
-					envcounter[j]++;
-					if (envcounter[j] > max_envcounter)
-						envcounter[j] = 0;
-					amp[j] = vi[j] * env_y[(int)(envpos[j]*envcounter[j] / max_envcounter)];
-					printf("att: %d %d amp=%.2f\n",j,envpos[j], amp[j]);
-					envpos[j]++;
-				} else if (envpos[j] > MAX_ENV / 2 && envpos[j] < MAX_ENV) {
+					j->curamp = j->vi * env_y[(int)(j->envpos)];
+					printf("att: %d %d curamp=%.2f\n",k,j->envpos, j->curamp);
+					j->envpos++;
+				} else if (j->envpos > MAX_ENV / 2 && j->envpos < MAX_ENV) {
 					//release
-					envcounter[j]++;
-					if (envcounter[j] > max_envcounter)
-						envcounter[j] = 0;
-					amp[j] = vi[j] * env_y[(int)(envpos[j]*envcounter[j] / max_envcounter)];
-					printf("rel: %d %d amp=%.2f\n",j,envpos[j], amp[j]);
-					envpos[j]++;
-					if (envpos[j] == MAX_ENV) {
+					j->curamp = j->vi * env_y[(int)(j->envpos)];
+					printf("rel: %d %d curamp=%.2f\n",k,j->envpos, j->curamp);
+					j->envpos++;
+					if (j->envpos == MAX_ENV) {
 						//end of release
-						envpos[j] = 0;
-						amp[j] = 0.f;
-						envcounter[j] = 0;
-						vi[j] = 0.f;
-						voice[k] = 0; //kill voice
-						totalvoices--;
-						if (totalvoices < 0)
-							totalvoices++;
+						j->envpos = 0;
+						j->curamp = 0.f;
+						j->vi = 0.f;
+						j->notenum = -1;
+						curvoice--;
+						if (nvoices-- < 0) {
+							curvoice = voice + MAX_VOICES;
+							nvoices++;
+						}
 					}
 				} else {
 					//sustain
-					amp[j] = vi[j] * env_y[MAX_ENV/2];
+					j->curamp = j->vi * env_y[MAX_ENV/2];
 				}
 			}
 		}
-		for (j = 0; j < 128; j++) {
-			if (amp[j] < 0.01f) continue;
+		for (k = 0; k < 128; k++) {
+			float rampfreq;
+			if (voice[k].curamp < 0.01f) continue;
 			signal = true;
+			rampfreq = 440.0*powf(2.0, (voice[k].notenum-48.0-36)/12.);
 
 			// ramp sawtooth
-			RD_0 = 1.4247585730565955E-4*srate/44100.*rampfreq[j] + rampstate[j];
+			RD_0 = 1.4247585730565955E-4*srate/44100.*rampfreq + voice[k].rampstate;
 			if (RD_0>6.283185307179586) {RD_0 -= 6.283185307179586;}
 			if (RD_0<-6.283185307179586) {RD_0 += 6.283185307179586;}
-			rampstate[j] = RD_0;
+			voice[k].rampstate = RD_0;
 
 			// wavetable
-			wave = wavetable(rampstate[j]);
-			power += sqrt(amp[j]);
+			wave = wavetable(voice[k].rampstate);
+			power += sqrt(voice[k].curamp);
 
-			outl += wave*amp[j];
-			outr += wave*amp[j];
+			outl += wave*voice[k].curamp;
+			outr += wave*voice[k].curamp;
 		}
 		if (signal) {
-			outl *= (totalvoices)/(10. * power);
-			outr *= (totalvoices)/(10. * power);
+			outl *= (nvoices)/(10. * power);
+			outr *= (nvoices)/(10. * power);
 			outputs[0][i] = outl*from_dB(gain);
 			outputs[1][i] = outr*from_dB(gain);
 		} else {

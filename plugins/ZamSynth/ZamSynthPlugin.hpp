@@ -24,7 +24,7 @@
 #define AREAHEIGHT 250
 #define MAX_ENV AREAHEIGHT
 #define MAX_ENVCOUNTER 48000
-
+#define NOTPLAYING -1
 
 START_NAMESPACE_DISTRHO
 
@@ -115,16 +115,19 @@ protected:
 
 private:
     float gain;
-    float rampstate[128], rampfreq[128], amp[128];
-    bool noteon[128];
-    bool noteoff[128];
-    int envpos[128];
-    int voice[128];
-    float vi[128];
-    int totalvoices;
+    int nvoices;
     float wave_y[AREAHEIGHT];
     float env_y[AREAHEIGHT];
-    int envcounter[MAX_ENVCOUNTER];
+	typedef struct v {
+		bool playing;
+		int notenum;
+		int envpos;
+		float curamp;
+		float vi;
+		float rampstate;
+	} Voice;
+    Voice voice[128];
+    Voice* curvoice;
 };
 
 // -----------------------------------------------------------------------
