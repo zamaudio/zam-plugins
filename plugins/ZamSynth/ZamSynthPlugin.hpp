@@ -22,7 +22,7 @@
 #include "DistrhoPlugin.hpp"
 #define MAX_VOICES 64
 #define AREAHEIGHT 250
-#define MAX_ENV AREAHEIGHT
+#define MAX_ENV 3000
 #define MAX_ENVCOUNTER 48000
 #define NOTPLAYING -1
 
@@ -117,7 +117,7 @@ private:
     float gain;
     int nvoices;
     float wave_y[AREAHEIGHT];
-    float env_y[AREAHEIGHT];
+    float env_y[MAX_ENV];
 	typedef struct v {
 		bool playing;
 		int notenum;
