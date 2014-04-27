@@ -22,9 +22,7 @@
 #include "DistrhoPlugin.hpp"
 #define MAX_VOICES 64
 #define AREAHEIGHT 250
-#define MAX_ENV 3000
-#define MAX_ENVCOUNTER 48000
-#define NOTPLAYING -1
+#define MAX_ENV AREAHEIGHT
 
 START_NAMESPACE_DISTRHO
 
@@ -36,6 +34,7 @@ public:
     enum Parameters
     {
         paramGain,
+        paramGraph,
         paramCount
     };
 
@@ -114,14 +113,14 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float gain;
+    float gain, graph;
     int nvoices;
     float wave_y[AREAHEIGHT];
     float env_y[MAX_ENV];
 	typedef struct v {
 		bool playing;
 		int notenum;
-		int envpos;
+		float envpos;
 		float curamp;
 		float vi;
 		float rampstate;

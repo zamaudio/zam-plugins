@@ -20,6 +20,16 @@ namespace ZamSynthArtwork
     const unsigned int smoothyWidth    = 78;
     const unsigned int smoothyHeight   = 22;
 
+    extern const char* toggleoffData;
+    const unsigned int toggleoffDataSize = 1056;
+    const unsigned int toggleoffWidth    = 12;
+    const unsigned int toggleoffHeight   = 22;
+
+    extern const char* toggleonData;
+    const unsigned int toggleonDataSize = 1056;
+    const unsigned int toggleonWidth    = 12;
+    const unsigned int toggleonHeight   = 22;
+
     extern const char* zamsynthData;
     const unsigned int zamsynthDataSize = 315000;
     const unsigned int zamsynthWidth    = 350;

@@ -51,6 +51,15 @@ void ZamSynthPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -30.0f;
         parameter.ranges.max = 30.0f;
         break;
+    case paramGraph:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.name       = "Graph toggle";
+        parameter.symbol     = "graph";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+	break;
     }
 }
 
@@ -72,6 +81,9 @@ float ZamSynthPlugin::d_getParameterValue(uint32_t index) const
     case paramGain:
         return gain;
         break;
+    case paramGraph:
+        return graph;
+        break;
     default:
         return 0.0f;
     }
@@ -84,6 +96,9 @@ void ZamSynthPlugin::d_setParameterValue(uint32_t index, float value)
     case paramGain:
         gain = value;
         break;
+    case paramGraph:
+        graph = value;
+        break;
     }
 }
 
@@ -94,12 +109,13 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
 
     /* Default parameter values */
     gain = 0.0f;
+    graph = 0.0f;
 
     /* Default variable values */
     for (int i = 0; i < 127; i++) {
         voice[i].playing = false;
 	voice[i].notenum = 0;
-	voice[i].envpos = 0;
+	voice[i].envpos = 0.f;
 	voice[i].curamp = 0.f;
 	voice[i].vi = 0.f;
         voice[i].rampstate = 0.f;
@@ -112,7 +128,7 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     }
 
     for (int i = 0; i < MAX_ENV; i++) {
-        env_y[i] = sin(i*2.*M_PI/d_getSampleRate()*1000./2.*24);
+        env_y[i] = sin(i*2.*M_PI/d_getSampleRate()*1000./2.);
     }
     /* reset filter values */
     d_activate();
@@ -120,26 +136,37 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
 
 void ZamSynthPlugin::d_setState(const char* key, const char* value)
 {
-	if (strcmp(key, "waveform") != 0) return;
-
-	char* tmp;
-	int i = 0;
-	char tmpbuf[4*AREAHEIGHT+1] = {0};
-	snprintf(tmpbuf, 4*AREAHEIGHT, "%s", value);
-	tmp = strtok(tmpbuf, " ");
-	while ((tmp != NULL) && (i < AREAHEIGHT)) {
-		wave_y[i] = ((float) atoi(tmp))/AREAHEIGHT - 0.5;
-		i++;
-		//printf("dsp wave_y[%d]=%.2f ", i, wave_y[i]);
-		tmp = strtok(NULL, " ");
+	if (strcmp(key, "waveform") == 0) {
+		char* tmp;
+		int i = 0;
+		char tmpbuf[4*AREAHEIGHT+1] = {0};
+		snprintf(tmpbuf, 4*AREAHEIGHT, "%s", value);
+		tmp = strtok(tmpbuf, " ");
+		while ((tmp != NULL) && (i < AREAHEIGHT)) {
+			wave_y[i] = ((float) atoi(tmp))/AREAHEIGHT - 0.5;
+			i++;
+			//printf("dsp wave_y[%d]=%.2f ", i, wave_y[i]);
+			tmp = strtok(NULL, " ");
+		}
+	} else if (strcmp(key, "envelope") == 0) {
+		char* tmp;
+		int i = 0;
+		char tmpbuf[4*MAX_ENV+1] = {0};
+		snprintf(tmpbuf, 4*MAX_ENV, "%s", value);
+		tmp = strtok(tmpbuf, " ");
+		while ((tmp != NULL) && (i < MAX_ENV)) {
+			env_y[i] = ((float) atoi(tmp))/MAX_ENV - 0.5;
+			i++;
+			//printf("dsp wave_y[%d]=%.2f ", i, wave_y[i]);
+			tmp = strtok(NULL, " ");
+		}
 	}
 }
 
 void ZamSynthPlugin::d_initStateKey(unsigned int index, d_string& key)
 {
-	if (index != 0)
-		return;
-	key = "waveform";
+	if (index == 0) key = "waveform";
+	if (index == 1) key = "envelope";
 }
 
 // -----------------------------------------------------------------------
@@ -166,11 +193,11 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 				const MidiEvent* midievent, uint32_t midicount)
 {
 	float srate = d_getSampleRate();
-	float max_envcounter = srate / 5; // 1/20th of a second for both attack and release
+	int slowdown = (int) srate / 2000; 
 	uint32_t i,j;
 	float RD_0;
 	int vn;
-
+	
 	for (i = 0; i < midicount; i++) {
 		int type = midievent[i].buf[0] & 0xF0;
 		int chan = midievent[i].buf[0] & 0x0F;
@@ -178,7 +205,7 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		int vel = midievent[i].buf[2];
 		if (type == 0x90 && chan == 0x0) {
 			// NOTE ON
-			printf("ON: Note\n");
+			//printf("ON: Note\n");
 			//find voice with current notenum
 			vn = -1;
 			nvoices = 0;
@@ -191,7 +218,7 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 				}
 			}
 			if (vn != -1) {
-				printf("note already playing\n");
+				//printf("note already playing\n");
 				//begin attack
 				voice[vn].playing = true;
 				voice[vn].envpos = 1;
@@ -204,12 +231,12 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 			nvoices++;
 			curvoice = &voice[nvoices];
 			if (nvoices > MAX_VOICES) {
-				printf("steal first voice\n");
+				//printf("steal first voice\n");
 				curvoice = voice; // steal first voice
 				nvoices--;
 			}
-			printf("ON: nvoices = %d\n", nvoices);
-			printf("ON: begin attack\n");
+			//printf("ON: nvoices = %d\n", nvoices);
+			//printf("ON: begin attack\n");
 			curvoice->envpos = 1; // begin attack
 			curvoice->playing = true;
 			curvoice->notenum = num;
@@ -219,7 +246,7 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		}
 		else if (type == 0x80 && chan == 0x0) {
 			// NOTE OFF
-			printf("OFF: Note\n");
+			//printf("OFF: Note\n");
 			//find voice with current notenum
 			vn = -1;
 			int v2 = -1;
@@ -237,16 +264,16 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 			}
 			if (vn != -1) {
 				voice[vn].envpos = MAX_ENV / 2 + 1; // begin release;
-				printf("begin release\n");
+				//printf("begin release\n");
 				continue;
 			}
 			if (v2 != -1) {
-				printf("note already off, do nothing\n");
+				//printf("note already off, do nothing\n");
 				voice[v2].envpos = 0;
 				voice[v2].curamp = 0.f;
 				voice[v2].vi = 0.f;
 				voice[v2].playing = false;
-				printf("OFF: nvoices = %d\n", nvoices);
+				//printf("OFF: nvoices = %d\n", nvoices);
 			}
 		}
 	}
@@ -266,24 +293,24 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		for (k = 0; k < 128; k++) {
 			j = &voice[k];
 			if (j->playing) {
-				if (j->envpos <= 0) {
+				if ((int) j->envpos <= 0) {
 					//silence
 					j->curamp = 0.f;
 					j->playing = false;
 					j->envpos = 0;
-				} else if (j->envpos > 0 && j->envpos < MAX_ENV / 2) {
+				} else if ((int) j->envpos > 0 && (int) j->envpos < MAX_ENV / 2) {
 					//attack
 					j->curamp = j->vi * env_y[(int)(j->envpos)];
 					//printf("att: %d %d curamp=%.2f\n",k,j->envpos, j->curamp);
-					j->envpos++;
-				} else if (j->envpos > MAX_ENV / 2) {
+					j->envpos += 1. / slowdown;
+				} else if ((int) j->envpos > MAX_ENV / 2) {
 					//release
 					j->curamp = j->vi * env_y[(int)(j->envpos)];
 					//printf("rel: %d %d curamp=%.2f\n",k,j->envpos, j->curamp);
-					j->envpos++;
-					if (j->envpos == MAX_ENV) {
+					j->envpos += 1. / slowdown;
+					if ((int) j->envpos == MAX_ENV) {
 						//end of release
-						j->envpos = 0;
+						j->envpos = 0.f;
 						j->curamp = 0.f;
 						j->vi = 0.f;
 						j->playing = false;
@@ -293,7 +320,7 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 							curvoice = voice + MAX_VOICES-1;
 							nvoices++;
 						}
-						printf("killed, nvoices=%d\n",nvoices);
+						//printf("killed, nvoices=%d\n",nvoices);
 					}
 				} else {
 					//sustain

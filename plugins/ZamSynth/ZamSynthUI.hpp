@@ -23,6 +23,7 @@
 #include "Geometry.hpp"
 #include "ImageKnob.hpp"
 #include "ImageButton.hpp"
+#include "ImageToggle.hpp"
 
 #include "ZamSynthArtwork.hpp"
 #include "ZamSynthPlugin.hpp"
@@ -30,6 +31,7 @@
 using DGL::Image;
 using DGL::ImageKnob;
 using DGL::ImageButton;
+using DGL::ImageToggle;
 
 #define AREAHEIGHT 250
 
@@ -39,7 +41,8 @@ START_NAMESPACE_DISTRHO
 
 class ZamSynthUI : public UI,
                   public ImageKnob::Callback,
-                  public ImageButton::Callback
+                  public ImageButton::Callback,
+                  public ImageToggle::Callback
 {
 public:
     ZamSynthUI();
@@ -76,6 +79,7 @@ protected:
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
     void imageButtonClicked(ImageButton* button, int) override;
+    void imageToggleClicked(ImageToggle* toggle, int) override;
 
     void onDisplay() override;
     bool onMouse(int, bool, int, int) override;
@@ -85,7 +89,10 @@ private:
     Image fImgBackground;
     ImageKnob* fKnobGain;
     ImageButton* fButtonSmooth;
+    ImageToggle* fToggleGraph;
     float wave_y[AREAHEIGHT];
+    float env_y[AREAHEIGHT];
+    bool fGraph;
 
     bool fDragging;
     bool fDragValid;
