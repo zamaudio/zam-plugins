@@ -309,7 +309,7 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
 
     if (parentId == nullptr)
     {
-        d_stdout("Parent Window Id missing, host should use be ui:showInterface...");
+        d_stdout("Parent Window Id missing, host should be using ui:showInterface...");
     }
 
 #if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
