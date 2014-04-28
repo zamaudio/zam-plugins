@@ -112,9 +112,9 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     graph = 0.0f;
 
     /* Default variable values */
-    for (int i = 0; i < 127; i++) {
+    for (int i = 0; i < MAX_VOICES; i++) {
         voice[i].playing = false;
-	voice[i].notenum = 0;
+	voice[i].notenum = -1;
 	voice[i].envpos = 0;
 	voice[i].slowcount = 0;
 	voice[i].curamp = 0.f;
@@ -125,7 +125,7 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     curvoice = voice; //ptr to first voice
 
     for (int i = 0; i < AREAHEIGHT; i++) {
-        wave_y[i] = sin(i*2.*M_PI/d_getSampleRate()*1000.);
+        wave_y[i] = sin(i*2.*M_PI/d_getSampleRate());//*1000
     }
 
     for (int i = 0; i < MAX_ENV; i++) {
