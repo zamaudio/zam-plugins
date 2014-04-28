@@ -59,15 +59,14 @@ ZamSynthUI::ZamSynthUI()
     fCanvasArea.setSize(AREAHEIGHT,AREAHEIGHT);
     for (int i = 0; i < AREAHEIGHT; i++) {
         wave_y[i] = -(AREAHEIGHT*(sin(2.*i*M_PI/AREAHEIGHT)-1.0))/2.;
-        env_y[i] = -(2*AREAHEIGHT*(sin(2.*i*M_PI/AREAHEIGHT/2.)-1.0))/2.;
+        env_y[i] = -(2*AREAHEIGHT*(sin(2.*i*M_PI/AREAHEIGHT/2.)-1.0))/2. < AREAHEIGHT / 2. ? -(2*AREAHEIGHT*(sin(2.*i*M_PI/AREAHEIGHT/2.)-1.0))/2. : AREAHEIGHT / 2.;
     }
 
     // toggle
     fToggleGraph = new ImageToggle(this, toggleonImage, toggleoffImage, toggleoffImage);
     fToggleGraph->setPos(290, 85);
     fToggleGraph->setCallback(this);
-
-    fGraph = false;
+    fToggleGraph->setValue(0.f);
 }
 
 ZamSynthUI::~ZamSynthUI()
@@ -116,6 +115,9 @@ void ZamSynthUI::d_parameterChanged(uint32_t index, float value)
 	case ZamSynthPlugin::paramGain:
 		fKnobGain->setValue(value);
 		break;
+	case ZamSynthPlugin::paramGraph:
+		fToggleGraph->setValue(value);
+		break;
 	}
 }
 
@@ -158,7 +160,7 @@ void ZamSynthUI::imageButtonClicked(ImageButton*, int)
 	}
 
 	float *gr;
-	gr = (fGraph) ? env_y : wave_y;
+	gr = (fToggleGraph->getValue() == 1.f) ? env_y : wave_y;
 
 	gaussiansmooth(wavesmooth, xs, gr, AREAHEIGHT, 4);
 	memcpy(gr, wavesmooth, AREAHEIGHT*sizeof(float));
@@ -170,7 +172,7 @@ void ZamSynthUI::imageButtonClicked(ImageButton*, int)
 		strcat(tmp, wavestr);
 	}
 
-	if (fGraph) 
+	if (fToggleGraph->getValue() == 1.f) 
 		d_setState("envelope", tmp);
 	else
 		d_setState("waveform", tmp);
@@ -178,7 +180,9 @@ void ZamSynthUI::imageButtonClicked(ImageButton*, int)
 
 void ZamSynthUI::imageToggleClicked(ImageToggle*, int)
 {
-	fGraph = !fGraph;
+	float toggle = fToggleGraph->getValue();
+	fToggleGraph->setValue(toggle);
+	d_setParameterValue(ZamSynthPlugin::paramGraph, toggle);	
 }
 
 void ZamSynthUI::gaussiansmooth(float* smoothed, float* xs, float* ys, int n, int radius)
@@ -206,8 +210,10 @@ bool ZamSynthUI::onMouse(int button, bool press, int x, int y)
 
     if (press)
     {
-        if (! fCanvasArea.contains(x, y))
+        if (! fCanvasArea.contains(x, y)) {
+            //fDragValid = false;
             return false;
+	}
 
         fDragging = true;
         fDragValid = true;
@@ -230,19 +236,22 @@ bool ZamSynthUI::onMotion(int x, int y)
     {
         fDragValid = true;
     }
-
+    
     if (x > fCanvasArea.getWidth()+10)
-    	x = fCanvasArea.getWidth()+10;
-
-    if (y > fCanvasArea.getHeight()+10)
-    	y = fCanvasArea.getHeight()+10;
-
+    x = fCanvasArea.getWidth()+10;
     if (x < 10) x = 10;
     if (y < 10) y = 10;
-
+    
     float *gr;
-
-    gr = (fGraph) ? env_y : wave_y;
+    if (fToggleGraph->getValue() == 0.f) {
+	gr = wave_y;	
+	if (y > fCanvasArea.getHeight()+10)
+		y = fCanvasArea.getHeight()+10;
+    } else {
+    	gr = env_y;
+	if (y > fCanvasArea.getHeight() / 2. + 10)
+		y = fCanvasArea.getHeight() / 2. + 10;
+    }
     
     if (gr[x-10] != (y-10)) {
 	char tmp[4*AREAHEIGHT+1] = {0};
@@ -278,7 +287,7 @@ void ZamSynthUI::onDisplay()
 
     glLineWidth(2);
     float *gr;
-    gr = (fGraph) ? env_y : wave_y;
+    gr = (fToggleGraph->getValue() == 1.f) ? env_y : wave_y;
 
     int i;
         glColor4f(0.235f, 1.f, 0.235f, 1.0f);

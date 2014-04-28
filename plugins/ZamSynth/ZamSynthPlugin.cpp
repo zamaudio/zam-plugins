@@ -128,7 +128,7 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     }
 
     for (int i = 0; i < MAX_ENV; i++) {
-        env_y[i] = sin(i*2.*M_PI/d_getSampleRate()*1000./2.);
+        env_y[i] = (sin(i*2.*M_PI/d_getSampleRate()*1000./2.)) > 0.f ? sin(i*2.*M_PI/d_getSampleRate()*1000./2.) : 0.f;
     }
     /* reset filter values */
     d_activate();
@@ -157,7 +157,7 @@ void ZamSynthPlugin::d_setState(const char* key, const char* value)
 		while ((tmp != NULL) && (i < MAX_ENV)) {
 			env_y[i] = ((float) atoi(tmp))/MAX_ENV - 0.5;
 			i++;
-			//printf("dsp wave_y[%d]=%.2f ", i, wave_y[i]);
+			//printf("dsp env_y[%d]=%.2f ", i, env_y[i]);
 			tmp = strtok(NULL, " ");
 		}
 	}
@@ -268,11 +268,12 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 				continue;
 			}
 			if (v2 != -1) {
+				voice[v2].notenum = -1;
 				//printf("note already off, do nothing\n");
-				voice[v2].envpos = 0;
-				voice[v2].curamp = 0.f;
-				voice[v2].vi = 0.f;
-				voice[v2].playing = false;
+			//	//voice[v2].envpos = 0;
+				//voice[v2].curamp = 0.f;
+				//voice[v2].vi = 0.f;
+				//voice[v2].playing = false;
 				//printf("OFF: nvoices = %d\n", nvoices);
 			}
 		}
@@ -315,6 +316,10 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 						j->vi = 0.f;
 						j->playing = false;
 						curvoice--;
+						nvoices = 0;
+						for (int k = 0; k < 128; k++)
+							if (voice[k].playing)
+								nvoices++;
 						nvoices--;
 						if (nvoices < 0) {
 							curvoice = voice + MAX_VOICES-1;
@@ -331,7 +336,8 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		}
 		for (k = 0; k < 128; k++) {
 			float rampfreq;
-			if (voice[k].curamp < 0.01f) continue;
+			if (voice[k].curamp < 0.f && voice[k].playing) printf("WTF NEG\n");
+			if (!voice[k].playing) continue;
 			signal = true;
 			rampfreq = 440.0*powf(2.0, (voice[k].notenum-48.0-36)/12.);
 
@@ -345,12 +351,12 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 			wave = wavetable(voice[k].rampstate);
 			power += sqrt(voice[k].curamp);
 
-			outl += wave*voice[k].curamp;
-			outr += wave*voice[k].curamp;
+			outl += wave*voice[k].curamp/5.;
+			outr += wave*voice[k].curamp/5.;
 		}
 		if (signal) {
-			outl *= (nvoices)/(10. * power);
-			outr *= (nvoices)/(10. * power);
+			//outl;
+			//outr;
 			outputs[0][i] = outl*from_dB(gain);
 			outputs[1][i] = outr*from_dB(gain);
 		} else {
