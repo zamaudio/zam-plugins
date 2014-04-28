@@ -43,15 +43,23 @@ ZamSynthUI::ZamSynthUI()
     // knob 
 
     fKnobGain = new ImageKnob(this, knobImage);
-    fKnobGain->setPos(284, 240);
+    fKnobGain->setPos(284.75, 240);
     fKnobGain->setRange(-30.f, 30.0f);
     fKnobGain->setDefault(0.0f);
     fKnobGain->setRotationAngle(240);
     fKnobGain->setCallback(this);
 
+    fKnobSpeed = new ImageKnob(this, knobImage);
+    fKnobSpeed->setPos(284.75, 92.5);
+    fKnobSpeed->setRange(1.f, 20.0f);
+    fKnobSpeed->setDefault(10.0f);
+    fKnobSpeed->setStep(1.0f);
+    fKnobSpeed->setRotationAngle(240);
+    fKnobSpeed->setCallback(this);
+
     // button
     fButtonSmooth = new ImageButton(this, smoothrImage, smoothrImage, smoothyImage);
-    fButtonSmooth->setPos(265, 55);
+    fButtonSmooth->setPos(265, 165);
     fButtonSmooth->setCallback(this);
 
     // drawing area
@@ -64,7 +72,7 @@ ZamSynthUI::ZamSynthUI()
 
     // toggle
     fToggleGraph = new ImageToggle(this, toggleonImage, toggleoffImage, toggleoffImage);
-    fToggleGraph->setPos(290, 85);
+    fToggleGraph->setPos(300, 33);
     fToggleGraph->setCallback(this);
     fToggleGraph->setValue(0.f);
 }
@@ -72,6 +80,7 @@ ZamSynthUI::ZamSynthUI()
 ZamSynthUI::~ZamSynthUI()
 {
 	delete fKnobGain;
+	delete fKnobSpeed;
 	delete fButtonSmooth;
 	delete fToggleGraph;
 }
@@ -115,6 +124,9 @@ void ZamSynthUI::d_parameterChanged(uint32_t index, float value)
 	case ZamSynthPlugin::paramGain:
 		fKnobGain->setValue(value);
 		break;
+	case ZamSynthPlugin::paramSpeed:
+		fKnobSpeed->setValue(value);
+		break;
 	case ZamSynthPlugin::paramGraph:
 		fToggleGraph->setValue(value);
 		break;
@@ -127,6 +139,7 @@ void ZamSynthUI::d_programChanged(uint32_t index)
         return;
 
     fKnobGain->setDefault(0.0f);
+    fKnobSpeed->setDefault(10.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -136,18 +149,24 @@ void ZamSynthUI::imageKnobDragStarted(ImageKnob* knob)
 {
     if (knob == fKnobGain)
         d_editParameter(ZamSynthPlugin::paramGain, true);
+    else if (knob == fKnobSpeed)
+        d_editParameter(ZamSynthPlugin::paramSpeed, true);
 }
 
 void ZamSynthUI::imageKnobDragFinished(ImageKnob* knob)
 {
     if (knob == fKnobGain)
         d_editParameter(ZamSynthPlugin::paramGain, false);
+    else if (knob == fKnobSpeed)
+        d_editParameter(ZamSynthPlugin::paramSpeed, false);
 }
 
 void ZamSynthUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobGain)
         d_setParameterValue(ZamSynthPlugin::paramGain, value);
+    else if (knob == fKnobSpeed)
+        d_setParameterValue(ZamSynthPlugin::paramSpeed, value);
 }
 
 void ZamSynthUI::imageButtonClicked(ImageButton*, int)

@@ -34,6 +34,7 @@ public:
     enum Parameters
     {
         paramGain,
+        paramSpeed,
         paramGraph,
         paramCount
     };
@@ -113,7 +114,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float gain, graph;
+    float gain, graph, speed;
     int nvoices;
     float wave_y[AREAHEIGHT];
     float env_y[MAX_ENV];

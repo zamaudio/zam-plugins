@@ -51,6 +51,15 @@ void ZamSynthPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -30.0f;
         parameter.ranges.max = 30.0f;
         break;
+    case paramSpeed:
+        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_INTEGER;
+        parameter.name       = "Speed";
+        parameter.symbol     = "speed";
+        parameter.unit       = " ";
+        parameter.ranges.def = 10.0f;
+        parameter.ranges.min = 1.0f;
+        parameter.ranges.max = 20.0f;
+        break;
     case paramGraph:
         parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
         parameter.name       = "Graph toggle";
@@ -81,6 +90,9 @@ float ZamSynthPlugin::d_getParameterValue(uint32_t index) const
     case paramGain:
         return gain;
         break;
+    case paramSpeed:
+        return speed;
+        break;
     case paramGraph:
         return graph;
         break;
@@ -96,6 +108,9 @@ void ZamSynthPlugin::d_setParameterValue(uint32_t index, float value)
     case paramGain:
         gain = value;
         break;
+    case paramSpeed:
+        speed = value;
+        break;
     case paramGraph:
         graph = value;
         break;
@@ -110,6 +125,7 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     /* Default parameter values */
     gain = 0.0f;
     graph = 0.0f;
+    speed = 10.0f;
 
     /* Default variable values */
     for (int i = 0; i < MAX_VOICES; i++) {
@@ -194,7 +210,7 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 				const MidiEvent* midievent, uint32_t midicount)
 {
 	float srate = d_getSampleRate();
-	int slowfactor = (int) srate / 6000; // 8
+	int slowfactor = (int) srate / (speed * 2400); // 1-20 ~ 20-1
 	uint32_t i;
 	float RD_0;
 	

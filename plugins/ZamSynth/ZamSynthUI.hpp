@@ -88,6 +88,7 @@ protected:
 private:
     Image fImgBackground;
     ImageKnob* fKnobGain;
+    ImageKnob* fKnobSpeed;
     ImageButton* fButtonSmooth;
     ImageToggle* fToggleGraph;
     float wave_y[AREAHEIGHT];
