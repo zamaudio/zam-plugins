@@ -115,7 +115,8 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     for (int i = 0; i < 127; i++) {
         voice[i].playing = false;
 	voice[i].notenum = 0;
-	voice[i].envpos = 0.f;
+	voice[i].envpos = 0;
+	voice[i].slowcount = 0;
 	voice[i].curamp = 0.f;
 	voice[i].vi = 0.f;
         voice[i].rampstate = 0.f;
@@ -193,10 +194,9 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 				const MidiEvent* midievent, uint32_t midicount)
 {
 	float srate = d_getSampleRate();
-	int slowdown = (int) srate / 2000; 
-	uint32_t i,j;
+	int slowfactor = (int) srate / 6000; // 8
+	uint32_t i;
 	float RD_0;
-	int vn;
 	
 	for (i = 0; i < midicount; i++) {
 		int type = midievent[i].buf[0] & 0xF0;
@@ -206,37 +206,11 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		if (type == 0x90 && chan == 0x0) {
 			// NOTE ON
 			//printf("ON: Note\n");
-			//find voice with current notenum
-			vn = -1;
-			nvoices = 0;
-			for (int k = 0; k < 128; k++) {
-				if (voice[k].playing) {
-					nvoices++;
-					if (voice[k].notenum == num) {
-						vn = k;
-					}
-				}
-			}
-			if (vn != -1) {
-				//printf("note already playing\n");
-				//begin attack
-				voice[vn].playing = true;
-				voice[vn].envpos = 1;
-				voice[vn].notenum = num;
-				voice[vn].vi = vel / 127.f;
-				voice[vn].curamp = vel / 127.f;
-				voice[vn].rampstate = 0;
-				continue; // restart note
-			}
-			nvoices++;
-			curvoice = &voice[nvoices];
-			if (nvoices > MAX_VOICES) {
-				//printf("steal first voice\n");
-				curvoice = voice; // steal first voice
-				nvoices--;
-			}
-			//printf("ON: nvoices = %d\n", nvoices);
 			//printf("ON: begin attack\n");
+			for (int k = 0; k < 128; k++)
+				if (voice[k].playing)
+					nvoices++;
+			curvoice = &voice[nvoices];
 			curvoice->envpos = 1; // begin attack
 			curvoice->playing = true;
 			curvoice->notenum = num;
@@ -248,33 +222,14 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 			// NOTE OFF
 			//printf("OFF: Note\n");
 			//find voice with current notenum
-			vn = -1;
-			int v2 = -1;
 			nvoices = 0;
 			for (int k = 0; k < 128; k++) {
-				if (voice[k].playing) {
-					nvoices++;
-					if (voice[k].notenum == num) {
-						vn = k;
-					}
+				if (voice[k].playing && voice[k].notenum == num) {
+					voice[k].envpos = MAX_ENV / 2 + 1; // begin release;
 				}
 				if (!voice[k].playing && voice[k].notenum == num) {
-					v2 = k;
+					voice[k].notenum = -1;
 				}
-			}
-			if (vn != -1) {
-				voice[vn].envpos = MAX_ENV / 2 + 1; // begin release;
-				//printf("begin release\n");
-				continue;
-			}
-			if (v2 != -1) {
-				voice[v2].notenum = -1;
-				//printf("note already off, do nothing\n");
-			//	//voice[v2].envpos = 0;
-				//voice[v2].curamp = 0.f;
-				//voice[v2].vi = 0.f;
-				//voice[v2].playing = false;
-				//printf("OFF: nvoices = %d\n", nvoices);
 			}
 		}
 	}
@@ -294,38 +249,32 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		for (k = 0; k < 128; k++) {
 			j = &voice[k];
 			if (j->playing) {
-				if ((int) j->envpos <= 0) {
+				if (j->envpos <= 0) {
 					//silence
 					j->curamp = 0.f;
 					j->playing = false;
+					j->slowcount = 0;
 					j->envpos = 0;
-				} else if ((int) j->envpos > 0 && (int) j->envpos < MAX_ENV / 2) {
+				} else if (j->envpos > 0 && (int) j->envpos < MAX_ENV / 2) {
 					//attack
-					j->curamp = j->vi * env_y[(int)(j->envpos)];
+					j->curamp = j->vi * env_y[j->envpos];
 					//printf("att: %d %d curamp=%.2f\n",k,j->envpos, j->curamp);
-					j->envpos += 1. / slowdown;
-				} else if ((int) j->envpos > MAX_ENV / 2) {
+					j->slowcount++;
+					j->envpos += ((j->slowcount % slowfactor) == 0) ? 1 : 0;
+				} else if (j->envpos > MAX_ENV / 2) {
 					//release
-					j->curamp = j->vi * env_y[(int)(j->envpos)];
+					j->curamp = j->vi * env_y[j->envpos];
 					//printf("rel: %d %d curamp=%.2f\n",k,j->envpos, j->curamp);
-					j->envpos += 1. / slowdown;
-					if ((int) j->envpos == MAX_ENV) {
+					j->slowcount++;
+					j->envpos += ((j->slowcount % slowfactor) == 0) ? 1 : 0;
+					if (j->envpos == MAX_ENV) {
 						//end of release
-						j->envpos = 0.f;
+						j->envpos = 0;
+						j->slowcount = 0;
 						j->curamp = 0.f;
 						j->vi = 0.f;
 						j->playing = false;
-						curvoice--;
-						nvoices = 0;
-						for (int k = 0; k < 128; k++)
-							if (voice[k].playing)
-								nvoices++;
-						nvoices--;
-						if (nvoices < 0) {
-							curvoice = voice + MAX_VOICES-1;
-							nvoices++;
-						}
-						//printf("killed, nvoices=%d\n",nvoices);
+						//printf("killed, n=%d\n",k);
 					}
 				} else {
 					//sustain

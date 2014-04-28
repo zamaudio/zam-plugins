@@ -20,7 +20,7 @@
 
 #include <string.h>
 #include "DistrhoPlugin.hpp"
-#define MAX_VOICES 64
+#define MAX_VOICES 128
 #define AREAHEIGHT 250
 #define MAX_ENV AREAHEIGHT
 
@@ -120,7 +120,8 @@ private:
 	typedef struct v {
 		bool playing;
 		int notenum;
-		float envpos;
+		int envpos;
+		int slowcount;
 		float curamp;
 		float vi;
 		float rampstate;
