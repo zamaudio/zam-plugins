@@ -20,8 +20,9 @@
 
 #include <string.h>
 #include "DistrhoPlugin.hpp"
-#define MAX_VOICES 64
+#define MAX_VOICES 128
 #define AREAHEIGHT 250
+#define MAX_ENV AREAHEIGHT
 
 START_NAMESPACE_DISTRHO
 
@@ -33,6 +34,8 @@ public:
     enum Parameters
     {
         paramGain,
+        paramSpeed,
+        paramGraph,
         paramCount
     };
 
@@ -111,13 +114,21 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float gain;
-    float rampstate[128], rampfreq[128], amp[128];
-    int noteon[128];
-    int noteoff[128];
-    int voice[128];
-    int totalvoices;
+    float gain, graph, speed;
+    int nvoices;
     float wave_y[AREAHEIGHT];
+    float env_y[MAX_ENV];
+	typedef struct v {
+		bool playing;
+		int notenum;
+		int envpos;
+		int slowcount;
+		float curamp;
+		float vi;
+		float rampstate;
+	} Voice;
+    Voice voice[128];
+    Voice* curvoice;
 };
 
 // -----------------------------------------------------------------------
