@@ -221,6 +221,7 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		int vel = midievent[i].buf[2];
 		if (type == 0x90 && chan == 0x0) {
 			// NOTE ON
+			nvoices = 0;
 			//printf("ON: Note\n");
 			//printf("ON: begin attack\n");
 			for (int k = 0; k < 128; k++)
