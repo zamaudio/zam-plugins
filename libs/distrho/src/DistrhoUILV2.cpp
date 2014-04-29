@@ -47,7 +47,9 @@ public:
           fKeyValueURID(uridMap->map(uridMap->handle, "urn:distrho:keyValueState")),
           fWinIdWasNull(winId == 0)
     {
-        if (fUiResize != nullptr && winId != 0)
+        if (winId == 0)
+            fUI.setTitle(fUI.getName());
+        else if (fUiResize != nullptr)
             fUiResize->ui_resize(fUiResize->handle, fUI.getWidth(), fUI.getHeight());
 
 #if DISTRHO_PLUGIN_WANT_STATE
@@ -332,7 +334,7 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
 
     *widget = parentId;
 
-    const intptr_t winId(*((intptr_t*)&parentId));
+    const intptr_t winId((intptr_t)parentId);
 
     const LV2_URID uridSampleRate(uridMap->map(uridMap->handle, LV2_CORE__sampleRate));
 
