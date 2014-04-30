@@ -221,13 +221,15 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 		int vel = midievent[i].buf[2];
 		if (type == 0x90 && chan == 0x0) {
 			// NOTE ON
-			nvoices = 0;
+			int newvoice = -1;
 			//printf("ON: Note\n");
 			//printf("ON: begin attack\n");
 			for (int k = 0; k < 128; k++)
-				if (voice[k].playing)
-					nvoices++;
-			curvoice = &voice[nvoices];
+				if (!voice[k].playing)
+					newvoice = k;
+			if (newvoice == -1)
+				newvoice = 0; //steal #0
+			curvoice = &voice[newvoice];
 			curvoice->envpos = 1; // begin attack
 			curvoice->playing = true;
 			curvoice->notenum = num;
@@ -268,10 +270,13 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 			if (j->playing) {
 				if (j->envpos <= 0) {
 					//silence
-					j->curamp = 0.f;
 					j->playing = false;
-					j->slowcount = 0;
+					j->notenum = -1;
 					j->envpos = 0;
+					j->slowcount = 0;
+					j->curamp = 0.f;
+					j->vi = 0.f;
+					j->rampstate = 0.f;
 				} else if (j->envpos > 0 && (int) j->envpos < MAX_ENV / 2) {
 					//attack
 					j->curamp = j->vi * env_y[j->envpos];
@@ -286,11 +291,13 @@ void ZamSynthPlugin::d_run(float**, float** outputs, uint32_t frames,
 					j->envpos += ((j->slowcount % slowfactor) == 0) ? 1 : 0;
 					if (j->envpos == MAX_ENV) {
 						//end of release
+						j->playing = false;
+						j->notenum = -1;
 						j->envpos = 0;
 						j->slowcount = 0;
 						j->curamp = 0.f;
 						j->vi = 0.f;
-						j->playing = false;
+						j->rampstate = 0.f;
 						//printf("killed, n=%d\n",k);
 					}
 				} else {

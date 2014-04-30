@@ -138,8 +138,8 @@ void ZamSynthUI::d_programChanged(uint32_t index)
     if (index != 0)
         return;
 
-    fKnobGain->setDefault(0.0f);
-    fKnobSpeed->setDefault(10.0f);
+    fKnobGain->setValue(0.0f);
+    fKnobSpeed->setValue(10.0f);
 }
 
 // -----------------------------------------------------------------------
