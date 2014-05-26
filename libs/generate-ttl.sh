@@ -9,17 +9,18 @@ else
   exit
 fi
 
-PWD=`pwd`
+PWD=`dirname $0`
 
-if [ -f $PWD/../libs/lv2_ttl_generator.exe ]; then
-  GEN=$PWD/../libs/lv2_ttl_generator.exe
+if [ -f $PWD/lv2_ttl_generator.exe ]; then
+  GEN=$PWD/lv2_ttl_generator.exe
   EXT=dll
-elif [ -d /Developer ]; then
-  GEN=$PWD/../libs/lv2_ttl_generator
-  EXT=dylib
 else
-  GEN=$PWD/../libs/lv2_ttl_generator
-  EXT=so
+  GEN=$PWD/lv2_ttl_generator
+  if [ -d /Library/Audio ]; then
+    EXT=dylib
+  else
+    EXT=so
+  fi
 fi
 
 FOLDERS=`find . -type d -name \*.lv2`

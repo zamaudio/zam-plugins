@@ -1,0 +1,9 @@
+[Project]
+Manager=KDevGenericManager
+Name=ZamAudio Plugins
+
+[Filters]
+Excludes=*/.*,*/*~,*/*.a
+
+[Project]
+VersionControlSupport=kdevgit
