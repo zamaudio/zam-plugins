@@ -1,5 +1,5 @@
 /*
- * ZaMultiCompX2 stereo multiband compressor 
+ * ZaMultiCompX2 stereo multiband compressor
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -21,7 +21,7 @@
 #include "DistrhoUI.hpp"
 
 #include "ImageKnob.hpp"
-#include "ImageSwitch.hpp"
+#include "ImageToggle.hpp"
 
 #include "ZaMultiCompX2Artwork.hpp"
 
@@ -30,7 +30,7 @@
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageSwitch;
+using DGL::ImageToggle;
 
 START_NAMESPACE_DISTRHO
 
@@ -38,7 +38,7 @@ START_NAMESPACE_DISTRHO
 
 class ZaMultiCompX2UI : public UI,
                         public ImageKnob::Callback,
-                        public ImageSwitch::Callback
+                        public ImageToggle::Callback
 {
 public:
     ZaMultiCompX2UI();
@@ -74,7 +74,7 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void imageSwitchClicked(ImageSwitch* toggle, int button) override;
+    void imageToggleClicked(ImageToggle* toggle, int button) override;
 
     void onDisplay() override;
 
@@ -98,26 +98,14 @@ sanitize_denormal(double value) {
 
 private:
     Image fImgBackground;
-    ImageKnob* fKnobAttack;
-    ImageKnob* fKnobRelease;
-    ImageKnob* fKnobThresh1;
-    ImageKnob* fKnobThresh2;
-    ImageKnob* fKnobThresh3;
-    ImageKnob* fKnobRatio;
-    ImageKnob* fKnobKnee;
-    ImageKnob* fKnobGlobalGain;
-    ImageKnob* fKnobMakeup1;
-    ImageKnob* fKnobMakeup2;
-    ImageKnob* fKnobMakeup3;
-    ImageKnob* fKnobXover1;
-    ImageKnob* fKnobXover2;
-    ImageSwitch* fSwitchBypass1;
-    ImageSwitch* fSwitchBypass2;
-    ImageSwitch* fSwitchBypass3;
-    ImageSwitch* fSwitchListen1;
-    ImageSwitch* fSwitchListen2;
-    ImageSwitch* fSwitchListen3;
-    ImageSwitch* fSwitchStereo;
+    ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease;
+    ScopedPointer<ImageKnob> fKnobThresh1, fKnobThresh2, fKnobThresh3;
+    ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobGlobalGain;
+    ScopedPointer<ImageKnob> fKnobMakeup1, fKnobMakeup2, fKnobMakeup3;
+    ScopedPointer<ImageKnob> fKnobXover1, fKnobXover2;
+    ScopedPointer<ImageToggle> fToggleBypass1, fToggleBypass2, fToggleBypass3;
+    ScopedPointer<ImageToggle> fToggleListen1, fToggleListen2, fToggleListen3;
+    ScopedPointer<ImageToggle> fToggleStereo;
 
     Image fLedRedImg;
     float fLedRedValue1;

@@ -45,16 +45,16 @@ ZaMultiCompUI::ZaMultiCompUI()
 
     // knob
     fKnobAttack = new ImageKnob(this, knobImage);
-    fKnobAttack->setPos(24, 43);
+    fKnobAttack->setAbsolutePos(24, 43);
     fKnobAttack->setRange(0.1f, 200.0f);
     fKnobAttack->setStep(0.1f);
-    fKnobAttack->setLogScale(true);
+    fKnobAttack->setUsingLogScale(true);
     fKnobAttack->setDefault(10.0f);
     fKnobAttack->setRotationAngle(240);
     fKnobAttack->setCallback(this);
 
     fKnobRelease = new ImageKnob(this, knobImage);
-    fKnobRelease->setPos(108, 43);
+    fKnobRelease->setAbsolutePos(108, 43);
     fKnobRelease->setRange(50.0f, 500.0f);
     fKnobRelease->setStep(1.0f);
     fKnobRelease->setDefault(80.0f);
@@ -62,7 +62,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease->setCallback(this);
 
     fKnobThresh = new ImageKnob(this, knobImage);
-    fKnobThresh->setPos(191.5, 43);
+    fKnobThresh->setAbsolutePos(191.5, 43);
     fKnobThresh->setRange(-60.0f, 0.0f);
     fKnobThresh->setStep(1.0f);
     fKnobThresh->setDefault(0.0f);
@@ -70,7 +70,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh->setCallback(this);
 
     fKnobRatio = new ImageKnob(this, knobImage);
-    fKnobRatio->setPos(270, 43);
+    fKnobRatio->setAbsolutePos(270, 43);
     fKnobRatio->setRange(1.0f, 20.0f);
     fKnobRatio->setStep(0.1f);
     fKnobRatio->setDefault(4.0f);
@@ -78,7 +78,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio->setCallback(this);
 
     fKnobKnee = new ImageKnob(this, knobImage);
-    fKnobKnee->setPos(348.5, 43);
+    fKnobKnee->setAbsolutePos(348.5, 43);
     fKnobKnee->setRange(0.0f, 8.0f);
     fKnobKnee->setStep(0.1f);
     fKnobKnee->setDefault(0.0f);
@@ -86,7 +86,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee->setCallback(this);
 
     fKnobGlobalGain = new ImageKnob(this, knobImage);
-    fKnobGlobalGain->setPos(427.3, 43);
+    fKnobGlobalGain->setAbsolutePos(427.3, 43);
     fKnobGlobalGain->setRange(-30.0f, 30.0f);
     fKnobGlobalGain->setStep(1.0f);
     fKnobGlobalGain->setDefault(0.0f);
@@ -94,25 +94,25 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobGlobalGain->setCallback(this);
 
     fKnobXover2 = new ImageKnob(this, knobImage);
-    fKnobXover2->setPos(84, 121);
+    fKnobXover2->setAbsolutePos(84, 121);
     fKnobXover2->setRange(1400.f, 14000.f);
     fKnobXover2->setStep(1.0f);
-    fKnobXover2->setLogScale(true);
+    fKnobXover2->setUsingLogScale(true);
     fKnobXover2->setDefault(1400.f);
     fKnobXover2->setRotationAngle(240);
     fKnobXover2->setCallback(this);
 
     fKnobXover1 = new ImageKnob(this, knobImage);
-    fKnobXover1->setPos(84, 176);
+    fKnobXover1->setAbsolutePos(84, 176);
     fKnobXover1->setRange(20.0f, 1400.0f);
     fKnobXover1->setStep(1.0f);
-    fKnobXover1->setLogScale(true);
+    fKnobXover1->setUsingLogScale(true);
     fKnobXover1->setDefault(250.0f);
     fKnobXover1->setRotationAngle(240);
     fKnobXover1->setCallback(this);
 
     fKnobMakeup3 = new ImageKnob(this, knobImage);
-    fKnobMakeup3->setPos(167.75, 99.5);
+    fKnobMakeup3->setAbsolutePos(167.75, 99.5);
     fKnobMakeup3->setRange(0.0f, 30.0f);
     fKnobMakeup3->setStep(0.1f);
     fKnobMakeup3->setDefault(0.0f);
@@ -120,7 +120,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup3->setCallback(this);
 
     fKnobMakeup2 = new ImageKnob(this, knobImage);
-    fKnobMakeup2->setPos(167.75, 150.25);
+    fKnobMakeup2->setAbsolutePos(167.75, 150.25);
     fKnobMakeup2->setRange(0.0f, 30.0f);
     fKnobMakeup2->setStep(0.1f);
     fKnobMakeup2->setDefault(0.0f);
@@ -128,7 +128,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup2->setCallback(this);
 
     fKnobMakeup1 = new ImageKnob(this, knobImage);
-    fKnobMakeup1->setPos(167.75, 201.4);
+    fKnobMakeup1->setAbsolutePos(167.75, 201.4);
     fKnobMakeup1->setRange(0.0f, 30.0f);
     fKnobMakeup1->setStep(0.1f);
     fKnobMakeup1->setDefault(0.0f);
@@ -142,40 +142,43 @@ ZaMultiCompUI::ZaMultiCompUI()
 
     Point<int> togglePosStart(247,109);
 
-    fSwitchBypass3 = new ImageSwitch(this, toggleoffImage, toggleoffImage, toggleonImage);
-    fSwitchBypass3->setPos(togglePosStart);
-    fSwitchBypass3->setCallback(this);
+    fToggleBypass3 = new ImageToggle(this, toggleoffImage, toggleonImage);
+    fToggleBypass3->setAbsolutePos(togglePosStart);
+    fToggleBypass3->setCallback(this);
 
     togglePosStart.setY(158);
 
-    fSwitchBypass2 = new ImageSwitch(this, toggleoffImage, toggleoffImage, toggleonImage);
-    fSwitchBypass2->setPos(togglePosStart);
-    fSwitchBypass2->setCallback(this);
+    fToggleBypass2 = new ImageToggle(this, toggleoffImage, toggleonImage);
+    fToggleBypass2->setAbsolutePos(togglePosStart);
+    fToggleBypass2->setCallback(this);
 
     togglePosStart.setY(209);
 
-    fSwitchBypass1 = new ImageSwitch(this, toggleoffImage, toggleoffImage, toggleonImage);
-    fSwitchBypass1->setPos(togglePosStart);
-    fSwitchBypass1->setCallback(this);
+    fToggleBypass1 = new ImageToggle(this, toggleoffImage, toggleonImage);
+    fToggleBypass1->setAbsolutePos(togglePosStart);
+    fToggleBypass1->setCallback(this);
 
     togglePosStart.setX(278);
     togglePosStart.setY(113);
 
-    fSwitchListen3 = new ImageSwitch(this,  toggleoffhImage, toggleoffhImage, toggleonhImage);
-    fSwitchListen3->setPos(togglePosStart);
-    fSwitchListen3->setCallback(this);
+    fToggleListen3 = new ImageToggle(this,  toggleoffhImage, toggleonhImage);
+    fToggleListen3->setAbsolutePos(togglePosStart);
+    fToggleListen3->setCallback(this);
 
     togglePosStart.setY(164);
 
-    fSwitchListen2 = new ImageSwitch(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
-    fSwitchListen2->setPos(togglePosStart);
-    fSwitchListen2->setCallback(this);
+    fToggleListen2 = new ImageToggle(this, toggleoffhImage, toggleonhImage);
+    fToggleListen2->setAbsolutePos(togglePosStart);
+    fToggleListen2->setCallback(this);
 
     togglePosStart.setY(214);
 
-    fSwitchListen1 = new ImageSwitch(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
-    fSwitchListen1->setPos(togglePosStart);
-    fSwitchListen1->setCallback(this);
+    fToggleListen1 = new ImageToggle(this, toggleoffhImage, toggleonhImage);
+    fToggleListen1->setAbsolutePos(togglePosStart);
+    fToggleListen1->setCallback(this);
+
+    // set default values
+    d_programChanged(0);
 }
 
 // -----------------------------------------------------------------------
@@ -241,22 +244,22 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
         fKnobMakeup3->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle1:
-        //fSwitchBypass1->setValue(value);
+        //fToggleBypass1->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle2:
-        //fSwitchBypass2->setValue(value);
+        //fToggleBypass2->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle3:
-        //fSwitchBypass3->setValue(value);
+        //fToggleBypass3->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen1:
-        //fSwitchListen1->setValue(value);
+        //fToggleListen1->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen2:
-        //fSwitchListen2->setValue(value);
+        //fToggleListen2->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen3:
-        //fSwitchListen3->setValue(value);
+        //fToggleListen3->setValue(value);
         break;
     }
 }
@@ -278,12 +281,12 @@ void ZaMultiCompUI::d_programChanged(uint32_t index)
     fKnobMakeup3->setValue(0.0f);
     fKnobXover1->setValue(250.0f);
     fKnobXover2->setValue(1400.0f);
-    fSwitchBypass1->setValue(1.0f);
-    fSwitchBypass2->setValue(1.0f);
-    fSwitchBypass3->setValue(1.0f);
-    fSwitchListen1->setValue(1.0f);
-    fSwitchListen2->setValue(1.0f);
-    fSwitchListen3->setValue(1.0f);
+    fToggleBypass1->setValue(1.0f);
+    fToggleBypass2->setValue(1.0f);
+    fToggleBypass3->setValue(1.0f);
+    fToggleListen1->setValue(1.0f);
+    fToggleListen2->setValue(1.0f);
+    fToggleListen3->setValue(1.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -367,20 +370,20 @@ void ZaMultiCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(ZaMultiCompPlugin::paramXover2, value);
 }
 
-void ZaMultiCompUI::imageSwitchClicked(ImageSwitch* toggle, int)
+void ZaMultiCompUI::imageToggleClicked(ImageToggle* toggle, int)
 {
     float v = toggle->getValue();
-    if (toggle == fSwitchBypass1)
+    if (toggle == fToggleBypass1)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle1, v);
-    else if (toggle == fSwitchBypass2)
+    else if (toggle == fToggleBypass2)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle2, v);
-    else if (toggle == fSwitchBypass3)
+    else if (toggle == fToggleBypass3)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle3, v);
-    else if (toggle == fSwitchListen1)
+    else if (toggle == fToggleListen1)
         d_setParameterValue(ZaMultiCompPlugin::paramListen1, v);
-    else if (toggle == fSwitchListen2)
+    else if (toggle == fToggleListen2)
         d_setParameterValue(ZaMultiCompPlugin::paramListen2, v);
-    else if (toggle == fSwitchListen3)
+    else if (toggle == fToggleListen3)
         d_setParameterValue(ZaMultiCompPlugin::paramListen3, v);
 }
 
@@ -481,13 +484,13 @@ void ZaMultiCompUI::onDisplay()
 	else numRedLeds3 = 0;
 
     for (int i=numRedLeds1; i>0; --i)
-        fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLed1StaticY);
+        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed1StaticY);
 
     for (int i=numRedLeds2; i>0; --i)
-        fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLed2StaticY);
+        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed2StaticY);
 
     for (int i=numRedLeds3; i>0; --i)
-        fLedRedImg.draw(sLedInitialX + (12 - i)*sLedSpacing, sRedLed3StaticY);
+        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed3StaticY);
 
 	if (fLedYellowValue >= 20.f)
 		numYellowLeds = 19;
@@ -531,12 +534,12 @@ void ZaMultiCompUI::onDisplay()
 
 	if (numYellowLeds > 12) {
 		for (int i=12; i<numYellowLeds; ++i)
-			fLedRedImg.draw(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedRedImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 		for (int i=0; i<12; ++i)
-			fLedYellowImg.draw(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 	} else {
 		for (int i=0; i<numYellowLeds; ++i)
-			fLedYellowImg.draw(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 	}
 }
 

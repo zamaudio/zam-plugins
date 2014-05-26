@@ -1,6 +1,6 @@
 /*
  * ZamEQ2 2 band parametric equaliser
- * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com> 
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -126,17 +126,12 @@ protected:
 
 private:
     Image fImgBackground;
-    ImageKnob* fKnobGain1;
-    ImageKnob* fKnobQ1;
-    ImageKnob* fKnobFreq1;
-    ImageKnob* fKnobGain2;
-    ImageKnob* fKnobQ2;
-    ImageKnob* fKnobFreq2;
-    ImageKnob* fKnobGainL;
-    ImageKnob* fKnobFreqL;
-    ImageKnob* fKnobGainH;
-    ImageKnob* fKnobFreqH;
-    ImageSlider* fSliderMaster;
+    ScopedPointer<ImageKnob> fKnobGain1;
+    ScopedPointer<ImageKnob> fKnobQ1, fKnobFreq1, fKnobGain2;
+    ScopedPointer<ImageKnob> fKnobQ2, fKnobFreq2;
+    ScopedPointer<ImageKnob> fKnobGainL, fKnobFreqL;
+    ScopedPointer<ImageKnob> fKnobGainH, fKnobFreqH;
+    ScopedPointer<ImageSlider> fSliderMaster;
     float eqx[EQPOINTS];
     float eqy[EQPOINTS];
     DGL::Rectangle<int> fCanvasArea;

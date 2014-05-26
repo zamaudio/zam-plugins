@@ -14,7 +14,7 @@ include ../../Makefile.mk
 TARGET_DIR = ../../bin
 
 BUILD_C_FLAGS   += -I.
-BUILD_CXX_FLAGS += -I. -I../../libs/distrho -I../../libs/dgl
+BUILD_CXX_FLAGS += -I. -I.. -I../../libs/distrho -I../../libs/dgl
 
 # --------------------------------------------------------------
 # Set plugin binary file targets

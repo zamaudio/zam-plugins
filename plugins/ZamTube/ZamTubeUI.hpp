@@ -1,6 +1,6 @@
 /*
- * ZamTube triode WDF distortion model 
- * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com> 
+ * ZamTube triode WDF distortion model
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -75,12 +75,8 @@ protected:
 
 private:
     Image fImgBackground;
-    ImageKnob* fKnobTube;
-    ImageKnob* fKnobBass;
-    ImageKnob* fKnobMids;
-    ImageKnob* fKnobTreb;
-    ImageKnob* fKnobGain;
-    ImageSlider* fSliderNotch;
+    ScopedPointer<ImageSlider> fSliderNotch;
+    ScopedPointer<ImageKnob> fKnobTube, fKnobBass, fKnobMids, fKnobTreb, fKnobGain;
 };
 
 // -----------------------------------------------------------------------

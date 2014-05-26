@@ -21,13 +21,13 @@
 #include "DistrhoUI.hpp"
 
 #include "ImageKnob.hpp"
-#include "ImageSwitch.hpp"
+#include "ImageToggle.hpp"
 
 #include "ZaMultiCompArtwork.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageSwitch;
+using DGL::ImageToggle;
 
 START_NAMESPACE_DISTRHO
 
@@ -35,7 +35,7 @@ START_NAMESPACE_DISTRHO
 
 class ZaMultiCompUI : public UI,
                       public ImageKnob::Callback,
-                      public ImageSwitch::Callback
+                      public ImageToggle::Callback
 {
 public:
     ZaMultiCompUI();
@@ -67,19 +67,19 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void imageSwitchClicked(ImageSwitch* slider, int button) override;
+    void imageToggleClicked(ImageToggle* slider, int button) override;
 
     void onDisplay() override;
 
 private:
     Image fImgBackground;
 
-    ScopePointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
-    ScopePointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobGlobalGain;
-    ScopePointer<ImageKnob> fKnobMakeup1, fKnobMakeup2, fKnobMakeup3;
-    ScopePointer<ImageKnob> fKnobXover1, fKnobXover2;
-    ScopePointer<ImageSwitch> fSwitchBypass1, fSwitchBypass2, fSwitchBypass3;
-    ScopePointer<ImageSwitch> fSwitchListen1, fSwitchListen2, fSwitchListen3;
+    ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
+    ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobGlobalGain;
+    ScopedPointer<ImageKnob> fKnobMakeup1, fKnobMakeup2, fKnobMakeup3;
+    ScopedPointer<ImageKnob> fKnobXover1, fKnobXover2;
+    ScopedPointer<ImageToggle> fToggleBypass1, fToggleBypass2, fToggleBypass3;
+    ScopedPointer<ImageToggle> fToggleListen1, fToggleListen2, fToggleListen3;
 
     Image fLedRedImg;
     float fLedRedValue1;

@@ -26,9 +26,6 @@ ZaMultiCompPlugin::ZaMultiCompPlugin()
 {
     // set default values
     d_setProgram(0);
-
-    // reset
-    d_deactivate();
 }
 
 // -----------------------------------------------------------------------
@@ -445,11 +442,6 @@ void ZaMultiCompPlugin::d_activate()
                 w1[i] = w2[i] = 0.f;
                 z1[i] = z2[i] = 0.f;
         }
-}
-
-void ZaMultiCompPlugin::d_deactivate()
-{
-    // all values to zero
 }
 
 float ZaMultiCompPlugin::run_filter(int i, float in)

@@ -1,6 +1,6 @@
 /*
  * ZamSynth polyphonic synthesiser
- * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com> 
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,7 +22,7 @@
 
 #include "ImageButton.hpp"
 #include "ImageKnob.hpp"
-#include "ImageSwitch.hpp"
+#include "ImageToggle.hpp"
 
 #include "ZamSynthArtwork.hpp"
 
@@ -31,7 +31,7 @@
 using DGL::Image;
 using DGL::ImageButton;
 using DGL::ImageKnob;
-using DGL::ImageSwitch;
+using DGL::ImageToggle;
 
 START_NAMESPACE_DISTRHO
 
@@ -40,7 +40,7 @@ START_NAMESPACE_DISTRHO
 class ZamSynthUI : public UI,
                    public ImageButton::Callback,
                    public ImageKnob::Callback,
-                   public ImageSwitch::Callback
+                   public ImageToggle::Callback
 {
 public:
     ZamSynthUI();
@@ -76,18 +76,17 @@ protected:
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
     void imageButtonClicked(ImageButton* button, int) override;
-    void imageSwitchClicked(ImageSwitch* toggle, int) override;
+    void imageToggleClicked(ImageToggle* toggle, int) override;
 
     void onDisplay() override;
-    bool onMouse(int, bool, int, int) override;
-    bool onMotion(int, int) override;
+    bool onMouse(const MouseEvent&) override;
+    bool onMotion(const MotionEvent&) override;
 
 private:
     Image fImgBackground;
-    ImageKnob* fKnobGain;
-    ImageKnob* fKnobSpeed;
-    ImageButton* fButtonSmooth;
-    ImageSwitch* fSwitchGraph;
+    ScopedPointer<ImageKnob> fKnobGain, fKnobSpeed;
+    ScopedPointer<ImageButton> fButtonSmooth;
+    ScopedPointer<ImageToggle> fToggleGraph;
     float wave_y[AREAHEIGHT];
     float env_y[AREAHEIGHT];
     bool fGraph;
