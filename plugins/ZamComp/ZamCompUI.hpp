@@ -37,18 +37,17 @@ class ZamCompUI : public UI,
 {
 public:
     ZamCompUI();
-    ~ZamCompUI() override;
 
 protected:
     // -------------------------------------------------------------------
     // Information
 
-    unsigned int d_getWidth() const noexcept override
+    uint d_getWidth() const noexcept override
     {
         return ZamCompArtwork::zamcompWidth;
     }
 
-    unsigned int d_getHeight() const noexcept override
+    uint d_getHeight() const noexcept override
     {
         return ZamCompArtwork::zamcompHeight;
     }

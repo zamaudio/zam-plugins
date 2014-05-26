@@ -24,7 +24,6 @@
 #include "ImageSlider.hpp"
 
 #include "ZamTubeArtwork.hpp"
-#include "ZamTubePlugin.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
@@ -35,23 +34,22 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamTubeUI : public UI,
-                      public ImageKnob::Callback,
-                      public ImageSlider::Callback
+                  public ImageKnob::Callback,
+                  public ImageSlider::Callback
 {
 public:
     ZamTubeUI();
-    ~ZamTubeUI() override;
 
 protected:
     // -------------------------------------------------------------------
     // Information
 
-    unsigned int d_getWidth() const noexcept override
+    uint d_getWidth() const noexcept override
     {
         return ZamTubeArtwork::zamtubeWidth;
     }
 
-    unsigned int d_getHeight() const noexcept override
+    uint d_getHeight() const noexcept override
     {
         return ZamTubeArtwork::zamtubeHeight;
     }

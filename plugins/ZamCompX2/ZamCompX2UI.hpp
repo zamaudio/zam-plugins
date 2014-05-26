@@ -21,37 +21,35 @@
 #include "DistrhoUI.hpp"
 
 #include "ImageKnob.hpp"
-#include "ImageToggle.hpp"
+#include "ImageSwitch.hpp"
 
 #include "ZamCompX2Artwork.hpp"
-#include "ZamCompX2Plugin.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageToggle;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZamCompX2UI : public UI,
-                  public ImageKnob::Callback,
-                  public ImageToggle::Callback
+                    public ImageKnob::Callback,
+                    public ImageSwitch::Callback
 {
 public:
     ZamCompX2UI();
-    ~ZamCompX2UI() override;
 
 protected:
     // -------------------------------------------------------------------
     // Information
 
-    unsigned int d_getWidth() const noexcept override
+    uint d_getWidth() const noexcept override
     {
         return ZamCompX2Artwork::zamcompx2Width;
     }
 
-    unsigned int d_getHeight() const noexcept override
+    uint d_getHeight() const noexcept override
     {
         return ZamCompX2Artwork::zamcompx2Height;
     }
@@ -68,7 +66,7 @@ protected:
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
-    void imageToggleClicked(ImageToggle *toggle, int button) override;
+    void imageSwitchClicked(ImageSwitch *toggle, int button) override;
 
     void onDisplay() override;
 
@@ -81,8 +79,8 @@ private:
     ImageKnob* fKnobKnee;
     ImageKnob* fKnobMakeup;
 
-    Image fImgToggleSlider;
-    ImageToggle* fToggleStereo;
+    Image fImgSwitchSlider;
+    ImageSwitch* fSwitchStereo;
 
     Image fLedRedImg;
     float fLedRedValue;

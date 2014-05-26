@@ -21,37 +21,35 @@
 #include "DistrhoUI.hpp"
 
 #include "ImageKnob.hpp"
-#include "ImageToggle.hpp"
+#include "ImageSwitch.hpp"
 
 #include "ZaMultiCompArtwork.hpp"
-#include "ZaMultiCompPlugin.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageToggle;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZaMultiCompUI : public UI,
-                  public ImageKnob::Callback,
-                  public ImageToggle::Callback
+                      public ImageKnob::Callback,
+                      public ImageSwitch::Callback
 {
 public:
     ZaMultiCompUI();
-    ~ZaMultiCompUI() override;
 
 protected:
     // -------------------------------------------------------------------
     // Information
 
-    unsigned int d_getWidth() const noexcept override
+    uint d_getWidth() const noexcept override
     {
         return ZaMultiCompArtwork::zamulticompWidth;
     }
 
-    unsigned int d_getHeight() const noexcept override
+    uint d_getHeight() const noexcept override
     {
         return ZaMultiCompArtwork::zamulticompHeight;
     }
@@ -69,7 +67,7 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void imageToggleClicked(ImageToggle* slider, int button) override;
+    void imageSwitchClicked(ImageSwitch* slider, int button) override;
 
     void onDisplay() override;
 
@@ -86,12 +84,12 @@ private:
     ImageKnob* fKnobMakeup3;
     ImageKnob* fKnobXover1;
     ImageKnob* fKnobXover2;
-    ImageToggle* fToggleBypass1;
-    ImageToggle* fToggleBypass2;
-    ImageToggle* fToggleBypass3;
-    ImageToggle* fToggleListen1;
-    ImageToggle* fToggleListen2;
-    ImageToggle* fToggleListen3;
+    ImageSwitch* fSwitchBypass1;
+    ImageSwitch* fSwitchBypass2;
+    ImageSwitch* fSwitchBypass3;
+    ImageSwitch* fSwitchListen1;
+    ImageSwitch* fSwitchListen2;
+    ImageSwitch* fSwitchListen3;
 
     Image fLedRedImg;
     float fLedRedValue1;

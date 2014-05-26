@@ -20,50 +20,47 @@
 
 #include "DistrhoUI.hpp"
 
-#include "Geometry.hpp"
-#include "ImageKnob.hpp"
 #include "ImageButton.hpp"
-#include "ImageToggle.hpp"
+#include "ImageKnob.hpp"
+#include "ImageSwitch.hpp"
 
 #include "ZamSynthArtwork.hpp"
-#include "ZamSynthPlugin.hpp"
-
-using DGL::Image;
-using DGL::ImageKnob;
-using DGL::ImageButton;
-using DGL::ImageToggle;
 
 #define AREAHEIGHT 250
+
+using DGL::Image;
+using DGL::ImageButton;
+using DGL::ImageKnob;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZamSynthUI : public UI,
-                  public ImageKnob::Callback,
-                  public ImageButton::Callback,
-                  public ImageToggle::Callback
+                   public ImageButton::Callback,
+                   public ImageKnob::Callback,
+                   public ImageSwitch::Callback
 {
 public:
     ZamSynthUI();
-    ~ZamSynthUI() override;
 
 protected:
     // -------------------------------------------------------------------
     // Information
 
-    unsigned int d_getWidth() const noexcept override
+    uint d_getWidth() const noexcept override
     {
         return ZamSynthArtwork::zamsynthWidth;
     }
 
-    unsigned int d_getHeight() const noexcept override
+    uint d_getHeight() const noexcept override
     {
         return ZamSynthArtwork::zamsynthHeight;
     }
 
     void gaussiansmooth(float* smoothed, float* xs, float* ys, int n, int radius);
-    
+
     // -------------------------------------------------------------------
     // DSP Callbacks
 
@@ -79,7 +76,7 @@ protected:
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
     void imageButtonClicked(ImageButton* button, int) override;
-    void imageToggleClicked(ImageToggle* toggle, int) override;
+    void imageSwitchClicked(ImageSwitch* toggle, int) override;
 
     void onDisplay() override;
     bool onMouse(int, bool, int, int) override;
@@ -90,7 +87,7 @@ private:
     ImageKnob* fKnobGain;
     ImageKnob* fKnobSpeed;
     ImageButton* fButtonSmooth;
-    ImageToggle* fToggleGraph;
+    ImageSwitch* fSwitchGraph;
     float wave_y[AREAHEIGHT];
     float env_y[AREAHEIGHT];
     bool fGraph;

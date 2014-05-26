@@ -20,41 +20,39 @@
 
 #include "DistrhoUI.hpp"
 
-#include "Geometry.hpp"
 #include "ImageKnob.hpp"
-#include "ImageToggle.hpp"
+#include "ImageSwitch.hpp"
+
+#include "ZaMultiCompX2Artwork.hpp"
 
 #define COMPOINTS 1000
 #define MAX_COMP 3
-#include "ZaMultiCompX2Artwork.hpp"
-#include "ZaMultiCompX2Plugin.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageToggle;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZaMultiCompX2UI : public UI,
-                  public ImageKnob::Callback,
-                  public ImageToggle::Callback
+                        public ImageKnob::Callback,
+                        public ImageSwitch::Callback
 {
 public:
     ZaMultiCompX2UI();
-    ~ZaMultiCompX2UI() override;
 
 protected:
     // -------------------------------------------------------------------
     // Information
 
-    unsigned int d_getWidth() const noexcept override
+    uint d_getWidth() const noexcept override
     {
         return ZaMultiCompX2Artwork::zamulticompx2Width;
     }
 
-    unsigned int d_getHeight() const noexcept override
+    uint d_getHeight() const noexcept override
     {
         return ZaMultiCompX2Artwork::zamulticompx2Height;
     }
@@ -76,7 +74,7 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void imageToggleClicked(ImageToggle* toggle, int button) override;
+    void imageSwitchClicked(ImageSwitch* toggle, int button) override;
 
     void onDisplay() override;
 
@@ -113,13 +111,13 @@ private:
     ImageKnob* fKnobMakeup3;
     ImageKnob* fKnobXover1;
     ImageKnob* fKnobXover2;
-    ImageToggle* fToggleBypass1;
-    ImageToggle* fToggleBypass2;
-    ImageToggle* fToggleBypass3;
-    ImageToggle* fToggleListen1;
-    ImageToggle* fToggleListen2;
-    ImageToggle* fToggleListen3;
-    ImageToggle* fToggleStereo;
+    ImageSwitch* fSwitchBypass1;
+    ImageSwitch* fSwitchBypass2;
+    ImageSwitch* fSwitchBypass3;
+    ImageSwitch* fSwitchListen1;
+    ImageSwitch* fSwitchListen2;
+    ImageSwitch* fSwitchListen3;
+    ImageSwitch* fSwitchStereo;
 
     Image fLedRedImg;
     float fLedRedValue1;
