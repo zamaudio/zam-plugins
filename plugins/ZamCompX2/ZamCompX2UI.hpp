@@ -1,6 +1,6 @@
 /*
- * ZamCompX2 stereo compressor 
- * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com> 
+ * ZamCompX2 stereo compressor
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,13 +21,13 @@
 #include "DistrhoUI.hpp"
 
 #include "ImageKnob.hpp"
-#include "ImageSwitch.hpp"
+#include "ImageToggle.hpp"
 
 #include "ZamCompX2Artwork.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageSwitch;
+using DGL::ImageToggle;
 
 START_NAMESPACE_DISTRHO
 
@@ -35,7 +35,7 @@ START_NAMESPACE_DISTRHO
 
 class ZamCompX2UI : public UI,
                     public ImageKnob::Callback,
-                    public ImageSwitch::Callback
+                    public ImageToggle::Callback
 {
 public:
     ZamCompX2UI();
@@ -66,21 +66,17 @@ protected:
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
-    void imageSwitchClicked(ImageSwitch *toggle, int button) override;
+    void imageToggleClicked(ImageToggle* imageToggle, int button) override;
 
     void onDisplay() override;
 
 private:
     Image fImgBackground;
-    ImageKnob* fKnobAttack;
-    ImageKnob* fKnobRelease;
-    ImageKnob* fKnobThresh;
-    ImageKnob* fKnobRatio;
-    ImageKnob* fKnobKnee;
-    ImageKnob* fKnobMakeup;
+    ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
+    ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup;
 
     Image fImgSwitchSlider;
-    ImageSwitch* fSwitchStereo;
+    ScopedPointer<ImageToggle> fToggleStereo;
 
     Image fLedRedImg;
     float fLedRedValue;
