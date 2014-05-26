@@ -31,10 +31,6 @@ ZaMultiCompPlugin::ZaMultiCompPlugin()
     d_deactivate();
 }
 
-ZaMultiCompPlugin::~ZaMultiCompPlugin()
-{
-}
-
 // -----------------------------------------------------------------------
 // Init
 
@@ -488,14 +484,14 @@ void ZaMultiCompPlugin::set_lp_coeffs(float fc, float q, float sr, int i, float 
         b2[i] = (float)((1.f - alpha)*inv);
 }
 
-void ZaMultiCompPlugin::set_hp_coeffs(float fc, float q, float sr, int i, float gain=1.0) 
-{       
+void ZaMultiCompPlugin::set_hp_coeffs(float fc, float q, float sr, int i, float gain=1.0)
+{
         float omega=(float)(2.f*M_PI*fc/sr);
         float sn=sin(omega);
         float cs=cos(omega);
         float alpha=(float)(sn/(2.f*q));
         float inv=(float)(1.f/(1.f+alpha));
-        
+
         a0[i] =  (float)(gain*inv*(1.f + cs)/2.f);
         a1[i] =  -2.f * a0[i];
         a2[i] =  a0[i];
@@ -551,7 +547,7 @@ float ZaMultiCompPlugin::run_comp(int k, float in)
         return sanitize_denormal(out);
 }
 
-void ZaMultiCompPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
+void ZaMultiCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = d_getSampleRate();
 	float max = 0.f;

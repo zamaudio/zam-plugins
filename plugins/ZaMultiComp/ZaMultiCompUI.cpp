@@ -1,5 +1,5 @@
 /*
- * ZaMultiComp mono multiband compressor 
+ * ZaMultiComp mono multiband compressor
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -15,8 +15,8 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
+#include "ZaMultiCompPlugin.hpp"
 #include "ZaMultiCompUI.hpp"
-#include <stdio.h>
 
 using DGL::Point;
 
@@ -38,12 +38,12 @@ ZaMultiCompUI::ZaMultiCompUI()
     fLedRedValue1 = 0.0f;
     fLedRedValue2 = 0.0f;
     fLedRedValue3 = 0.0f;
-    fLedYellowValue = 0.0f; 
+    fLedYellowValue = 0.0f;
 
     // knob
     Image knobImage(ZaMultiCompArtwork::knobData, ZaMultiCompArtwork::knobWidth, ZaMultiCompArtwork::knobHeight);
 
-    // knob 
+    // knob
     fKnobAttack = new ImageKnob(this, knobImage);
     fKnobAttack->setPos(24, 43);
     fKnobAttack->setRange(0.1f, 200.0f);
@@ -142,61 +142,40 @@ ZaMultiCompUI::ZaMultiCompUI()
 
     Point<int> togglePosStart(247,109);
 
-    fToggleBypass3 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
-    fToggleBypass3->setPos(togglePosStart);
-    fToggleBypass3->setCallback(this);
+    fSwitchBypass3 = new ImageSwitch(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fSwitchBypass3->setPos(togglePosStart);
+    fSwitchBypass3->setCallback(this);
 
     togglePosStart.setY(158);
 
-    fToggleBypass2 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
-    fToggleBypass2->setPos(togglePosStart);
-    fToggleBypass2->setCallback(this);
+    fSwitchBypass2 = new ImageSwitch(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fSwitchBypass2->setPos(togglePosStart);
+    fSwitchBypass2->setCallback(this);
 
     togglePosStart.setY(209);
 
-    fToggleBypass1 = new ImageToggle(this, toggleoffImage, toggleoffImage, toggleonImage);
-    fToggleBypass1->setPos(togglePosStart);
-    fToggleBypass1->setCallback(this);
+    fSwitchBypass1 = new ImageSwitch(this, toggleoffImage, toggleoffImage, toggleonImage);
+    fSwitchBypass1->setPos(togglePosStart);
+    fSwitchBypass1->setCallback(this);
 
     togglePosStart.setX(278);
     togglePosStart.setY(113);
 
-    fToggleListen3 = new ImageToggle(this,  toggleoffhImage, toggleoffhImage, toggleonhImage);
-    fToggleListen3->setPos(togglePosStart);
-    fToggleListen3->setCallback(this);
+    fSwitchListen3 = new ImageSwitch(this,  toggleoffhImage, toggleoffhImage, toggleonhImage);
+    fSwitchListen3->setPos(togglePosStart);
+    fSwitchListen3->setCallback(this);
 
     togglePosStart.setY(164);
 
-    fToggleListen2 = new ImageToggle(this, toggleoffhImage, toggleoffhImage, toggleonhImage); 
-    fToggleListen2->setPos(togglePosStart);
-    fToggleListen2->setCallback(this);
+    fSwitchListen2 = new ImageSwitch(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
+    fSwitchListen2->setPos(togglePosStart);
+    fSwitchListen2->setCallback(this);
 
     togglePosStart.setY(214);
 
-    fToggleListen1 = new ImageToggle(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
-    fToggleListen1->setPos(togglePosStart);
-    fToggleListen1->setCallback(this);
-}
-
-ZaMultiCompUI::~ZaMultiCompUI()
-{
-    delete fKnobAttack;
-    delete fKnobRelease;
-    delete fKnobThresh;
-    delete fKnobRatio;
-    delete fKnobKnee;
-    delete fKnobGlobalGain;
-    delete fKnobMakeup1;
-    delete fKnobMakeup2;
-    delete fKnobMakeup3;
-    delete fKnobXover1;
-    delete fKnobXover2;
-    delete fToggleBypass1;
-    delete fToggleBypass2;
-    delete fToggleBypass3;
-    delete fToggleListen1;
-    delete fToggleListen2;
-    delete fToggleListen3;
+    fSwitchListen1 = new ImageSwitch(this, toggleoffhImage, toggleoffhImage, toggleonhImage);
+    fSwitchListen1->setPos(togglePosStart);
+    fSwitchListen1->setCallback(this);
 }
 
 // -----------------------------------------------------------------------
@@ -262,22 +241,22 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
         fKnobMakeup3->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle1:
-        //fToggleBypass1->setValue(value);
+        //fSwitchBypass1->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle2:
-        //fToggleBypass2->setValue(value);
+        //fSwitchBypass2->setValue(value);
         break;
     case ZaMultiCompPlugin::paramToggle3:
-        //fToggleBypass3->setValue(value);
+        //fSwitchBypass3->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen1:
-        //fToggleListen1->setValue(value);
+        //fSwitchListen1->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen2:
-        //fToggleListen2->setValue(value);
+        //fSwitchListen2->setValue(value);
         break;
     case ZaMultiCompPlugin::paramListen3:
-        //fToggleListen3->setValue(value);
+        //fSwitchListen3->setValue(value);
         break;
     }
 }
@@ -299,12 +278,12 @@ void ZaMultiCompUI::d_programChanged(uint32_t index)
     fKnobMakeup3->setValue(0.0f);
     fKnobXover1->setValue(250.0f);
     fKnobXover2->setValue(1400.0f);
-    fToggleBypass1->setValue(1.0f);
-    fToggleBypass2->setValue(1.0f);
-    fToggleBypass3->setValue(1.0f);
-    fToggleListen1->setValue(1.0f);
-    fToggleListen2->setValue(1.0f);
-    fToggleListen3->setValue(1.0f);
+    fSwitchBypass1->setValue(1.0f);
+    fSwitchBypass2->setValue(1.0f);
+    fSwitchBypass3->setValue(1.0f);
+    fSwitchListen1->setValue(1.0f);
+    fSwitchListen2->setValue(1.0f);
+    fSwitchListen3->setValue(1.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -388,20 +367,20 @@ void ZaMultiCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
         d_setParameterValue(ZaMultiCompPlugin::paramXover2, value);
 }
 
-void ZaMultiCompUI::imageToggleClicked(ImageToggle* toggle, int)
+void ZaMultiCompUI::imageSwitchClicked(ImageSwitch* toggle, int)
 {
     float v = toggle->getValue();
-    if (toggle == fToggleBypass1)
+    if (toggle == fSwitchBypass1)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle1, v);
-    else if (toggle == fToggleBypass2)
+    else if (toggle == fSwitchBypass2)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle2, v);
-    else if (toggle == fToggleBypass3)
+    else if (toggle == fSwitchBypass3)
         d_setParameterValue(ZaMultiCompPlugin::paramToggle3, v);
-    else if (toggle == fToggleListen1)
+    else if (toggle == fSwitchListen1)
         d_setParameterValue(ZaMultiCompPlugin::paramListen1, v);
-    else if (toggle == fToggleListen2)
+    else if (toggle == fSwitchListen2)
         d_setParameterValue(ZaMultiCompPlugin::paramListen2, v);
-    else if (toggle == fToggleListen3)
+    else if (toggle == fSwitchListen3)
         d_setParameterValue(ZaMultiCompPlugin::paramListen3, v);
 }
 

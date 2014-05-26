@@ -1,6 +1,6 @@
 /*
  * ZaMultiComp mono multiband compressor
- * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com> 
+ * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -73,23 +73,13 @@ protected:
 
 private:
     Image fImgBackground;
-    ImageKnob* fKnobAttack;
-    ImageKnob* fKnobRelease;
-    ImageKnob* fKnobThresh;
-    ImageKnob* fKnobRatio;
-    ImageKnob* fKnobKnee;
-    ImageKnob* fKnobGlobalGain;
-    ImageKnob* fKnobMakeup1;
-    ImageKnob* fKnobMakeup2;
-    ImageKnob* fKnobMakeup3;
-    ImageKnob* fKnobXover1;
-    ImageKnob* fKnobXover2;
-    ImageSwitch* fSwitchBypass1;
-    ImageSwitch* fSwitchBypass2;
-    ImageSwitch* fSwitchBypass3;
-    ImageSwitch* fSwitchListen1;
-    ImageSwitch* fSwitchListen2;
-    ImageSwitch* fSwitchListen3;
+
+    ScopePointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
+    ScopePointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobGlobalGain;
+    ScopePointer<ImageKnob> fKnobMakeup1, fKnobMakeup2, fKnobMakeup3;
+    ScopePointer<ImageKnob> fKnobXover1, fKnobXover2;
+    ScopePointer<ImageSwitch> fSwitchBypass1, fSwitchBypass2, fSwitchBypass3;
+    ScopePointer<ImageSwitch> fSwitchListen1, fSwitchListen2, fSwitchListen3;
 
     Image fLedRedImg;
     float fLedRedValue1;
