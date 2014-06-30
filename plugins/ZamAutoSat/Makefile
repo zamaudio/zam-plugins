@@ -15,18 +15,22 @@ NAME = ZamAutoSat
 OBJS_DSP = \
 	ZamAutoSatPlugin.cpp.o
 
-OBJS_UI = \
+OBJS_UI  = \
 	ZamAutoSatArtwork.cpp.o \
 	ZamAutoSatUI.cpp.o
-
-# --------------------------------------------------------------
-# No custom UI for now
-
-#TARGET_NOUI = true
 
 # --------------------------------------------------------------
 # Do some magic
 
 include ../Makefile.mk
+
+# --------------------------------------------------------------
+# Enable all possible plugin types
+
+ifeq ($(LINUX),true)
+all: jack ladspa dssi lv2_sep vst
+else
+all: ladspa dssi lv2_sep vst
+endif
 
 # --------------------------------------------------------------

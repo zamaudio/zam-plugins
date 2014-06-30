@@ -81,7 +81,7 @@ void ZamAutoSatPlugin::d_deactivate()
 {
 }
 
-void ZamAutoSatPlugin::d_run(float** inputs, float** outputs, uint32_t frames)
+void ZamAutoSatPlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
 	for (i = 0; i < frames; i++) {

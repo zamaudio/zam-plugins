@@ -55,7 +55,7 @@ protected:
     // DSP Callbacks
 
     void d_parameterChanged(uint32_t index, float value) override;
-    void d_programChanged(uint32_t index) override;
+    void d_programChanged(uint32_t index) ;
 
     // -------------------------------------------------------------------
 
