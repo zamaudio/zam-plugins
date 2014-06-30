@@ -21,12 +21,6 @@
 #include "Widget.hpp"
 #include "Window.hpp"
 
-#ifdef PROPER_CPP11_SUPPORT
-# include <cstdint>
-#else
-# include <stdint.h>
-#endif
-
 START_NAMESPACE_DGL
 
 // -----------------------------------------------------------------------
@@ -35,15 +29,16 @@ class ImageAboutWindow : public Window,
                          public Widget
 {
 public:
-    ImageAboutWindow(App& app, Window& parent, const Image& image = Image());
-    ImageAboutWindow(Widget* widget, const Image& image = Image());
+    explicit ImageAboutWindow(Window& parent, const Image& image = Image());
+    explicit ImageAboutWindow(Widget* widget, const Image& image = Image());
 
     void setImage(const Image& image);
 
 protected:
     void onDisplay() override;
-    bool onMouse(int button, bool press, int x, int y) override;
-    bool onKeyboard(bool press, uint32_t key) override;
+    bool onKeyboard(const KeyboardEvent&) override;
+    bool onMouse(const MouseEvent&) override;
+    void onReshape(int width, int height) override;
 
 private:
     Image fImgBackground;

@@ -16,18 +16,20 @@ LINK_FLAGS      += $(DGL_LIBS)
 
 OBJS = \
 	src/App.cpp.o \
+	src/Geometry.cpp.o \
 	src/Image.cpp.o \
 	src/ImageAboutWindow.cpp.o \
 	src/ImageButton.cpp.o \
-	src/ImageToggle.cpp.o \
 	src/ImageKnob.cpp.o \
 	src/ImageSlider.cpp.o \
-	src/Geometry.cpp.o \
-	src/Widget.cpp.o \
-	src/Window.cpp.o
+	src/ImageSwitch.cpp.o \
+	src/NanoVG.cpp.o \
+	src/Widget.cpp.o
 
 ifeq ($(MACOS),true)
-OBJS += src/pugl/pugl_osx_extended.m.o
+OBJS += src/Window.mm.o
+else
+OBJS += src/Window.cpp.o
 endif
 
 TARGET = ../libdgl.a
@@ -39,10 +41,23 @@ all: $(TARGET)
 # --------------------------------------------------------------
 
 ../libdgl.a: $(OBJS)
-	$(RM) $@
-	$(AR) crs $@ $^
+	rm -f $@
+	ar crs $@ $^
+
+../libdgl.dll: $(OBJS)
+	# -Wl,--output-def,$@.def,--out-implib,$@.a
+	$(CXX) $^ -shared $(LINK_FLAGS) -o $@
+
+../libdgl.dylib: $(OBJS)
+	$(CXX) $^ -dynamiclib $(LINK_FLAGS) -o $@
+
+../libdgl.so: $(OBJS)
+	$(CXX) $^ -shared $(LINK_FLAGS) -o $@
 
 # --------------------------------------------------------------
+
+%.c.o: %.c
+	$(CC) $< $(BUILD_C_FLAGS) -c -o $@
 
 %.cpp.o: %.cpp
 	$(CXX) $< $(BUILD_CXX_FLAGS) -c -o $@
@@ -50,10 +65,13 @@ all: $(TARGET)
 %.m.o: %.m
 	$(CC) $< $(BUILD_C_FLAGS) -ObjC -c -o $@
 
+%.mm.o: %.mm
+	$(CXX) $< $(BUILD_CXX_FLAGS) -ObjC++ -c -o $@
+
 # --------------------------------------------------------------
 
 clean:
-	$(RM) src/*.o src/pugl/*.o ../libdgl.*
+	rm -f src/*.o src/pugl/*.o src/freetype-gl/*.o ../libdgl.*
 
 debug:
 	$(MAKE) DEBUG=true

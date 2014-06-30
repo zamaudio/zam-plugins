@@ -1,7 +1,6 @@
 /*
  * DISTRHO Plugin Framework (DPF)
  * Copyright (C) 2012-2014 Filipe Coelho <falktx@falktx.com>
- * Copyright (C) 2014 Damien Zammit <damien@zamaudio.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any purpose with
  * or without fee is hereby granted, provided that the above copyright notice and this
@@ -15,8 +14,8 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef DGL_IMAGE_TOGGLE_HPP_INCLUDED
-#define DGL_IMAGE_TOGGLE_HPP_INCLUDED
+#ifndef DGL_IMAGE_SWITCH_HPP_INCLUDED
+#define DGL_IMAGE_SWITCH_HPP_INCLUDED
 
 #include "Image.hpp"
 #include "Widget.hpp"
@@ -25,43 +24,45 @@ START_NAMESPACE_DGL
 
 // -----------------------------------------------------------------------
 
-class ImageToggle : public Widget
+class ImageSwitch : public Widget
 {
 public:
     class Callback
     {
     public:
         virtual ~Callback() {}
-        virtual void imageToggleClicked(ImageToggle* imageToggle, int button) = 0;
+        virtual void imageSwitchClicked(ImageSwitch* imageButton, bool down) = 0;
     };
 
-    ImageToggle(Window& parent, const Image& image);
-    ImageToggle(Widget* widget, const Image& image);
-    ImageToggle(Window& parent, const Image& imageNormal, const Image& imageHover, const Image& imageDown);
-    ImageToggle(Widget* widget, const Image& imageNormal, const Image& imageHover, const Image& imageDown);
-    ImageToggle(const ImageToggle& imageToggle);
+    explicit ImageSwitch(Window& parent, const Image& imageNormal, const Image& imageDown, int id = 0) noexcept;
+    explicit ImageSwitch(Widget* widget, const Image& imageNormal, const Image& imageDown, int id = 0) noexcept;
+    explicit ImageSwitch(const ImageSwitch& imageSwitch) noexcept;
 
-    void setCallback(Callback* callback);
-    float getValue() override;
-    void setValue(float value) override;
+    int getId() const noexcept;
+    void setId(int id) noexcept;
+
+    bool isDown() const noexcept;
+    void setDown(bool down) noexcept;
+
+    void setCallback(Callback* callback) noexcept;
 
 protected:
      void onDisplay() override;
-     bool onMouse(int button, bool press, int x, int y) override;
-     bool onMotion(int x, int y) override;
+     bool onMouse(const MouseEvent&) override;
 
 private:
-    Image  fImageNormal;
-    Image  fImageHover;
-    Image  fImageDown;
-    Image* fCurImage;
-    int    fCurButton;
+    Image fImageNormal;
+    Image fImageDown;
+    bool  fIsDown;
+    int   fId;
 
     Callback* fCallback;
+
+    DISTRHO_LEAK_DETECTOR(ImageSwitch)
 };
 
 // -----------------------------------------------------------------------
 
 END_NAMESPACE_DGL
 
-#endif // DGL_IMAGE_TOGGLE_HPP_INCLUDED
+#endif // DGL_IMAGE_SWITCH_HPP_INCLUDED

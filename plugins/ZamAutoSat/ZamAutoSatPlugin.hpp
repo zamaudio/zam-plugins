@@ -73,14 +73,14 @@ protected:
     // -------------------------------------------------------------------
     // Internal data
 
-    float d_getParameterValue(uint32_t index) const override;
-    void  d_setParameterValue(uint32_t index, float value) override;
+    float d_getParameterValue(uint32_t index) const ;
+    void  d_setParameterValue(uint32_t index, float value) ;
     void  d_setProgram(uint32_t index) ;
 
     // -------------------------------------------------------------------
-    void d_activate() override;
-    void d_deactivate() override;
-    void d_run(float** inputs, float** outputs, uint32_t frames) override;
+    void d_activate() ;
+    void d_deactivate() ;
+    void d_run(const float** inputs, float** outputs, uint32_t frames) override;
 
     // -------------------------------------------------------------------
 

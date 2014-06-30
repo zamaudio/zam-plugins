@@ -4,19 +4,8 @@
 # Created by falkTX
 #
 
-AR  ?= ar
-RM  ?= rm -f
 CC  ?= gcc
 CXX ?= g++
-
-# No heavy optimisations
-OPTIMIZATIONS ?= -O2 -ffast-math
-
-# Heavy optimisations
-#OPTIMIZATIONS ?= -O2 -ffast-math -mtune=generic -msse -msse2 -mfpmath=sse
-
-# Raspberry Pi
-#OPTIMIZATIONS ?= -O2 -ffast-math -march=armv6 -mfpu=vfp -mfloat-abi=hard
 
 # --------------------------------------------------------------
 # Fallback to Linux if no other OS defined
@@ -32,9 +21,11 @@ endif
 # --------------------------------------------------------------
 # Common build and link flags
 
-
 BASE_FLAGS = -Wall -Wextra -pipe
-BASE_OPTS  = $(OPTIMIZATIONS) -fdata-sections -ffunction-sections
+BASE_OPTS  = -O2 -ffast-math -fdata-sections -ffunction-sections
+ifneq ($(NOOPT),true)
+BASE_OPTS  += -mtune=generic -msse -msse2 -mfpmath=sse
+endif
 LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,-O1 -Wl,--as-needed -Wl,--gc-sections -Wl,--strip-all
 
 ifeq ($(MACOS),true)
@@ -43,8 +34,11 @@ LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,-dead_strip -Wl,-dead_strip
 endif
 
 ifeq ($(RASPPI),true)
-# Raspberry-Pi optimization flags
-BASE_OPTS  = $(OPTIMIZATIONS) 
+# Raspberry-Pi flags
+BASE_OPTS  = -O2 -ffast-math
+ifneq ($(NOOPT),true)
+BASE_OPTS += -march=armv6 -mfpu=vfp -mfloat-abi=hard
+endif
 LINK_OPTS  = -Wl,-O1 -Wl,--as-needed -Wl,--strip-all
 endif
 
@@ -75,12 +69,19 @@ endif
 # Check for required libs
 
 ifeq ($(LINUX),true)
+ifneq ($(shell pkg-config --exists jack && echo true),true)
+$(error JACK missing, cannot continue)
+endif
 ifneq ($(shell pkg-config --exists gl && echo true),true)
 $(error OpenGL missing, cannot continue)
 endif
 ifneq ($(shell pkg-config --exists x11 && echo true),true)
 $(error X11 missing, cannot continue)
 endif
+endif
+
+ifneq ($(shell pkg-config --exists liblo && echo true),true)
+$(error liblo missing, cannot continue)
 endif
 
 # --------------------------------------------------------------

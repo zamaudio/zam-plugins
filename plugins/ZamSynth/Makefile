@@ -20,13 +20,17 @@ OBJS_UI  = \
 	ZamSynthUI.cpp.o
 
 # --------------------------------------------------------------
-# No custom UI for now
-
-#TARGET_NOUI = true
-
-# --------------------------------------------------------------
 # Do some magic
 
 include ../Makefile.mk
+
+# --------------------------------------------------------------
+# Enable all possible plugin types
+
+ifeq ($(LINUX),true)
+all: jack dssi lv2_sep vst
+else
+all: dssi lv2_sep vst
+endif
 
 # --------------------------------------------------------------
