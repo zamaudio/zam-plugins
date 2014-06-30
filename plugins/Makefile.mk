@@ -20,7 +20,7 @@ BUILD_CXX_FLAGS += -I. -I../../libs/distrho -I../../libs/dgl
 # Enable all plugin types
 
 #all: dssi lv2 vst
-all: vst lv2
+all: lv2
 
 # --------------------------------------------------------------
 # Set plugin binary file targets
