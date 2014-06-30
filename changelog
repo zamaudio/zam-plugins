@@ -1,0 +1,7 @@
+2.1 Initial stable release
+
+3.0 Complete rewrite of plugins, with GUIs.  Testing phase.
+	- No more dependencies on faust or lv2
+
+3.1 Stable release of new plugins, with GUIs.
+	- Ready for packaging
