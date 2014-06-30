@@ -13,7 +13,7 @@ Please use versions >= 3.1 of this package.
 Build Dependencies:
 ===================
 
-	pkg-config libx11-dev libgl-dev
+	pkg-config libx11-dev libgl-dev liblo-dev
 
 
 Installation:
