@@ -10,10 +10,10 @@ CC  ?= gcc
 CXX ?= g++
 
 # No heavy optimisations
-#OPTIMIZATIONS ?= -O2 -ffast-math
+OPTIMIZATIONS ?= -O2 -ffast-math
 
 # Heavy optimisations
-OPTIMIZATIONS ?= -O2 -ffast-math -mtune=generic -msse -msse2 -mfpmath=sse
+#OPTIMIZATIONS ?= -O2 -ffast-math -mtune=generic -msse -msse2 -mfpmath=sse
 
 # Raspberry Pi
 #OPTIMIZATIONS ?= -O2 -ffast-math -march=armv6 -mfpu=vfp -mfloat-abi=hard
