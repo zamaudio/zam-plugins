@@ -4,7 +4,7 @@ LIBDIR ?= lib
 NAME    = zam-plugins
 VERSION = $(shell cat .version)
 
-PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZaMultiCompX2 ZamTube ZamEQ2 ZamSynth
+PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZaMultiCompX2 ZamTube ZamEQ2 ZamSynth ZamAutoSat
 
 all: libs $(PLUGINS) gen
 
