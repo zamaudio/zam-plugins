@@ -12,6 +12,7 @@ bin/*-dssi/
 bin/*.lv2/
 libs/lv2_ttl_generator
 
+bin/ZamAutoSat
 bin/ZaMultiComp
 bin/ZaMultiCompX2
 bin/ZamComp
