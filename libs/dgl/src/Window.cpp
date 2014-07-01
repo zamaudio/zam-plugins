@@ -26,9 +26,7 @@
 #if defined(DISTRHO_OS_WINDOWS)
 # include "pugl/pugl_win.cpp"
 #elif defined(DISTRHO_OS_MAC)
-extern "C" {
 # include "pugl/pugl_osx.m"
-}
 #elif defined(DISTRHO_OS_LINUX)
 # include <sys/types.h>
 # include <unistd.h>
@@ -56,8 +54,6 @@ extern "C" {
 #endif
 
 START_NAMESPACE_DGL
-
-Window* dgl_lastUiParent = nullptr;
 
 // -----------------------------------------------------------------------
 // Window Private
@@ -164,11 +160,8 @@ struct Window::PrivateData {
         if (fSelf == nullptr || fView == nullptr)
         {
             DBG("Failed!\n");
-            dgl_lastUiParent = nullptr;
             return;
         }
-
-        dgl_lastUiParent = fSelf;
 
         puglInitResizable(fView, fResizable);
 
@@ -569,6 +562,8 @@ struct Window::PrivateData {
     {
         fSelf->onDisplayBefore();
 
+        bool needsDisableScissor = false;
+
         FOR_EACH_WIDGET(it)
         {
             Widget* const widget(*it);
@@ -582,24 +577,30 @@ struct Window::PrivateData {
                 {
                     // full viewport size
                     glViewport(0, 0, fView->width, fView->height);
+                }
+                else if (! widget->fNeedsScaling)
+                {
+                    // only set viewport pos
+                    glViewport(widget->getAbsoluteX(), /*fView->height - widget->getHeight()*/ - widget->getAbsoluteY(), fView->width, fView->height);
 
-                    // display widget
-                    widget->onDisplay();
+                    // then cut the outer bounds
+                    glScissor(widget->getAbsoluteX(), fView->height - widget->getHeight() - widget->getAbsoluteY(), widget->getWidth(), widget->getHeight());
+                    glEnable(GL_SCISSOR_TEST);
+                    needsDisableScissor = true;
                 }
                 else
                 {
                     // limit viewport to widget bounds
                     glViewport(widget->getAbsoluteX(), fView->height - widget->getHeight() - widget->getAbsoluteY(), widget->getWidth(), widget->getHeight());
+                }
 
-                    // scale contents to match viewport size
-                    glPushMatrix();
-                    glScalef(float(fView->width)/float(widget->getWidth()), float(fView->height)/float(widget->getHeight()), 1.0f);
+                // display widget
+                widget->onDisplay();
 
-                    // display widget
-                    widget->onDisplay();
-
-                    // done
-                    glPopMatrix();
+                if (needsDisableScissor)
+                {
+                    glDisable(GL_SCISSOR_TEST);
+                    needsDisableScissor = false;
                 }
             }
         }
