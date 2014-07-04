@@ -8,7 +8,7 @@ Note:
 This is a new repo that contains the full history of the old repo.
 Submodules are no longer required.
 Uses Distrho Plugin Framework.
-Please use versions >= 3.1 of this package.
+Please use versions >= 3.2 of this package.
 
 Build Dependencies:
 ===================
@@ -26,5 +26,5 @@ Installation:
 Package Maintainers:
 ====================
 
-	git checkout 3.1
+	git checkout 3.2
 	make dist
