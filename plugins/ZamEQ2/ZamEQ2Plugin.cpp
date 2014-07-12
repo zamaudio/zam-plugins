@@ -252,10 +252,10 @@ void ZamEQ2Plugin::d_setProgram(uint32_t index)
 
     /* Default parameter values */
     gain1 = 0.0f;
-    q1 = 1.0f;
+    q1 = 2.0f;
     freq1 = 500.0f;
     gain2 = 0.0f;
-    q2 = 1.0f;
+    q2 = 2.0f;
     freq2 = 3000.0f;
     gainl = 0.0f;
     freql = 250.0f;
