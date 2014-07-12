@@ -179,18 +179,17 @@ void ZamEQ2UI::d_programChanged(uint32_t index)
         return;
 
     // Default values
-/*
-    fKnobGain1->resetDefault();
-    fKnobQ1->resetDefault();
-    fKnobFreq1->resetDefault();
-    fKnobGain2->resetDefault();
-    fKnobQ2->resetDefault();
-    fKnobFreq2->resetDefault();
-    fKnobGainL->resetDefault();
-    fKnobFreqL->resetDefault();
-    fKnobGainH->resetDefault();
-    fKnobFreqH->resetDefault();
-*/
+
+    fKnobGain1->setValue(0.0f);
+    fKnobQ1->setValue(1.0f);
+    fKnobFreq1->setValue(500.0f);
+    fKnobGain2->setValue(0.0f);
+    fKnobQ2->setValue(1.0f);
+    fKnobFreq2->setValue(3000.0f);
+    fKnobGainL->setValue(0.0f);
+    fKnobFreqL->setValue(250.0f);
+    fKnobGainH->setValue(0.0f);
+    fKnobFreqH->setValue(8000.0f);
     fSliderMaster->setValue(0.f);
 }
 
