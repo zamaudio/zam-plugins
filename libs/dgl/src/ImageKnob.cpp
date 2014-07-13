@@ -135,7 +135,7 @@ float ImageKnob::getValue() const noexcept
 
 void ImageKnob::setDefault(float value) noexcept
 {
-    fValueDef = fUsingLog ? _logscale(value) : value;
+    fValueDef = /*fUsingLog ? _logscale(value) :*/ value;
     fUsingDefault = true;
 }
 
