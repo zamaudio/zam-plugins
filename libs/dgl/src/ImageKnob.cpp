@@ -330,13 +330,14 @@ bool ImageKnob::onMotion(const MotionEvent& ev)
 
     bool doVal = false;
     float d, value;
+    float fValueTmpLog = fUsingLog ? _invlogscale(fValueTmp) : fValueTmp;
 
     if (fOrientation == ImageKnob::Horizontal)
     {
         if (const int movX = ev.pos.getX() - fLastX)
         {
             d     = (ev.mod & MODIFIER_CTRL) ? 2000.0f : 200.0f;
-            value = fValueTmp + (float(fMaximum - fMinimum) / d * float(movX));
+            value = fValueTmpLog + (float(fMaximum - fMinimum) / d * float(movX));
             doVal = true;
         }
     }
@@ -345,10 +346,13 @@ bool ImageKnob::onMotion(const MotionEvent& ev)
         if (const int movY = fLastY - ev.pos.getY())
         {
             d     = (ev.mod & MODIFIER_CTRL) ? 2000.0f : 200.0f;
-            value = fValueTmp + (float(fMaximum - fMinimum) / d * float(movY));
+            value = fValueTmpLog + (float(fMaximum - fMinimum) / d * float(movY));
             doVal = true;
         }
     }
+
+    if (fUsingLog)
+        value = _logscale(value);
 
     if (! doVal)
         return false;
@@ -381,8 +385,12 @@ bool ImageKnob::onScroll(const ScrollEvent& ev)
     if (! contains(ev.pos))
         return false;
 
+    float fValueTmpLog = fUsingLog ? _invlogscale(fValueTmp) : fValueTmp;
     const float d     = (ev.mod & MODIFIER_CTRL) ? 2000.0f : 200.0f;
-    float       value = (fValueTmp) + (float(fMaximum - fMinimum) / d * 10.f * ev.delta.getY());
+    float       value = (fValueTmpLog) + (float(fMaximum - fMinimum) / d * 10.f * ev.delta.getY());
+
+    if (fUsingLog)
+        value = _logscale(value);
 
     if (value < fMinimum)
     {
