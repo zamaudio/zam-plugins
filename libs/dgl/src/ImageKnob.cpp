@@ -125,7 +125,7 @@ int ImageKnob::getId() const noexcept
 
 void ImageKnob::setId(int id) noexcept
 {
-    fId = id;;
+    fId = id;
 }
 
 float ImageKnob::getValue() const noexcept
@@ -135,7 +135,7 @@ float ImageKnob::getValue() const noexcept
 
 void ImageKnob::setDefault(float value) noexcept
 {
-    fValueDef = value;
+    fValueDef = fUsingLog ? _logscale(value) : value;
     fUsingDefault = true;
 }
 
@@ -179,10 +179,13 @@ void ImageKnob::setStep(float step) noexcept
 
 void ImageKnob::setValue(float value, bool sendCallback) noexcept
 {
+    if (fUsingLog)
+        value = _logscale(value);
+
     if (fValue == value)
         return;
 
-    fValue = fUsingLog ? _logscale(value) : value;
+    fValue = value;
 
     if (fStep == 0.0f)
         fValueTmp = value;
@@ -229,7 +232,7 @@ void ImageKnob::setRotationAngle(int angle)
 
 void ImageKnob::onDisplay()
 {
-    const float normValue = (fUsingLog ? _invlogscale(fValue) : fValue - fMinimum) / (fMaximum - fMinimum);
+    const float normValue = ((fUsingLog ? _invlogscale(fValue) : fValue) - fMinimum) / (fMaximum - fMinimum);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, fTextureId);
