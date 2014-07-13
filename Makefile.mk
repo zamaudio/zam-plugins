@@ -42,6 +42,15 @@ endif
 LINK_OPTS  = -Wl,-O1 -Wl,--as-needed -Wl,--strip-all
 endif
 
+ifeq ($(PANDORA),true)
+# OpenPandora flags
+BASE_OPTS  = -O2 -ffast-math
+ifneq ($(NOOPT),true)
+BASE_OPTS += -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
+endif
+LINK_OPTS  = -Wl,-O1 -Wl,--as-needed -Wl,--strip-all
+endif
+
 ifneq ($(WIN32),true)
 # not needed for Windows
 BASE_FLAGS += -fPIC -DPIC
@@ -56,12 +65,12 @@ CXXFLAGS   += -fvisibility-inlines-hidden
 endif
 
 BUILD_C_FLAGS   = $(BASE_FLAGS) -std=c99 -std=gnu99 $(CFLAGS)
-BUILD_CXX_FLAGS = $(BASE_FLAGS) -std=c++0x -std=gnu++0x $(CXXFLAGS)
+BUILD_CXX_FLAGS = $(BASE_FLAGS) -std=c++0x -std=gnu++0x $(CXXFLAGS) $(CPPFLAGS)
 LINK_FLAGS      = $(LINK_OPTS) -Wl,--no-undefined $(LDFLAGS)
 
 ifeq ($(MACOS),true)
 # No C++11 support
-BUILD_CXX_FLAGS = $(BASE_FLAGS) $(CXXFLAGS)
+BUILD_CXX_FLAGS = $(BASE_FLAGS) $(CXXFLAGS) $(CPPFLAGS)
 LINK_FLAGS      = $(LINK_OPTS) $(LDFLAGS)
 endif
 
