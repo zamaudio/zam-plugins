@@ -179,13 +179,10 @@ void ImageKnob::setStep(float step) noexcept
 
 void ImageKnob::setValue(float value, bool sendCallback) noexcept
 {
-    if (fUsingLog)
-        value = _logscale(value);
-
     if (fValue == value)
         return;
 
-    fValue = value;
+    fValue = fUsingLog ? _logscale(value) : value;
 
     if (fStep == 0.0f)
         fValueTmp = value;
@@ -298,7 +295,7 @@ bool ImageKnob::onMouse(const MouseEvent& ev)
 
         if ((ev.mod & MODIFIER_SHIFT) != 0 && fUsingDefault)
         {
-            setValue(fValueDef, true);
+            setValue(fUsingLog ? _invlogscale(fValueDef) : fValueDef, true);
             fValueTmp = fValue;
             return true;
         }
