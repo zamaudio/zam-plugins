@@ -81,28 +81,14 @@ public:
 
             for (uint32_t i=0; i < count; ++i)
             {
-                const uint32_t paramHints(fPlugin.getParameterHints(i));
-
-                if (paramHints & PARAMETER_IS_OUTPUT)
+                if (fPlugin.isParameterOutput(i))
                 {
                     fLastOutputValues[i] = fPlugin.getParameterValue(i);
                 }
                 else
                 {
                     fLastOutputValues[i] = 0.0f;
-#if 0
-                    float value = fPlugin.getParameterValue(i);
-
-                    if (paramHints & PARAMETER_IS_LOGARITHMIC)
-                    {
-                        const ParameterRanges& paramRanges(fPlugin.getParameterRanges(i));
-                        const float b = std::log(paramRanges.max/paramRanges.min)/(paramRanges.max-paramRanges.min);
-                        const float a = paramRanges.max/std::exp(paramRanges.max*b);
-                        value = a * std::exp(b*value);
-                    }
-
-                    fUI.parameterChanged(i, value);
-#endif
+                    fUI.parameterChanged(i, fPlugin.getParameterValue(i));
                 }
             }
         }
