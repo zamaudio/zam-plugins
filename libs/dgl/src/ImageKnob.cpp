@@ -133,6 +133,7 @@ float ImageKnob::getValue() const noexcept
     return fValue;
 }
 
+// NOTE: value is assumed to be already scaled if using log
 void ImageKnob::setDefault(float value) noexcept
 {
     fValueDef = /*fUsingLog ? _logscale(value) :*/ value;
@@ -177,11 +178,9 @@ void ImageKnob::setStep(float step) noexcept
     fStep = step;
 }
 
+// NOTE: value is assumed to be already scaled if using log
 void ImageKnob::setValue(float value, bool sendCallback) noexcept
 {
-    if (fUsingLog)
-        value = _logscale(value);
-
     if (fValue == value)
         return;
 
@@ -298,7 +297,7 @@ bool ImageKnob::onMouse(const MouseEvent& ev)
 
         if ((ev.mod & MODIFIER_SHIFT) != 0 && fUsingDefault)
         {
-            setValue(fUsingLog ? _invlogscale(fValueDef) : fValueDef, true);
+            setValue(fValueDef, true);
             fValueTmp = fValue;
             return true;
         }
@@ -354,9 +353,6 @@ bool ImageKnob::onMotion(const MotionEvent& ev)
     if (! doVal)
         return false;
 
-    if (fUsingLog)
-        value = _invlogscale(value);
-
     if (value < fMinimum)
     {
         fValueTmp = value = fMinimum;
@@ -387,9 +383,6 @@ bool ImageKnob::onScroll(const ScrollEvent& ev)
 
     const float d     = (ev.mod & MODIFIER_CTRL) ? 2000.0f : 200.0f;
     float       value = (fValueTmp) + (float(fMaximum - fMinimum) / d * 10.f * ev.delta.getY());
-
-    if (fUsingLog)
-        value = _invlogscale(value);
 
     if (value < fMinimum)
     {

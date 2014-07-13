@@ -69,7 +69,10 @@ public:
 
 #if DISTRHO_PLUGIN_WANT_PROGRAMS
         if (fPlugin.getProgramCount() > 0)
+        {
             fPlugin.setProgram(0);
+            fUI.programChanged(0);
+        }
 #endif
 
         if (const uint32_t count = fPlugin.getParameterCount())
@@ -78,10 +81,29 @@ public:
 
             for (uint32_t i=0; i < count; ++i)
             {
-                if (fPlugin.isParameterOutput(i))
+                const uint32_t paramHints(fPlugin.getParameterHints(i));
+
+                if (paramHints & PARAMETER_IS_OUTPUT)
+                {
                     fLastOutputValues[i] = fPlugin.getParameterValue(i);
+                }
                 else
+                {
                     fLastOutputValues[i] = 0.0f;
+#if 0
+                    float value = fPlugin.getParameterValue(i);
+
+                    if (paramHints & PARAMETER_IS_LOGARITHMIC)
+                    {
+                        const ParameterRanges& paramRanges(fPlugin.getParameterRanges(i));
+                        const float b = std::log(paramRanges.max/paramRanges.min)/(paramRanges.max-paramRanges.min);
+                        const float a = paramRanges.max/std::exp(paramRanges.max*b);
+                        value = a * std::exp(b*value);
+                    }
+
+                    fUI.parameterChanged(i, value);
+#endif
+                }
             }
         }
         else
