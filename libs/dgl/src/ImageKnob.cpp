@@ -134,6 +134,7 @@ float ImageKnob::getValue() const noexcept
 void ImageKnob::setDefault(float value) noexcept
 {
     fValueDef = value;
+    fValueTmp = fUsingLog ? _invlogscale(value) : value;
     fUsingDefault = true;
 }
 
@@ -252,7 +253,7 @@ void ImageKnob::setRotationAngle(int angle)
 
 void ImageKnob::onDisplay()
 {
-    const float normValue = (fUsingLog ? _invlogscale(fValue) : fValue - fMinimum) / (fMaximum - fMinimum);
+    const float normValue = ((fUsingLog ? _invlogscale(fValue) : fValue) - fMinimum) / (fMaximum - fMinimum);
 
     if (fRotationAngle != 0)
     {

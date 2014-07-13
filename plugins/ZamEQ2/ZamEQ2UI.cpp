@@ -46,15 +46,14 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobQ1 = new ImageKnob(this, knobImage);
     fKnobQ1->setAbsolutePos(91, 122);
     fKnobQ1->setRange(0.1f, 6.0f);
-    fKnobQ1->setUsingLogScale(true);
     fKnobQ1->setRotationAngle(240);
-    fKnobQ1->setDefault(2.0f);
+    fKnobQ1->setDefault(1.0f);
     fKnobQ1->setCallback(this);
 
     fKnobFreq1 = new ImageKnob(this, knobImage);
     fKnobFreq1->setAbsolutePos(23, 144);
-    fKnobFreq1->setRange(20.f, 14000.0f);
     fKnobFreq1->setUsingLogScale(true);
+    fKnobFreq1->setRange(20.f, 14000.0f);
     fKnobFreq1->setRotationAngle(240);
     fKnobFreq1->setDefault(500.0f);
     fKnobFreq1->setCallback(this);
@@ -69,15 +68,14 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobQ2 = new ImageKnob(this, knobImage);
     fKnobQ2->setAbsolutePos(567, 122);
     fKnobQ2->setRange(0.1f, 6.0f);
-    fKnobQ2->setUsingLogScale(true);
     fKnobQ2->setRotationAngle(240);
-    fKnobQ2->setDefault(2.0f);
+    fKnobQ2->setDefault(1.0f);
     fKnobQ2->setCallback(this);
 
     fKnobFreq2 = new ImageKnob(this, knobImage);
     fKnobFreq2->setAbsolutePos(499, 144);
-    fKnobFreq2->setRange(20.f, 14000.0f);
     fKnobFreq2->setUsingLogScale(true);
+    fKnobFreq2->setRange(20.f, 14000.0f);
     fKnobFreq2->setRotationAngle(240);
     fKnobFreq2->setDefault(3000.0f);
     fKnobFreq2->setCallback(this);
@@ -91,8 +89,8 @@ ZamEQ2UI::ZamEQ2UI()
 
     fKnobFreqL = new ImageKnob(this, knobImage);
     fKnobFreqL->setAbsolutePos(23, 23);
-    fKnobFreqL->setRange(20.f, 14000.0f);
     fKnobFreqL->setUsingLogScale(true);
+    fKnobFreqL->setRange(20.f, 14000.0f);
     fKnobFreqL->setRotationAngle(240);
     fKnobFreqL->setDefault(250.0f);
     fKnobFreqL->setCallback(this);
@@ -106,8 +104,8 @@ ZamEQ2UI::ZamEQ2UI()
 
     fKnobFreqH = new ImageKnob(this, knobImage);
     fKnobFreqH->setAbsolutePos(499, 24);
-    fKnobFreqH->setRange(20.f, 14000.0f);
     fKnobFreqH->setUsingLogScale(true);
+    fKnobFreqH->setRange(20.f, 14000.0f);
     fKnobFreqH->setRotationAngle(240);
     fKnobFreqH->setDefault(8000.0f);
     fKnobFreqH->setCallback(this);
@@ -181,10 +179,10 @@ void ZamEQ2UI::d_programChanged(uint32_t index)
     // Default values
 
     fKnobGain1->setValue(0.0f);
-    fKnobQ1->setValue(2.0f);
+    fKnobQ1->setValue(1.0f);
     fKnobFreq1->setValue(500.0f);
     fKnobGain2->setValue(0.0f);
-    fKnobQ2->setValue(2.0f);
+    fKnobQ2->setValue(1.0f);
     fKnobFreq2->setValue(3000.0f);
     fKnobGainL->setValue(0.0f);
     fKnobFreqL->setValue(250.0f);

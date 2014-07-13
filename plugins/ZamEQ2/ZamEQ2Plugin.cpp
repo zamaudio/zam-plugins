@@ -49,7 +49,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bandwidth 1";
         parameter.symbol     = "bw1";
         parameter.unit       = " ";
-        parameter.ranges.def = 2.0f;
+        parameter.ranges.def = 1.0f;
         parameter.ranges.min = 0.1f;
         parameter.ranges.max = 6.0f;
         break;
@@ -76,7 +76,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bandwidth 2";
         parameter.symbol     = "bw2";
         parameter.unit       = " ";
-        parameter.ranges.def = 2.0f;
+        parameter.ranges.def = 1.0f;
         parameter.ranges.min = 0.1f;
         parameter.ranges.max = 6.0f;
         break;
@@ -252,10 +252,10 @@ void ZamEQ2Plugin::d_setProgram(uint32_t index)
 
     /* Default parameter values */
     gain1 = 0.0f;
-    q1 = 2.0f;
+    q1 = 1.0f;
     freq1 = 500.0f;
     gain2 = 0.0f;
-    q2 = 2.0f;
+    q2 = 1.0f;
     freq2 = 3000.0f;
     gainl = 0.0f;
     freql = 250.0f;
