@@ -133,10 +133,9 @@ float ImageKnob::getValue() const noexcept
     return fValue;
 }
 
-// NOTE: value is assumed to be already scaled if using log
 void ImageKnob::setDefault(float value) noexcept
 {
-    fValueDef = /*fUsingLog ? _logscale(value) :*/ value;
+    fValueDef = value;
     fUsingDefault = true;
 }
 
@@ -178,9 +177,12 @@ void ImageKnob::setStep(float step) noexcept
     fStep = step;
 }
 
-// NOTE: value is assumed to be already scaled if using log
 void ImageKnob::setValue(float value, bool sendCallback) noexcept
 {
+    // value is scaled if using log, revert that
+    if (fUsingLog)
+        value = _invlogscale(value);
+
     if (fValue == value)
         return;
 
@@ -231,7 +233,7 @@ void ImageKnob::setRotationAngle(int angle)
 
 void ImageKnob::onDisplay()
 {
-    const float normValue = ((fUsingLog ? _invlogscale(fValue) : fValue) - fMinimum) / (fMaximum - fMinimum);
+    const float normValue = (fValue - fMinimum) / (fMaximum - fMinimum);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, fTextureId);
@@ -353,6 +355,9 @@ bool ImageKnob::onMotion(const MotionEvent& ev)
     if (! doVal)
         return false;
 
+    if (fUsingLog)
+        value = _logscale(value);
+
     if (value < fMinimum)
     {
         fValueTmp = value = fMinimum;
@@ -383,6 +388,9 @@ bool ImageKnob::onScroll(const ScrollEvent& ev)
 
     const float d     = (ev.mod & MODIFIER_CTRL) ? 2000.0f : 200.0f;
     float       value = (fValueTmp) + (float(fMaximum - fMinimum) / d * 10.f * ev.delta.getY());
+
+    if (fUsingLog)
+        value = _logscale(value);
 
     if (value < fMinimum)
     {
