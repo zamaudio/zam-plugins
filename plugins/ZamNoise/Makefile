@@ -13,7 +13,8 @@ NAME = ZamNoise
 # Files to build
 
 OBJS_DSP = \
-	ZamNoisePlugin.cpp.o
+	ZamNoisePlugin.cpp.o \
+	Denoise.cpp.o 
 
 OBJS_UI  = \
 	ZamNoiseArtwork.cpp.o \
