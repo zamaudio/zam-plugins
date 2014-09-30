@@ -140,7 +140,7 @@ protected:
     void d_run(const float** inputs, float** outputs, uint32_t frames) override;
 
     void geq31(int i, int ch, float srate, float fc, float q);
-    float run_filter(int i, int ch, double in);
+    double run_filter(int i, int ch, double in);
         double x1[1][MAX_FILT], x2[1][MAX_FILT], y1[1][MAX_FILT], y2[1][MAX_FILT];
         double a[1][MAX_FILT], b[1][MAX_FILT], g[1][MAX_FILT];
     // -------------------------------------------------------------------

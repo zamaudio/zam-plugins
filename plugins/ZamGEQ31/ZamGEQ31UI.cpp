@@ -44,7 +44,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fKnobMaster->setCallback(this);
 
     fKnobQ = new ImageKnob(this, knobImage);
-    fKnobQ->setAbsolutePos(382.5, 126);
+    fKnobQ->setAbsolutePos(382.5, 126.5);
     fKnobQ->setRange(1.f, 3.f);
     fKnobQ->setRotationAngle(240);
     fKnobQ->setDefault(1.0f);

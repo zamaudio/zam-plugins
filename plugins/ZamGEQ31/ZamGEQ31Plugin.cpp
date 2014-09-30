@@ -624,7 +624,7 @@ void ZamGEQ31Plugin::d_activate()
 
 void ZamGEQ31Plugin::geq31(int i, int ch, float srate, float fc, float q)
 {
-	float t0;
+	double t0;
 
 	t0 = 2.*M_PI*fc/srate;
 	b[ch][i] = (q - t0*0.5)/(2.*q+t0);
@@ -632,7 +632,7 @@ void ZamGEQ31Plugin::geq31(int i, int ch, float srate, float fc, float q)
 	g[ch][i] = (0.5 + b[ch][i])*cos(t0);
 }
 
-float ZamGEQ31Plugin::run_filter(int i, int ch, double in)
+double ZamGEQ31Plugin::run_filter(int i, int ch, double in)
 {
 	double out;
 	in = sanitize_denormal(in);
@@ -643,7 +643,7 @@ float ZamGEQ31Plugin::run_filter(int i, int ch, double in)
 	x1[ch][i] = in;
 	y1[ch][i] = out;
 
-	return (float) out;
+	return out;
 }
 
 void ZamGEQ31Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
@@ -662,12 +662,11 @@ void ZamGEQ31Plugin::d_run(const float** inputs, float** outputs, uint32_t frame
 		tmp = 0.;
 
                 for (int j = 0; j < MAX_FILT; j++) {
-                	tmp += from_dB(gain[j]) * run_filter(j, 0, in);
+                	tmp += from_dB(-12. - gain[j]) * run_filter(j, 0, in);
 		}
 
                 outputs[0][i] = inputs[0][i];
-                outputs[0][i] = (float) tmp;
-		outputs[0][i] *= from_dB(master) / from_dB(12.);
+                outputs[0][i] = (float) (tmp * from_dB(master));
 	}
 }
 
