@@ -24,6 +24,8 @@ START_NAMESPACE_DISTRHO
 ZamAutoSatUI::ZamAutoSatUI()
     : UI()
 {
+    setSize(ZamAutoSatArtwork::zamautosatWidth, ZamAutoSatArtwork::zamautosatHeight);
+
     // background
     fImgBackground = Image(ZamAutoSatArtwork::zamautosatData, ZamAutoSatArtwork::zamautosatWidth, ZamAutoSatArtwork::zamautosatHeight, GL_BGR);
 

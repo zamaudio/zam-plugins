@@ -36,7 +36,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramGain1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Boost/Cut 1";
         parameter.symbol     = "boost1";
         parameter.unit       = "dB";
@@ -45,7 +45,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramQ1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Bandwidth 1";
         parameter.symbol     = "bw1";
         parameter.unit       = " ";
@@ -54,7 +54,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 6.0f;
         break;
     case paramFreq1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Frequency 1";
         parameter.symbol     = "f1";
         parameter.unit       = "Hz";
@@ -63,7 +63,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 14000.0f;
         break;
     case paramGain2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Boost/Cut 2";
         parameter.symbol     = "boost2";
         parameter.unit       = "dB";
@@ -72,7 +72,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramQ2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Bandwidth 2";
         parameter.symbol     = "bw2";
         parameter.unit       = " ";
@@ -81,7 +81,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 6.0f;
         break;
     case paramFreq2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Frequency 2";
         parameter.symbol     = "f2";
         parameter.unit       = "Hz";
@@ -90,7 +90,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 14000.0f;
         break;
     case paramGainL:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Boost/Cut L";
         parameter.symbol     = "boostl";
         parameter.unit       = "dB";
@@ -99,7 +99,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramFreqL:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Frequency L";
         parameter.symbol     = "fl";
         parameter.unit       = "Hz";
@@ -108,7 +108,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 14000.0f;
         break;
     case paramGainH:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Boost/Cut H";
         parameter.symbol     = "boosth";
         parameter.unit       = "dB";
@@ -117,7 +117,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramFreqH:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Frequency H";
         parameter.symbol     = "fh";
         parameter.unit       = "Hz";
@@ -126,7 +126,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 14000.0f;
         break;
     case paramMaster:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Master Gain";
         parameter.symbol     = "master";
         parameter.unit       = "dB";
@@ -135,7 +135,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramTogglePeaks:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "Peaks ON";
         parameter.symbol     = "peaks";
         parameter.unit       = " ";

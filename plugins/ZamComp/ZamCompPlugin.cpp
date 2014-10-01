@@ -36,7 +36,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramAttack:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Attack";
         parameter.symbol     = "att";
         parameter.unit       = "ms";
@@ -45,7 +45,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 200.0f;
         break;
     case paramRelease:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
@@ -54,7 +54,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Knee";
         parameter.symbol     = "kn";
         parameter.unit       = "dB";
@@ -63,7 +63,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Ratio";
         parameter.symbol     = "rat";
         parameter.unit       = " ";
@@ -72,7 +72,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramThresh:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Threshold";
         parameter.symbol     = "thr";
         parameter.unit       = "dB";
@@ -81,7 +81,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramMakeup:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Makeup";
         parameter.symbol     = "mak";
         parameter.unit       = "dB";
@@ -90,7 +90,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramGainR:
-        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.hints      = kParameterIsOutput;
         parameter.name       = "Gain Reduction";
         parameter.symbol     = "gr";
         parameter.unit       = "dB";
@@ -99,7 +99,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 40.0f;
         break;
     case paramOutputLevel:
-        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.hints      = kParameterIsOutput;
         parameter.name       = "Output Level";
         parameter.symbol     = "outlevel";
         parameter.unit       = "dB";

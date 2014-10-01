@@ -26,6 +26,8 @@ START_NAMESPACE_DISTRHO
 ZamGEQ31UI::ZamGEQ31UI()
     : UI()
 {
+    setSize(ZamGEQ31Artwork::zamgeq31Width, ZamGEQ31Artwork::zamgeq31Height);
+
     // background
     fImgBackground = Image(ZamGEQ31Artwork::zamgeq31Data, ZamGEQ31Artwork::zamgeq31Width, ZamGEQ31Artwork::zamgeq31Height, GL_BGR);
 

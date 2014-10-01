@@ -27,6 +27,8 @@ START_NAMESPACE_DISTRHO
 ZamCompX2UI::ZamCompX2UI()
     : UI()
 {
+    setSize(ZamCompX2Artwork::zamcompx2Width, ZamCompX2Artwork::zamcompx2Height);
+
     // background
     fImgBackground = Image(ZamCompX2Artwork::zamcompx2Data, ZamCompX2Artwork::zamcompx2Width, ZamCompX2Artwork::zamcompx2Height, GL_BGR);
 

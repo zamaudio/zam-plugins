@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZaMultiCompX2Plugin::ZaMultiCompX2Plugin()
-    : Plugin(paramCount, 1, 1) // 1 program, 1 state
+    : Plugin(paramCount, 1, 0) // 1 program, 0 state
 {
     // set default values
     d_setProgram(0);
@@ -36,7 +36,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramAttack:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Attack";
         parameter.symbol     = "att";
         parameter.unit       = "ms";
@@ -45,7 +45,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.0f;
         break;
     case paramRelease:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
@@ -54,7 +54,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Knee";
         parameter.symbol     = "kn";
         parameter.unit       = "dB";
@@ -63,7 +63,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 9.0f;
         break;
     case paramRatio:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Ratio";
         parameter.symbol     = "rat";
         parameter.unit       = " ";
@@ -72,7 +72,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramThresh1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Threshold 1";
         parameter.symbol     = "thr1";
         parameter.unit       = "dB";
@@ -81,7 +81,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramThresh2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Threshold 2";
         parameter.symbol     = "thr2";
         parameter.unit       = "dB";
@@ -90,7 +90,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramThresh3:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Threshold 3";
         parameter.symbol     = "thr3";
         parameter.unit       = "dB";
@@ -99,7 +99,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramMakeup1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Makeup 1";
         parameter.symbol     = "mak1";
         parameter.unit       = "dB";
@@ -108,7 +108,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramMakeup2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Makeup 2";
         parameter.symbol     = "mak2";
         parameter.unit       = "dB";
@@ -117,7 +117,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramMakeup3:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Makeup 3";
         parameter.symbol     = "mak3";
         parameter.unit       = "dB";
@@ -126,7 +126,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramGainR1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
+        parameter.hints      = kParameterIsAutomable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 1";
         parameter.symbol     = "gr1";
         parameter.unit       = "dB";
@@ -135,7 +135,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramGainR2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
+        parameter.hints      = kParameterIsAutomable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 2";
         parameter.symbol     = "gr2";
         parameter.unit       = "dB";
@@ -144,7 +144,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramGainR3:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_OUTPUT;
+        parameter.hints      = kParameterIsAutomable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 3";
         parameter.symbol     = "gr3";
         parameter.unit       = "dB";
@@ -153,7 +153,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramXover1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Crossover freq 1";
         parameter.symbol     = "xover1";
         parameter.unit       = "Hz";
@@ -162,7 +162,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20000.0f;
         break;
     case paramXover2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_LOGARITHMIC;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Crossover freq 2";
         parameter.symbol     = "xover2";
         parameter.unit       = "Hz";
@@ -171,7 +171,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20000.0f;
         break;
     case paramToggle1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "ZamComp 1 ON";
         parameter.symbol     = "toggle1";
         parameter.unit       = " ";
@@ -180,7 +180,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramToggle2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "ZamComp 2 ON";
         parameter.symbol     = "toggle2";
         parameter.unit       = " ";
@@ -189,7 +189,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramToggle3:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "ZamComp 3 ON";
         parameter.symbol     = "toggle3";
         parameter.unit       = " ";
@@ -198,7 +198,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramListen1:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "Listen 1";
         parameter.symbol     = "listen1";
         parameter.unit       = " ";
@@ -207,7 +207,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramListen2:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "Listen 2";
         parameter.symbol     = "listen2";
         parameter.unit       = " ";
@@ -216,7 +216,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramListen3:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "Listen 3";
         parameter.symbol     = "listen3";
         parameter.unit       = " ";
@@ -225,7 +225,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramGlobalGain:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Master Trim";
         parameter.symbol     = "globalgain";
         parameter.unit       = "dB";
@@ -234,7 +234,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramStereoDet:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE | PARAMETER_IS_BOOLEAN;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "Detection (MAX/avg)";
         parameter.symbol     = "stereodet";
         parameter.unit       = " ";
@@ -243,7 +243,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramOutputLevelL:
-        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.hints      = kParameterIsOutput;
         parameter.name       = "Output Left";
         parameter.symbol     = "outl";
         parameter.unit       = "dB";
@@ -252,7 +252,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramOutputLevelR:
-        parameter.hints      = PARAMETER_IS_OUTPUT;
+        parameter.hints      = kParameterIsOutput;
         parameter.name       = "Output Right";
         parameter.symbol     = "outr";
         parameter.unit       = "dB";
@@ -492,13 +492,13 @@ void ZaMultiCompX2Plugin::d_setProgram(uint32_t index)
     d_activate();
 }
 
-void ZaMultiCompX2Plugin::d_setState(const char* key, const char* value)
+void ZaMultiCompX2Plugin::d_setState(const char*, const char*)
 {
     resetl = true;
     resetr = true;
 }
 
-void ZaMultiCompX2Plugin::d_initStateKey(unsigned int key, d_string& val)
+void ZaMultiCompX2Plugin::d_initState(unsigned int, d_string&, d_string&)
 {
 }
 

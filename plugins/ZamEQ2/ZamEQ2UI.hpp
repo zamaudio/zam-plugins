@@ -46,17 +46,6 @@ public:
 
 protected:
     // -------------------------------------------------------------------
-    // Information
-
-    uint d_getWidth() const noexcept override
-    {
-        return ZamEQ2Artwork::zameq2Width;
-    }
-
-    uint d_getHeight() const noexcept override
-    {
-        return ZamEQ2Artwork::zameq2Height;
-    }
 
 	inline double
 	to_dB(double g) {

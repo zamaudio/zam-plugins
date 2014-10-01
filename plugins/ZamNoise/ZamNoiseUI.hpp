@@ -42,19 +42,6 @@ public:
 
 protected:
     // -------------------------------------------------------------------
-    // Information
-
-    unsigned int d_getWidth() const noexcept override
-    {
-        return ZamNoiseArtwork::zamnoiseWidth;
-    }
-
-    unsigned int d_getHeight() const noexcept override
-    {
-        return ZamNoiseArtwork::zamnoiseHeight;
-    }
-
-    // -------------------------------------------------------------------
     // DSP Callbacks
 
     void d_parameterChanged(uint32_t index, float value) override;

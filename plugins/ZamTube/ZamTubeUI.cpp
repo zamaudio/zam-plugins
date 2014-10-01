@@ -32,6 +32,8 @@ START_NAMESPACE_DISTRHO
 ZamTubeUI::ZamTubeUI()
     : UI()
 {
+    setSize(ZamTubeArtwork::zamtubeWidth, ZamTubeArtwork::zamtubeHeight);
+
     // background
     fImgBackground = Image(ZamTubeArtwork::zamtubeData, ZamTubeArtwork::zamtubeWidth, ZamTubeArtwork::zamtubeHeight, GL_BGR);
 

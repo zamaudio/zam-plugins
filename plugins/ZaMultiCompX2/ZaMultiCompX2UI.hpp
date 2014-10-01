@@ -45,17 +45,6 @@ public:
 
 protected:
     // -------------------------------------------------------------------
-    // Information
-
-    uint d_getWidth() const noexcept override
-    {
-        return ZaMultiCompX2Artwork::zamulticompx2Width;
-    }
-
-    uint d_getHeight() const noexcept override
-    {
-        return ZaMultiCompX2Artwork::zamulticompx2Height;
-    }
 
     void compcurve(float in, int k, float* x, float* y);
     void calc_compcurves(void);
