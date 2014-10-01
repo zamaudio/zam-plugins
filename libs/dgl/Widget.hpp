@@ -52,8 +52,8 @@ class Widget
 public:
    /**
       Base event data.
-      @param mod  The currently active modifiers.
-      @param time The timestamp (if any) of the currently-processing event.
+      @a mod  The currently active modifiers.
+      @a time The timestamp (if any) of the currently-processing event.
     */
     struct BaseEvent {
         Modifier mod;
@@ -62,8 +62,8 @@ public:
 
    /**
       Keyboard event.
-      @param press True if the key was pressed, false if released.
-      @param key   Unicode point of the key pressed.
+      @a press True if the key was pressed, false if released.
+      @a key   Unicode point of the key pressed.
       @see onKeyboard
     */
     struct KeyboardEvent : BaseEvent {
@@ -73,8 +73,8 @@ public:
 
    /**
       Special keyboard event.
-      @param press True if the key was pressed, false if released.
-      @param key   The key pressed.
+      @a press True if the key was pressed, false if released.
+      @a key   The key pressed.
       @see onSpecial
     */
     struct SpecialEvent : BaseEvent {
@@ -84,9 +84,9 @@ public:
 
    /**
       Mouse event.
-      @param button The button number (1 = left, 2 = middle, 3 = right).
-      @param press  True if the key was pressed, false if released.
-      @param pos    The widget-relative coordinates of the pointer.
+      @a button The button number (1 = left, 2 = middle, 3 = right).
+      @a press  True if the key was pressed, false if released.
+      @a pos    The widget-relative coordinates of the pointer.
       @see onMouse
     */
     struct MouseEvent : BaseEvent {
@@ -97,7 +97,7 @@ public:
 
    /**
       Mouse motion event.
-      @param pos The widget-relative coordinates of the pointer.
+      @a pos The widget-relative coordinates of the pointer.
       @see onMotion
     */
     struct MotionEvent : BaseEvent {
@@ -106,8 +106,8 @@ public:
 
    /**
       Mouse scroll event.
-      @param pos   The widget-relative coordinates of the pointer.
-      @param delta The scroll distance.
+      @a pos   The widget-relative coordinates of the pointer.
+      @a delta The scroll distance.
       @see onScroll
     */
     struct ScrollEvent : BaseEvent {
@@ -117,13 +117,13 @@ public:
 
    /**
       Resize event.
-      @param size    The new widget size.
-      @param oldSize The previous size, may be null.
+      @a size    The new widget size.
+      @a oldSize The previous size, may be null.
       @see onResize
     */
     struct ResizeEvent {
-        Size<int> size;
-        Size<int> oldSize;
+        Size<uint> size;
+        Size<uint> oldSize;
     };
 
    /**
@@ -162,37 +162,37 @@ public:
    /**
       Get width.
     */
-    int getWidth() const noexcept;
+    uint getWidth() const noexcept;
 
    /**
       Get height.
     */
-    int getHeight() const noexcept;
+    uint getHeight() const noexcept;
 
    /**
       Get size.
     */
-    const Size<int>& getSize() const noexcept;
+    const Size<uint>& getSize() const noexcept;
 
    /**
       Set width.
     */
-    virtual void setWidth(int width) noexcept;
+    virtual void setWidth(uint width) noexcept;
 
    /**
       Set height.
     */
-    virtual void setHeight(int height) noexcept;
+    virtual void setHeight(uint height) noexcept;
 
    /**
       Set size using @a width and @a height values.
     */
-    virtual void setSize(int width, int height) noexcept;
+    virtual void setSize(uint width, uint height) noexcept;
 
    /**
       Set size.
     */
-    virtual void setSize(const Size<int>& size) noexcept;
+    virtual void setSize(const Size<uint>& size) noexcept;
 
    /**
       Get absolute X.
@@ -241,7 +241,7 @@ public:
     Window& getParentWindow() const noexcept;
 
    /**
-      Check if this widget contains the point defined by @a X and @a Y.
+      Check if this widget contains the point defined by @a x and @a y.
     */
     bool contains(int x, int y) const noexcept;
 
@@ -306,7 +306,7 @@ protected:
 
    /**
       Tell the parent window this widget needs scaling.
-      When enabled, the widget viewport is scaled to match width&height.
+      When enabled, the widget viewport is scaled to match width and height.
       @note: This is an internal function;
              You do not need it under normal circumstances.
     */
@@ -317,7 +317,8 @@ private:
     bool    fNeedsFullViewport;
     bool    fNeedsScaling;
     bool    fVisible;
-    Rectangle<int> fArea;
+    Point<int> fAbsolutePos;
+    Size<uint> fSize;
 
     friend class CairoWidget;
     friend class Window;

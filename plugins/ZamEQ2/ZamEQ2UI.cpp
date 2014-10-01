@@ -26,6 +26,8 @@ START_NAMESPACE_DISTRHO
 ZamEQ2UI::ZamEQ2UI()
     : UI()
 {
+    setSize(ZamEQ2Artwork::zameq2Width, ZamEQ2Artwork::zameq2Height);
+
     // background
     fImgBackground = Image(ZamEQ2Artwork::zameq2Data, ZamEQ2Artwork::zameq2Width, ZamEQ2Artwork::zameq2Height, GL_BGR);
 

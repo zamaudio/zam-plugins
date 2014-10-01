@@ -39,19 +39,6 @@ public:
 
 protected:
     // -------------------------------------------------------------------
-    // Information
-
-    unsigned int d_getWidth() const noexcept override
-    {
-        return ZamAutoSatArtwork::zamautosatWidth;
-    }
-
-    unsigned int d_getHeight() const noexcept override
-    {
-        return ZamAutoSatArtwork::zamautosatHeight;
-    }
-
-    // -------------------------------------------------------------------
     // DSP Callbacks
 
     void d_parameterChanged(uint32_t index, float value) override;

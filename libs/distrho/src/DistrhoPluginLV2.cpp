@@ -27,6 +27,7 @@
 #include "lv2/time.h"
 #include "lv2/urid.h"
 #include "lv2/worker.h"
+#include "lv2/lv2_kxstudio_properties.h"
 #include "lv2/lv2_programs.h"
 
 #ifdef noexcept
@@ -34,37 +35,34 @@
 #endif
 
 #include <map>
-#include <string>
 
 #ifndef DISTRHO_PLUGIN_URI
 # error DISTRHO_PLUGIN_URI undefined!
 #endif
 
-#if DISTRHO_PLUGIN_WANT_STATE
-# warning LV2 State still TODO (working but needs final testing)
-#endif
 #if DISTRHO_PLUGIN_WANT_TIMEPOS
 # warning LV2 TimePos still TODO
 #endif
 
-#define DISTRHO_LV2_USE_EVENTS_IN  (DISTRHO_PLUGIN_IS_SYNTH || DISTRHO_PLUGIN_WANT_TIMEPOS || (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI))
-#define DISTRHO_LV2_USE_EVENTS_OUT (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI)
-
-typedef std::map<d_string,d_string> StringMap;
+#define DISTRHO_LV2_USE_EVENTS_IN  (DISTRHO_PLUGIN_HAS_MIDI_INPUT || DISTRHO_PLUGIN_WANT_TIMEPOS || (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI))
+#define DISTRHO_LV2_USE_EVENTS_OUT (DISTRHO_PLUGIN_HAS_MIDI_OUTPUT || (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI))
 
 START_NAMESPACE_DISTRHO
+
+typedef std::map<const d_string,d_string> StringMap;
 
 // -----------------------------------------------------------------------
 
 class PluginLv2
 {
 public:
-    PluginLv2(const LV2_URID_Map* const uridMap, const LV2_Worker_Schedule* const worker)
+    PluginLv2(const double sampleRate, const LV2_URID_Map* const uridMap, const LV2_Worker_Schedule* const worker)
         : fPortControls(nullptr),
           fLastControlValues(nullptr),
+          fSampleRate(sampleRate),
 #if DISTRHO_LV2_USE_EVENTS_IN || DISTRHO_LV2_USE_EVENTS_OUT
 # if DISTRHO_PLUGIN_WANT_TIMEPOS
-          fLastTimeSpeed(0.0f),
+          fLastTimeSpeed(0.0),
 # endif
           fURIDs(uridMap),
 #endif
@@ -118,12 +116,30 @@ public:
             fNeededUiSends = new bool[count];
 
             for (uint32_t i=0; i < count; ++i)
+            {
                 fNeededUiSends[i] = false;
+
+                const d_string& d_key(fPlugin.getStateKey(i));
+                fStateMap[d_key] = fPlugin.getStateDefaultValue(i);
+            }
         }
         else
         {
             fNeededUiSends = nullptr;
         }
+#endif
+
+#if DISTRHO_PLUGIN_WANT_TIMEPOS
+        // hosts may not send all values, resulting on some invalid ones
+        fTimePosition.bbt.valid = false;
+        fTimePosition.bbt.bar   = 1;
+        fTimePosition.bbt.beat  = 1;
+        fTimePosition.bbt.tick  = 0;
+        fTimePosition.bbt.barStartTick = 0;
+        fTimePosition.bbt.beatsPerBar  = 4;
+        fTimePosition.bbt.beatType     = 4;
+        fTimePosition.bbt.ticksPerBeat = 960.0;
+        fTimePosition.bbt.beatsPerMinute = 120.0;
 #endif
     }
 
@@ -252,21 +268,18 @@ public:
         }
 
 #if DISTRHO_LV2_USE_EVENTS_IN
-# if DISTRHO_PLUGIN_IS_SYNTH
+# if DISTRHO_PLUGIN_HAS_MIDI_INPUT
         uint32_t midiEventCount = 0;
-# endif
-# if DISTRHO_PLUGIN_WANT_TIMEPOS
-        bool needsFrameIncrement = true;
 # endif
         LV2_ATOM_SEQUENCE_FOREACH(fPortEventsIn, event)
         {
             if (event == nullptr)
                 break;
 
-# if DISTRHO_PLUGIN_IS_SYNTH
+# if DISTRHO_PLUGIN_HAS_MIDI_INPUT
             if (event->body.type == fURIDs.midiEvent)
             {
-                if (event->body.size > 4 || midiEventCount >= kMaxMidiEvents)
+                if (midiEventCount >= kMaxMidiEvents)
                     continue;
 
                 const uint8_t* const data((const uint8_t*)(event + 1));
@@ -276,18 +289,17 @@ public:
                 midiEvent.frame = event->time.frames;
                 midiEvent.size  = event->body.size;
 
-                uint8_t i;
-                for (i=0; i < midiEvent.size; ++i)
-                    midiEvent.buf[i] = data[i];
-                for (; i < 4; ++i)
-                  midiEvent.buf[i] = 0;
+                if (midiEvent.size > MidiEvent::kDataSize)
+                    midiEvent.dataExt = data;
+                else
+                    std::memcpy(midiEvent.data, data, midiEvent.size);
 
                 ++midiEventCount;
                 continue;
             }
 # endif
 # if DISTRHO_PLUGIN_WANT_TIMEPOS
-            if (event->body.type == fURIDs.atomBlank)
+            if (event->body.type == fURIDs.atomBlank || event->body.type == fURIDs.atomObject)
             {
                 const LV2_Atom_Object* const obj((const LV2_Atom_Object*)&event->body);
 
@@ -300,6 +312,7 @@ public:
                 LV2_Atom* beatUnit = nullptr;
                 LV2_Atom* beatsPerBar = nullptr;
                 LV2_Atom* beatsPerMinute = nullptr;
+                LV2_Atom* ticksPerBeat = nullptr;
                 LV2_Atom* frame = nullptr;
                 LV2_Atom* speed = nullptr;
 
@@ -310,94 +323,127 @@ public:
                                     fURIDs.timeBeatUnit, &beatUnit,
                                     fURIDs.timeBeatsPerBar, &beatsPerBar,
                                     fURIDs.timeBeatsPerMinute, &beatsPerMinute,
+                                    fURIDs.timeTicksPerBeat, &ticksPerBeat,
                                     fURIDs.timeFrame, &frame,
                                     fURIDs.timeSpeed, &speed,
                                     nullptr);
 
-                // TODO:
-                // - tick
-                // - barStartTick
-                // - ticksPerBeat
-
                 if (bar != nullptr)
                 {
-                     if (bar->type == fURIDs.atomDouble)
-                        fTimePos.bbt.bar = ((LV2_Atom_Double*)bar)->body + 1.0f;
+                    /**/ if (bar->type == fURIDs.atomDouble)
+                        fTimePosition.bbt.bar = ((LV2_Atom_Double*)bar)->body + 1.0;
                     else if (bar->type == fURIDs.atomFloat)
-                        fTimePos.bbt.bar = ((LV2_Atom_Float*)bar)->body + 1.0f;
+                        fTimePosition.bbt.bar = ((LV2_Atom_Float*)bar)->body + 1.0f;
                     else if (bar->type == fURIDs.atomInt)
-                        fTimePos.bbt.bar = ((LV2_Atom_Int*)bar)->body + 1;
+                        fTimePosition.bbt.bar = ((LV2_Atom_Int*)bar)->body + 1;
                     else if (bar->type == fURIDs.atomLong)
-                        fTimePos.bbt.bar = ((LV2_Atom_Long*)bar)->body + 1;
+                        fTimePosition.bbt.bar = ((LV2_Atom_Long*)bar)->body + 1;
+                    else
+                        d_stderr("Unknown lv2 bar value type");
                 }
 
-                /*if (barBeat != nullptr && barBeat->type == fURIDs.atomFloat)
+                if (ticksPerBeat != nullptr)
                 {
-                }*/
+                    /**/ if (ticksPerBeat->type == fURIDs.atomDouble)
+                        fTimePosition.bbt.ticksPerBeat = ((LV2_Atom_Double*)ticksPerBeat)->body;
+                    else if (ticksPerBeat->type == fURIDs.atomFloat)
+                        fTimePosition.bbt.ticksPerBeat = ((LV2_Atom_Float*)ticksPerBeat)->body;
+                    else if (ticksPerBeat->type == fURIDs.atomInt)
+                        fTimePosition.bbt.ticksPerBeat = ((LV2_Atom_Int*)ticksPerBeat)->body;
+                    else if (ticksPerBeat->type == fURIDs.atomLong)
+                        fTimePosition.bbt.ticksPerBeat = ((LV2_Atom_Long*)ticksPerBeat)->body;
+                    else
+                        d_stderr("Unknown lv2 ticksPerBeat value type");
+                }
 
-                if (beat != nullptr)
+                if (barBeat != nullptr)
                 {
-                     if (beat->type == fURIDs.atomDouble)
-                        fTimePos.bbt.beat = ((LV2_Atom_Double*)beat)->body + 1.0f;
+                    double barBeatValue = 0.0;
+
+                    /**/ if (barBeat->type == fURIDs.atomDouble)
+                        barBeatValue = ((LV2_Atom_Double*)barBeat)->body;
+                    else if (barBeat->type == fURIDs.atomFloat)
+                        barBeatValue = ((LV2_Atom_Float*)barBeat)->body;
+                    else if (barBeat->type == fURIDs.atomInt)
+                        barBeatValue = ((LV2_Atom_Int*)barBeat)->body;
+                    else if (barBeat->type == fURIDs.atomLong)
+                        barBeatValue = ((LV2_Atom_Long*)barBeat)->body;
+                    else
+                        d_stderr("Unknown lv2 barBeat value type");
+
+                    const double rest = std::fmod(barBeatValue, 1.0);
+                    fTimePosition.bbt.beat = barBeatValue-rest+1.0;
+                    fTimePosition.bbt.tick = rest*fTimePosition.bbt.ticksPerBeat+0.5;
+                }
+                // barBeat includes beat
+                else if (beat != nullptr)
+                {
+                    /**/ if (beat->type == fURIDs.atomDouble)
+                        fTimePosition.bbt.beat = ((LV2_Atom_Double*)beat)->body + 1.0;
                     else if (beat->type == fURIDs.atomFloat)
-                        fTimePos.bbt.beat = ((LV2_Atom_Float*)beat)->body + 1.0f;
+                        fTimePosition.bbt.beat = ((LV2_Atom_Float*)beat)->body + 1.0f;
                     else if (beat->type == fURIDs.atomInt)
-                        fTimePos.bbt.beat = ((LV2_Atom_Int*)beat)->body + 1;
+                        fTimePosition.bbt.beat = ((LV2_Atom_Int*)beat)->body + 1;
                     else if (beat->type == fURIDs.atomLong)
-                        fTimePos.bbt.beat = ((LV2_Atom_Long*)beat)->body + 1;
+                        fTimePosition.bbt.beat = ((LV2_Atom_Long*)beat)->body + 1;
+                    else
+                        d_stderr("Unknown lv2 beat value type");
                 }
 
                 if (beatUnit != nullptr)
                 {
-                    if (beatUnit->type == fURIDs.atomDouble)
-                        fTimePos.bbt.beatType = ((LV2_Atom_Double*)beatUnit)->body;
+                    /**/ if (beatUnit->type == fURIDs.atomDouble)
+                        fTimePosition.bbt.beatType = ((LV2_Atom_Double*)beatUnit)->body;
                     else if (beatUnit->type == fURIDs.atomFloat)
-                        fTimePos.bbt.beatType = ((LV2_Atom_Float*)beatUnit)->body;
+                        fTimePosition.bbt.beatType = ((LV2_Atom_Float*)beatUnit)->body;
                     else if (beatUnit->type == fURIDs.atomInt)
-                        fTimePos.bbt.beatType = ((LV2_Atom_Int*)beatUnit)->body;
+                        fTimePosition.bbt.beatType = ((LV2_Atom_Int*)beatUnit)->body;
                     else if (beatUnit->type == fURIDs.atomLong)
-                        fTimePos.bbt.beatType = ((LV2_Atom_Long*)beatUnit)->body;
+                        fTimePosition.bbt.beatType = ((LV2_Atom_Long*)beatUnit)->body;
+                    else
+                        d_stderr("Unknown lv2 beatUnit value type");
                 }
 
                 if (beatsPerBar != nullptr)
                 {
-                    if (beatsPerBar->type == fURIDs.atomDouble)
-                        fTimePos.bbt.beatsPerBar = ((LV2_Atom_Double*)beatsPerBar)->body;
+                    /**/ if (beatsPerBar->type == fURIDs.atomDouble)
+                        fTimePosition.bbt.beatsPerBar = ((LV2_Atom_Double*)beatsPerBar)->body;
                     else if (beatsPerBar->type == fURIDs.atomFloat)
-                        fTimePos.bbt.beatsPerBar = ((LV2_Atom_Float*)beatsPerBar)->body;
+                        fTimePosition.bbt.beatsPerBar = ((LV2_Atom_Float*)beatsPerBar)->body;
                     else if (beatsPerBar->type == fURIDs.atomInt)
-                        fTimePos.bbt.beatsPerBar = ((LV2_Atom_Int*)beatsPerBar)->body;
+                        fTimePosition.bbt.beatsPerBar = ((LV2_Atom_Int*)beatsPerBar)->body;
                     else if (beatsPerBar->type == fURIDs.atomLong)
-                        fTimePos.bbt.beatsPerBar = ((LV2_Atom_Long*)beatsPerBar)->body;
+                        fTimePosition.bbt.beatsPerBar = ((LV2_Atom_Long*)beatsPerBar)->body;
+                    else
+                        d_stderr("Unknown lv2 beatsPerBar value type");
                 }
 
                 if (beatsPerMinute != nullptr)
                 {
-                    if (beatsPerMinute->type == fURIDs.atomDouble)
-                        fTimePos.bbt.beatsPerMinute = ((LV2_Atom_Double*)beatsPerMinute)->body;
+                    /**/ if (beatsPerMinute->type == fURIDs.atomDouble)
+                        fTimePosition.bbt.beatsPerMinute = ((LV2_Atom_Double*)beatsPerMinute)->body;
                     else if (beatsPerMinute->type == fURIDs.atomFloat)
-                        fTimePos.bbt.beatsPerMinute = ((LV2_Atom_Float*)beatsPerMinute)->body;
+                        fTimePosition.bbt.beatsPerMinute = ((LV2_Atom_Float*)beatsPerMinute)->body;
                     else if (beatsPerMinute->type == fURIDs.atomInt)
-                        fTimePos.bbt.beatsPerMinute = ((LV2_Atom_Int*)beatsPerMinute)->body;
+                        fTimePosition.bbt.beatsPerMinute = ((LV2_Atom_Int*)beatsPerMinute)->body;
                     else if (beatsPerMinute->type == fURIDs.atomLong)
-                        fTimePos.bbt.beatsPerMinute = ((LV2_Atom_Long*)beatsPerMinute)->body;
+                        fTimePosition.bbt.beatsPerMinute = ((LV2_Atom_Long*)beatsPerMinute)->body;
+                    else
+                        d_stderr("Unknown lv2 beatsPerMinute value type");
                 }
 
+                fTimePosition.bbt.barStartTick = fTimePosition.bbt.ticksPerBeat*fTimePosition.bbt.beatsPerBar*(fTimePosition.bbt.bar-1);
+
                 if (frame != nullptr && frame->type == fURIDs.atomLong)
-                {
-                    fTimePos.frame = ((LV2_Atom_Long*)frame)->body;
-                    needsFrameIncrement = false;
-                }
+                    fTimePosition.frame = ((LV2_Atom_Long*)frame)->body;
 
                 if (speed != nullptr && speed->type == fURIDs.atomFloat)
                 {
                     fLastTimeSpeed = ((LV2_Atom_Float*)speed)->body;
-                    fTimePos.playing = (fLastTimeSpeed == 1.0f);
+                    fTimePosition.playing = (fLastTimeSpeed == 1.0);
                 }
 
-                if ((! fTimePos.bbt.valid) && beatsPerMinute != nullptr && beatsPerBar != nullptr && beatUnit != nullptr)
-                    fTimePos.bbt.valid = true;
-
+                fTimePosition.bbt.valid = (beatsPerMinute != nullptr && beatsPerBar != nullptr && beatUnit != nullptr);
                 continue;
             }
 # endif
@@ -425,16 +471,51 @@ public:
 #endif
 
 # if DISTRHO_PLUGIN_WANT_TIMEPOS
-        if (needsFrameIncrement && fLastTimeSpeed != 0.0f)
-            fTimePos.frame += fLastTimeSpeed*sampleCount;
-        fPlugin.setTimePos(fTimePos);
+        fPlugin.setTimePosition(fTimePosition);
 # endif
 
-#if DISTRHO_PLUGIN_IS_SYNTH
+#if DISTRHO_PLUGIN_HAS_MIDI_INPUT
         fPlugin.run(fPortAudioIns, fPortAudioOuts, sampleCount, fMidiEvents, midiEventCount);
 #else
         fPlugin.run(fPortAudioIns, fPortAudioOuts, sampleCount);
 #endif
+
+# if DISTRHO_PLUGIN_WANT_TIMEPOS
+        // update timePos for next callback
+        if (fLastTimeSpeed != 0.0)
+        {
+            const double newFrames = fLastTimeSpeed*sampleCount;
+
+            fTimePosition.frame += newFrames;
+
+            if (fTimePosition.bbt.valid)
+            {
+                const double samplesPerBeat = 60.0 / fTimePosition.bbt.beatsPerMinute * fSampleRate;
+                const double ticksPerSample = fTimePosition.bbt.ticksPerBeat / samplesPerBeat;
+
+                double newTickPos = double(fTimePosition.bbt.tick) + ticksPerSample*newFrames;
+                double newBeatPos = double(fTimePosition.bbt.beat)-1.0;
+                double newBarPos  = double(fTimePosition.bbt.bar)-1.0;
+
+                for (; newTickPos >= fTimePosition.bbt.ticksPerBeat;)
+                {
+                    ++newBeatPos;
+                    newTickPos -= fTimePosition.bbt.ticksPerBeat;
+                }
+
+                for (; newBeatPos >= fTimePosition.bbt.beatsPerBar;)
+                {
+                    ++newBarPos;
+                    newBeatPos -= fTimePosition.bbt.beatsPerBar;
+                }
+
+                fTimePosition.bbt.bar  = newBarPos+1.0;
+                fTimePosition.bbt.beat = newBeatPos+1.0;
+                fTimePosition.bbt.tick = newTickPos;
+                fTimePosition.bbt.barStartTick = fTimePosition.bbt.ticksPerBeat*fTimePosition.bbt.beatsPerBar*(fTimePosition.bbt.bar-1);
+            }
+        }
+# endif
 
         updateParameterOutputs();
 
@@ -445,6 +526,10 @@ public:
         uint32_t size, offset = 0;
         LV2_Atom_Event* aev;
 
+# if DISTRHO_PLUGIN_HAS_MIDI_OUTPUT
+        // TODO
+# endif
+# if (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI)
         for (uint32_t i=0, count=fPlugin.getStateCount(); i < count; ++i)
         {
             if (! fNeededUiSends[i])
@@ -452,29 +537,20 @@ public:
 
             const d_string& key = fPlugin.getStateKey(i);
 
-            for (auto it = fStateMap.begin(), end = fStateMap.end(); it != end; ++it)
+            for (StringMap::const_iterator cit=fStateMap.cbegin(), cite=fStateMap.cend(); cit != cite; ++cit)
             {
-                const d_string& curKey = it->first;
+                const d_string& curKey = cit->first;
 
                 if (curKey != key)
                     continue;
 
-                const d_string& value = it->second;
+                const d_string& value = cit->second;
 
-                // TODO - RT safe
-                d_stdout("Got msg (from DSP to UI via host):\n%s\n%s", (const char*)key, (const char*)value);
-
-                // join key and value
-                std::string tmpStr;
-                tmpStr += std::string(key);
-                tmpStr += std::string("\0", 1);
-                tmpStr += std::string(value);
-
-                // get msg size
-                const size_t msgSize(tmpStr.size()+1);
+                // set msg size (key + value + separator + 2x null terminator)
+                const size_t msgSize(key.length()+value.length()+3);
 
                 if (sizeof(LV2_Atom_Event) + msgSize > capacity - offset)
-                    return;
+                    break;
 
                 if (needsInit)
                 {
@@ -485,17 +561,20 @@ public:
                     needsInit = false;
                 }
 
-                // reserve atom space
-                const size_t atomSize(lv2_atom_pad_size(sizeof(LV2_Atom) + msgSize));
-                char         atomBuf[atomSize];
-                std::memset(atomBuf, 0, atomSize);
+                // reserve msg space
+                char msgBuf[msgSize];
+                std::memset(msgBuf, 0, msgSize);
+
+                // write key and value in atom bufer
+                std::memcpy(msgBuf, key.buffer(), key.length());
+                std::memcpy(msgBuf+(key.length()+1), value.buffer(), value.length());
 
                 // put data
-                aev = (LV2_Atom_Event*)((char*)LV2_ATOM_CONTENTS(LV2_Atom_Sequence, fPortEventsOut) + offset);
+                aev = (LV2_Atom_Event*)(LV2_ATOM_CONTENTS(LV2_Atom_Sequence, fPortEventsOut) + offset);
                 aev->time.frames = 0;
                 aev->body.type   = fURIDs.distrhoState;
                 aev->body.size   = msgSize;
-                std::memcpy(LV2_ATOM_BODY(&aev->body), tmpStr.data(), msgSize-1);
+                std::memcpy(LV2_ATOM_BODY(&aev->body), msgBuf, msgSize-1);
 
                 size    = lv2_atom_pad_size(sizeof(LV2_Atom_Event) + msgSize);
                 offset += size;
@@ -505,6 +584,7 @@ public:
                 break;
             }
         }
+# endif
 #endif
     }
 
@@ -526,12 +606,12 @@ public:
                 {
                     const int bufferSize(*(const int*)options[i].value);
                     fPlugin.setBufferSize(bufferSize);
-                    return LV2_OPTIONS_SUCCESS;
+                    continue;
                 }
                 else
                 {
                     d_stderr("Host changed maxBlockLength but with wrong value type");
-                    return LV2_OPTIONS_ERR_BAD_VALUE;
+                    continue;
                 }
             }
             else if (options[i].key == fUridMap->map(fUridMap->handle, LV2_CORE__sampleRate))
@@ -539,18 +619,19 @@ public:
                 if (options[i].type == fUridMap->map(fUridMap->handle, LV2_ATOM__Double))
                 {
                     const double sampleRate(*(const double*)options[i].value);
+                    fSampleRate = sampleRate;
                     fPlugin.setSampleRate(sampleRate);
-                    return LV2_OPTIONS_SUCCESS;
+                    continue;
                 }
                 else
                 {
                     d_stderr("Host changed sampleRate but with wrong value type");
-                    return LV2_OPTIONS_ERR_BAD_VALUE;
+                    continue;
                 }
             }
         }
 
-        return LV2_OPTIONS_ERR_BAD_KEY;
+        return LV2_OPTIONS_SUCCESS;
     }
 
     // -------------------------------------------------------------------
@@ -596,16 +677,17 @@ public:
     // -------------------------------------------------------------------
 
 #if DISTRHO_PLUGIN_WANT_STATE
-    LV2_State_Status lv2_save(const LV2_State_Store_Function store, const LV2_State_Handle handle, const uint32_t flags)
+    LV2_State_Status lv2_save(const LV2_State_Store_Function store, const LV2_State_Handle handle)
     {
-        //flags = LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE;
-
-        for (auto it = fStateMap.begin(), end = fStateMap.end(); it != end; ++it)
+        for (StringMap::const_iterator cit=fStateMap.cbegin(), cite=fStateMap.cend(); cit != cite; ++cit)
         {
-            const d_string& key   = it->first;
-            const d_string& value = it->second;
+            const d_string& key   = cit->first;
+            const d_string& value = cit->second;
 
-            store(handle, fUridMap->map(fUridMap->handle, (const char*)key), (const char*)value, value.length()+1, fURIDs.atomString, flags);
+            const d_string urnKey("urn:distrho:" + key);
+
+            // some hosts need +1 for the null terminator, even though the type is string
+            store(handle, fUridMap->map(fUridMap->handle, urnKey.buffer()), value.buffer(), value.length()+1, fURIDs.atomString, LV2_STATE_IS_POD|LV2_STATE_IS_PORTABLE);
         }
 
         return LV2_STATE_SUCCESS;
@@ -613,31 +695,29 @@ public:
 
     LV2_State_Status lv2_restore(const LV2_State_Retrieve_Function retrieve, const LV2_State_Handle handle)
     {
-        size_t   size  = 0;
-        uint32_t type  = 0;
-        uint32_t flags = LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE;
+        size_t   size;
+        uint32_t type, flags;
 
         for (uint32_t i=0, count=fPlugin.getStateCount(); i < count; ++i)
         {
-            const d_string& key = fPlugin.getStateKey(i);
+            const d_string& key(fPlugin.getStateKey(i));
+            const d_string urnKey("urn:distrho:" + key);
 
-            const void* data = retrieve(handle, fUridMap->map(fUridMap->handle, (const char*)key), &size, &type, &flags);
+            size  = 0;
+            type  = 0;
+            flags = LV2_STATE_IS_POD|LV2_STATE_IS_PORTABLE;
+            const void* data = retrieve(handle, fUridMap->map(fUridMap->handle, urnKey.buffer()), &size, &type, &flags);
 
-            if (size == 0)
+            if (data == nullptr || size == 0)
                 continue;
-            if (data == nullptr)
-                continue;
-            if (type != fURIDs.atomString)
-                continue;
+
+            DISTRHO_SAFE_ASSERT_CONTINUE(type == fURIDs.atomString);
 
             const char* const value((const char*)data);
-
-            if (std::strlen(value) != size)
-                continue;
+            const std::size_t length(std::strlen(value));
+            DISTRHO_SAFE_ASSERT_CONTINUE(length == size || length+1 == size);
 
             setState(key, value);
-
-            d_stdout("Got state msg:\n%s\n%s", (const char*)key, value);
 
 #if DISTRHO_LV2_USE_EVENTS_OUT
             // signal msg needed for UI
@@ -652,10 +732,10 @@ public:
 
     LV2_Worker_Status lv2_work(const void* const data)
     {
-        const char* const stateKey((const char*)data);
-        const char* const stateValue(stateKey+std::strlen(stateKey)+1);
+        const char* const key((const char*)data);
+        const char* const value(key+std::strlen(key)+1);
 
-        setState(stateKey, stateValue);
+        setState(key, value);
 
         return LV2_WORKER_SUCCESS;
     }
@@ -699,18 +779,20 @@ private:
 
     // Temporary data
     float* fLastControlValues;
-#if DISTRHO_PLUGIN_IS_SYNTH
+    double fSampleRate;
+#if DISTRHO_PLUGIN_HAS_MIDI_INPUT
     MidiEvent fMidiEvents[kMaxMidiEvents];
 #endif
 #if DISTRHO_PLUGIN_WANT_TIMEPOS
-    TimePos fTimePos;
-    float   fLastTimeSpeed;
+    TimePosition fTimePosition;
+    double       fLastTimeSpeed;
 #endif
 
     // LV2 URIDs
 #if DISTRHO_LV2_USE_EVENTS_IN || DISTRHO_LV2_USE_EVENTS_OUT
     struct URIDs {
         LV2_URID atomBlank;
+        LV2_URID atomObject;
         LV2_URID atomDouble;
         LV2_URID atomFloat;
         LV2_URID atomInt;
@@ -726,11 +808,13 @@ private:
         LV2_URID timeBeatUnit;
         LV2_URID timeBeatsPerBar;
         LV2_URID timeBeatsPerMinute;
+        LV2_URID timeTicksPerBeat;
         LV2_URID timeFrame;
         LV2_URID timeSpeed;
 
         URIDs(const LV2_URID_Map* const uridMap)
             : atomBlank(uridMap->map(uridMap->handle, LV2_ATOM__Blank)),
+              atomObject(uridMap->map(uridMap->handle, LV2_ATOM__Object)),
               atomDouble(uridMap->map(uridMap->handle, LV2_ATOM__Double)),
               atomFloat(uridMap->map(uridMap->handle, LV2_ATOM__Float)),
               atomInt(uridMap->map(uridMap->handle, LV2_ATOM__Int)),
@@ -746,6 +830,7 @@ private:
               timeBeatUnit(uridMap->map(uridMap->handle, LV2_TIME__beatUnit)),
               timeBeatsPerBar(uridMap->map(uridMap->handle, LV2_TIME__beatsPerBar)),
               timeBeatsPerMinute(uridMap->map(uridMap->handle, LV2_TIME__beatsPerMinute)),
+              timeTicksPerBeat(uridMap->map(uridMap->handle, LV2_KXSTUDIO_PROPERTIES__TimePositionTicksPerBeat)),
               timeFrame(uridMap->map(uridMap->handle, LV2_TIME__frame)),
               timeSpeed(uridMap->map(uridMap->handle, LV2_TIME__speed)) {}
     } fURIDs;
@@ -768,9 +853,9 @@ private:
             return;
 
         // check if key already exists
-        for (auto it = fStateMap.begin(), end = fStateMap.end(); it != end; ++it)
+        for (StringMap::iterator it=fStateMap.begin(), ite=fStateMap.end(); it != ite; ++it)
         {
-            const d_string& d_key = it->first;
+            const d_string& d_key(it->first);
 
             if (d_key == key)
             {
@@ -779,9 +864,7 @@ private:
             }
         }
 
-        // nope, add a new one then
-        d_string d_key(key);
-        fStateMap[d_key] = newValue;
+        d_stderr("Failed to find plugin state with key \"%s\"", key);
     }
 #endif
 
@@ -866,7 +949,7 @@ static LV2_Handle lv2_instantiate(const LV2_Descriptor*, double sampleRate, cons
 
     d_lastSampleRate = sampleRate;
 
-    return new PluginLv2(uridMap, worker);
+    return new PluginLv2(sampleRate, uridMap, worker);
 }
 
 #define instancePtr ((PluginLv2*)instance)
@@ -925,9 +1008,9 @@ static void lv2_select_program(LV2_Handle instance, uint32_t bank, uint32_t prog
 // -----------------------------------------------------------------------
 
 #if DISTRHO_PLUGIN_WANT_STATE
-static LV2_State_Status lv2_save(LV2_Handle instance, LV2_State_Store_Function store, LV2_State_Handle handle, uint32_t flags, const LV2_Feature* const*)
+static LV2_State_Status lv2_save(LV2_Handle instance, LV2_State_Store_Function store, LV2_State_Handle handle, uint32_t, const LV2_Feature* const*)
 {
-    return instancePtr->lv2_save(store, handle, flags);
+    return instancePtr->lv2_save(store, handle);
 }
 
 static LV2_State_Status lv2_restore(LV2_Handle instance, LV2_State_Retrieve_Function retrieve, LV2_State_Handle handle, uint32_t, const LV2_Feature* const*)

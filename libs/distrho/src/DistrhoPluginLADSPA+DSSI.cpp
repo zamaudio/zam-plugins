@@ -16,12 +16,16 @@
 
 #include "DistrhoPluginInternal.hpp"
 
+#if DISTRHO_PLUGIN_HAS_MIDI_OUTPUT
+# error Cannot use MIDI Output with LADSPA or DSSI
+#endif
+
 #ifdef DISTRHO_PLUGIN_TARGET_DSSI
 # include "dssi/dssi.h"
 #else
 # include "ladspa/ladspa.h"
-# if DISTRHO_PLUGIN_IS_SYNTH
-#  error Cannot build synth plugin with LADSPA
+# if DISTRHO_PLUGIN_HAS_MIDI_INPUT
+#  error Cannot use MIDI with LADSPA
 # endif
 # if DISTRHO_PLUGIN_WANT_STATE
 #  warning LADSPA cannot handle states
@@ -186,7 +190,7 @@ public:
             }
         }
 
-#if DISTRHO_PLUGIN_IS_SYNTH
+#if DISTRHO_PLUGIN_HAS_MIDI_INPUT
         // Get MIDI Events
         uint32_t  midiEventCount = 0;
         MidiEvent midiEvents[eventCount];
@@ -203,58 +207,58 @@ public:
             {
             case SND_SEQ_EVENT_NOTEOFF:
                 j = midiEventCount++;
-                midiEvents[j].frame  = seqEvent.time.tick;
-                midiEvents[j].size   = 3;
-                midiEvents[j].buf[0] = 0x80 + seqEvent.data.note.channel;
-                midiEvents[j].buf[1] = seqEvent.data.note.note;
-                midiEvents[j].buf[2] = 0;
-                midiEvents[j].buf[3] = 0;
+                midiEvents[j].frame   = seqEvent.time.tick;
+                midiEvents[j].size    = 3;
+                midiEvents[j].data[0] = 0x80 + seqEvent.data.note.channel;
+                midiEvents[j].data[1] = seqEvent.data.note.note;
+                midiEvents[j].data[2] = 0;
+                midiEvents[j].data[3] = 0;
                 break;
             case SND_SEQ_EVENT_NOTEON:
                 j = midiEventCount++;
-                midiEvents[j].frame  = seqEvent.time.tick;
-                midiEvents[j].size   = 3;
-                midiEvents[j].buf[0] = 0x90 + seqEvent.data.note.channel;
-                midiEvents[j].buf[1] = seqEvent.data.note.note;
-                midiEvents[j].buf[2] = seqEvent.data.note.velocity;
-                midiEvents[j].buf[3] = 0;
+                midiEvents[j].frame   = seqEvent.time.tick;
+                midiEvents[j].size    = 3;
+                midiEvents[j].data[0] = 0x90 + seqEvent.data.note.channel;
+                midiEvents[j].data[1] = seqEvent.data.note.note;
+                midiEvents[j].data[2] = seqEvent.data.note.velocity;
+                midiEvents[j].data[3] = 0;
                 break;
             case SND_SEQ_EVENT_KEYPRESS:
                 j = midiEventCount++;
-                midiEvents[j].frame  = seqEvent.time.tick;
-                midiEvents[j].size   = 3;
-                midiEvents[j].buf[0] = 0xA0 + seqEvent.data.note.channel;
-                midiEvents[j].buf[1] = seqEvent.data.note.note;
-                midiEvents[j].buf[2] = seqEvent.data.note.velocity;
-                midiEvents[j].buf[3] = 0;
+                midiEvents[j].frame   = seqEvent.time.tick;
+                midiEvents[j].size    = 3;
+                midiEvents[j].data[0] = 0xA0 + seqEvent.data.note.channel;
+                midiEvents[j].data[1] = seqEvent.data.note.note;
+                midiEvents[j].data[2] = seqEvent.data.note.velocity;
+                midiEvents[j].data[3] = 0;
                 break;
             case SND_SEQ_EVENT_CONTROLLER:
                 j = midiEventCount++;
-                midiEvents[j].frame  = seqEvent.time.tick;
-                midiEvents[j].size   = 3;
-                midiEvents[j].buf[0] = 0xB0 + seqEvent.data.control.channel;
-                midiEvents[j].buf[1] = seqEvent.data.control.param;
-                midiEvents[j].buf[2] = seqEvent.data.control.value;
-                midiEvents[j].buf[3] = 0;
+                midiEvents[j].frame   = seqEvent.time.tick;
+                midiEvents[j].size    = 3;
+                midiEvents[j].data[0] = 0xB0 + seqEvent.data.control.channel;
+                midiEvents[j].data[1] = seqEvent.data.control.param;
+                midiEvents[j].data[2] = seqEvent.data.control.value;
+                midiEvents[j].data[3] = 0;
                 break;
             case SND_SEQ_EVENT_CHANPRESS:
                 j = midiEventCount++;
-                midiEvents[j].frame  = seqEvent.time.tick;
-                midiEvents[j].size   = 2;
-                midiEvents[j].buf[0] = 0xD0 + seqEvent.data.control.channel;
-                midiEvents[j].buf[1] = seqEvent.data.control.value;
-                midiEvents[j].buf[2] = 0;
-                midiEvents[j].buf[3] = 0;
+                midiEvents[j].frame   = seqEvent.time.tick;
+                midiEvents[j].size    = 2;
+                midiEvents[j].data[0] = 0xD0 + seqEvent.data.control.channel;
+                midiEvents[j].data[1] = seqEvent.data.control.value;
+                midiEvents[j].data[2] = 0;
+                midiEvents[j].data[3] = 0;
                 break;
 #if 0 // TODO
             case SND_SEQ_EVENT_PITCHBEND:
                 j = midiEventCount++;
-                midiEvents[j].frame  = seqEvent.time.tick;
-                midiEvents[j].size   = 3;
-                midiEvents[j].buf[0] = 0xE0 + seqEvent.data.control.channel;
-                midiEvents[j].buf[1] = 0;
-                midiEvents[j].buf[2] = 0;
-                midiEvents[j].buf[3] = 0;
+                midiEvents[j].frame   = seqEvent.time.tick;
+                midiEvents[j].size    = 3;
+                midiEvents[j].data[0] = 0xE0 + seqEvent.data.control.channel;
+                midiEvents[j].data[1] = 0;
+                midiEvents[j].data[2] = 0;
+                midiEvents[j].data[3] = 0;
                 break;
 #endif
             }
@@ -267,7 +271,7 @@ public:
 
         updateParameterOutputs();
 
-#if defined(DISTRHO_PLUGIN_TARGET_DSSI) && ! DISTRHO_PLUGIN_IS_SYNTH
+#if defined(DISTRHO_PLUGIN_TARGET_DSSI) && ! DISTRHO_PLUGIN_HAS_MIDI_INPUT
         return; // unused
         (void)events; (void)eventCount;
 #endif
@@ -431,7 +435,7 @@ static void dssi_select_program(LADSPA_Handle instance, ulong bank, ulong progra
 }
 # endif
 
-# if DISTRHO_PLUGIN_IS_SYNTH
+# if DISTRHO_PLUGIN_HAS_MIDI_INPUT
 static void dssi_run_synth(LADSPA_Handle instance, ulong sampleCount, snd_seq_event_t* events, ulong eventCount)
 {
     instancePtr->dssi_run_synth(sampleCount, events, eventCount);
@@ -486,7 +490,7 @@ static DSSI_Descriptor sDssiDescriptor = {
     /* select_program               */ nullptr,
 # endif
     /* get_midi_controller_for_port */ nullptr,
-# if DISTRHO_PLUGIN_IS_SYNTH
+# if DISTRHO_PLUGIN_HAS_MIDI_INPUT
     dssi_run_synth,
 # else
     /* run_synth                    */ nullptr,
@@ -611,11 +615,11 @@ public:
             {
                 const uint32_t hints(plugin.getParameterHints(i));
 
-                if (hints & PARAMETER_IS_BOOLEAN)
+                if (hints & kParameterIsBoolean)
                     portRangeHints[port].HintDescriptor |= LADSPA_HINT_TOGGLED;
-                if (hints & PARAMETER_IS_INTEGER)
+                if (hints & kParameterIsInteger)
                     portRangeHints[port].HintDescriptor |= LADSPA_HINT_INTEGER;
-                if (hints & PARAMETER_IS_LOGARITHMIC)
+                if (hints & kParameterIsLogarithmic)
                     portRangeHints[port].HintDescriptor |= LADSPA_HINT_LOGARITHMIC;
             }
         }

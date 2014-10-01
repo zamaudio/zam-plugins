@@ -33,8 +33,10 @@ struct App::PrivateData {
     std::list<IdleCallback*> idleCallbacks;
 
     PrivateData()
-        : doLoop(false),
-          visibleWindows(0) {}
+        : doLoop(true),
+          visibleWindows(0),
+          windows(),
+          idleCallbacks() {}
 
     ~PrivateData()
     {
@@ -58,6 +60,8 @@ struct App::PrivateData {
         if (--visibleWindows == 0)
             doLoop = false;
     }
+
+    DISTRHO_DECLARE_NON_COPY_STRUCT(PrivateData)
 };
 
 // -----------------------------------------------------------------------

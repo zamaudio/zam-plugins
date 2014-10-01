@@ -105,9 +105,9 @@ public:
         jack_activate(fClient);
 
         if (const char* const name = jack_get_client_name(fClient))
-            fUI.setTitle(name);
+            fUI.setWindowTitle(name);
         else
-            fUI.setTitle(DISTRHO_PLUGIN_NAME);
+            fUI.setWindowTitle(fPlugin.getName());
 
         fUI.exec(this);
     }
@@ -199,40 +199,37 @@ protected:
 
 #if DISTRHO_PLUGIN_WANT_TIMEPOS
         jack_position_t pos;
-        fTimePos.playing = (jack_transport_query(fClient, &pos) == JackTransportRolling);
+        fTimePosition.playing = (jack_transport_query(fClient, &pos) == JackTransportRolling);
 
         if (pos.unique_1 == pos.unique_2)
         {
-            if (pos.valid & JackTransportPosition)
-                fTimePos.frame = pos.frame;
-            else
-                fTimePos.frame = 0;
+            fTimePosition.frame = pos.frame;
 
             if (pos.valid & JackTransportBBT)
             {
-                fTimePos.bbt.valid = true;
+                fTimePosition.bbt.valid = true;
 
-                fTimePos.bbt.bar  = pos.bar;
-                fTimePos.bbt.beat = pos.beat;
-                fTimePos.bbt.tick = pos.tick;
-                fTimePos.bbt.barStartTick = pos.bar_start_tick;
+                fTimePosition.bbt.bar  = pos.bar;
+                fTimePosition.bbt.beat = pos.beat;
+                fTimePosition.bbt.tick = pos.tick;
+                fTimePosition.bbt.barStartTick = pos.bar_start_tick;
 
-                fTimePos.bbt.beatsPerBar = pos.beats_per_bar;
-                fTimePos.bbt.beatType    = pos.beat_type;
+                fTimePosition.bbt.beatsPerBar = pos.beats_per_bar;
+                fTimePosition.bbt.beatType    = pos.beat_type;
 
-                fTimePos.bbt.ticksPerBeat   = pos.ticks_per_beat;
-                fTimePos.bbt.beatsPerMinute = pos.beats_per_minute;
+                fTimePosition.bbt.ticksPerBeat   = pos.ticks_per_beat;
+                fTimePosition.bbt.beatsPerMinute = pos.beats_per_minute;
             }
             else
-                fTimePos.bbt.valid = false;
+                fTimePosition.bbt.valid = false;
         }
         else
         {
-            fTimePos.bbt.valid = false;
-            fTimePos.frame = 0;
+            fTimePosition.bbt.valid = false;
+            fTimePosition.frame = 0;
         }
 
-        fPlugin.setTimePos(fTimePos);
+        fPlugin.setTimePosition(fTimePosition);
 #endif
 
 #if DISTRHO_PLUGIN_IS_SYNTH
@@ -249,14 +246,16 @@ protected:
             {
                 if (jack_midi_event_get(&jevent, midiBuf, i) != 0)
                     break;
-                if (jevent.size > 4)
-                    continue;
 
                 MidiEvent& midiEvent(midiEvents[midiEventCount++]);
 
                 midiEvent.frame = jevent.time;
                 midiEvent.size  = jevent.size;
-                std::memcpy(midiEvent.buf, jevent.buffer, jevent.size);
+
+                if (midiEvent.size > MidiEvent::kDataSize)
+                    midiEvent.dataExt = jevent.buffer;
+                else
+                    std::memcpy(midiEvent.data, jevent.buffer, midiEvent.size);
             }
 
             fPlugin.run(audioIns, audioOuts, nframes, midiEvents, midiEventCount);
@@ -293,7 +292,7 @@ protected:
 
     void setSize(const uint width, const uint height)
     {
-        fUI.setSize(width, height);
+        fUI.setWindowSize(width, height);
     }
 
     // -------------------------------------------------------------------
@@ -314,7 +313,7 @@ private:
     jack_port_t* fPortMidiIn;
 #endif
 #if DISTRHO_PLUGIN_WANT_TIMEPOS
-    TimePos fTimePos;
+    TimePosition fTimePosition;
 #endif
 
     // Temporary data
@@ -374,6 +373,8 @@ END_NAMESPACE_DISTRHO
 
 int main()
 {
+    USE_NAMESPACE_DISTRHO;
+
     jack_status_t  status = jack_status_t(0x0);
     jack_client_t* client = jack_client_open(DISTRHO_PLUGIN_NAME, JackNoStartServer, &status);
 

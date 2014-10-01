@@ -16,6 +16,8 @@
 
 #include "DistrhoUIInternal.hpp"
 
+#include "../extra/d_string.hpp"
+
 #include "lv2/atom.h"
 #include "lv2/atom-util.h"
 #include "lv2/data-access.h"
@@ -23,9 +25,8 @@
 #include "lv2/options.h"
 #include "lv2/ui.h"
 #include "lv2/urid.h"
+#include "lv2/lv2_kxstudio_properties.h"
 #include "lv2/lv2_programs.h"
-
-#include <string>
 
 START_NAMESPACE_DISTRHO
 
@@ -58,22 +59,25 @@ public:
         if (winId != 0)
             return;
 
+        // if winId != 0 then options must not be null
+        DISTRHO_SAFE_ASSERT_RETURN(options != nullptr,);
+
         const LV2_URID uridWindowTitle(uridMap->map(uridMap->handle, LV2_UI__windowTitle));
-        const LV2_URID uridFrontendWinId(uridMap->map(uridMap->handle, "http://kxstudio.sf.net/ns/carla/frontendWinId"));
+        const LV2_URID uridTransientWinId(uridMap->map(uridMap->handle, LV2_KXSTUDIO_PROPERTIES__TransientWindowId));
 
         bool hasTitle = false;
 
         for (int i=0; options[i].key != 0; ++i)
         {
-            if (options[i].key == uridFrontendWinId)
+            if (options[i].key == uridTransientWinId)
             {
                 if (options[i].type == uridMap->map(uridMap->handle, LV2_ATOM__Long))
                 {
-                    if (const int64_t frontendWinId = *(const int64_t*)options[i].value)
-                        fUI.setTransientWinId(static_cast<intptr_t>(frontendWinId));
+                    if (const int64_t transientWinId = *(const int64_t*)options[i].value)
+                        fUI.setWindowTransientWinId(static_cast<intptr_t>(transientWinId));
                 }
                 else
-                    d_stderr("Host provides frontendWinId but has wrong value type");
+                    d_stderr("Host provides transientWinId but has wrong value type");
             }
             else if (options[i].key == uridWindowTitle)
             {
@@ -82,7 +86,7 @@ public:
                     if (const char* const windowTitle = (const char*)options[i].value)
                     {
                         hasTitle = true;
-                        fUI.setTitle(windowTitle);
+                        fUI.setWindowTitle(windowTitle);
                     }
                 }
                 else
@@ -91,7 +95,7 @@ public:
         }
 
         if (! hasTitle)
-            fUI.setTitle(fUI.getName());
+            fUI.setWindowTitle(DISTRHO_PLUGIN_NAME);
     }
 
     // -------------------------------------------------------------------
@@ -115,13 +119,12 @@ public:
         {
             const LV2_Atom* const atom((const LV2_Atom*)buffer);
 
-            // TODO - check atom type
+            DISTRHO_SAFE_ASSERT_RETURN(atom->type == fKeyValueURID,);
 
-            const char* const stateKey((const char*)LV2_ATOM_BODY_CONST(atom));
-            const char* const stateValue(stateKey+std::strlen(stateKey)+1);
+            const char* const key   = (const char*)LV2_ATOM_BODY_CONST(atom);
+            const char* const value = key+(std::strlen(key)+1);
 
-            d_stdout("Got MSG in UI from DSP ==> %s | %s", stateKey, stateValue);
-            fUI.stateChanged(stateKey, stateValue);
+            fUI.stateChanged(key, value);
         }
 #endif
     }
@@ -138,12 +141,49 @@ public:
 
     int lv2ui_show()
     {
-        return fUI.setVisible(true) ? 0 : 1;
+        return fUI.setWindowVisible(true) ? 0 : 1;
     }
 
     int lv2ui_hide()
     {
-        return fUI.setVisible(false) ? 0 : 1;
+        return fUI.setWindowVisible(false) ? 0 : 1;
+    }
+
+    int lv2ui_resize(uint width, uint height)
+    {
+        fUI.setWindowSize(width, height, true);
+        return 0;
+    }
+
+    // -------------------------------------------------------------------
+
+    uint32_t lv2_get_options(LV2_Options_Option* const /*options*/)
+    {
+        // currently unused
+        return LV2_OPTIONS_ERR_UNKNOWN;
+    }
+
+    uint32_t lv2_set_options(const LV2_Options_Option* const options)
+    {
+        for (int i=0; options[i].key != 0; ++i)
+        {
+            if (options[i].key == fUridMap->map(fUridMap->handle, LV2_CORE__sampleRate))
+            {
+                if (options[i].type == fUridMap->map(fUridMap->handle, LV2_ATOM__Double))
+                {
+                    const double sampleRate(*(const double*)options[i].value);
+                    fUI.setSampleRate(sampleRate);
+                    continue;
+                }
+                else
+                {
+                    d_stderr("Host changed sampleRate but with wrong value type");
+                    continue;
+                }
+            }
+        }
+
+        return LV2_OPTIONS_SUCCESS;
     }
 
     // -------------------------------------------------------------------
@@ -168,25 +208,27 @@ protected:
 
     void setParameterValue(const uint32_t rindex, const float value)
     {
-        if (fWriteFunction != nullptr)
-            fWriteFunction(fController, rindex, sizeof(float), 0, &value);
+        DISTRHO_SAFE_ASSERT_RETURN(fWriteFunction != nullptr,);
+
+        fWriteFunction(fController, rindex, sizeof(float), 0, &value);
     }
 
     void setState(const char* const key, const char* const value)
     {
-        if (fWriteFunction == nullptr)
-            return;
+        DISTRHO_SAFE_ASSERT_RETURN(fWriteFunction != nullptr,);
 
         const uint32_t eventInPortIndex(DISTRHO_PLUGIN_NUM_INPUTS + DISTRHO_PLUGIN_NUM_OUTPUTS);
 
         // join key and value
-        std::string tmpStr;
-        tmpStr += std::string(key);
-        tmpStr += std::string("\0", 1);
-        tmpStr += std::string(value);
+        d_string tmpStr;
+        tmpStr += key;
+        tmpStr += "\xff";
+        tmpStr += value;
 
-        // get msg size
-        const size_t msgSize(tmpStr.size()+1);
+        tmpStr[std::strlen(key)] = '\0';
+
+        // set msg size (key + separator + value + null terminator)
+        const size_t msgSize(tmpStr.length()+1);
 
         // reserve atom space
         const size_t atomSize(lv2_atom_pad_size(sizeof(LV2_Atom) + msgSize));
@@ -199,7 +241,7 @@ protected:
         atom->type = fKeyValueURID;
 
         // set atom data
-        std::memcpy(atomBuf + sizeof(LV2_Atom), tmpStr.data(), msgSize-1);
+        std::memcpy(atomBuf + sizeof(LV2_Atom), tmpStr.buffer(), msgSize);
 
         // send to DSP side
         fWriteFunction(fController, eventInPortIndex, atomSize, fEventTransferURID, atom);
@@ -211,7 +253,7 @@ protected:
 
     void setSize(const uint width, const uint height)
     {
-        fUI.setSize(width, height);
+        fUI.setWindowSize(width, height);
 
         if (fUiResize != nullptr && ! fWinIdWasNull)
             fUiResize->ui_resize(fUiResize->handle, width, height);
@@ -313,9 +355,9 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
 #endif
     }
 
-    if (options == nullptr)
+    if (options == nullptr && parentId == nullptr)
     {
-        d_stderr("Options feature missing, cannot continue!");
+        d_stderr("Options feature missing (needed for show-interface), cannot continue!");
         return nullptr;
     }
 
@@ -338,10 +380,11 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
     }
 
     if (const LV2_DirectAccess_Interface* const directAccess = (const LV2_DirectAccess_Interface*)extData->data_access(DISTRHO_DIRECT_ACCESS_URI))
-    {
         instance = directAccess->get_instance_pointer(instance);
-    }
     else
+        instance = nullptr;
+
+    if (instance == nullptr)
     {
         d_stderr("Failed to get direct access, cannot continue!");
         return nullptr;
@@ -352,23 +395,29 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
 
     const intptr_t winId((intptr_t)parentId);
 
-    const LV2_URID uridSampleRate(uridMap->map(uridMap->handle, LV2_CORE__sampleRate));
-
-    for (int i=0; options[i].key != 0; ++i)
+    if (options != nullptr)
     {
-        if (options[i].key == uridSampleRate)
-        {
-            if (options[i].type == uridMap->map(uridMap->handle, LV2_ATOM__Double))
-                d_lastUiSampleRate = *(const double*)options[i].value;
-            else
-                d_stderr("Host provides sampleRate but has wrong value type");
+        const LV2_URID uridSampleRate(uridMap->map(uridMap->handle, LV2_CORE__sampleRate));
 
-            break;
+        for (int i=0; options[i].key != 0; ++i)
+        {
+            if (options[i].key == uridSampleRate)
+            {
+                if (options[i].type == uridMap->map(uridMap->handle, LV2_ATOM__Double))
+                    d_lastUiSampleRate = *(const double*)options[i].value;
+                else
+                    d_stderr("Host provides sampleRate but has wrong value type");
+
+                break;
+            }
         }
     }
 
     if (d_lastUiSampleRate == 0.0)
+    {
+        d_stdout("WARNING: this host does not send sample-rate information for LV2 UIs, using 44100 as fallback (this could be wrong)");
         d_lastUiSampleRate = 44100.0;
+    }
 
     return new UiLv2(winId, options, uridMap, uiResize, uiTouch, controller, writeFunction, instance);
 }
@@ -402,6 +451,30 @@ static int lv2ui_hide(LV2UI_Handle ui)
     return uiPtr->lv2ui_hide();
 }
 
+static int lv2ui_resize(LV2UI_Handle ui, int width, int height)
+{
+    DISTRHO_SAFE_ASSERT_RETURN(ui != nullptr, 1);
+    DISTRHO_SAFE_ASSERT_RETURN(width > 0, 1);
+    DISTRHO_SAFE_ASSERT_RETURN(height > 0, 1);
+
+    return 1; // This needs more testing
+    //return uiPtr->lv2ui_resize(width, height);
+}
+
+// -----------------------------------------------------------------------
+
+static uint32_t lv2_get_options(LV2UI_Handle ui, LV2_Options_Option* options)
+{
+    return uiPtr->lv2_get_options(options);
+}
+
+static uint32_t lv2_set_options(LV2UI_Handle ui, const LV2_Options_Option* options)
+{
+    return uiPtr->lv2_set_options(options);
+}
+
+// -----------------------------------------------------------------------
+
 #if DISTRHO_PLUGIN_WANT_PROGRAMS
 static void lv2ui_select_program(LV2UI_Handle ui, uint32_t bank, uint32_t program)
 {
@@ -413,13 +486,19 @@ static void lv2ui_select_program(LV2UI_Handle ui, uint32_t bank, uint32_t progra
 
 static const void* lv2ui_extension_data(const char* uri)
 {
-    static const LV2UI_Idle_Interface uiIdle = { lv2ui_idle };
-    static const LV2UI_Show_Interface uiShow = { lv2ui_show, lv2ui_hide };
+    static const LV2_Options_Interface options = { lv2_get_options, lv2_set_options };
+    static const LV2UI_Idle_Interface  uiIdle  = { lv2ui_idle };
+    static const LV2UI_Show_Interface  uiShow  = { lv2ui_show, lv2ui_hide };
+    static const LV2UI_Resize          uiResz  = { nullptr, lv2ui_resize };
 
+    if (std::strcmp(uri, LV2_OPTIONS__interface) == 0)
+        return &options;
     if (std::strcmp(uri, LV2_UI__idleInterface) == 0)
         return &uiIdle;
     if (std::strcmp(uri, LV2_UI__showInterface) == 0)
         return &uiShow;
+    if (std::strcmp(uri, LV2_UI__resize) == 0)
+        return &uiResz;
 
 #if DISTRHO_PLUGIN_WANT_PROGRAMS
     static const LV2_Programs_UI_Interface uiPrograms = { lv2ui_select_program };

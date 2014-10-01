@@ -42,19 +42,6 @@ public:
 
 protected:
     // -------------------------------------------------------------------
-    // Information
-
-    uint d_getWidth() const noexcept override
-    {
-        return ZaMultiCompArtwork::zamulticompWidth;
-    }
-
-    uint d_getHeight() const noexcept override
-    {
-        return ZaMultiCompArtwork::zamulticompHeight;
-    }
-
-    // -------------------------------------------------------------------
     // DSP Callbacks
 
     void d_parameterChanged(uint32_t index, float value) override;

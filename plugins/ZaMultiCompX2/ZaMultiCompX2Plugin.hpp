@@ -113,7 +113,7 @@ protected:
 
     void d_initParameter(uint32_t index, Parameter& parameter) ;
     void d_initProgramName(uint32_t index, d_string& programName) ;
-    void d_initStateKey(uint32_t, d_string&) override;
+    void d_initState(uint32_t, d_string&, d_string&) override;
 
     // -------------------------------------------------------------------
     // Internal data

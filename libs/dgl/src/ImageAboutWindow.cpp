@@ -23,7 +23,8 @@ START_NAMESPACE_DGL
 ImageAboutWindow::ImageAboutWindow(Window& parent, const Image& image)
     : Window(parent.getApp(), parent),
       Widget((Window&)*this),
-      fImgBackground(image)
+      fImgBackground(image),
+      leakDetector_ImageAboutWindow()
 {
     Window::setResizable(false);
     Window::setSize(static_cast<uint>(image.getWidth()), static_cast<uint>(image.getHeight()));
@@ -33,7 +34,8 @@ ImageAboutWindow::ImageAboutWindow(Window& parent, const Image& image)
 ImageAboutWindow::ImageAboutWindow(Widget* widget, const Image& image)
     : Window(widget->getParentApp(), widget->getParentWindow()),
       Widget((Window&)*this),
-      fImgBackground(image)
+      fImgBackground(image),
+      leakDetector_ImageAboutWindow()
 {
     Window::setResizable(false);
     Window::setSize(static_cast<uint>(image.getWidth()), static_cast<uint>(image.getHeight()));
@@ -76,7 +78,7 @@ bool ImageAboutWindow::onMouse(const MouseEvent& ev)
     return false;
 }
 
-void ImageAboutWindow::onReshape(int width, int height)
+void ImageAboutWindow::onReshape(uint width, uint height)
 {
     Widget::setSize(width, height);
     Window::onReshape(width, height);

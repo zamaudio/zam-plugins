@@ -27,6 +27,8 @@ START_NAMESPACE_DISTRHO
 ZaMultiCompX2UI::ZaMultiCompX2UI()
     : UI()
 {
+    setSize(ZaMultiCompX2Artwork::zamulticompx2Width, ZaMultiCompX2Artwork::zamulticompx2Height);
+
     // background
     fImgBackground = Image(ZaMultiCompX2Artwork::zamulticompx2Data, ZaMultiCompX2Artwork::zamulticompx2Width, ZaMultiCompX2Artwork::zamulticompx2Height, GL_BGR);
 

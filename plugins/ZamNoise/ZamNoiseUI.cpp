@@ -25,6 +25,8 @@ START_NAMESPACE_DISTRHO
 ZamNoiseUI::ZamNoiseUI()
     : UI()
 {
+    setSize(ZamNoiseArtwork::zamnoiseWidth,  ZamNoiseArtwork::zamnoiseHeight);
+
     // background
     fImgBackground = Image(ZamNoiseArtwork::zamnoiseData, ZamNoiseArtwork::zamnoiseWidth, ZamNoiseArtwork::zamnoiseHeight, GL_BGR);
 

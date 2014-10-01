@@ -42,19 +42,6 @@ public:
 
 protected:
     // -------------------------------------------------------------------
-    // Information
-
-    uint d_getWidth() const noexcept override
-    {
-        return ZamTubeArtwork::zamtubeWidth;
-    }
-
-    uint d_getHeight() const noexcept override
-    {
-        return ZamTubeArtwork::zamtubeHeight;
-    }
-
-    // -------------------------------------------------------------------
     // DSP Callbacks
 
     void d_parameterChanged(uint32_t index, float value) ;

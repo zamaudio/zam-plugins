@@ -18,21 +18,21 @@
 
 START_NAMESPACE_DISTRHO
 
-// -----------------------------------------------------------------------
-// Static data, see DistrhoUIInternal.hpp
+/* ------------------------------------------------------------------------------------------------------------
+ * Static data, see DistrhoUIInternal.hpp */
 
-double  d_lastUiSampleRate = 0.0;
-void*   d_lastUiDspPtr = nullptr;
-Window* d_lastUiWindow = nullptr;
+double    d_lastUiSampleRate = 0.0;
+void*     d_lastUiDspPtr = nullptr;
+UIWindow* d_lastUiWindow = nullptr;
 
-// -----------------------------------------------------------------------
-// UI
+/* ------------------------------------------------------------------------------------------------------------
+ * UI */
 
 UI::UI()
     : UIWidget(*d_lastUiWindow),
       pData(new PrivateData())
 {
-    Widget::setNeedsFullViewport(true);
+    UIWidget::setNeedsFullViewport(true);
 }
 
 UI::~UI()
@@ -40,49 +40,41 @@ UI::~UI()
     delete pData;
 }
 
-// -----------------------------------------------------------------------
-// Host DSP State
+/* ------------------------------------------------------------------------------------------------------------
+ * Host state */
 
 double UI::d_getSampleRate() const noexcept
 {
     return pData->sampleRate;
 }
 
-void UI::d_editParameter(uint32_t index, bool started)
+void UI::d_editParameter(const uint32_t index, const bool started)
 {
     pData->editParamCallback(index + pData->parameterOffset, started);
 }
 
-void UI::d_setParameterValue(uint32_t index, float value)
+void UI::d_setParameterValue(const uint32_t index, const float value)
 {
     pData->setParamCallback(index + pData->parameterOffset, value);
 }
 
 #if DISTRHO_PLUGIN_WANT_STATE
-void UI::d_setState(const char* key, const char* value)
+void UI::d_setState(const char* const key, const char* const value)
 {
     pData->setStateCallback(key, value);
 }
 #endif
 
 #if DISTRHO_PLUGIN_IS_SYNTH
-void UI::d_sendNote(uint8_t channel, uint8_t note, uint8_t velocity)
+void UI::d_sendNote(const uint8_t channel, const uint8_t note, const uint8_t velocity)
 {
     pData->sendNoteCallback(channel, note, velocity);
 }
 #endif
 
-// -----------------------------------------------------------------------
-// Host UI State
-
-void UI::d_setSize(uint width, uint height)
-{
-    pData->setSizeCallback(width, height);
-}
-
 #if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
-// -----------------------------------------------------------------------
-// Direct DSP access
+/* ------------------------------------------------------------------------------------------------------------
+ * Direct DSP access */
 
 void* UI::d_getPluginInstancePointer() const noexcept
 {
@@ -90,10 +82,16 @@ void* UI::d_getPluginInstancePointer() const noexcept
 }
 #endif
 
-// -----------------------------------------------------------------------
-// UI Callbacks (optional)
+/* ------------------------------------------------------------------------------------------------------------
+ * DSP/Plugin Callbacks (optional) */
 
-void UI::d_uiReshape(int width, int height)
+void UI::d_sampleRateChanged(double) {}
+
+/* ------------------------------------------------------------------------------------------------------------
+ * UI Callbacks (optional) */
+
+#if ! DISTRHO_UI_USE_NTK
+void UI::d_uiReshape(uint width, uint height)
 {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -104,7 +102,24 @@ void UI::d_uiReshape(int width, int height)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
+#endif
 
-// -----------------------------------------------------------------------
+/* ------------------------------------------------------------------------------------------------------------
+ * UI Resize Handling, internal */
+
+#if DISTRHO_UI_USE_NTK
+void UI::resize(int x, int y, int w, int h)
+{
+    UIWidget::resize(x, y, w, h);
+    pData->setSizeCallback(w, h);
+}
+#else
+void UI::onResize(const ResizeEvent& ev)
+{
+    pData->setSizeCallback(ev.size.getWidth(), ev.size.getHeight());
+}
+#endif
+
+// -----------------------------------------------------------------------------------------------------------
 
 END_NAMESPACE_DISTRHO

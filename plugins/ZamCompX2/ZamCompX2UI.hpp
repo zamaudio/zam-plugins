@@ -42,19 +42,6 @@ public:
 
 protected:
     // -------------------------------------------------------------------
-    // Information
-
-    uint d_getWidth() const noexcept override
-    {
-        return ZamCompX2Artwork::zamcompx2Width;
-    }
-
-    uint d_getHeight() const noexcept override
-    {
-        return ZamCompX2Artwork::zamcompx2Height;
-    }
-
-    // -------------------------------------------------------------------
     // DSP Callbacks
 
     void d_parameterChanged(uint32_t index, float value) override;
