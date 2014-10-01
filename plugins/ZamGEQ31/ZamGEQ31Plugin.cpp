@@ -560,6 +560,51 @@ void ZamGEQ31Plugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
+void ZamGEQ31Plugin::peq(int i, float srate, float fc, float g, float bw)
+{
+        float k, v0, q;
+
+        k = tanf(M_PI * fc / srate);
+        v0 = powf(10., g / 20.); 
+        q = 4.318473;
+	//q = powf(2., bw/2.)/(powf(2., bw) - 1.); //q from octave bw
+
+        if (g < 0.f) {
+                // cut
+                float denom = 1. + k/(v0*q) + k*k;
+                b0[0][i] = (1. + k/q + k*k) / denom;
+                b1[0][i] = 2. * (k*k - 1.) / denom;
+                b2[0][i] = (1. - k/q + k*k) / denom;
+                a1[0][i] = b1[0][i];
+                a2[0][i] = (1. - k/(v0*q) + k*k) / denom;
+        } else {
+                // boost
+                float denom = 1. + k/q + k*k;
+                b0[0][i] = (1. + k*v0/q + k*k) / denom;
+                b1[0][i] = 2. * (k*k - 1.) / denom;
+                b2[0][i] = (1. - k*v0/q + k*k) / denom;
+                a1[0][i] = b1[0][i];
+                a2[0][i] = (1. - k/q + k*k) / denom;
+        }
+}
+
+double ZamGEQ31Plugin::run_filter(int i, int ch, double in)
+{
+        double out;
+        in = sanitize_denormal(in);
+        out = in * b0[ch][i]    + x1[ch][i] * b1[ch][i]
+                                + x2[ch][i] * b2[ch][i]
+                                - y1[ch][i] * a1[ch][i]
+                                - y2[ch][i] * a2[ch][i] + 1e-20f;
+        out = sanitize_denormal(out);
+        x2[ch][i] = sanitize_denormal(x1[ch][i]);
+        y2[ch][i] = sanitize_denormal(y1[ch][i]);
+        x1[ch][i] = in;
+        y1[ch][i] = out;
+
+        return out;
+}
+
 void ZamGEQ31Plugin::d_setProgram(uint32_t index)
 {
     if (index != 0)
@@ -604,6 +649,10 @@ void ZamGEQ31Plugin::d_setProgram(uint32_t index)
     freq[30] = 20000.;
     q = 1.4f;
     master = 0.f;
+    float srate = d_getSampleRate();
+    for (int i=0; i < MAX_FILT; ++i) {
+    	peq(i, srate, freq[i], 0., 1./3.);
+    }
 
     /* reset filter values */
     d_activate();
@@ -618,10 +667,12 @@ void ZamGEQ31Plugin::d_activate()
 	for (i = 0; i < MAX_FILT; ++i) {
 		x1[0][i] = x2[0][i] = 0.f;
 		y1[0][i] = y2[0][i] = 0.f;
-		a[0][i] = b[0][i] = g[0][i] = 0.f;
+		a1[0][i] = a2[0][i] = 0.f;
+		b0[0][i] = b1[0][i] = b2[0][i] = 0.f;
         }
 }
 
+/*
 void ZamGEQ31Plugin::geq31(int i, int ch, float srate, float fc, float q)
 {
 	double t0;
@@ -645,6 +696,7 @@ double ZamGEQ31Plugin::run_filter(int i, int ch, double in)
 
 	return out;
 }
+*/
 
 void ZamGEQ31Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
 {
@@ -652,25 +704,51 @@ void ZamGEQ31Plugin::d_run(const float** inputs, float** outputs, uint32_t frame
 	
 	int i;
 	for (i = 0; i < MAX_FILT; i++) {
-		geq31(i, 0, srate, freq[i], q);
+		peq(i, srate, freq[i], -gain[i], 1./3.);
 	}
 
         for (uint32_t i = 0; i < frames; i++) {
-                double tmp;
+                double tmp1, tmp2;
                 double in = inputs[0][i];
                 in = sanitize_denormal(in);
-		tmp = 0.;
+		tmp1 = tmp2 = 0.;
 
-                for (int j = 0; j < MAX_FILT; j++) {
-                	tmp += from_dB(-12. - gain[j]) * run_filter(j, 0, in);
-		}
+                tmp1 = run_filter(0, 0, in);
+		tmp2 = run_filter(1, 0, tmp1);
+		tmp1 = run_filter(2, 0, tmp2);
+		tmp2 = run_filter(3, 0, tmp1);
+		tmp1 = run_filter(4, 0, tmp2);
+		tmp2 = run_filter(5, 0, tmp1);
+		tmp1 = run_filter(6, 0, tmp2);
+		tmp2 = run_filter(7, 0, tmp1);
+		tmp1 = run_filter(8, 0, tmp2);
+		tmp2 = run_filter(9, 0, tmp1);
+		tmp1 = run_filter(10, 0, tmp2);
+		tmp2 = run_filter(11, 0, tmp1);
+		tmp1 = run_filter(12, 0, tmp2);
+		tmp2 = run_filter(13, 0, tmp1);
+		tmp1 = run_filter(14, 0, tmp2);
+		tmp2 = run_filter(15, 0, tmp1);
+		tmp1 = run_filter(16, 0, tmp2);
+		tmp2 = run_filter(17, 0, tmp1);
+		tmp1 = run_filter(18, 0, tmp2);
+		tmp2 = run_filter(19, 0, tmp1);
+		tmp1 = run_filter(20, 0, tmp2);
+		tmp2 = run_filter(21, 0, tmp1);
+		tmp1 = run_filter(22, 0, tmp2);
+		tmp2 = run_filter(23, 0, tmp1);
+		tmp1 = run_filter(24, 0, tmp2);
+		tmp2 = run_filter(25, 0, tmp1);
+		tmp1 = run_filter(26, 0, tmp2);
+		tmp2 = run_filter(27, 0, tmp1);
+		tmp1 = run_filter(28, 0, tmp2);
+		tmp2 = run_filter(29, 0, tmp1);
+		tmp1 = run_filter(30, 0, tmp2);
 
                 outputs[0][i] = inputs[0][i];
-                outputs[0][i] = (float) (tmp * from_dB(master));
+                outputs[0][i] = (float) (tmp1 * from_dB(master));
 	}
 }
-
-// -----------------------------------------------------------------------
 
 Plugin* createPlugin()
 {

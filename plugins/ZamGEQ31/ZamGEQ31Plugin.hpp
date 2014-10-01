@@ -139,14 +139,16 @@ protected:
     void d_activate() override;
     void d_run(const float** inputs, float** outputs, uint32_t frames) override;
 
-    void geq31(int i, int ch, float srate, float fc, float q);
+    //void geq31(int i, int ch, float srate, float fc, float q);
+    void peq(int i, float srate, float fc, float g, float bw);
     double run_filter(int i, int ch, double in);
         double x1[1][MAX_FILT], x2[1][MAX_FILT], y1[1][MAX_FILT], y2[1][MAX_FILT];
-        double a[1][MAX_FILT], b[1][MAX_FILT], g[1][MAX_FILT];
+        double a1[1][MAX_FILT], a2[1][MAX_FILT];
+	double b0[1][MAX_FILT], b1[1][MAX_FILT], b2[1][MAX_FILT];
     // -------------------------------------------------------------------
 
 private:
-    float gain[MAX_FILT], freq[MAX_FILT], master, q; //parameters
+    float gain[MAX_FILT], freq[MAX_FILT], bw[MAX_FILT], master, q; //parameters
 };
 
 // -----------------------------------------------------------------------
