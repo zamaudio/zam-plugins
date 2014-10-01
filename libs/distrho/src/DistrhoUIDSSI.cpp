@@ -97,7 +97,7 @@ public:
           fHostClosed(false),
           fOscData(oscData)
     {
-        fUI.setTitle(uiTitle);
+        fUI.setWindowTitle(uiTitle);
     }
 
     ~UIDssi()
@@ -112,7 +112,7 @@ public:
         {
             fOscData.idle();
 
-            if (! fUI.idle())
+            if (fHostClosed || ! fUI.idle())
                 break;
 
             d_msleep(30);
@@ -140,14 +140,19 @@ public:
     }
 #endif
 
+    void dssiui_samplerate(const double sampleRate)
+    {
+        fUI.setSampleRate(sampleRate, true);
+    }
+
     void dssiui_show()
     {
-        fUI.setVisible(true);
+        fUI.setWindowVisible(true);
     }
 
     void dssiui_hide()
     {
-        fUI.setVisible(false);
+        fUI.setWindowVisible(false);
     }
 
     void dssiui_quit()
@@ -190,7 +195,7 @@ protected:
 
     void setSize(const uint width, const uint height)
     {
-        fUI.setSize(width, height);
+        fUI.setWindowSize(width, height);
     }
 
 private:
@@ -322,6 +327,9 @@ int osc_sample_rate_handler(const char*, const char*, lo_arg** argv, int, lo_mes
 
     d_lastUiSampleRate = sampleRate;
 
+    if (globalUI != nullptr)
+        globalUI->dssiui_samplerate(sampleRate);
+
     return 0;
 }
 
@@ -372,6 +380,9 @@ int main(int argc, char* argv[])
         initUiIfNeeded();
         globalUI->dssiui_show();
         globalUI->exec();
+
+        delete globalUI;
+        globalUI = nullptr;
 
         return 0;
     }

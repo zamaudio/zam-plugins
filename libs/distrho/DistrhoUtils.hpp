@@ -24,7 +24,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#ifdef PROPER_CPP11_SUPPORT
+#ifdef DISTRHO_PROPER_CPP11_SUPPORT
 # include <cstdint>
 #else
 # include <stdint.h>
@@ -51,7 +51,7 @@ inline float
 // misc functions
 
 static inline
-long d_cconst(const int a, const int b, const int c, const int d) noexcept
+int64_t d_cconst(const int a, const int b, const int c, const int d) noexcept
 {
     return (a << 24) | (b << 16) | (c << 8) | (d << 0);
 }

@@ -18,22 +18,22 @@
 
 START_NAMESPACE_DISTRHO
 
-// -----------------------------------------------------------------------
-// Static data, see DistrhoPluginInternal.hpp
+/* ------------------------------------------------------------------------------------------------------------
+ * Static data, see DistrhoPluginInternal.hpp */
 
 uint32_t d_lastBufferSize = 0;
 double   d_lastSampleRate = 0.0;
 
-// -----------------------------------------------------------------------
-// Static fallback data, see DistrhoPluginInternal.hpp
+/* ------------------------------------------------------------------------------------------------------------
+ * Static fallback data, see DistrhoPluginInternal.hpp */
 
 const d_string        PluginExporter::sFallbackString;
 const ParameterRanges PluginExporter::sFallbackRanges;
 
-// -----------------------------------------------------------------------
-// Plugin
+/* ------------------------------------------------------------------------------------------------------------
+ * Plugin */
 
-Plugin::Plugin(uint32_t parameterCount, uint32_t programCount, uint32_t stateCount)
+Plugin::Plugin(const uint32_t parameterCount, const uint32_t programCount, const uint32_t stateCount)
     : pData(new PrivateData())
 {
     if (parameterCount > 0)
@@ -42,21 +42,26 @@ Plugin::Plugin(uint32_t parameterCount, uint32_t programCount, uint32_t stateCou
         pData->parameters     = new Parameter[parameterCount];
     }
 
+#if DISTRHO_PLUGIN_WANT_PROGRAMS
     if (programCount > 0)
     {
-#if DISTRHO_PLUGIN_WANT_PROGRAMS
         pData->programCount = programCount;
         pData->programNames = new d_string[programCount];
-#endif
     }
+#else
+    DISTRHO_SAFE_ASSERT(programCount == 0);
+#endif
 
+#if DISTRHO_PLUGIN_WANT_STATE
     if (stateCount > 0)
     {
-#if DISTRHO_PLUGIN_WANT_STATE
-        pData->stateCount = stateCount;
-        pData->stateKeys  = new d_string[stateCount];
-#endif
+        pData->stateCount     = stateCount;
+        pData->stateKeys      = new d_string[stateCount];
+        pData->stateDefValues = new d_string[stateCount];
     }
+#else
+    DISTRHO_SAFE_ASSERT(stateCount == 0);
+#endif
 }
 
 Plugin::~Plugin()
@@ -64,8 +69,8 @@ Plugin::~Plugin()
     delete pData;
 }
 
-// -----------------------------------------------------------------------
-// Host state
+/* ------------------------------------------------------------------------------------------------------------
+ * Host state */
 
 uint32_t Plugin::d_getBufferSize() const noexcept
 {
@@ -78,33 +83,33 @@ double Plugin::d_getSampleRate() const noexcept
 }
 
 #if DISTRHO_PLUGIN_WANT_TIMEPOS
-const TimePos& Plugin::d_getTimePos() const noexcept
+const TimePosition& Plugin::d_getTimePosition() const noexcept
 {
-    // timePos outside run() may not be valid
-    DISTRHO_SAFE_ASSERT(pData->isProcessing);
-
-    return pData->timePos;
+    return pData->timePosition;
 }
 #endif
 
 #if DISTRHO_PLUGIN_WANT_LATENCY
-void Plugin::d_setLatency(uint32_t frames) noexcept
+void Plugin::d_setLatency(const uint32_t frames) noexcept
 {
     pData->latency = frames;
 }
 #endif
 
-// -----------------------------------------------------------------------
-// Callbacks (optional)
-
-void Plugin::d_bufferSizeChanged(uint32_t)
+#if DISTRHO_PLUGIN_HAS_MIDI_OUTPUT
+bool Plugin::d_writeMidiEvent(const MidiEvent& /*midiEvent*/) noexcept
 {
+    // TODO
+    return false;
 }
+#endif
 
-void Plugin::d_sampleRateChanged(double)
-{
-}
+/* ------------------------------------------------------------------------------------------------------------
+ * Callbacks (optional) */
 
-// -----------------------------------------------------------------------
+void Plugin::d_bufferSizeChanged(uint32_t) {}
+void Plugin::d_sampleRateChanged(double)   {}
+
+// -----------------------------------------------------------------------------------------------------------
 
 END_NAMESPACE_DISTRHO

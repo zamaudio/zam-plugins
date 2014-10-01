@@ -19,21 +19,28 @@
 
 #include "../DistrhoUI.hpp"
 
-#include "../../dgl/App.hpp"
-#include "../../dgl/Window.hpp"
+#if DISTRHO_UI_USE_NTK
+# include "../../dgl/ntk/NtkApp.hpp"
+# include "../../dgl/ntk/NtkWindow.hpp"
+typedef DGL::NtkApp    App;
+typedef DGL::NtkWindow UIWindow;
+#else
+# include "../../dgl/App.hpp"
+# include "../../dgl/Window.hpp"
+typedef DGL::App    App;
+typedef DGL::Window UIWindow;
+#endif
 
-using DGL::App;
 using DGL::IdleCallback;
-using DGL::Window;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 // Static data, see DistrhoUI.cpp
 
-extern double  d_lastUiSampleRate;
-extern void*   d_lastUiDspPtr;
-extern Window* d_lastUiWindow;
+extern double    d_lastUiSampleRate;
+extern void*     d_lastUiDspPtr;
+extern UIWindow* d_lastUiWindow;
 
 // -----------------------------------------------------------------------
 // UI callbacks
@@ -130,7 +137,7 @@ struct UI::PrivateData {
 // Plugin Window, needed to take care of resize properly
 
 static inline
-UI* createUiWrapper(void* const dspPtr, Window* const window)
+UI* createUiWrapper(void* const dspPtr, UIWindow* const window)
 {
     d_lastUiDspPtr = dspPtr;
     d_lastUiWindow = window;
@@ -140,28 +147,29 @@ UI* createUiWrapper(void* const dspPtr, Window* const window)
     return ret;
 }
 
-class UIExporterWindow : public Window
+class UIExporterWindow : public UIWindow
 {
 public:
     UIExporterWindow(App& app, const intptr_t winId, void* const dspPtr)
-        : Window(app, winId),
-          fUi(createUiWrapper(dspPtr, this)),
+        : UIWindow(app, winId),
+          fUI(createUiWrapper(dspPtr, this)),
           fIsReady(false)
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr,);
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
 
+        // set window size
         setResizable(false);
-        setSize(fUi->d_getWidth(), fUi->d_getHeight());
+        setSize(fUI->getWidth(), fUI->getHeight());
     }
 
     ~UIExporterWindow()
     {
-        delete fUi;
+        delete fUI;
     }
 
     UI* getUI() const noexcept
     {
-        return fUi;
+        return fUI;
     }
 
     bool isReady() const noexcept
@@ -169,19 +177,27 @@ public:
         return fIsReady;
     }
 
-protected:
-    void onReshape(int width, int height) override
+//protected:
+#if DISTRHO_UI_USE_NTK
+    void resize(int x, int y, int width, int height) override
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr,);
+        UIWindow::resize(x, y, width, height);
+        fIsReady = true;
+    }
+#else
+    void onReshape(uint width, uint height) override
+    {
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
+
+        // custom window reshape
+        fUI->d_uiReshape(width, height);
 
         fIsReady = true;
-
-        fUi->setSize(width, height);
-        fUi->d_uiReshape(width, height);
     }
+#endif
 
 private:
-    UI* const fUi;
+    UI* const fUI;
     bool fIsReady;
 };
 
@@ -196,10 +212,11 @@ public:
                void* const dspPtr = nullptr)
         : glApp(),
           glWindow(glApp, winId, dspPtr),
-          fUi(glWindow.getUI()),
-          fData((fUi != nullptr) ? fUi->pData : nullptr)
+          fChangingSize(false),
+          fUI(glWindow.getUI()),
+          fData((fUI != nullptr) ? fUI->pData : nullptr)
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr,);
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
         DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
 
         fData->ptr = ptr;
@@ -212,25 +229,19 @@ public:
 
     // -------------------------------------------------------------------
 
-    const char* getName() const noexcept
-    {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr, "");
-
-        return fUi->d_getName();
-    }
-
     uint getWidth() const noexcept
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr, 0);
-
-        return fUi->d_getWidth();
+        return glWindow.getWidth();
     }
 
     uint getHeight() const noexcept
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr, 0);
+        return glWindow.getHeight();
+    }
 
-        return fUi->d_getHeight();
+    bool isVisible() const noexcept
+    {
+        return glWindow.isVisible();
     }
 
     // -------------------------------------------------------------------
@@ -246,28 +257,28 @@ public:
 
     void parameterChanged(const uint32_t index, const float value)
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr,);
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
 
-        fUi->d_parameterChanged(index, value);
+        fUI->d_parameterChanged(index, value);
     }
 
 #if DISTRHO_PLUGIN_WANT_PROGRAMS
     void programChanged(const uint32_t index)
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr,);
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
 
-        fUi->d_programChanged(index);
+        fUI->d_programChanged(index);
     }
 #endif
 
 #if DISTRHO_PLUGIN_WANT_STATE
     void stateChanged(const char* const key, const char* const value)
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr,);
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
         DISTRHO_SAFE_ASSERT_RETURN(key != nullptr && key[0] != '\0',);
         DISTRHO_SAFE_ASSERT_RETURN(value != nullptr,);
 
-        fUi->d_stateChanged(key, value);
+        fUI->d_stateChanged(key, value);
     }
 #endif
 
@@ -276,7 +287,7 @@ public:
     void exec(IdleCallback* const cb)
     {
         DISTRHO_SAFE_ASSERT_RETURN(cb != nullptr,);
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr,);
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
 
         glWindow.addIdleCallback(cb);
         glWindow.setVisible(true);
@@ -286,24 +297,23 @@ public:
     void exec_idle()
     {
         if (glWindow.isReady())
-            fUi->d_uiIdle();
+            fUI->d_uiIdle();
+
+        fChangingSize = false;
     }
 
     bool idle()
     {
-        DISTRHO_SAFE_ASSERT_RETURN(fUi != nullptr, false);
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr, false);
 
         glApp.idle();
 
         if (glWindow.isReady())
-            fUi->d_uiIdle();
+            fUI->d_uiIdle();
+
+        fChangingSize = false;
 
         return ! glApp.isQuiting();
-    }
-
-    bool isVisible() const noexcept
-    {
-        return glWindow.isVisible();
     }
 
     void quit()
@@ -312,26 +322,55 @@ public:
         glApp.quit();
     }
 
-    void setSize(const uint width, const uint height)
+    // -------------------------------------------------------------------
+
+    void setWindowSize(const uint width, const uint height, const bool updateUI = false)
     {
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
+
+        if (fChangingSize)
+            return;
+
+        fChangingSize = true;
+
+        if (updateUI)
+            fUI->setSize(width, height);
+
         glWindow.setSize(width, height);
     }
 
-    void setTitle(const char* const uiTitle)
+    void setWindowTitle(const char* const uiTitle)
     {
         glWindow.setTitle(uiTitle);
     }
 
-    void setTransientWinId(const intptr_t winId)
+    void setWindowTransientWinId(const intptr_t winId)
     {
         glWindow.setTransientWinId(winId);
     }
 
-    bool setVisible(const bool yesNo)
+    bool setWindowVisible(const bool yesNo)
     {
         glWindow.setVisible(yesNo);
 
         return ! glApp.isQuiting();
+    }
+
+    // -------------------------------------------------------------------
+
+    void setSampleRate(const double sampleRate, const bool doCallback = false)
+    {
+        DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
+        DISTRHO_SAFE_ASSERT(sampleRate > 0.0);
+
+        if (fData->sampleRate == sampleRate)
+            return;
+
+        fData->sampleRate = sampleRate;
+
+        if (doCallback)
+            fUI->d_sampleRateChanged(sampleRate);
     }
 
 private:
@@ -341,10 +380,13 @@ private:
     App glApp;
     UIExporterWindow glWindow;
 
+    // prevent recursion
+    bool fChangingSize;
+
     // -------------------------------------------------------------------
     // Widget and DistrhoUI data
 
-    UI* const fUi;
+    UI* const fUI;
     UI::PrivateData* const fData;
 
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UIExporter)

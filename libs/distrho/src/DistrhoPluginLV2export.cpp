@@ -22,6 +22,7 @@
 #include "lv2/instance-access.h"
 #include "lv2/midi.h"
 #include "lv2/options.h"
+#include "lv2/port-props.h"
 #include "lv2/resize-port.h"
 #include "lv2/state.h"
 #include "lv2/time.h"
@@ -29,6 +30,7 @@
 #include "lv2/units.h"
 #include "lv2/urid.h"
 #include "lv2/worker.h"
+#include "lv2/lv2_kxstudio_properties.h"
 #include "lv2/lv2_programs.h"
 
 #include <fstream>
@@ -42,8 +44,8 @@
 # define DISTRHO_PLUGIN_MINIMUM_BUFFER_SIZE 2048
 #endif
 
-#define DISTRHO_LV2_USE_EVENTS_IN  (DISTRHO_PLUGIN_IS_SYNTH || DISTRHO_PLUGIN_WANT_TIMEPOS || (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI))
-#define DISTRHO_LV2_USE_EVENTS_OUT (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI)
+#define DISTRHO_LV2_USE_EVENTS_IN  (DISTRHO_PLUGIN_HAS_MIDI_INPUT || DISTRHO_PLUGIN_WANT_TIMEPOS || (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI))
+#define DISTRHO_LV2_USE_EVENTS_OUT (DISTRHO_PLUGIN_HAS_MIDI_OUTPUT || (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI))
 
 // -----------------------------------------------------------------------
 
@@ -248,13 +250,12 @@ void lv2_generate_ttl(const char* const basename)
 # if (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI)
             pluginString += "        atom:supports <" LV2_ATOM__String "> ;\n";
 # endif
+# if DISTRHO_PLUGIN_HAS_MIDI_INPUT
+            pluginString += "        atom:supports <" LV2_MIDI__MidiEvent "> ;\n";
+# endif
 # if DISTRHO_PLUGIN_WANT_TIMEPOS
             pluginString += "        atom:supports <" LV2_TIME__Position "> ;\n";
 # endif
-# if DISTRHO_PLUGIN_IS_SYNTH
-            pluginString += "        atom:supports <" LV2_MIDI__MidiEvent "> ;\n";
-# endif
-
             pluginString += "    ] ;\n\n";
             ++portIndex;
 #endif
@@ -267,7 +268,12 @@ void lv2_generate_ttl(const char* const basename)
             pluginString += "        lv2:symbol \"lv2_events_out\" ;\n";
             pluginString += "        rsz:minimumSize " + d_string(DISTRHO_PLUGIN_MINIMUM_BUFFER_SIZE) + " ;\n";
             pluginString += "        atom:bufferType atom:Sequence ;\n";
+# if (DISTRHO_PLUGIN_WANT_STATE && DISTRHO_PLUGIN_HAS_UI)
             pluginString += "        atom:supports <" LV2_ATOM__String "> ;\n";
+# endif
+# if DISTRHO_PLUGIN_HAS_MIDI_OUTPUT
+            pluginString += "        atom:supports <" LV2_MIDI__MidiEvent "> ;\n";
+# endif
             pluginString += "    ] ;\n\n";
             ++portIndex;
 #endif
@@ -313,7 +319,7 @@ void lv2_generate_ttl(const char* const basename)
                 {
                     const ParameterRanges& ranges(plugin.getParameterRanges(i));
 
-                    if (plugin.getParameterHints(i) & PARAMETER_IS_INTEGER)
+                    if (plugin.getParameterHints(i) & kParameterIsInteger)
                     {
                         pluginString += "        lv2:default " + d_string(int(plugin.getParameterValue(i))) + " ;\n";
                         pluginString += "        lv2:minimum " + d_string(int(ranges.min)) + " ;\n";
@@ -369,14 +375,17 @@ void lv2_generate_ttl(const char* const basename)
                 {
                     const uint32_t hints(plugin.getParameterHints(i));
 
-                    if (hints & PARAMETER_IS_BOOLEAN)
+                    if (hints & kParameterIsBoolean)
                         pluginString += "        lv2:portProperty lv2:toggled ;\n";
-                    if (hints & PARAMETER_IS_INTEGER)
+                    if (hints & kParameterIsInteger)
                         pluginString += "        lv2:portProperty lv2:integer ;\n";
-                    if (hints & PARAMETER_IS_LOGARITHMIC)
-                        pluginString += "        lv2:portProperty <http://lv2plug.in/ns/ext/port-props#logarithmic> ;\n";
-                    if ((hints & PARAMETER_IS_AUTOMABLE) == 0 && ! plugin.isParameterOutput(i))
-                        pluginString += "        lv2:portProperty <http://lv2plug.in/ns/ext/port-props#expensive> ;\n";
+                    if (hints & kParameterIsLogarithmic)
+                        pluginString += "        lv2:portProperty <" LV2_PORT_PROPS__logarithmic "> ;\n";
+                    if ((hints & kParameterIsAutomable) == 0 && ! plugin.isParameterOutput(i))
+                    {
+                        pluginString += "        lv2:portProperty <" LV2_PORT_PROPS__expensive "> ,\n";
+                        pluginString += "                         <" LV2_KXSTUDIO_PROPERTIES__NonAutomable "> ;\n";
+                    }
                 }
 
                 if (i+1 == count)

@@ -21,6 +21,8 @@
 
 #include <algorithm>
 
+START_NAMESPACE_DISTRHO
+
 // -----------------------------------------------------------------------
 // The following code was based from juce-core ScopedPointer class
 // Copyright (C) 2013 Raw Material Software Ltd.
@@ -180,7 +182,7 @@ public:
     {
         // Two ScopedPointers should never be able to refer to the same object - if
         // this happens, you must have done something dodgy!
-        DISTRHO_SAFE_ASSERT_RETURN(object != other.object && this != other.getAddress(),);
+        DISTRHO_SAFE_ASSERT_RETURN(object != other.object || this == other.getAddress() || object == nullptr,);
 
         std::swap(object, other.object);
     }
@@ -239,5 +241,7 @@ bool operator!=(const ScopedPointer<ObjectType>& pointer1, ObjectType* const poi
 }
 
 // -----------------------------------------------------------------------
+
+END_NAMESPACE_DISTRHO
 
 #endif // DISTRHO_SCOPED_POINTER_HPP_INCLUDED

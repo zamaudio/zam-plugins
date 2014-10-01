@@ -49,6 +49,7 @@ struct Plugin::PrivateData {
 #if DISTRHO_PLUGIN_WANT_STATE
     uint32_t  stateCount;
     d_string* stateKeys;
+    d_string* stateDefValues;
 #endif
 
 #if DISTRHO_PLUGIN_WANT_LATENCY
@@ -56,7 +57,7 @@ struct Plugin::PrivateData {
 #endif
 
 #if DISTRHO_PLUGIN_WANT_TIMEPOS
-    TimePos timePos;
+    TimePosition timePosition;
 #endif
 
     uint32_t bufferSize;
@@ -73,6 +74,7 @@ struct Plugin::PrivateData {
 #if DISTRHO_PLUGIN_WANT_STATE
           stateCount(0),
           stateKeys(nullptr),
+          stateDefValues(nullptr),
 #endif
 #if DISTRHO_PLUGIN_WANT_LATENCY
           latency(0),
@@ -106,6 +108,12 @@ struct Plugin::PrivateData {
             delete[] stateKeys;
             stateKeys = nullptr;
         }
+
+        if (stateDefValues != nullptr)
+        {
+            delete[] stateDefValues;
+            stateDefValues = nullptr;
+        }
 #endif
     }
 };
@@ -118,7 +126,8 @@ class PluginExporter
 public:
     PluginExporter()
         : fPlugin(createPlugin()),
-          fData((fPlugin != nullptr) ? fPlugin->pData : nullptr)
+          fData((fPlugin != nullptr) ? fPlugin->pData : nullptr),
+          fIsActive(false)
     {
         DISTRHO_SAFE_ASSERT_RETURN(fPlugin != nullptr,);
         DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
@@ -133,7 +142,7 @@ public:
 
 #if DISTRHO_PLUGIN_WANT_STATE
         for (uint32_t i=0, count=fData->stateCount; i < count; ++i)
-            fPlugin->d_initStateKey(i, fData->stateKeys[i]);
+            fPlugin->d_initState(i, fData->stateKeys[i], fData->stateDefValues[i]);
 #endif
     }
 
@@ -218,7 +227,7 @@ public:
 
     bool isParameterOutput(const uint32_t index) const noexcept
     {
-        return (getParameterHints(index) & PARAMETER_IS_OUTPUT);
+        return (getParameterHints(index) & kParameterIsOutput);
     }
 
     const d_string& getParameterName(const uint32_t index) const noexcept
@@ -304,6 +313,13 @@ public:
         return fData->stateKeys[index];
     }
 
+    const d_string& getStateDefaultValue(const uint32_t index) const noexcept
+    {
+        DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr && index < fData->stateCount, sFallbackString);
+
+        return fData->stateDefValues[index];
+    }
+
     void setState(const char* const key, const char* const value)
     {
         DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
@@ -329,11 +345,11 @@ public:
 #endif
 
 #if DISTRHO_PLUGIN_WANT_TIMEPOS
-    void setTimePos(const TimePos& timePos) noexcept
+    void setTimePosition(const TimePosition& timePosition) noexcept
     {
         DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
 
-        std::memcpy(&fData->timePos, &timePos, sizeof(TimePos));
+        std::memcpy(&fData->timePosition, &timePosition, sizeof(TimePosition));
     }
 #endif
 
@@ -343,6 +359,7 @@ public:
     {
         DISTRHO_SAFE_ASSERT_RETURN(fPlugin != nullptr,);
 
+        fIsActive = true;
         fPlugin->d_activate();
     }
 
@@ -350,11 +367,13 @@ public:
     {
         DISTRHO_SAFE_ASSERT_RETURN(fPlugin != nullptr,);
 
+        fIsActive = false;
         fPlugin->d_deactivate();
     }
 
 #if DISTRHO_PLUGIN_IS_SYNTH
-    void run(const float** const inputs, float** const outputs, const uint32_t frames, const MidiEvent* const midiEvents, const uint32_t midiEventCount)
+    void run(const float** const inputs, float** const outputs, const uint32_t frames,
+             const MidiEvent* const midiEvents, const uint32_t midiEventCount)
     {
         DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
         DISTRHO_SAFE_ASSERT_RETURN(fPlugin != nullptr,);
@@ -377,7 +396,19 @@ public:
 
     // -------------------------------------------------------------------
 
-    void setBufferSize(const uint32_t bufferSize, bool doCallback = false)
+    uint32_t getBufferSize() const noexcept
+    {
+        DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr, 0);
+        return fData->bufferSize;
+    }
+
+    double getSampleRate() const noexcept
+    {
+        DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr, 0.0);
+        return fData->sampleRate;
+    }
+
+    void setBufferSize(const uint32_t bufferSize, const bool doCallback = false)
     {
         DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
         DISTRHO_SAFE_ASSERT_RETURN(fPlugin != nullptr,);
@@ -390,13 +421,13 @@ public:
 
         if (doCallback)
         {
-            fPlugin->d_deactivate();
+            if (fIsActive) fPlugin->d_deactivate();
             fPlugin->d_bufferSizeChanged(bufferSize);
-            fPlugin->d_activate();
+            if (fIsActive) fPlugin->d_activate();
         }
     }
 
-    void setSampleRate(const double sampleRate, bool doCallback = false)
+    void setSampleRate(const double sampleRate, const bool doCallback = false)
     {
         DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
         DISTRHO_SAFE_ASSERT_RETURN(fPlugin != nullptr,);
@@ -409,9 +440,9 @@ public:
 
         if (doCallback)
         {
-            fPlugin->d_deactivate();
+            if (fIsActive) fPlugin->d_deactivate();
             fPlugin->d_sampleRateChanged(sampleRate);
-            fPlugin->d_activate();
+            if (fIsActive) fPlugin->d_activate();
         }
     }
 
@@ -421,6 +452,7 @@ private:
 
     Plugin* const fPlugin;
     Plugin::PrivateData* const fData;
+    bool fIsActive;
 
     // -------------------------------------------------------------------
     // Static fallback data, see DistrhoPlugin.cpp

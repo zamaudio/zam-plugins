@@ -20,77 +20,157 @@
 #include "extra/d_leakdetector.hpp"
 #include "src/DistrhoPluginChecks.h"
 
-#include "../dgl/Widget.hpp"
-
-#if DISTRHO_UI_USE_NANOVG
+#if DISTRHO_UI_USE_NTK
+# include "../dgl/ntk/NtkWidget.hpp"
+typedef DGL::NtkWidget UIWidget;
+#elif DISTRHO_UI_USE_NANOVG
 # include "../dgl/NanoVG.hpp"
 typedef DGL::NanoWidget UIWidget;
-#else
+# else
+# include "../dgl/Widget.hpp"
 typedef DGL::Widget UIWidget;
 #endif
 
 START_NAMESPACE_DISTRHO
 
-// -----------------------------------------------------------------------
-// UI
+/* ------------------------------------------------------------------------------------------------------------
+ * DPF UI */
 
+/**
+   DPF UI class from where UI instances are created.
+
+   TODO.
+
+   must call setSize during construction,
+ */
 class UI : public UIWidget
 {
 public:
+   /**
+      UI class constructor.
+      The UI should be initialized to a default state that matches the plugin side.
+    */
     UI();
+
+   /**
+      Destructor.
+    */
     virtual ~UI();
 
-    // -------------------------------------------------------------------
-    // Host DSP State
+   /* --------------------------------------------------------------------------------------------------------
+    * Host state */
 
+   /**
+      Get the current sample rate used in plugin processing.
+      @see d_sampleRateChanged(double)
+    */
     double d_getSampleRate() const noexcept;
-    void   d_editParameter(uint32_t index, bool started);
-    void   d_setParameterValue(uint32_t index, float value);
+
+   /**
+      TODO: Document this.
+    */
+    void d_editParameter(const uint32_t index, const bool started);
+
+   /**
+      TODO: Document this.
+    */
+    void d_setParameterValue(const uint32_t index, const float value);
+
 #if DISTRHO_PLUGIN_WANT_STATE
-    void   d_setState(const char* key, const char* value);
+   /**
+      TODO: Document this.
+    */
+    void d_setState(const char* const key, const char* const value);
 #endif
+
 #if DISTRHO_PLUGIN_IS_SYNTH
-    void   d_sendNote(uint8_t channel, uint8_t note, uint8_t velocity);
+   /**
+      TODO: Document this.
+    */
+    void d_sendNote(const uint8_t channel, const uint8_t note, const uint8_t velocity);
 #endif
-
-    // -------------------------------------------------------------------
-    // Host UI State
-
-    void d_setSize(uint width, uint height);
 
 #if DISTRHO_PLUGIN_WANT_DIRECT_ACCESS
-    // -------------------------------------------------------------------
-    // Direct DSP access - DO NOT USE THIS UNLESS STRICTLY NECESSARY!!
+   /* --------------------------------------------------------------------------------------------------------
+    * Direct DSP access - DO NOT USE THIS UNLESS STRICTLY NECESSARY!! */
 
+   /**
+      TODO: Document this.
+    */
     void* d_getPluginInstancePointer() const noexcept;
 #endif
 
 protected:
-    // -------------------------------------------------------------------
-    // Basic Information
+   /* --------------------------------------------------------------------------------------------------------
+    * DSP/Plugin Callbacks */
 
-    virtual const char* d_getName()   const noexcept { return DISTRHO_PLUGIN_NAME; }
-    virtual uint        d_getWidth()  const noexcept = 0;
-    virtual uint        d_getHeight() const noexcept = 0;
-
-    // -------------------------------------------------------------------
-    // DSP Callbacks
-
+   /**
+      A parameter has changed on the plugin side.
+      This is called by the host to inform the UI about parameter changes.
+    */
     virtual void d_parameterChanged(uint32_t index, float value) = 0;
+
 #if DISTRHO_PLUGIN_WANT_PROGRAMS
+   /**
+      The current program has changed on the plugin side.
+      This is called by the host to inform the UI about program changes.
+    */
     virtual void d_programChanged(uint32_t index) = 0;
 #endif
+
 #if DISTRHO_PLUGIN_WANT_STATE
+   /**
+      A state has changed on the plugin side.
+      This is called by the host to inform the UI about state changes.
+    */
     virtual void d_stateChanged(const char* key, const char* value) = 0;
 #endif
 
-    // -------------------------------------------------------------------
-    // UI Callbacks (optional)
+   /* --------------------------------------------------------------------------------------------------------
+    * DSP/Plugin Callbacks (optional) */
 
+   /**
+      Optional callback to inform the UI about a sample rate change on the plugin side.
+      @see d_getSampleRate()
+    */
+    virtual void d_sampleRateChanged(double newSampleRate);
+
+   /* --------------------------------------------------------------------------------------------------------
+    * UI Callbacks (optional) */
+
+   /**
+      TODO: Document this.
+    */
     virtual void d_uiIdle() {}
-    virtual void d_uiReshape(int width, int height);
 
-    // -------------------------------------------------------------------
+#if ! DISTRHO_UI_USE_NTK
+   /**
+      OpenGL window reshape function, called when parent window is resized.
+      You can reimplement this function for a custom OpenGL state.
+      @see Window::onReshape(uint,uint)
+    */
+    virtual void d_uiReshape(uint width, uint height);
+#endif
+
+   /* --------------------------------------------------------------------------------------------------------
+    * UI Resize Handling, internal */
+
+#if DISTRHO_UI_USE_NTK
+   /**
+      NTK widget resize function, called when the widget is resized.
+      This is overriden here so the host knows when the UI is resized by you.
+    */
+    void resize(int x, int y, int w, int h) override;
+#else
+   /**
+      OpenGL widget resize function, called when the widget is resized.
+      This is overriden here so the host knows when the UI is resized by you.
+      @see Widget::onResize(const ResizeEvent&)
+    */
+    void onResize(const ResizeEvent& ev) override;
+#endif
+
+    // -------------------------------------------------------------------------------------------------------
 
 private:
     struct PrivateData;
@@ -99,21 +179,27 @@ private:
     friend class UIExporterWindow;
 
     // these should not be used
+    void position(int, int) noexcept {}
     void setAbsoluteX(int) const noexcept {}
     void setAbsoluteY(int) const noexcept {}
     void setAbsolutePos(int, int) const noexcept {}
-    void setAbsolutePos(const DGL::Point<int>&) const noexcept {}
     void setNeedsFullViewport(bool) const noexcept {}
+#if ! DISTRHO_UI_USE_NTK
+    void setAbsolutePos(const DGL::Point<int>&) const noexcept {}
+#endif
 
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UI)
 };
 
-// -----------------------------------------------------------------------
-// Create UI, entry point
+/* ------------------------------------------------------------------------------------------------------------
+ * Create UI, entry point */
 
+/**
+   TODO.
+ */
 extern UI* createUI();
 
-// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------
 
 END_NAMESPACE_DISTRHO
 
