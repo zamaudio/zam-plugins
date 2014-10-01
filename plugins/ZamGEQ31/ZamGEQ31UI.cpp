@@ -43,13 +43,6 @@ ZamGEQ31UI::ZamGEQ31UI()
     fKnobMaster->setDefault(0.0f);
     fKnobMaster->setCallback(this);
 
-    fKnobQ = new ImageKnob(this, knobImage);
-    fKnobQ->setAbsolutePos(382.5, 127);
-    fKnobQ->setRange(1.f, 3.f);
-    fKnobQ->setRotationAngle(240);
-    fKnobQ->setDefault(1.0f);
-    fKnobQ->setCallback(this);
-
     float i,j;
     i = 24.;
     j = 19.4;
@@ -374,9 +367,6 @@ void ZamGEQ31UI::d_parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
-    case ZamGEQ31Plugin::paramQ:
-        fKnobQ->setValue(value);
-        break;
     case ZamGEQ31Plugin::paramMaster:
     	fKnobMaster->setValue(value);
 	break;
@@ -483,7 +473,6 @@ void ZamGEQ31UI::d_programChanged(uint32_t index)
 
     // Default values
 
-    fKnobQ->setValue(1.4f);
     fKnobMaster->setValue(0.f);
     fSliderGain1->setValue(0.0f);
     fSliderGain2->setValue(0.0f);
@@ -525,24 +514,18 @@ void ZamGEQ31UI::imageKnobDragStarted(ImageKnob* knob)
 {
     if (knob == fKnobMaster)
         d_editParameter(ZamGEQ31Plugin::paramMaster, true);
-    else if (knob == fKnobQ)
-        d_editParameter(ZamGEQ31Plugin::paramQ, true);
 }
 
 void ZamGEQ31UI::imageKnobDragFinished(ImageKnob* knob)
 {
     if (knob == fKnobMaster)
         d_editParameter(ZamGEQ31Plugin::paramMaster, false);
-    else if (knob == fKnobQ)
-        d_editParameter(ZamGEQ31Plugin::paramQ, false);
 }
 
 void ZamGEQ31UI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobMaster)
         d_setParameterValue(ZamGEQ31Plugin::paramMaster, value);
-    else if (knob == fKnobQ)
-        d_setParameterValue(ZamGEQ31Plugin::paramQ, value);
 }
 
 void ZamGEQ31UI::imageSliderDragStarted(ImageSlider* slider)

@@ -35,23 +35,14 @@ void ZamGEQ31Plugin::d_initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
-    case paramQ:
-        parameter.hints      = PARAMETER_IS_AUTOMABLE;
-        parameter.name       = "Q of filters";
-        parameter.symbol     = "q";
-        parameter.unit       = " ";
-        parameter.ranges.def = 1.4f;
-        parameter.ranges.min = 1.f;
-        parameter.ranges.max = 3.f;
-        break;
     case paramMaster:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
         parameter.name       = "Master Gain";
         parameter.symbol     = "master";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -20.f;
-        parameter.ranges.max = 20.f;
+        parameter.ranges.min = -30.f;
+        parameter.ranges.max = 30.f;
         break;
     case paramGain1:
         parameter.hints      = PARAMETER_IS_AUTOMABLE;
@@ -350,9 +341,6 @@ float ZamGEQ31Plugin::d_getParameterValue(uint32_t index) const
 {
     switch (index)
     {
-    case paramQ:
-        return q;
-        break;
     case paramMaster:
         return master;
         break;
@@ -458,9 +446,6 @@ void ZamGEQ31Plugin::d_setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
-    case paramQ:
-        q = value;
-        break;
     case paramMaster:
         master = value;
         break;
@@ -560,7 +545,7 @@ void ZamGEQ31Plugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamGEQ31Plugin::peq(int i, float srate, float fc, float g, float bw)
+void ZamGEQ31Plugin::peq(int i, float srate, float fc, float g, float)
 {
         float k, v0, q;
 
@@ -647,7 +632,6 @@ void ZamGEQ31Plugin::d_setProgram(uint32_t index)
     freq[28] = 12500.;
     freq[29] = 16000.;
     freq[30] = 20000.;
-    q = 1.4f;
     master = 0.f;
     float srate = d_getSampleRate();
     for (int i=0; i < MAX_FILT; ++i) {

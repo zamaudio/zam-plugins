@@ -4689,9 +4689,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="280.1631"
-     inkscape:cy="98.489433"
+     inkscape:zoom="2"
+     inkscape:cx="295.80839"
+     inkscape:cy="74.925957"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -4700,8 +4700,8 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="983"
-     inkscape:window-height="715"
+     inkscape:window-width="1879"
+     inkscape:window-height="1027"
      inkscape:window-x="41"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -4888,7 +4888,7 @@
        x="0"
        y="897.65881"
        id="rect5419"
-       transform="matrix(0.78549605,0,0,1.180375,0,-189.28634)" />
+       transform="matrix(0.78549605,0,0,1.180375,-8.5219096e-7,-189.28634)" />
     <g
        transform="matrix(0.06133939,0,0,0.06133939,580.67334,1033.4581)"
        id="layer1-9"
@@ -5073,7 +5073,7 @@
          sodipodi:role="line">20</tspan></text>
     <g
        id="g4576"
-       transform="translate(-88,0)">
+       transform="translate(-88,100)">
       <path
          sodipodi:end="6.8187738"
          sodipodi:start="2.6132357"
@@ -7622,14 +7622,14 @@
     <text
        xml:space="preserve"
        style="font-size:23.44490623px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Amperzand;-inkscape-font-specification:Amperzand"
-       x="216.7807"
-       y="1025.0713"
+       x="282.63196"
+       y="1023.0713"
        id="text4469"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4471"
-         x="216.7807"
-         y="1025.0713">ZamGEq31</tspan></text>
+         x="282.63196"
+         y="1023.0713">ZamGEq31</tspan></text>
     <g
        id="g3782"
        transform="translate(83.59375,230.46875)">
@@ -8119,13 +8119,13 @@
        xml:space="preserve"
        style="font-size:63.93571854px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:'Nova ';-inkscape-font-specification:'Nova '"
        x="367.00269"
-       y="1020.1838"
+       y="1120.1838"
        id="text5509"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5511"
          x="367.00269"
-         y="1020.1838"
+         y="1120.1838"
          style="font-size:15.98392963px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Allstar4;-inkscape-font-specification:Allstar4">Q</tspan></text>
   </g>
 </svg>

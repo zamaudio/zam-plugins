@@ -31,8 +31,7 @@ class ZamGEQ31Plugin : public Plugin
 public:
     enum Parameters
     {
-        paramQ = 0,
-        paramMaster,
+        paramMaster = 0,
         paramGain1,
         paramGain2,
         paramGain3,
@@ -90,7 +89,7 @@ protected:
 
     uint32_t d_getVersion() const noexcept override
     {
-        return 0x1000;
+        return 0x1001;
     }
 
     long d_getUniqueId() const noexcept override
@@ -139,7 +138,6 @@ protected:
     void d_activate() override;
     void d_run(const float** inputs, float** outputs, uint32_t frames) override;
 
-    //void geq31(int i, int ch, float srate, float fc, float q);
     void peq(int i, float srate, float fc, float g, float bw);
     double run_filter(int i, int ch, double in);
         double x1[1][MAX_FILT], x2[1][MAX_FILT], y1[1][MAX_FILT], y2[1][MAX_FILT];
@@ -148,7 +146,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float gain[MAX_FILT], freq[MAX_FILT], bw[MAX_FILT], master, q; //parameters
+    float gain[MAX_FILT], freq[MAX_FILT], bw[MAX_FILT], master; //parameters
 };
 
 // -----------------------------------------------------------------------
