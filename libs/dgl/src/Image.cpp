@@ -31,7 +31,7 @@ Image::Image()
     glGenTextures(1, &fTextureId);
 }
 
-Image::Image(const char* rawData, int width, int height, GLenum format, GLenum type)
+Image::Image(const char* const rawData, const uint width, const uint height, const GLenum format, const GLenum type)
     : fRawData(rawData),
       fSize(width, height),
       fFormat(format),
@@ -42,7 +42,7 @@ Image::Image(const char* rawData, int width, int height, GLenum format, GLenum t
     glGenTextures(1, &fTextureId);
 }
 
-Image::Image(const char* rawData, const Size<int>& size, GLenum format, GLenum type)
+Image::Image(const char* const rawData, const Size<uint>& size, const GLenum format, const GLenum type)
     : fRawData(rawData),
       fSize(size),
       fFormat(format),
@@ -73,12 +73,12 @@ Image::~Image()
     }
 }
 
-void Image::loadFromMemory(const char* rawData, int width, int height, GLenum format, GLenum type) noexcept
+void Image::loadFromMemory(const char* const rawData, const uint width, const uint height, const GLenum format, const GLenum type) noexcept
 {
-    loadFromMemory(rawData, Size<int>(width, height), format, type);
+    loadFromMemory(rawData, Size<uint>(width, height), format, type);
 }
 
-void Image::loadFromMemory(const char* rawData, const Size<int>& size, GLenum format, GLenum type) noexcept
+void Image::loadFromMemory(const char* const rawData, const Size<uint>& size, const GLenum format, const GLenum type) noexcept
 {
     fRawData = rawData;
     fSize    = size;
@@ -92,17 +92,17 @@ bool Image::isValid() const noexcept
     return (fRawData != nullptr && fSize.getWidth() > 0 && fSize.getHeight() > 0);
 }
 
-int Image::getWidth() const noexcept
+uint Image::getWidth() const noexcept
 {
     return fSize.getWidth();
 }
 
-int Image::getHeight() const noexcept
+uint Image::getHeight() const noexcept
 {
     return fSize.getHeight();
 }
 
-const Size<int>& Image::getSize() const noexcept
+const Size<uint>& Image::getSize() const noexcept
 {
     return fSize;
 }
@@ -127,7 +127,7 @@ void Image::draw()
     drawAt(0, 0);
 }
 
-void Image::drawAt(int x, int y)
+void Image::drawAt(const int x, const int y)
 {
     drawAt(Point<int>(x, y));
 }
@@ -157,7 +157,7 @@ void Image::drawAt(const Point<int>& pos)
         fIsReady = true;
     }
 
-    Rectangle<int>(pos, fSize).draw();
+    Rectangle<int>(pos, fSize.getWidth(), fSize.getHeight()).draw();
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);

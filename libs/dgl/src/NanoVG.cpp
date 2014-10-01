@@ -39,19 +39,7 @@
 START_NAMESPACE_DGL
 
 // -----------------------------------------------------------------------
-// Conversions
-
-NanoVG::Color::Color() noexcept
-    : r(1.0f), g(1.0f), b(1.0f), a(1.0f) {}
-
-NanoVG::Color::Color(const NVGcolor& c) noexcept
-    : r(c.r), g(c.g), b(c.b), a(c.a) {}
-
-NanoVG::Color::operator NVGcolor() const noexcept
-{
-    NVGcolor nc = {{{ r, g, b, a }}};
-    return nc;
-}
+// Paint
 
 NanoVG::Paint::Paint() noexcept
     : radius(0.0f), feather(0.0f), innerColor(), outerColor(), imageId(0), repeat(REPEAT_NONE)
@@ -84,9 +72,13 @@ NanoVG::Paint::operator NVGpaint() const noexcept
 // -----------------------------------------------------------------------
 // NanoImage
 
-NanoImage::NanoImage(NVGcontext* context, int imageId) noexcept
+NanoImage::NanoImage(NVGcontext* const context, const int imageId) noexcept
     : fContext(context),
-      fImageId(imageId) {}
+      fImageId(imageId),
+      fSize()
+{
+    _updateSize();
+}
 
 NanoImage::~NanoImage()
 {
@@ -94,101 +86,94 @@ NanoImage::~NanoImage()
         nvgDeleteImage(fContext, fImageId);
 }
 
-Size<int> NanoImage::getSize() const
+Size<uint> NanoImage::getSize() const noexcept
+{
+    return fSize;
+}
+
+void NanoImage::updateImage(const uchar* const data)
+{
+    DISTRHO_SAFE_ASSERT_RETURN(data != nullptr,);
+
+    if (fContext != nullptr && fImageId != 0)
+    {
+        nvgUpdateImage(fContext, fImageId, data);
+        _updateSize();
+    }
+}
+
+void NanoImage::_updateSize()
 {
     int w=0, h=0;
 
     if (fContext != nullptr && fImageId != 0)
+    {
         nvgImageSize(fContext, fImageId, &w, &h);
 
-    return Size<int>(w, h);
-}
+        if (w < 0) w = 0;
+        if (h < 0) h = 0;
+    }
 
-void NanoImage::updateImage(const uchar* data)
-{
-    if (fContext != nullptr && fImageId != 0)
-        nvgUpdateImage(fContext, fImageId, data);
+    fSize.setSize(w, h);
 }
 
 // -----------------------------------------------------------------------
 // NanoVG
 
 NanoVG::NanoVG()
-    : fContext(nvgCreateGL(512, 512, NVG_ANTIALIAS))
+    : fContext(nvgCreateGL(512, 512, NVG_ANTIALIAS)),
+      fInFrame(false)
 {
     DISTRHO_SAFE_ASSERT_RETURN(fContext != nullptr,);
 }
 
-NanoVG::NanoVG(int textAtlasWidth, int textAtlasHeight)
-    : fContext(nvgCreateGL(textAtlasWidth, textAtlasHeight, NVG_ANTIALIAS))
+NanoVG::NanoVG(const int textAtlasWidth, const int textAtlasHeight)
+    : fContext(nvgCreateGL(textAtlasWidth, textAtlasHeight, NVG_ANTIALIAS)),
+      fInFrame(false)
 {
     DISTRHO_SAFE_ASSERT_RETURN(fContext != nullptr,);
 }
 
 NanoVG::~NanoVG()
 {
-    if (fContext == nullptr)
-        return;
+    DISTRHO_SAFE_ASSERT(! fInFrame);
 
-    nvgDeleteGL(fContext);
+    if (fContext != nullptr)
+        nvgDeleteGL(fContext);
 }
 
 // -----------------------------------------------------------------------
 
-void NanoVG::beginFrame(int width, int height, float scaleFactor, Alpha alpha)
+void NanoVG::beginFrame(const uint width, const uint height, const float scaleFactor, const Alpha alpha)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(scaleFactor > 0.0f,);
+    DISTRHO_SAFE_ASSERT_RETURN(! fInFrame,);
+
+    fInFrame = true;
     nvgBeginFrame(fContext, width, height, scaleFactor, static_cast<NVGalpha>(alpha));
 }
 
-void NanoVG::beginFrame(Widget* widget)
+void NanoVG::beginFrame(Widget* const widget)
 {
+    if (fContext == nullptr) return;
     DISTRHO_SAFE_ASSERT_RETURN(widget != nullptr,);
+    DISTRHO_SAFE_ASSERT_RETURN(! fInFrame,);
 
     Window& window(widget->getParentWindow());
+
+    fInFrame = true;
     nvgBeginFrame(fContext, window.getWidth(), window.getHeight(), 1.0f, NVG_PREMULTIPLIED_ALPHA);
 }
 
 void NanoVG::endFrame()
 {
-    nvgEndFrame(fContext);
-}
+    DISTRHO_SAFE_ASSERT_RETURN(fInFrame,);
 
-// -----------------------------------------------------------------------
-// Color utils
+    if (fContext != nullptr)
+        nvgEndFrame(fContext);
 
-NanoVG::Color NanoVG::RGB(uchar r, uchar g, uchar b)
-{
-    return nvgRGB(r, g, b);
-}
-
-NanoVG::Color NanoVG::RGBf(float r, float g, float b)
-{
-    return nvgRGBf(r, g, b);
-}
-
-NanoVG::Color NanoVG::RGBA(uchar r, uchar g, uchar b, uchar a)
-{
-    return nvgRGBA(r, g, b, a);
-}
-
-NanoVG::Color NanoVG::RGBAf(float r, float g, float b, float a)
-{
-    return nvgRGBAf(r, g, b, a);
-}
-
-NanoVG::Color NanoVG::lerpRGBA(const Color& c0, const Color& c1, float u)
-{
-    return nvgLerpRGBA(c0, c1, u);
-}
-
-NanoVG::Color NanoVG::HSL(float h, float s, float l)
-{
-    return nvgHSL(h, s, l);
-}
-
-NanoVG::Color NanoVG::HSLA(float h, float s, float l, uchar a)
-{
-    return nvgHSLA(h, s, l, a);
+    fInFrame = false;
 }
 
 // -----------------------------------------------------------------------
@@ -196,17 +181,20 @@ NanoVG::Color NanoVG::HSLA(float h, float s, float l, uchar a)
 
 void NanoVG::save()
 {
-    nvgSave(fContext);
+    if (fContext != nullptr)
+        nvgSave(fContext);
 }
 
 void NanoVG::restore()
 {
-    nvgRestore(fContext);
+    if (fContext != nullptr)
+        nvgRestore(fContext);
 }
 
 void NanoVG::reset()
 {
-    nvgReset(fContext);
+    if (fContext != nullptr)
+        nvgReset(fContext);
 }
 
 // -----------------------------------------------------------------------
@@ -214,42 +202,78 @@ void NanoVG::reset()
 
 void NanoVG::strokeColor(const Color& color)
 {
-    nvgStrokeColor(fContext, color);
+    if (fContext != nullptr)
+        nvgStrokeColor(fContext, color);
+}
+
+void NanoVG::strokeColor(const int red, const int green, const int blue, const int alpha)
+{
+    if (fContext != nullptr)
+        nvgStrokeColor(fContext, nvgRGBA(red, green, blue, alpha));
+}
+
+void NanoVG::strokeColor(const float red, const float green, const float blue, const float alpha)
+{
+    if (fContext != nullptr)
+        nvgStrokeColor(fContext, nvgRGBAf(red, green, blue, alpha));
 }
 
 void NanoVG::strokePaint(const Paint& paint)
 {
-    nvgStrokePaint(fContext, paint);
+    if (fContext != nullptr)
+        nvgStrokePaint(fContext, paint);
 }
 
 void NanoVG::fillColor(const Color& color)
 {
-    nvgFillColor(fContext, color);
+    if (fContext != nullptr)
+        nvgFillColor(fContext, color);
+}
+
+void NanoVG::fillColor(const int red, const int green, const int blue, const int alpha)
+{
+    if (fContext != nullptr)
+        nvgFillColor(fContext, nvgRGBA(red, green, blue, alpha));
+}
+
+void NanoVG::fillColor(const float red, const float green, const float blue, const float alpha)
+{
+    if (fContext != nullptr)
+        nvgFillColor(fContext, nvgRGBAf(red, green, blue, alpha));
 }
 
 void NanoVG::fillPaint(const Paint& paint)
 {
-    nvgFillPaint(fContext, paint);
+    if (fContext != nullptr)
+        nvgFillPaint(fContext, paint);
 }
 
 void NanoVG::miterLimit(float limit)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(limit > 0.0f,);
+
     nvgMiterLimit(fContext, limit);
 }
 
 void NanoVG::strokeWidth(float size)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(size > 0.0f,);
+
     nvgStrokeWidth(fContext, size);
 }
 
 void NanoVG::lineCap(NanoVG::LineCap cap)
 {
-    nvgLineCap(fContext, cap);
+    if (fContext != nullptr)
+        nvgLineCap(fContext, cap);
 }
 
 void NanoVG::lineJoin(NanoVG::LineCap join)
 {
-    nvgLineJoin(fContext, join);
+    if (fContext != nullptr)
+        nvgLineJoin(fContext, join);
 }
 
 // -----------------------------------------------------------------------
@@ -257,42 +281,59 @@ void NanoVG::lineJoin(NanoVG::LineCap join)
 
 void NanoVG::resetTransform()
 {
-    nvgResetTransform(fContext);
+    if (fContext != nullptr)
+        nvgResetTransform(fContext);
 }
 
 void NanoVG::transform(float a, float b, float c, float d, float e, float f)
 {
-    nvgTransform(fContext, a, b, c, d, e, f);
+    if (fContext != nullptr)
+        nvgTransform(fContext, a, b, c, d, e, f);
 }
 
 void NanoVG::translate(float x, float y)
 {
-    nvgTranslate(fContext, x, y);
+    if (fContext != nullptr)
+        nvgTranslate(fContext, x, y);
 }
 
 void NanoVG::rotate(float angle)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(angle > 0.0f,);
+
     nvgRotate(fContext, angle);
 }
 
 void NanoVG::skewX(float angle)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(angle > 0.0f,);
+
     nvgSkewX(fContext, angle);
 }
 
 void NanoVG::skewY(float angle)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(angle > 0.0f,);
+
     nvgSkewY(fContext, angle);
 }
 
 void NanoVG::scale(float x, float y)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(x > 0.0f,);
+    DISTRHO_SAFE_ASSERT_RETURN(y > 0.0f,);
+
     nvgScale(fContext, x, y);
 }
 
 void NanoVG::currentTransform(float xform[6])
 {
-    nvgCurrentTransform(fContext, xform);
+    if (fContext != nullptr)
+        nvgCurrentTransform(fContext, xform);
 }
 
 void NanoVG::transformIdentity(float dst[6])
@@ -360,46 +401,64 @@ float NanoVG::radToDeg(float rad)
 
 NanoImage* NanoVG::createImage(const char* filename)
 {
+    if (fContext == nullptr) return nullptr;
+    DISTRHO_SAFE_ASSERT_RETURN(filename != nullptr && filename[0] != '\0', nullptr);
+
     if (const int imageId = nvgCreateImage(fContext, filename))
         return new NanoImage(fContext, imageId);
+
     return nullptr;
 }
 
 NanoImage* NanoVG::createImageMem(uchar* data, int ndata)
 {
+    if (fContext == nullptr) return nullptr;
+    DISTRHO_SAFE_ASSERT_RETURN(data != nullptr, nullptr);
+    DISTRHO_SAFE_ASSERT_RETURN(ndata > 0, nullptr);
+
     if (const int imageId = nvgCreateImageMem(fContext, data, ndata))
         return new NanoImage(fContext, imageId);
+
     return nullptr;
 }
 
-NanoImage* NanoVG::createImageRGBA(int w, int h, const uchar* data)
+NanoImage* NanoVG::createImageRGBA(uint w, uint h, const uchar* data)
 {
+    if (fContext == nullptr) return nullptr;
+    DISTRHO_SAFE_ASSERT_RETURN(data != nullptr, nullptr);
+
     if (const int imageId = nvgCreateImageRGBA(fContext, w, h, data))
         return new NanoImage(fContext, imageId);
+
     return nullptr;
 }
 
 // -----------------------------------------------------------------------
 // Paints
 
-NanoVG::Paint NanoVG::linearGradient(float sx, float sy, float ex, float ey, const NanoVG::Color& icol, const NanoVG::Color& ocol)
+NanoVG::Paint NanoVG::linearGradient(float sx, float sy, float ex, float ey, const Color& icol, const Color& ocol)
 {
+    if (fContext == nullptr) return Paint();
     return nvgLinearGradient(fContext, sx, sy, ex, ey, icol, ocol);
 }
 
-NanoVG::Paint NanoVG::boxGradient(float x, float y, float w, float h, float r, float f, const NanoVG::Color& icol, const NanoVG::Color& ocol)
+NanoVG::Paint NanoVG::boxGradient(float x, float y, float w, float h, float r, float f, const Color& icol, const Color& ocol)
 {
+    if (fContext == nullptr) return Paint();
     return nvgBoxGradient(fContext, x, y, w, h, r, f, icol, ocol);
 }
 
-NanoVG::Paint NanoVG::radialGradient(float cx, float cy, float inr, float outr, const NanoVG::Color& icol, const NanoVG::Color& ocol)
+NanoVG::Paint NanoVG::radialGradient(float cx, float cy, float inr, float outr, const Color& icol, const Color& ocol)
 {
+    if (fContext == nullptr) return Paint();
     return nvgRadialGradient(fContext, cx, cy, inr, outr, icol, ocol);
 }
 
 NanoVG::Paint NanoVG::imagePattern(float ox, float oy, float ex, float ey, float angle, const NanoImage* image, NanoVG::PatternRepeat repeat)
 {
+    if (fContext == nullptr) return Paint();
     DISTRHO_SAFE_ASSERT_RETURN(image != nullptr, Paint());
+
     return nvgImagePattern(fContext, ox, oy, ex, ey, angle, image->fImageId, repeat);
 }
 
@@ -408,12 +467,14 @@ NanoVG::Paint NanoVG::imagePattern(float ox, float oy, float ex, float ey, float
 
 void NanoVG::scissor(float x, float y, float w, float h)
 {
-    nvgScissor(fContext, x, y, w, h);
+    if (fContext != nullptr)
+        nvgScissor(fContext, x, y, w, h);
 }
 
 void NanoVG::resetScissor()
 {
-    nvgResetScissor(fContext);
+    if (fContext != nullptr)
+        nvgResetScissor(fContext);
 }
 
 // -----------------------------------------------------------------------
@@ -421,72 +482,86 @@ void NanoVG::resetScissor()
 
 void NanoVG::beginPath()
 {
-    nvgBeginPath(fContext);
+    if (fContext != nullptr)
+        nvgBeginPath(fContext);
 }
 
 void NanoVG::moveTo(float x, float y)
 {
-    nvgMoveTo(fContext, x, y);
+    if (fContext != nullptr)
+        nvgMoveTo(fContext, x, y);
 }
 
 void NanoVG::lineTo(float x, float y)
 {
-    nvgLineTo(fContext, x, y);
+    if (fContext != nullptr)
+        nvgLineTo(fContext, x, y);
 }
 
 void NanoVG::bezierTo(float c1x, float c1y, float c2x, float c2y, float x, float y)
 {
-    nvgBezierTo(fContext, c1x, c1y, c2x, c2y, x, y);
+    if (fContext != nullptr)
+        nvgBezierTo(fContext, c1x, c1y, c2x, c2y, x, y);
 }
 
 void NanoVG::arcTo(float x1, float y1, float x2, float y2, float radius)
 {
-    nvgArcTo(fContext, x1, y1, x2, y2, radius);
+    if (fContext != nullptr)
+        nvgArcTo(fContext, x1, y1, x2, y2, radius);
 }
 
 void NanoVG::closePath()
 {
-    nvgClosePath(fContext);
+    if (fContext != nullptr)
+        nvgClosePath(fContext);
 }
 
 void NanoVG::pathWinding(NanoVG::Winding dir)
 {
-    nvgPathWinding(fContext, dir);
+    if (fContext != nullptr)
+        nvgPathWinding(fContext, dir);
 }
 
 void NanoVG::arc(float cx, float cy, float r, float a0, float a1, NanoVG::Winding dir)
 {
-    nvgArc(fContext, cx, cy, r, a0, a1, dir);
+    if (fContext != nullptr)
+        nvgArc(fContext, cx, cy, r, a0, a1, dir);
 }
 
 void NanoVG::rect(float x, float y, float w, float h)
 {
-    nvgRect(fContext, x, y, w, h);
+    if (fContext != nullptr)
+        nvgRect(fContext, x, y, w, h);
 }
 
 void NanoVG::roundedRect(float x, float y, float w, float h, float r)
 {
-    nvgRoundedRect(fContext, x, y, w, h, r);
+    if (fContext != nullptr)
+        nvgRoundedRect(fContext, x, y, w, h, r);
 }
 
 void NanoVG::ellipse(float cx, float cy, float rx, float ry)
 {
-    nvgEllipse(fContext, cx, cy, rx, ry);
+    if (fContext != nullptr)
+        nvgEllipse(fContext, cx, cy, rx, ry);
 }
 
 void NanoVG::circle(float cx, float cy, float r)
 {
-    nvgCircle(fContext, cx, cy, r);
+    if (fContext != nullptr)
+        nvgCircle(fContext, cx, cy, r);
 }
 
 void NanoVG::fill()
 {
-    nvgFill(fContext);
+    if (fContext != nullptr)
+        nvgFill(fContext);
 }
 
 void NanoVG::stroke()
 {
-    nvgStroke(fContext);
+    if (fContext != nullptr)
+        nvgStroke(fContext);
 }
 
 // -----------------------------------------------------------------------
@@ -494,71 +569,111 @@ void NanoVG::stroke()
 
 NanoVG::FontId NanoVG::createFont(const char* name, const char* filename)
 {
+    if (fContext == nullptr) return -1;
+    DISTRHO_SAFE_ASSERT_RETURN(name != nullptr && name[0] != '\0', -1);
+    DISTRHO_SAFE_ASSERT_RETURN(filename != nullptr && filename[0] != '\0', -1);
+
     return nvgCreateFont(fContext, name, filename);
 }
 
 NanoVG::FontId NanoVG::createFontMem(const char* name, uchar* data, int ndata, bool freeData)
 {
+    if (fContext == nullptr) return -1;
+    DISTRHO_SAFE_ASSERT_RETURN(name != nullptr && name[0] != '\0', -1);
+    DISTRHO_SAFE_ASSERT_RETURN(data != nullptr, -1);
+
     return nvgCreateFontMem(fContext, name, data, ndata, freeData);
 }
 
 NanoVG::FontId NanoVG::findFont(const char* name)
 {
+    if (fContext == nullptr) return -1;
+    DISTRHO_SAFE_ASSERT_RETURN(name != nullptr && name[0] != '\0', -1);
+
     return nvgFindFont(fContext, name);
 }
 
 void NanoVG::fontSize(float size)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(size > 0.0f,);
+
     nvgFontSize(fContext, size);
 }
 
 void NanoVG::fontBlur(float blur)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(blur >= 0.0f,);
+
     nvgFontBlur(fContext, blur);
 }
 
 void NanoVG::textLetterSpacing(float spacing)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(spacing >= 0.0f,);
+
     nvgTextLetterSpacing(fContext, spacing);
 }
 
 void NanoVG::textLineHeight(float lineHeight)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(lineHeight > 0.0f,);
+
     nvgTextLineHeight(fContext, lineHeight);
 }
 
 void NanoVG::textAlign(NanoVG::Align align)
 {
-    nvgTextAlign(fContext, align);
+    if (fContext != nullptr)
+        nvgTextAlign(fContext, align);
 }
 
 void NanoVG::textAlign(int align)
 {
-    nvgTextAlign(fContext, align);
+    if (fContext != nullptr)
+        nvgTextAlign(fContext, align);
 }
 
 void NanoVG::fontFaceId(FontId font)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(font >= 0,);
+
     nvgFontFaceId(fContext, font);
 }
 
 void NanoVG::fontFace(const char* font)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(font != nullptr && font[0] != '\0',);
+
     nvgFontFace(fContext, font);
 }
 
 float NanoVG::text(float x, float y, const char* string, const char* end)
 {
+    if (fContext == nullptr) return 0.0f;
+    DISTRHO_SAFE_ASSERT_RETURN(string != nullptr && string[0] != '\0', 0.0f);
+
     return nvgText(fContext, x, y, string, end);
 }
 
 void NanoVG::textBox(float x, float y, float breakRowWidth, const char* string, const char* end)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(string != nullptr && string[0] != '\0',);
+
     nvgTextBox(fContext, x, y, breakRowWidth, string, end);
 }
 
 float NanoVG::textBounds(float x, float y, const char* string, const char* end, Rectangle<float>& bounds)
 {
+    if (fContext == nullptr) return 0.0f;
+    DISTRHO_SAFE_ASSERT_RETURN(string != nullptr && string[0] != '\0', 0.0f);
+
     float b[4];
     const float ret = nvgTextBounds(fContext, x, y, string, end, b);
     bounds = Rectangle<float>(b[0], b[1], b[2], b[3]);
@@ -567,22 +682,31 @@ float NanoVG::textBounds(float x, float y, const char* string, const char* end, 
 
 void NanoVG::textBoxBounds(float x, float y, float breakRowWidth, const char* string, const char* end, float* bounds)
 {
+    if (fContext == nullptr) return;
+    DISTRHO_SAFE_ASSERT_RETURN(string != nullptr && string[0] != '\0',);
+
     nvgTextBoxBounds(fContext, x, y, breakRowWidth, string, end, bounds);
 }
 
 int NanoVG::textGlyphPositions(float x, float y, const char* string, const char* end, NanoVG::GlyphPosition* positions, int maxPositions)
 {
+    if (fContext == nullptr) return 0;
+    DISTRHO_SAFE_ASSERT_RETURN(string != nullptr && string[0] != '\0', 0);
+
     return nvgTextGlyphPositions(fContext, x, y, string, end, (NVGglyphPosition*)positions, maxPositions);
 }
 
 void NanoVG::textMetrics(float* ascender, float* descender, float* lineh)
 {
-    nvgTextMetrics(fContext, ascender, descender, lineh);
+    if (fContext != nullptr)
+        nvgTextMetrics(fContext, ascender, descender, lineh);
 }
 
 int NanoVG::textBreakLines(const char* string, const char* end, float breakRowWidth, NanoVG::TextRow* rows, int maxRows)
 {
-    return nvgTextBreakLines(fContext, string, end, breakRowWidth, (NVGtextRow*)rows, maxRows);
+    if (fContext != nullptr)
+        return nvgTextBreakLines(fContext, string, end, breakRowWidth, (NVGtextRow*)rows, maxRows);
+    return 0;
 }
 
 // -----------------------------------------------------------------------

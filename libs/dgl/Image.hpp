@@ -45,15 +45,15 @@ public:
 
    /**
       Constructor using raw image data.
-      @note @a rawData must remain valid for the lifetime of this Image.
+      @note: @a rawData must remain valid for the lifetime of this Image.
     */
-    Image(const char* rawData, int width, int height, GLenum format = GL_BGRA, GLenum type = GL_UNSIGNED_BYTE);
+    Image(const char* const rawData, const uint width, const uint height, const GLenum format = GL_BGRA, const GLenum type = GL_UNSIGNED_BYTE);
 
    /**
       Constructor using raw image data.
-      @note @a rawData must remain valid for the lifetime of this Image.
+      @note: @a rawData must remain valid for the lifetime of this Image.
     */
-    Image(const char* rawData, const Size<int>& size, GLenum format = GL_BGRA, GLenum type = GL_UNSIGNED_BYTE);
+    Image(const char* const rawData, const Size<uint>& size, const GLenum format = GL_BGRA, const GLenum type = GL_UNSIGNED_BYTE);
 
    /**
       Constructor using another image data.
@@ -67,15 +67,15 @@ public:
 
    /**
       Load image data from memory.
-      @note @a rawData must remain valid for the lifetime of this Image.
+      @note: @a rawData must remain valid for the lifetime of this Image.
     */
-    void loadFromMemory(const char* rawData, int width, int height, GLenum format = GL_BGRA, GLenum type = GL_UNSIGNED_BYTE) noexcept;
+    void loadFromMemory(const char* const rawData, const uint width, const uint height, const GLenum format = GL_BGRA, const GLenum type = GL_UNSIGNED_BYTE) noexcept;
 
    /**
       Load image data from memory.
-      @note @a rawData must remain valid for the lifetime of this Image.
+      @note: @a rawData must remain valid for the lifetime of this Image.
     */
-    void loadFromMemory(const char* rawData, const Size<int>& size, GLenum format = GL_BGRA, GLenum type = GL_UNSIGNED_BYTE) noexcept;
+    void loadFromMemory(const char* const rawData, const Size<uint>& size, const GLenum format = GL_BGRA, const GLenum type = GL_UNSIGNED_BYTE) noexcept;
 
    /**
       Check if this image is valid.
@@ -85,17 +85,17 @@ public:
    /**
       Get width.
     */
-    int getWidth() const noexcept;
+    uint getWidth() const noexcept;
 
    /**
       Get height.
     */
-    int getHeight() const noexcept;
+    uint getHeight() const noexcept;
 
    /**
       Get size.
     */
-    const Size<int>& getSize() const noexcept;
+    const Size<uint>& getSize() const noexcept;
 
    /**
       Get the raw image data.
@@ -120,7 +120,7 @@ public:
    /**
       Draw this image at (x, y) point.
     */
-    void drawAt(int x, int y);
+    void drawAt(const int x, const int y);
 
    /**
       Draw this image at position @a pos.
@@ -133,7 +133,7 @@ public:
 
 private:
     const char* fRawData;
-    Size<int> fSize;
+    Size<uint> fSize;
     GLenum fFormat;
     GLenum fType;
     GLuint fTextureId;

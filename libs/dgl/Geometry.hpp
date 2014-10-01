@@ -42,7 +42,7 @@ public:
     Point() noexcept;
 
    /**
-      Constructor using custom x and y values.
+      Constructor using custom X and Y values.
     */
     Point(const T& x, const T& y) noexcept;
 
@@ -91,6 +91,13 @@ public:
     */
     void moveBy(const Point<T>& pos) noexcept;
 
+   /**
+      Return true if point is (0, 0).
+    */
+    bool isZero() const noexcept;
+
+    Point<T> operator+(const Point<T>& pos) noexcept;
+    Point<T> operator-(const Point<T>& pos) noexcept;
     Point<T>& operator=(const Point<T>& pos) noexcept;
     Point<T>& operator+=(const Point<T>& pos) noexcept;
     Point<T>& operator-=(const Point<T>& pos) noexcept;
@@ -167,6 +174,18 @@ public:
     */
     void shrinkBy(const T& divider) noexcept;
 
+   /**
+      Return true if size is null (0x0).
+    */
+    bool isNull() const noexcept;
+
+   /**
+      Return true if size is not null (0x0).
+    */
+    bool isNotNull() const noexcept;
+
+    Size<T> operator+(const Size<T>& size) noexcept;
+    Size<T> operator-(const Size<T>& size) noexcept;
     Size<T>& operator=(const Size<T>& size) noexcept;
     Size<T>& operator+=(const Size<T>& size) noexcept;
     Size<T>& operator-=(const Size<T>& size) noexcept;
@@ -325,12 +344,12 @@ public:
    /**
       Constructor using custom X, Y and size values.
     */
-    Circle(const T& x, const T& y, float size, int numSegments = 300);
+    Circle(const T& x, const T& y, const float size, const uint numSegments = 300);
 
    /**
       Constructor using custom position and size values.
     */
-    Circle(const Point<T>& pos, float size, int numSegments = 300);
+    Circle(const Point<T>& pos, const float size, const uint numSegments = 300);
 
    /**
       Constructor using another Circle class values.
@@ -379,20 +398,20 @@ public:
 
    /**
       Set size.
-      @note Must always be > 0.0f
+      @note Must always be > 0
     */
-    void setSize(float size) noexcept;
+    void setSize(const float size) noexcept;
 
    /**
       Get the current number of line segments that make this circle.
     */
-    int getNumSegments() const noexcept;
+    uint getNumSegments() const noexcept;
 
    /**
       Set the number of line segments that will make this circle.
       @note Must always be >= 3
     */
-    void setNumSegments(int num);
+    void setNumSegments(const uint num);
 
    /**
       Draw this circle using the current OpenGL state.
@@ -411,7 +430,7 @@ public:
 private:
     Point<T> fPos;
     float    fSize;
-    int      fNumSegments;
+    uint     fNumSegments;
 
     // cached values
     float fTheta, fCos, fSin;
@@ -592,6 +611,16 @@ public:
       Shrink size by @a divider.
     */
     void shrinkBy(const T& divider) noexcept;
+
+   /**
+      Set rectangle using @a pos and @a size.
+    */
+    void setRectangle(const Point<T>& pos, const Size<T>& size) noexcept;
+
+   /**
+      Set rectangle.
+    */
+    void setRectangle(const Rectangle<T>& rect) noexcept;
 
    /**
       Check if this rectangle contains the point defined by @a X and @a Y.
