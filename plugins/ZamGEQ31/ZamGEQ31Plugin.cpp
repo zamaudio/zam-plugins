@@ -688,7 +688,7 @@ void ZamGEQ31Plugin::d_run(const float** inputs, float** outputs, uint32_t frame
 	
 	int i;
 	for (i = 0; i < MAX_FILT; i++) {
-		peq(i, srate, freq[i], -gain[i], 1./3.);
+		peq(i, srate, freq[i], gain[i], 1./3.);
 	}
 
         for (uint32_t i = 0; i < frames; i++) {
