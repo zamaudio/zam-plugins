@@ -157,18 +157,18 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Crossover freq 1";
         parameter.symbol     = "xover1";
         parameter.unit       = "Hz";
-        parameter.ranges.def = 500.0f;
+        parameter.ranges.def = 160.0f;
         parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 20000.0f;
+        parameter.ranges.max = 1400.0f;
         break;
     case paramXover2:
         parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Crossover freq 2";
         parameter.symbol     = "xover2";
         parameter.unit       = "Hz";
-        parameter.ranges.def = 3000.0f;
-        parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 20000.0f;
+        parameter.ranges.def = 1400.0f;
+        parameter.ranges.min = 1400.0f;
+        parameter.ranges.max = 14000.0f;
         break;
     case paramToggle1:
         parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
@@ -471,8 +471,8 @@ void ZaMultiCompX2Plugin::d_setProgram(uint32_t index)
     gainr[0] = 0.0f;
     gainr[1] = 0.0f;
     gainr[2] = 0.0f;
-    xover1 = 500.0f;
-    xover2 = 3000.0f;
+    xover1 = 160.0f;
+    xover2 = 1400.0f;
     toggle[0] = 0.0f;
     toggle[1] = 0.0f;
     toggle[2] = 0.0f;

@@ -139,7 +139,7 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Crossover freq 1";
         parameter.symbol     = "xover1";
         parameter.unit       = "Hz";
-        parameter.ranges.def = 250.0f;
+        parameter.ranges.def = 160.0f;
         parameter.ranges.min = 20.0f;
         parameter.ranges.max = 1400.0f;
         break;
@@ -409,7 +409,7 @@ void ZaMultiCompPlugin::d_setProgram(uint32_t index)
     gainr[0] = 0.0f;
     gainr[1] = 0.0f;
     gainr[2] = 0.0f;
-    xover1 = 250.0f;
+    xover1 = 160.0f;
     xover2 = 1400.0f;
     toggle[0] = 0.0f;
     toggle[1] = 0.0f;

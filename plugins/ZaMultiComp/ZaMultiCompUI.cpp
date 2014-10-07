@@ -109,7 +109,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover1->setRange(20.0f, 1400.0f);
     fKnobXover1->setStep(1.0f);
     fKnobXover1->setUsingLogScale(true);
-    fKnobXover1->setDefault(250.0f);
+    fKnobXover1->setDefault(160.0f);
     fKnobXover1->setRotationAngle(240);
     fKnobXover1->setCallback(this);
 
@@ -272,6 +272,7 @@ void ZaMultiCompUI::d_programChanged(uint32_t index)
         return;
 
     // Default values
+/*
     fKnobAttack->setValue(10.0f);
     fKnobRelease->setValue(80.0f);
     fKnobThresh->setValue(0.0f);
@@ -281,14 +282,15 @@ void ZaMultiCompUI::d_programChanged(uint32_t index)
     fKnobMakeup1->setValue(0.0f);
     fKnobMakeup2->setValue(0.0f);
     fKnobMakeup3->setValue(0.0f);
-    fKnobXover1->setValue(250.0f);
+    fKnobXover1->setValue(160.0f);
     fKnobXover2->setValue(1400.0f);
-    fToggleBypass1->setValue(1.0f);
-    fToggleBypass2->setValue(1.0f);
-    fToggleBypass3->setValue(1.0f);
-    fToggleListen1->setValue(1.0f);
-    fToggleListen2->setValue(1.0f);
-    fToggleListen3->setValue(1.0f);
+*/
+    fToggleBypass1->setValue(0.0f);
+    fToggleBypass2->setValue(0.0f);
+    fToggleBypass3->setValue(0.0f);
+    fToggleListen1->setValue(0.0f);
+    fToggleListen2->setValue(0.0f);
+    fToggleListen3->setValue(0.0f);
 }
 
 // -----------------------------------------------------------------------

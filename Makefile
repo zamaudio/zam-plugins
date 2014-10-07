@@ -1,10 +1,11 @@
 PREFIX ?= /usr/local
 LIBDIR ?= lib
+BINDIR ?= bin
 
 NAME    = zam-plugins
 VERSION = $(shell cat .version)
 
-PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZaMultiCompX2 ZamTube ZamEQ2 ZamAutoSat ZamNoise ZamGEQ31
+PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZaMultiCompX2 ZamTube ZamEQ2 ZamAutoSat ZamGEQ31
 
 all: libs $(PLUGINS) gen
 
@@ -22,18 +23,23 @@ $(PLUGINS): libs
 
 install: all
 	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa \
-		$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2 ; \
+		$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2 \
+		$(DESTDIR)$(PREFIX)/$(LIBDIR)/vst ; \
 	for plugin in $(PLUGINS); do \
 		install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
 		install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 \
 			bin/"$$plugin".lv2/* ; \
+		install -t $(DESTDIR)$(PREFIX)/$(BINDIR) bin/"$$plugin" ; \
 	done; \
 	install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa bin/*-ladspa.so
+	install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst bin/*-vst.so
 
 uninstall:
 	for plugin in $(PLUGINS); do \
 		rm -rf $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
-		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa.so ;
+		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa.so ; \
+		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst/"$$plugin"-vst.so ; \
+		rm -f $(DESTDIR)$(PREFIX)/$(BINDIR)/"$$plugin" ; \
 	done
 
 
