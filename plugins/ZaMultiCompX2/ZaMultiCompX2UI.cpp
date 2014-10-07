@@ -308,6 +308,12 @@ void ZaMultiCompX2UI::d_parameterChanged(uint32_t index, float value)
         fKnobGlobalGain->setValue(value);
         fMaster = value;
         break;
+    case ZaMultiCompX2Plugin::paramXover1:
+        fKnobXover1->setValue(value);
+        break;
+    case ZaMultiCompX2Plugin::paramXover2:
+        fKnobXover2->setValue(value);
+        break;
     case ZaMultiCompX2Plugin::paramGainR1:
         if (fLedRedValue1 != value)
         {

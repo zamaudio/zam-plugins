@@ -215,6 +215,12 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
             repaint();
         }
         break;
+    case ZaMultiCompPlugin::paramXover1:
+        fKnobXover1->setValue(value);
+        break;
+    case ZaMultiCompPlugin::paramXover2:
+        fKnobXover2->setValue(value);
+        break;
     case ZaMultiCompPlugin::paramGainR2:
         if (fLedRedValue2 != value)
         {
