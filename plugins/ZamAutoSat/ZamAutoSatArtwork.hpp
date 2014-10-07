@@ -6,9 +6,9 @@
 namespace ZamAutoSatArtwork
 {
     extern const char* zamautosatData;
-    const unsigned int zamautosatDataSize = 91962;
-    const unsigned int zamautosatWidth    = 234;
-    const unsigned int zamautosatHeight   = 131;
+    const unsigned int zamautosatDataSize = 59148;
+    const unsigned int zamautosatWidth    = 212;
+    const unsigned int zamautosatHeight   = 93;
 }
 
 #endif // BINARY_ZAMAUTOSATARTWORK_HPP

@@ -36,8 +36,8 @@ namespace ZamEQ2Artwork
     const unsigned int togglesliderHeight   = 13;
 
     extern const char* zameq2Data;
-    const unsigned int zameq2DataSize = 426600;
-    const unsigned int zameq2Width    = 632;
+    const unsigned int zameq2DataSize = 427275;
+    const unsigned int zameq2Width    = 633;
     const unsigned int zameq2Height   = 225;
 }
 

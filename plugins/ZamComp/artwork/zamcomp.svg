@@ -17,7 +17,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="zamcomp.svg"
-   inkscape:export-filename="/home/damien/git/audio/zam-plugins-DPF/plugins/ZamComp/artwork/zamcomp.png"
+   inkscape:export-filename="/home/damien/git/audio/zam-plugins/plugins/ZamComp/artwork/zamcomp.png"
    inkscape:export-xdpi="84.32"
    inkscape:export-ydpi="84.32">
   <defs
@@ -70,7 +70,7 @@
     <linearGradient
        id="linearGradient5440">
       <stop
-         style="stop-color:#5a5a5a;stop-opacity:0.54782611;"
+         style="stop-color:#5a5a5a;stop-opacity:1;"
          offset="0"
          id="stop5442" />
       <stop
@@ -80,7 +80,7 @@
       <stop
          id="stop5454"
          offset="1"
-         style="stop-color:#646464;stop-opacity:0.54782611;" />
+         style="stop-color:#646464;stop-opacity:1;" />
     </linearGradient>
     <pattern
        inkscape:collect="always"
@@ -157,15 +157,6 @@
          id="rect2985"
          style="fill:url(#pattern5417);fill-opacity:1;fill-rule:evenodd;stroke:none" />
     </pattern>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5440"
-       id="linearGradient5448"
-       x1="0"
-       y1="975.00922"
-       x2="853.93701"
-       y2="975.00922"
-       gradientUnits="userSpaceOnUse" />
     <filter
        inkscape:collect="always"
        id="filter5470"
@@ -4634,8 +4625,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.90509669"
-     inkscape:cx="725.82861"
-     inkscape:cy="-136.22578"
+     inkscape:cx="728.03832"
+     inkscape:cy="40.550913"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -4657,7 +4648,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -4680,7 +4671,7 @@
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
        sodipodi:type="arc" />
     <rect
-       style="fill:url(#linearGradient5448);fill-opacity:1;stroke:none;filter:url(#filter5470)"
+       style="fill:#8c8c8c;fill-opacity:1;stroke:none;filter:url(#filter5470)"
        width="853.93701"
        height="154.70079"
        x="0"

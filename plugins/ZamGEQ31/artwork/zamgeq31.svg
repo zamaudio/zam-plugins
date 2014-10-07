@@ -4651,15 +4651,6 @@
        fx="1140.9673"
        fy="1004.3799"
        r="128.79445" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5440"
-       id="linearGradient7667"
-       gradientUnits="userSpaceOnUse"
-       x1="0"
-       y1="975.00922"
-       x2="853.93701"
-       y2="975.00922" />
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4827"
@@ -4690,7 +4681,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2"
-     inkscape:cx="295.80839"
+     inkscape:cx="296.80839"
      inkscape:cy="74.925957"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -4715,7 +4706,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -4882,7 +4873,7 @@
          y="1085.1747"
          style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Allstar4;-inkscape-font-specification:Allstar4" /></text>
     <rect
-       style="fill:url(#linearGradient7667);fill-opacity:1;stroke:none;filter:url(#filter5470)"
+       style="fill:#8c8c8c;fill-opacity:1;stroke:none;filter:url(#filter5470)"
        width="853.93701"
        height="154.70079"
        x="0"

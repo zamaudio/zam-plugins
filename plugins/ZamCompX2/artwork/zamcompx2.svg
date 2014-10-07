@@ -17,7 +17,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="zamcompx2.svg"
-   inkscape:export-filename="/home/damien/git/audio/zam-plugins-DPF/plugins/ZamCompX2/artwork/zamcompx2.png"
+   inkscape:export-filename="/home/damien/git/audio/zam-plugins/plugins/ZamCompX2/artwork/zamcompx2.png"
    inkscape:export-xdpi="84.32"
    inkscape:export-ydpi="84.32">
   <defs
@@ -172,15 +172,6 @@
          id="rect2985"
          style="fill:url(#pattern5417);fill-opacity:1;fill-rule:evenodd;stroke:none" />
     </pattern>
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient5440"
-       id="linearGradient5448"
-       x1="0"
-       y1="975.00922"
-       x2="853.93701"
-       y2="975.00922"
-       gradientUnits="userSpaceOnUse" />
     <filter
        inkscape:collect="always"
        id="filter5470"
@@ -4645,7 +4636,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.28"
-     inkscape:cx="585.96542"
+     inkscape:cx="587.52792"
      inkscape:cy="71.860493"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -4668,7 +4659,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -4691,7 +4682,7 @@
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
        sodipodi:type="arc" />
     <rect
-       style="fill:url(#linearGradient5448);fill-opacity:1;stroke:none;filter:url(#filter5470)"
+       style="fill:#8c8c8c;fill-opacity:1;stroke:none;filter:url(#filter5470)"
        width="853.93701"
        height="154.70079"
        x="0"
@@ -6639,7 +6630,7 @@
        id="g3739">
       <path
          transform="matrix(0.30977154,0,0,0.38209111,572.70003,1058.8653)"
-         d="m 579.99997,81.843651 a 7.1428571,7.1428571 0 1 1 -14.28571,0 7.1428571,7.1428571 0 1 1 14.28571,0 z"
+         d="m 579.99997,81.843651 c 0,3.944891 -3.19796,7.142857 -7.14285,7.142857 -3.94489,0 -7.14286,-3.197966 -7.14286,-7.142857 0,-3.944891 3.19797,-7.142857 7.14286,-7.142857 3.94489,0 7.14285,3.197966 7.14285,7.142857 z"
          sodipodi:ry="7.1428571"
          sodipodi:rx="7.1428571"
          sodipodi:cy="81.843651"
@@ -6655,7 +6646,7 @@
          sodipodi:cy="81.843651"
          sodipodi:rx="7.1428571"
          sodipodi:ry="7.1428571"
-         d="m 579.99997,81.843651 a 7.1428571,7.1428571 0 1 1 -14.28571,0 7.1428571,7.1428571 0 1 1 14.28571,0 z"
+         d="m 579.99997,81.843651 c 0,3.944891 -3.19796,7.142857 -7.14285,7.142857 -3.94489,0 -7.14286,-3.197966 -7.14286,-7.142857 0,-3.944891 3.19797,-7.142857 7.14286,-7.142857 3.94489,0 7.14285,3.197966 7.14285,7.142857 z"
          transform="matrix(0.30977154,0,0,0.34901686,572.70003,1078.3129)" />
       <rect
          y="1089.2603"

@@ -39,7 +39,7 @@ ZamGEQ31UI::ZamGEQ31UI()
 
     // master knob
     fKnobMaster = new ImageKnob(this, knobImage);
-    fKnobMaster->setAbsolutePos(107, 126);
+    fKnobMaster->setAbsolutePos(103, 122);
     fKnobMaster->setRange(-20.f, 20.f);
     fKnobMaster->setRotationAngle(240);
     fKnobMaster->setDefault(0.0f);
@@ -47,9 +47,9 @@ ZamGEQ31UI::ZamGEQ31UI()
 
     float i,j;
     i = 24.;
-    j = 19.4;
-    Point<int> masterPosStart(i,20);
-    Point<int> masterPosEnd(i,97);
+    j = 18.8;
+    Point<int> masterPosStart(i,18);
+    Point<int> masterPosEnd(i,95);
 
     fSliderGain1 = new ImageSlider(this, sliderImage);
     fSliderGain1->setStartPos(masterPosStart);
