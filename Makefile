@@ -33,7 +33,7 @@ install: all
 uninstall:
 	for plugin in $(PLUGINS); do \
 		rm -rf $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
-		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa.so ;
+		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa.so ; \
 	done
 
 
