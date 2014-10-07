@@ -26,5 +26,5 @@ Installation:
 Package Maintainers:
 ====================
 
-	git checkout 3.3
+	git checkout 3.4
 	make dist
