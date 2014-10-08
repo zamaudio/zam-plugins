@@ -24,7 +24,7 @@
 #ifndef DSSI_INCLUDED
 #define DSSI_INCLUDED
 
-#include "../ladspa/ladspa.h"
+#include <ladspa.h>
 #include "seq_event-compat.h"
 
 #define DSSI_VERSION "1.0"

@@ -23,7 +23,7 @@
 #ifdef DISTRHO_PLUGIN_TARGET_DSSI
 # include "dssi/dssi.h"
 #else
-# include "ladspa/ladspa.h"
+# include <ladspa.h>
 # if DISTRHO_PLUGIN_HAS_MIDI_INPUT
 #  error Cannot use MIDI with LADSPA
 # endif
