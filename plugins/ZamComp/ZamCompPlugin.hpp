@@ -111,7 +111,7 @@ protected:
 
 private:
     float attack,release,knee,ratio,thresdb,makeup,gainr,outlevel; //parameters
-    float old_yl, old_y1;
+    float old_yl, old_y1, old_yg;
 };
 
 // -----------------------------------------------------------------------

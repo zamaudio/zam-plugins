@@ -209,7 +209,7 @@ void ZamCompPlugin::d_activate()
 {
     gainr = 0.0f;
     outlevel = -45.f;
-    old_yl = old_y1 = 0.0f;
+    old_yl = old_y1 = old_yg = 0.0f;
 }
 
 void ZamCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
@@ -219,7 +219,8 @@ void ZamCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames
         float cdb=0.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
-
+	int slew;
+	float slewfactor = 20.f*knee;
         float gain = 1.f;
         float xg, xl, yg, yl, y1;
         uint32_t i;
@@ -227,25 +228,37 @@ void ZamCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames
 
         for (i = 0; i < frames; i++) {
                 yg=0.f;
+		slew = 0;
                 xg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
                 xg = sanitize_denormal(xg);
 
+		yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
+                yg = sanitize_denormal(yg);
 
                 if (2.f*(xg-thresdb)<-width) {
-                        yg = xg;
-                } else if (2.f*fabs(xg-thresdb)<=width) {
-                        yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
+                        // before the knee
+			yg = xg;
+                } else if (2.f*fabs(xg-thresdb)<=width && yg >= old_yg) {
+                        // inside the knee from below
+			// NOOP
+			slew = 1;
+                } else if (2.f*fabs(xg-thresdb)<=width && yg < old_yg) {
+                        // inside the knee dropping off
+			yg = thresdb + (xg-thresdb)/ratio;
+                	yg = sanitize_denormal(yg);
                 } else if (2.f*(xg-thresdb)>width) {
+			// after the knee
                         yg = thresdb + (xg-thresdb)/ratio;
+                	yg = sanitize_denormal(yg);
                 }
-                yg = sanitize_denormal(yg);
 
                 xl = xg - yg;
                 old_y1 = sanitize_denormal(old_y1);
                 old_yl = sanitize_denormal(old_yl);
 
                 y1 = fmaxf(xl, release_coeff * old_y1+(1.f-release_coeff)*xl);
-                yl = attack_coeff * old_yl+(1.f-attack_coeff)*y1;
+                attack_coeff = slew ? exp(-1000.f/(attack*slewfactor * srate)) : attack_coeff;
+		yl = attack_coeff * old_yl+(1.f-attack_coeff)*y1;
                 y1 = sanitize_denormal(y1);
                 yl = sanitize_denormal(yl);
 
@@ -261,6 +274,7 @@ void ZamCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames
 
                 old_yl = yl;
                 old_y1 = y1;
+		old_yg = yg;
         }
 	outlevel = (max == 0.f) ? -45.f : to_dB(max);
     }
