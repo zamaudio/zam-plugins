@@ -220,7 +220,7 @@ void ZamCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
 	int slew;
-	float slewfactor = 20.f*knee;
+	float slewfactor = 1.f + knee/2.f;
         float gain = 1.f;
         float xg, xl, yg, yl, y1;
         uint32_t i;
