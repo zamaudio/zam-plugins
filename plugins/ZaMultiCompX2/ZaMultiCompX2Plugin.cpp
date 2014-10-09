@@ -50,7 +50,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
         parameter.ranges.def = 80.0f;
-        parameter.ranges.min = 1.0f;
+        parameter.ranges.min = 50.0f;
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
@@ -60,7 +60,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 9.0f;
+        parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
         parameter.hints      = kParameterIsAutomable;
@@ -510,7 +510,7 @@ void ZaMultiCompX2Plugin::d_activate()
         int i,j;
         for (i = 0; i < MAX_COMP; i++)
         	for (j = 0; j < 2; j++)
-                	old_yl[j][i]=old_y1[j][i]=0.f;
+                	old_yl[j][i]=old_y1[j][i]=old_yg[j][i]=0.f;
 
         for (i = 0; i < MAX_FILT; i++) {
         	for (j = 0; j < 2; j++) {
@@ -578,6 +578,7 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         float release_coeff = exp(-1000.f/(release * srate));
 	int stereolink = (stereodet > 0.5f) ? STEREOLINK_MAX : STEREOLINK_AVERAGE;
 
+        float slewfactor = 1.f + knee/2.f;
         float cdb=0.f;
         float Lgain = 1.f;
         float Rgain = 1.f;
@@ -594,26 +595,36 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         Lxg = sanitize_denormal(Lxg);
         Rxg = sanitize_denormal(Rxg);
 
+        Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb[k]+width/2.f)*(Lxg-thresdb[k]+width/2.f)/(2.f*width);
+        Lyg = sanitize_denormal(Lyg);
+        Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb[k]+width/2.f)*(Rxg-thresdb[k]+width/2.f)/(2.f*width);
+        Ryg = sanitize_denormal(Ryg);
 
         if (2.f*(Lxg-thresdb[k])<-width) {
                 Lyg = Lxg;
-        } else if (2.f*fabs(Lxg-thresdb[k])<=width) {
-                Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb[k]+width/2.f)*(Lxg-thresdb[k]+width/2.f)/(2.f*width);
+        } else if (2.f*fabs(Lxg-thresdb[k])<=width && Lyg >= old_yg[0][k]) {
+	        attack_coeff = exp(-1000.f/(attack*slewfactor * srate));
+        } else if (2.f*fabs(Lxg-thresdb[k])<=width && Lyg < old_yg[0][k]) {
+                Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio;
+                Lyg = sanitize_denormal(Lyg);
         } else if (2.f*(Lxg-thresdb[k])>width) {
                 Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio;
+                Lyg = sanitize_denormal(Lyg);
         }
 
-        Lyg = sanitize_denormal(Lyg);
 
         if (2.f*(Rxg-thresdb[k])<-width) {
                 Ryg = Rxg;
-        } else if (2.f*fabs(Rxg-thresdb[k])<=width) {
-                Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb[k]+width/2.f)*(Rxg-thresdb[k]+width/2.f)/(2.f*width);
+        } else if (2.f*fabs(Rxg-thresdb[k])<=width && Ryg >= old_yg[1][k]) {
+	        attack_coeff = exp(-1000.f/(attack*slewfactor * srate));
+        } else if (2.f*fabs(Rxg-thresdb[k])<=width && Ryg < old_yg[1][k]) {
+                Ryg = thresdb[k] + (Rxg-thresdb[k])/ratio;
+        	Ryg = sanitize_denormal(Ryg);
         } else if (2.f*(Rxg-thresdb[k])>width) {
                 Ryg = thresdb[k] + (Rxg-thresdb[k])/ratio;
+        	Ryg = sanitize_denormal(Ryg);
         }
 
-        Ryg = sanitize_denormal(Ryg);
 
         if (stereolink == STEREOLINK_MAX) {
                 Lxl = Rxl = fmaxf(Lxg - Lyg, Rxg - Ryg);
@@ -657,6 +668,8 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         old_yl[1][k] = Ryl;
         old_y1[0][k] = Ly1;
         old_y1[1][k] = Ry1;
+        old_yg[0][k] = Lyg;
+        old_yg[1][k] = Ryg;
 }
 
 void ZaMultiCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)

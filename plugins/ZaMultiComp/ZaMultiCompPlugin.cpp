@@ -50,7 +50,7 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
         parameter.ranges.def = 80.0f;
-        parameter.ranges.min = 1.0f;
+        parameter.ranges.min = 50.0f;
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
@@ -60,7 +60,7 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 9.0f;
+        parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
         parameter.hints      = kParameterIsAutomable;
@@ -433,7 +433,7 @@ void ZaMultiCompPlugin::d_activate()
 {
         int i;
         for (i = 0; i < MAX_COMP; i++) {
-                old_yl[i]=old_y1[i]=0.f;
+                old_yl[i]=old_y1[i]=old_yg[i]=0.f;
         }
 
         for (i = 0; i < MAX_FILT; i++) {
@@ -495,10 +495,10 @@ float ZaMultiCompPlugin::run_comp(int k, float in)
 {
 	float srate = d_getSampleRate();
         float width=(knee-0.99f)*6.f;
-        float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
-
-        float cdb=0.f;
+        float attack_coeff;
+	float slewfactor = 1.f + knee/2.f;
+        float cdb = 0.f;
         float gain = 1.f;
         float xg, xl, yg, yl, y1;
         float out;
@@ -508,17 +508,25 @@ float ZaMultiCompPlugin::run_comp(int k, float in)
         xg = (in==0.f) ? -160.f : to_dB(fabs(in));
 	xg = sanitize_denormal(xg);
 
-        if (2.f*(xg-thresdb)<-width) {
+        yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
+        yg = sanitize_denormal(yg);
+        
+	if (2.f*(xg-thresdb)<-width) {
                 yg = xg;
-        } else if (2.f*fabs(xg-thresdb)<=width) {
-                yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
+                attack_coeff = exp(-1000.f/(attack * srate));
+        } else if (2.f*fabs(xg-thresdb)<=width && yg >= old_yg[k]) {
+                attack_coeff = exp(-1000.f/(attack*slewfactor * srate));
+        } else if (2.f*fabs(xg-thresdb)<=width && yg < old_yg[k]) {
+                yg = thresdb + (xg-thresdb)/ratio;
+                yg = sanitize_denormal(yg);
+                attack_coeff = exp(-1000.f/(attack * srate));
         } else if (2.f*(xg-thresdb)>width) {
                 yg = thresdb + (xg-thresdb)/ratio;
+                yg = sanitize_denormal(yg);
+                attack_coeff = exp(-1000.f/(attack * srate));
         }
 
-        yg = sanitize_denormal(yg);
-
-        xl = xg - yg;
+	xl = xg - yg;
         old_y1[k] = sanitize_denormal(old_y1[k]);
         old_yl[k] = sanitize_denormal(old_yl[k]);
 
@@ -536,7 +544,8 @@ float ZaMultiCompPlugin::run_comp(int k, float in)
 
         old_yl[k] = yl;
         old_y1[k] = y1;
-        return sanitize_denormal(out);
+        old_yg[k] = yg;
+	return sanitize_denormal(out);
 }
 
 void ZaMultiCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
