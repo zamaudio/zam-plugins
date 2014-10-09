@@ -92,7 +92,7 @@ protected:
         return 0x1001;
     }
 
-    long d_getUniqueId() const noexcept override
+    int64_t d_getUniqueId() const noexcept override
     {
         return d_cconst('Z', 'G', '3', '1');
     }

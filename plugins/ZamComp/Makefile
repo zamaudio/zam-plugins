@@ -30,7 +30,7 @@ include ../Makefile.mk
 ifeq ($(LINUX),true)
 all: jack ladspa dssi lv2_sep vst
 else
-all: ladspa dssi lv2_sep vst
+all: ladspa vst
 endif
 
 # --------------------------------------------------------------
