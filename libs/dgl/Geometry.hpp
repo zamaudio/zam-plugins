@@ -18,6 +18,7 @@
 #define DGL_GEOMETRY_HPP_INCLUDED
 
 #include "Base.hpp"
+#include <cmath>
 
 START_NAMESPACE_DGL
 
