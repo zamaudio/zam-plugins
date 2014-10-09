@@ -50,7 +50,7 @@ void ZamCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
         parameter.ranges.def = 80.0f;
-        parameter.ranges.min = 1.0f;
+        parameter.ranges.min = 50.0f;
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
@@ -60,7 +60,7 @@ void ZamCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 9.0f;
+        parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
         parameter.hints      = kParameterIsAutomable;
@@ -225,7 +225,7 @@ void ZamCompX2Plugin::d_activate()
 {
     gainred = 0.0f;
     outlevel = -45.0f;
-    oldL_yl = oldL_y1 = oldR_yl = oldR_y1 = 0.f;
+    oldL_yl = oldL_y1 = oldR_yl = oldR_y1 = oldL_yg = oldR_yg = 0.f;
 }
 
 void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
@@ -237,6 +237,8 @@ void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t fram
         float release_coeff = exp(-1000.f/(release * srate));
 	int stereo = (stereolink > 1.f) ? STEREOLINK_MAX : (stereolink > 0.f) ? STEREOLINK_AVERAGE : STEREOLINK_UNCOUPLED;
 
+        int slew;
+        float slewfactor = 1.f + knee/2.f;
 	float max = 0.f;
         float Lgain = 1.f;
         float Rgain = 1.f;
@@ -245,32 +247,41 @@ void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t fram
         uint32_t i;
 
         for (i = 0; i < frames; i++) {
-                Lyg = Ryg = 0.f;
+                slew = 0;
+		Lyg = Ryg = 0.f;
                 Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
                 Rxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
                 Lxg = sanitize_denormal(Lxg);
                 Rxg = sanitize_denormal(Rxg);
 
+                Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
+                Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb+width/2.f)*(Rxg-thresdb+width/2.f)/(2.f*width);
 
                 if (2.f*(Lxg-thresdb)<-width) {
                         Lyg = Lxg;
-                } else if (2.f*fabs(Lxg-thresdb)<=width) {
-                        Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
+                } else if (2.f*fabs(Lxg-thresdb)<=width && Lyg >= oldL_yg) {
+		        slew = 1;
+                } else if (2.f*fabs(Lxg-thresdb)<=width && Lyg < oldL_yg) {
+		        Lyg = thresdb + (Lxg-thresdb)/ratio;
+			Lyg = sanitize_denormal(Lyg);
                 } else if (2.f*(Lxg-thresdb)>width) {
                         Lyg = thresdb + (Lxg-thresdb)/ratio;
+                        Lyg = sanitize_denormal(Lyg);
                 }
-
-                Lyg = sanitize_denormal(Lyg);
 
                 if (2.f*(Rxg-thresdb)<-width) {
                         Ryg = Rxg;
-                } else if (2.f*fabs(Rxg-thresdb)<=width) {
-                        Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb+width/2.f)*(Rxg-thresdb+width/2.f)/(2.f*width);
+                } else if (2.f*fabs(Rxg-thresdb)<=width && Ryg >= oldR_yg) {
+		        slew = 1;
+                } else if (2.f*fabs(Rxg-thresdb)<=width && Ryg < oldR_yg) {
+                        Ryg = thresdb + (Rxg-thresdb)/ratio;
+                        Ryg = sanitize_denormal(Ryg);
                 } else if (2.f*(Rxg-thresdb)>width) {
                         Ryg = thresdb + (Rxg-thresdb)/ratio;
+                        Ryg = sanitize_denormal(Ryg);
                 }
 
-                Ryg = sanitize_denormal(Ryg);
+                attack_coeff = slew ? exp(-1000.f/(attack*slewfactor * srate)) : attack_coeff;
 
                 if (stereo == STEREOLINK_UNCOUPLED) {
                         Lxl = Lxg - Lyg;
@@ -286,7 +297,7 @@ void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t fram
                 oldL_yl = sanitize_denormal(oldL_yl);
                 oldR_yl = sanitize_denormal(oldR_yl);
                 Ly1 = fmaxf(Lxl, release_coeff * oldL_y1+(1.f-release_coeff)*Lxl);
-                Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Ly1;
+		Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Ly1;
                 Ly1 = sanitize_denormal(Ly1);
                 Lyl = sanitize_denormal(Lyl);
 
@@ -315,6 +326,8 @@ void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t fram
                 oldR_yl = Ryl;
                 oldL_y1 = Ly1;
                 oldR_y1 = Ry1;
+                oldL_yg = Lyg;
+                oldR_yg = Ryg;
         }
 	outlevel = (max == 0.f) ? -45.f : to_dB(max);
     }

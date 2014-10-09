@@ -116,7 +116,7 @@ protected:
 
 private:
     float attack,release,knee,ratio,thresdb,makeup,gainred,stereolink,outlevel; //parameters
-    float oldL_yl, oldL_y1, oldR_yl, oldR_y1;
+    float oldL_yl, oldL_y1, oldR_yl, oldR_y1, oldL_yg, oldR_yg;
 };
 
 // -----------------------------------------------------------------------
