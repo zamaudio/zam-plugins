@@ -375,6 +375,7 @@ puglCreateWindow(PuglView* view, const char* title)
 	if (view->parent) {
 		NSView* pview = (NSView*)view->parent;
 		[pview addSubview:impl->glview];
+		[impl->glview setHidden:NO];
 		return 0;
 	}
 
