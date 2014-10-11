@@ -295,7 +295,15 @@ public:
                 parameterValues[i] = 0.0f;
             }
         }
-#endif
+# if DISTRHO_OS_MAC
+#  ifdef __LP64__
+        fUsingNsView = true;
+#  else
+#  warning 32bit VST UIs on OSX only work if the host supports "hasCockosViewAsConfig"
+        fUsingNsView = false;
+#  endif
+# endif // DISTRHO_OS_MAC
+#endif // DISTRHO_PLUGIN_HAS_UI
 
 #if DISTRHO_PLUGIN_WANT_STATE
         fStateChunk = nullptr;
@@ -407,16 +415,20 @@ public:
         case effEditOpen:
             if (fVstUI == nullptr)
             {
-# if DISTRHO_OS_MAC && ! defined(__LP64__)
-                if ((fEffect->dispatcher(fEffect, effCanDo, 0, 0, (void*)"hasCockosViewAsConfig", 0.0f) & 0xffff0000) != 0xbeef0000)
+# if DISTRHO_OS_MAC
+                if (! fUsingNsView)
+                {
+                    d_stderr("Host doesn't support hasCockosViewAsConfig, cannot use UI");
                     return 0;
+                }
 # endif
                 d_lastUiSampleRate = fPlugin.getSampleRate();
 
+                d_stdout("effEditOpen with ptr = %p", ptr);
                 fVstUI = new UIVst(fAudioMaster, fEffect, this, &fPlugin, (intptr_t)ptr);
 
 # if DISTRHO_PLUGIN_WANT_STATE
-                for (StringMap::const_iterator cit=fStateMap.cbegin(), cite=fStateMap.cend(); cit != cite; ++cit)
+                for (StringMap::const_iterator cit=fStateMap.begin(), cite=fStateMap.end(); cit != cite; ++cit)
                 {
                     const d_string& key   = cit->first;
                     const d_string& value = cit->second;
@@ -469,7 +481,7 @@ public:
             {
                 d_string chunkStr;
 
-                for (StringMap::const_iterator cit=fStateMap.cbegin(), cite=fStateMap.cend(); cit != cite; ++cit)
+                for (StringMap::const_iterator cit=fStateMap.begin(), cite=fStateMap.end(); cit != cite; ++cit)
                 {
                     const d_string& key   = cit->first;
                     const d_string& value = cit->second;
@@ -568,27 +580,36 @@ public:
             }
             break;
 
+#if DISTRHO_PLUGIN_HAS_MIDI_INPUT || DISTRHO_PLUGIN_HAS_MIDI_OUTPUT || DISTRHO_PLUGIN_WANT_TIMEPOS || DISTRHO_OS_MAC
         case effCanDo:
             if (const char* const canDo = (const char*)ptr)
             {
-#if DISTRHO_PLUGIN_HAS_MIDI_INPUT
+# if DISTRHO_OS_MAC
+                if (std::strcmp(canDo, "hasCockosViewAsConfig") == 0)
+                {
+                    fUsingNsView = true;
+                    return 0xbeef0000;
+                }
+# endif
+# if DISTRHO_PLUGIN_HAS_MIDI_INPUT
                 if (std::strcmp(canDo, "receiveVstEvents") == 0)
                     return 1;
                 if (std::strcmp(canDo, "receiveVstMidiEvent") == 0)
                     return 1;
-#endif
-#if DISTRHO_PLUGIN_HAS_MIDI_OUTPUT
+# endif
+# if DISTRHO_PLUGIN_HAS_MIDI_OUTPUT
                 if (std::strcmp(canDo, "sendVstEvents") == 0)
                     return 1;
                 if (std::strcmp(canDo, "sendVstMidiEvent") == 0)
                     return 1;
-#endif
-#if DISTRHO_PLUGIN_WANT_TIMEPOS
+# endif
+# if DISTRHO_PLUGIN_WANT_TIMEPOS
                 if (std::strcmp(canDo, "receiveVstTimeInfo") == 0)
                     return 1;
-#endif
+# endif
             }
             break;
+#endif
 
         //case effStartProcess:
         //case effStopProcess:
@@ -710,6 +731,9 @@ private:
 #if DISTRHO_PLUGIN_HAS_UI
     UIVst* fVstUI;
     ERect  fVstRect;
+# if DISTRHO_OS_MAC
+    bool fUsingNsView;
+# endif
 #endif
 
 #if DISTRHO_PLUGIN_WANT_STATE
@@ -759,13 +783,22 @@ private:
 
 // -----------------------------------------------------------------------
 
+struct VstObject {
+    audioMasterCallback audioMaster;
+    PluginVst* plugin;
+};
+
 #ifdef VESTIGE_HEADER
-# define handlePtr   ((PluginVst*)effect->ptr2)
-# define validEffect effect != nullptr && effect->ptr2 != nullptr
+# define validObject  effect != nullptr && effect->ptr3 != nullptr
+# define validPlugin  effect != nullptr && effect->ptr3 != nullptr && ((VstObject*)effect->ptr3)->plugin != nullptr
+# define vstObjectPtr (VstObject*)effect->ptr3
 #else
-# define handlePtr   ((PluginVst*)effect->resvd2)
-# define validEffect effect != nullptr && effect->resvd2 != 0
+# define validObject  effect != nullptr && effect->object != nullptr
+# define validPlugin  effect != nullptr && effect->object != nullptr && ((VstObject*)effect->object)->plugin != nullptr
+# define vstObjectPtr (VstObject*)effect->object
 #endif
+
+#define pluginPtr     (vstObjectPtr)->plugin
 
 static intptr_t vst_dispatcherCallback(AEffect* effect, int32_t opcode, int32_t index, intptr_t value, void* ptr, float opt)
 {
@@ -796,15 +829,16 @@ static intptr_t vst_dispatcherCallback(AEffect* effect, int32_t opcode, int32_t 
     switch (opcode)
     {
     case effOpen:
-#ifdef VESTIGE_HEADER
-        if (effect != nullptr && effect->ptr3 != nullptr)
+        if (VstObject* const obj = vstObjectPtr)
         {
-            audioMasterCallback audioMaster = (audioMasterCallback)effect->ptr3;
-#else
-        if (effect != nullptr && effect->object != nullptr)
-        {
-            audioMasterCallback audioMaster = (audioMasterCallback)effect->object;
-#endif
+            // this must always be valid
+            DISTRHO_SAFE_ASSERT_RETURN(obj->audioMaster != nullptr, 0);
+
+            // some hosts call effOpen twice
+            DISTRHO_SAFE_ASSERT_RETURN(obj->plugin == nullptr, 1);
+
+            audioMasterCallback audioMaster = (audioMasterCallback)obj->audioMaster;
+
             d_lastBufferSize = audioMaster(effect, audioMasterGetBlockSize, 0, 0, nullptr, 0.0f);
             d_lastSampleRate = audioMaster(effect, audioMasterGetSampleRate, 0, 0, nullptr, 0.0f);
 
@@ -814,31 +848,35 @@ static intptr_t vst_dispatcherCallback(AEffect* effect, int32_t opcode, int32_t 
             if (d_lastSampleRate <= 0.0)
                 d_lastSampleRate = 44100.0;
 
-            PluginVst* const plugin(new PluginVst(audioMaster, effect));
-#ifdef VESTIGE_HEADER
-            effect->ptr2 = plugin;
-#else
-            effect->resvd2 = (intptr_t)plugin;
-#endif
+            obj->plugin = new PluginVst(audioMaster, effect);
             return 1;
         }
         return 0;
 
     case effClose:
-        if (validEffect)
+        if (VstObject* const obj = vstObjectPtr)
         {
-#ifdef VESTIGE_HEADER
-            delete (PluginVst*)effect->ptr2;
-            effect->ptr2 = nullptr;
+            if (obj->plugin != nullptr)
+            {
+                delete obj->plugin;
+                obj->plugin = nullptr;
+            }
+
+#if 0
+            /* This code invalidates the object created in VSTPluginMain
+             * Probably not safe against all hosts */
+            obj->audioMaster = nullptr;
+# ifdef VESTIGE_HEADER
             effect->ptr3 = nullptr;
-#else
-            delete (PluginVst*)effect->resvd2;
-            effect->resvd2 = 0;
-            effect->object = nullptr;
+# else
+            vstObjectPtr = nullptr;
+# endif
+            delete obj;
 #endif
-            delete effect;
+
             return 1;
         }
+        //delete effect;
         return 0;
 
     case effGetParamLabel:
@@ -896,45 +934,48 @@ static intptr_t vst_dispatcherCallback(AEffect* effect, int32_t opcode, int32_t 
     };
 
     // handle advanced opcodes
-    if (validEffect)
-        return handlePtr->vst_dispatcher(opcode, index, value, ptr, opt);
+    if (validPlugin)
+        return pluginPtr->vst_dispatcher(opcode, index, value, ptr, opt);
 
     return 0;
 }
 
 static float vst_getParameterCallback(AEffect* effect, int32_t index)
 {
-    if (validEffect)
-        return handlePtr->vst_getParameter(index);
+    if (validPlugin)
+        return pluginPtr->vst_getParameter(index);
     return 0.0f;
 }
 
 static void vst_setParameterCallback(AEffect* effect, int32_t index, float value)
 {
-    if (validEffect)
-        handlePtr->vst_setParameter(index, value);
+    if (validPlugin)
+        pluginPtr->vst_setParameter(index, value);
 }
 
 static void vst_processCallback(AEffect* effect, float** inputs, float** outputs, int32_t sampleFrames)
 {
-    if (validEffect)
-        handlePtr->vst_processReplacing(const_cast<const float**>(inputs), outputs, sampleFrames);
+    if (validPlugin)
+        pluginPtr->vst_processReplacing(const_cast<const float**>(inputs), outputs, sampleFrames);
 }
 
 static void vst_processReplacingCallback(AEffect* effect, float** inputs, float** outputs, int32_t sampleFrames)
 {
-    if (validEffect)
-        handlePtr->vst_processReplacing(const_cast<const float**>(inputs), outputs, sampleFrames);
+    if (validPlugin)
+        pluginPtr->vst_processReplacing(const_cast<const float**>(inputs), outputs, sampleFrames);
 }
 
-#undef handlePtr
+#undef pluginPtr
+#undef validObject
+#undef validPlugin
+#undef vstObjectPtr
 
 // -----------------------------------------------------------------------
 
 END_NAMESPACE_DISTRHO
 
 DISTRHO_PLUGIN_EXPORT
-#if DISTRHO_OS_WINDOWS
+#if DISTRHO_OS_WINDOWS || DISTRHO_OS_MAC
 const AEffect* VSTPluginMain(audioMasterCallback audioMaster);
 #else
 const AEffect* VSTPluginMain(audioMasterCallback audioMaster) asm ("main");
@@ -969,11 +1010,18 @@ const AEffect* VSTPluginMain(audioMasterCallback audioMaster)
 
     // VST doesn't support parameter outputs, hide them
     int numParams = 0;
+    bool outputsReached = false;
 
     for (uint32_t i=0, count=plugin->getParameterCount(); i < count; ++i)
     {
         if (! plugin->isParameterOutput(i))
+        {
+            // parameter outputs must be all at the end
+            DISTRHO_SAFE_ASSERT_BREAK(! outputsReached);
             ++numParams;
+            continue;
+        }
+        outputsReached = true;
     }
 
     // plugin fields
@@ -1002,10 +1050,13 @@ const AEffect* VSTPluginMain(audioMasterCallback audioMaster)
     effect->processReplacing = vst_processReplacingCallback;
 
     // pointers
+    VstObject* const obj(new VstObject());
+    obj->audioMaster = audioMaster;
+    obj->plugin      = nullptr;
 #ifdef VESTIGE_HEADER
-    effect->ptr3   = (void*)audioMaster;
+    effect->ptr3   = obj;
 #else
-    effect->object = (void*)audioMaster;
+    effect->object = obj;
 #endif
 
     return effect;
