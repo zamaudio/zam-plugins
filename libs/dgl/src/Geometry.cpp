@@ -16,6 +16,8 @@
 
 #include "../Geometry.hpp"
 
+#include <cmath>
+
 START_NAMESPACE_DGL
 
 static const float M_2PIf = 3.14159265358979323846f*2.0f;
@@ -627,7 +629,7 @@ void Circle<T>::_draw(const bool isOutline)
 
     glBegin(isOutline ? GL_LINE_LOOP : GL_POLYGON);
 
-    for (int i=0; i<fNumSegments; ++i)
+    for (uint i=0; i<fNumSegments; ++i)
     {
         glVertex2f(x + fPos.fX, y + fPos.fY);
 

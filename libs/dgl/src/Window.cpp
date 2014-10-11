@@ -77,7 +77,8 @@ struct Window::PrivateData {
           xWindow(0),
 #elif defined(DISTRHO_OS_MAC)
           fNeedsIdle(true),
-          xWindow(nullptr),
+          mView(nullptr),
+          mWindow(nullptr),
 #endif
           leakDetector_PrivateData()
     {
@@ -103,7 +104,8 @@ struct Window::PrivateData {
           xWindow(0),
 #elif defined(DISTRHO_OS_MAC)
           fNeedsIdle(false),
-          xWindow(nullptr),
+          mView(nullptr),
+          mWindow(nullptr),
 #endif
           leakDetector_PrivateData()
     {
@@ -135,7 +137,8 @@ struct Window::PrivateData {
           xWindow(0),
 #elif defined(DISTRHO_OS_MAC)
           fNeedsIdle(false),
-          xWindow(nullptr),
+          mView(nullptr),
+          mWindow(nullptr),
 #endif
           leakDetector_PrivateData()
     {
@@ -188,8 +191,14 @@ struct Window::PrivateData {
         hwnd = impl->hwnd;
         DISTRHO_SAFE_ASSERT(hwnd != 0);
 #elif defined(DISTRHO_OS_MAC)
-        xWindow = impl->window;
-        DISTRHO_SAFE_ASSERT(xWindow != nullptr);
+        mView   = impl->glview;
+        mWindow = impl->window;
+        DISTRHO_SAFE_ASSERT(mView != nullptr);
+        if (fUsingEmbed) {
+            DISTRHO_SAFE_ASSERT(mWindow == nullptr);
+        } else {
+            DISTRHO_SAFE_ASSERT(mWindow != nullptr);
+        }
 #elif defined(DISTRHO_OS_LINUX)
         xDisplay = impl->display;
         xWindow  = impl->win;
@@ -236,7 +245,8 @@ struct Window::PrivateData {
 #if defined(DISTRHO_OS_WINDOWS)
         hwnd = 0;
 #elif defined(DISTRHO_OS_MAC)
-        xWindow = nullptr;
+        mView   = nullptr;
+        mWindow = nullptr;
 #elif defined(DISTRHO_OS_LINUX)
         xDisplay = nullptr;
         xWindow  = 0;
@@ -337,9 +347,12 @@ struct Window::PrivateData {
         SetActiveWindow(hwnd);
         SetFocus(hwnd);
 #elif defined(DISTRHO_OS_MAC)
-        // TODO
-        //[NSApp activateIgnoringOtherApps:YES];
-        //[xWindow makeKeyAndOrderFront:xWindow];
+        if (mWindow != nullptr)
+        {
+            // TODO
+            //[NSApp activateIgnoringOtherApps:YES];
+            //[mWindow makeKeyAndOrderFront:mWindow];
+        }
 #elif defined(DISTRHO_OS_LINUX)
         XRaiseWindow(xDisplay, xWindow);
         XSetInputFocus(xDisplay, xWindow, RevertToPointerRoot, CurrentTime);
@@ -378,9 +391,19 @@ struct Window::PrivateData {
         UpdateWindow(hwnd);
 #elif defined(DISTRHO_OS_MAC)
         if (yesNo)
-            [xWindow setIsVisible:YES];
+        {
+            if (mWindow != nullptr)
+                [mWindow setIsVisible:YES];
+            else
+                [mView setHidden:NO];
+        }
         else
-            [xWindow setIsVisible:NO];
+        {
+            if (mWindow != nullptr)
+                [mWindow setIsVisible:NO];
+            else
+                [mView setHidden:YES];
+        }
 #elif defined(DISTRHO_OS_LINUX)
         if (yesNo)
             XMapRaised(xDisplay, xWindow);
@@ -421,6 +444,12 @@ struct Window::PrivateData {
 
         fResizable = yesNo;
 
+#ifdef CARLA_OS_MAC
+        // FIXME?
+        const uint flags(yesNo ? (NSViewWidthSizable|NSViewHeightSizable) : 0x0);
+        [mView setAutoresizingMask:flags];
+#endif
+
         setSize(fWidth, fHeight, true);
     }
 
@@ -459,18 +488,12 @@ struct Window::PrivateData {
         if (! forced)
             UpdateWindow(hwnd);
 #elif defined(DISTRHO_OS_MAC)
-        [xWindow setContentSize:NSMakeSize(width, height)];
-# if 0
-        NSRect frame      = [xWindow frame];
-        frame.origin.y   -= height - frame.size.height;
-        frame.size.width  = width;
-        frame.size.height = height+20;
+        [mView setFrame:NSMakeRect(0, 0, width, height)];
 
-        //if (forced)
-        //    [xWindow setFrame:frame];
-        //else
-        [xWindow setFrame:frame display:YES animate:NO];
-# endif
+        if (mWindow != nullptr)
+        {
+            [mWindow setContentSize:NSMakeSize(width, height)];
+        }
 #elif defined(DISTRHO_OS_LINUX)
         XResizeWindow(xDisplay, xWindow, width, height);
 
@@ -506,12 +529,15 @@ struct Window::PrivateData {
 #if defined(DISTRHO_OS_WINDOWS)
         SetWindowTextA(hwnd, title);
 #elif defined(DISTRHO_OS_MAC)
-        NSString* titleString = [[NSString alloc]
-                                  initWithBytes:title
-                                        length:strlen(title)
-                                      encoding:NSUTF8StringEncoding];
+        if (mWindow != nullptr)
+        {
+            NSString* titleString = [[NSString alloc]
+                                      initWithBytes:title
+                                             length:strlen(title)
+                                          encoding:NSUTF8StringEncoding];
 
-        [xWindow setTitle:titleString];
+            [mWindow setTitle:titleString];
+        }
 #elif defined(DISTRHO_OS_LINUX)
         XStoreName(xDisplay, xWindow, title);
 #endif
@@ -815,8 +841,9 @@ struct Window::PrivateData {
     Display* xDisplay;
     ::Window xWindow;
 #elif defined(DISTRHO_OS_MAC)
-    bool     fNeedsIdle;
-    id       xWindow;
+    bool            fNeedsIdle;
+    PuglOpenGLView* mView;
+    id              mWindow;
 #endif
 
     // -------------------------------------------------------------------
