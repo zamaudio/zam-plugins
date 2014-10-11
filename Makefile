@@ -14,6 +14,9 @@ libs: FORCE
 
 gen: plugins libs/lv2_ttl_generator
 	@./libs/generate-ttl.sh
+ifeq ($(MACOS),true)
+	@./libs/generate-vst-bundles.sh
+endif
 
 libs/lv2_ttl_generator:
 	$(MAKE) -C libs/lv2-ttl-generator
