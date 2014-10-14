@@ -27,7 +27,8 @@ $(PLUGINS): libs
 install: all
 	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa \
 		$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2 \
-		$(DESTDIR)$(PREFIX)/$(LIBDIR)/vst ; \
+		$(DESTDIR)$(PREFIX)/$(LIBDIR)/vst \
+		$(DESTDIR)$(PREFIX)/$(BINDIR) ; \
 	for plugin in $(PLUGINS); do \
 		install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
 		install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 \
