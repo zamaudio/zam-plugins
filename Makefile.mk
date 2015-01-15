@@ -27,6 +27,7 @@ ifneq ($(NOOPT),true)
 BASE_OPTS  += -mtune=generic -msse -msse2 -mfpmath=sse
 endif
 LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,-O1 -Wl,--as-needed -Wl,--gc-sections -Wl,--strip-all 
+LINK_OPTS += $(shell pkg-config --libs fftw3f)
 
 ifeq ($(MACOS),true)
 # MacOS linker flags
