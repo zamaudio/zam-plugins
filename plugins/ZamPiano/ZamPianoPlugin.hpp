@@ -113,8 +113,8 @@ protected:
     double q0(int n);
     double p(int n);
     double alpha(int n);
-    double a(int n);
-    double w(int n);
+    double a(int i, int n);
+    double w(int i, int n);
     double mu(int n);
     double c(int n);
     double mhammer(int n);
@@ -136,7 +136,8 @@ protected:
 	} note_t;
 	note_t note[128];
 
-	double ff0[128], ff1[128], integrala[128], integralb[128], timepos[128];
+	double ff0[2000], ff1[2000], integrala[2000], 
+		integralb[2000], timepos[2000];
 private:
     float gain;
 };
