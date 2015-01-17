@@ -131,7 +131,7 @@ void ZamPianoPlugin::d_activate()
 		oldbuf[0][i] = oldbuf[1][i] = 0.;
 	}
 
-	dumpvals();
+	//dumpvals();
 }
 
 double ZamPianoPlugin::q0(int n)
@@ -223,7 +223,7 @@ void ZamPianoPlugin::e(int n, double vhammer, int *state, float *out, uint32_t f
 	double sr = d_getSampleRate();
 	double t0 = 0.008; //1000  0.8ms contact time
 	//int N = t0 * frames;
-	double dt = 10./sr;
+	double dt = 1.;
 	double t;
 	uint32_t i;
 	vhammer *= 1000.;
@@ -235,10 +235,10 @@ void ZamPianoPlugin::e(int n, double vhammer, int *state, float *out, uint32_t f
 	if (*state == STRIKE) *state = ATTACK;
 	
 	for (i = 0; i < frames; i++) {
-		if (timepos[n] >= t0*frames) {
+		if (timepos[n] >= t0*sr) {
 			*state = SUSTAIN;
 		}
-		if (timepos[n] > 0.1*frames) {
+		if (timepos[n] > sr) {
 			*state = SILENT;
 			timepos[n] = 0;
 			integrala[n] = 0.;
@@ -248,27 +248,26 @@ void ZamPianoPlugin::e(int n, double vhammer, int *state, float *out, uint32_t f
 		if (*state == ATTACK) {
 			double ii = i / (double) (frames + 1.);
 			ff1[n] = fk1(ff0[n], dt, timepos[n], n);
-			integrala[n] += ff1[n]*a(i, n) * cos(w(i, ii) * timepos[n]);
-			integralb[n] -= ff1[n]*a(i, n) * sin(w(i, ii) * timepos[n]);
+			integrala[n] += ff1[n]*a(i, n) * cos(w(i, ii) * timepos[n]*sr)*dt;
+			integralb[n] -= ff1[n]*a(i, n) * sin(w(i, ii) * timepos[n]*sr)*dt;
 	
 			ff0[n] = ff1[n];
 			timepos[n] += dt;
-			printf("%f, %f, %f\n", integrala[n], integralb[n], ff0[n]);
-			fftvars.cmplex[0][i] = ( 2.*mstring(n)
+			//printf("%f, %f, %f\n", integrala[n], integralb[n], ff0[n]);
+			fftvars.cmplex[0][i] += ( 2.*mstring(n)
 				* w(i, ii)*w(i, ii)
 				/ (mhammer(n)*vhammer*vhammer)
-				* (integrala[n]*integrala[n]) );
-			fftvars.cmplex[1][i] = ( 2.*mstring(n)
+				* (integrala[n]*integrala[n])+integralb[n]*integralb[n] );
+			fftvars.cmplex[1][i] += ( 2.*mstring(n)
 				* w(i, ii)*w(i, ii)
 				/ (mhammer(n)*vhammer*vhammer)
-				* (integralb[n]*integralb[n]) );
+				* (integrala[n]*integrala[n])+integralb[n]*integralb[n] );
 			//printf("%f %f\n", fftvars.cmplex[0][i], fftvars.cmplex[1][i]);
+		} else if (*state == SILENT) {
+			fftvars.cmplex[0][i] = 0.;
+			fftvars.cmplex[1][i] = 0.;
 		} else {
-			timepos[n] += frames;
-			for (i = 0; i < frames; i++) {
-				fftvars.cmplex[0][i] = 0.2;//oldbuf[0][i]*0.2; 
-				fftvars.cmplex[1][i] = 0.2;//oldbuf[1][i]*0.2;
-			}
+			timepos[n] += dt;
 		}
 	}
 /*
