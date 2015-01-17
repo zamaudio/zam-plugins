@@ -115,14 +115,16 @@ protected:
     double p(int n);
     double alpha(int n);
     double a(int i, int n);
-    double w(int i, int n);
+    double w(int i, double f);
     double mu(int n);
     double c(int n);
     double mhammer(int n);
     double lstring(int n);
     double mstring(int n);
     double fk1(double fk, double dt, double t, int n);
+    void damp(int n, int *state, float *out, uint32_t frames);
     void e(int n, double vhammer, int *state, float *out, uint32_t frames);
+    void dumpvals(void);
 
     void d_activate() override;
     void d_run(const float** inputs, float** outputs, uint32_t frames,
@@ -136,6 +138,8 @@ protected:
 		double vel;
 	} note_t;
 	note_t note[128];
+
+	float oldbuf[2][MAX_SAMP_FRAME];
 
 	double ff0[128], ff1[128], integrala[128], 
 		integralb[128], timepos[128];
