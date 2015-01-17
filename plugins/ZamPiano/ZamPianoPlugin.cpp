@@ -118,13 +118,14 @@ double ZamPianoPlugin::f0(int n)
 void ZamPianoPlugin::d_activate()
 {
 	int i;
-	for (i = 0; i < 2000; i++) {
+	for (i = 0; i < 128; i++) {
 		ff0[i] = f0(i);
 		ff1[i] = 0.;
+		integrala[i] = 0.;
+		integralb[i] = 0.;
 		timepos[i] = 0.;
-	}
-	for (i = 0; i < 128; i++) {
 		note[i].state = SILENT;
+		note[i].vel = 0.;
 	}	
 }
 
@@ -203,6 +204,7 @@ double ZamPianoPlugin::mu(int n)
 double ZamPianoPlugin::a(int i, int n)
 {
 	float strike = 0.105;
+	if (i == 0.) return 1.;
 	return sin(strike*i*M_PI)/(i*M_PI*c(n)*mu(n));
 }
 
@@ -216,43 +218,40 @@ void ZamPianoPlugin::e(int n, double vhammer, int *state, float *out, uint32_t f
 {
 	double sr = d_getSampleRate();
 	double t0 = 0.008; //1000  0.8ms contact time
-	int N = t0 * (frames);
-	double dt = 1. / (sr);
-	double t = 0.;
+	//int N = t0 * frames;
+	double dt = 1. / sr;
+	double t;
 	uint32_t i;
-	int j;
-	double intega = 0.;
-	double integb = 0.;
 	//vhammer /= 1000.;
 	memset(fftvars.cmplex[0], 0, 4096*sizeof(float));
 	memset(fftvars.cmplex[1], 0, 4096*sizeof(float));
-	for (i = 0; i < frames; i++) {
-		intega = (*state == ATTACK) ? 0. : integrala[n];
-		integb = (*state == ATTACK) ? 0. : integralb[n];
-		ff0[0] = (*state == ATTACK) ? f0(n) : ff0[0];
-		t = timepos[n];
-		for (j = 0; j < N; j++) {
-			ff1[j] = fk1(ff0[j], dt, t, n);
-			intega += ff1[j] * a(i, n) * cos(w(i, n) * t / frames) * dt;
-			integb -= ff1[j] * a(i, n) * sin(w(i, n) * t / frames) * dt;
 	
-			ff0[j] = ff1[j];
-			t += dt;
-		}
-		fftvars.cmplex[0][i] = 10. * log( (2.*mstring(n)*w(i, n)*w(i, n)				/ (mhammer(n)*vhammer*vhammer)
-				* (intega*intega)) ) / frames;
-		fftvars.cmplex[1][i] = 10. * log( (2.*mstring(n)*w(i, n)*w(i, n)
-				/ (mhammer(n)*vhammer*vhammer)
-				* (integb*integb)) ) / frames;
-		//printf("%f\n", fftvars.cmplex[0][i]);
+	ff0[n] = (*state == STRIKE) ? f0(n) : ff0[n];
+	timepos[n] = (*state == STRIKE) ? 0. : timepos[n];
+	
+	for (i = 0; i < frames; i++) {
+		ff1[n] = fk1(ff0[n], dt, timepos[n], n);
+		integrala[n] += ff1[n] * a(i, n) * cos(w(i, n) * timepos[n]) * dt;
+		integralb[n] -= ff1[n] * a(i, n) * sin(w(i, n) * timepos[n]) * dt;
+
+		ff0[n] = ff1[n];
+		timepos[n] += dt;
+		//printf("%f, %f, %f\n", integrala[n], integralb[n], ff0[n]);
 	}
-	integrala[n] = intega;
-	integralb[n] = integb;
-	timepos[n] += t0;
+	for (i = 0; i < frames; i++) {
+		fftvars.cmplex[0][i] = ( (2.*mstring(n)*w(i, n)*w(i, n)
+				/ (mhammer(n)*vhammer*vhammer)
+				* (integrala[n])) );
+		fftvars.cmplex[1][i] = ( (2.*mstring(n)*w(i, n)*w(i, n)
+				/ (mhammer(n)*vhammer*vhammer)
+				* (integralb[n])) );
+		//printf("%f %f\n", fftvars.cmplex[0][i], fftvars.cmplex[1][i]);
+	}
+	if (*state == STRIKE) *state = ATTACK;
 	if (timepos[n] >= t0) {
 		*state = SUSTAIN;
 	}
-	if (timepos[n] > 2) {
+	if (timepos[n] > 0.7) {
 		*state = SILENT;
 		timepos[n] = 0;
 		integrala[n] = 0.;
@@ -268,16 +267,15 @@ void ZamPianoPlugin::e(int n, double vhammer, int *state, float *out, uint32_t f
 	
 	fftvars.fft_inverse();
 	
-	float scale = 1. / frames;
-	for (i = 0; i < frames; i++) {
+	float scale = 1. / fftvars.ffttime[0];
+	for (i = 1; i < frames; i++) {
 		out[i] += fftvars.ffttime[i] * scale;
-		if (out[i] > 0.2) out[i] = 0.2;
-		if (out[i] < -0.2) out[i] = -0.2;
+		//if (out[i] > 0.2) out[i] = 0.2;
+		//if (out[i] < -0.2) out[i] = -0.2;
 
 		//printf("%e\n", out[i]);
 	}
-	//out[0] += 1.;
-
+	out[0] += 1.;
 }
 
 void ZamPianoPlugin::d_run(const float**, float** outputs, uint32_t frames,
@@ -293,7 +291,7 @@ void ZamPianoPlugin::d_run(const float**, float** outputs, uint32_t frames,
 		int v = midievent[i].data[2];
 		if (type == 0x90 && chan == 0x0) {
 			// NOTE ON
-			note[n].state = ATTACK;
+			note[n].state = STRIKE;
 			note[n].vel = v / 127.f;
 		}
 		else if (type == 0x80 && chan == 0x0) {
@@ -311,19 +309,18 @@ void ZamPianoPlugin::d_run(const float**, float** outputs, uint32_t frames,
 	for (k = 0; k < 128; k++) {
 		if (k > 87) continue;
 		if (note[k].state == SILENT) {
-			//e(k, 0.001, &note[k].state, outputs[0], frames);
 			continue;
 		}
 		signal = true;
-		if (note[k].state == ATTACK) {
+		if (note[k].state == STRIKE || note[k].state == ATTACK) {
 			printf("ATT: %d\n", k);
 			e(k, 5.*note[k].vel, &note[k].state, outputs[0], frames);
 		} else if (note[k].state == SUSTAIN) {
 			printf("SUS: %d\n", k);
-			e(k, 0.001, &note[k].state, outputs[0], frames);
+			e(k, 0.1, &note[k].state, outputs[0], frames);
 		} else if (note[k].state == RELEASE) {
 			printf("REL: %d\n", k);
-			e(k, 0.001, &note[k].state, outputs[0], frames);
+			e(k, 0.1, &note[k].state, outputs[0], frames);
 		}
 	}
 	for (i = 0; i < frames; i++) {

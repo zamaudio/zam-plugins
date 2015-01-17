@@ -21,10 +21,11 @@
 #include <string.h>
 #include "DistrhoPlugin.hpp"
 
-#define ATTACK 0
-#define SUSTAIN 1
-#define RELEASE 2
-#define SILENT 3
+#define STRIKE 0
+#define ATTACK 1
+#define SUSTAIN 2
+#define RELEASE 3
+#define SILENT 4
 
 #define MAX_SAMP_FRAME 4096
 
@@ -136,8 +137,8 @@ protected:
 	} note_t;
 	note_t note[128];
 
-	double ff0[2000], ff1[2000], integrala[2000], 
-		integralb[2000], timepos[2000];
+	double ff0[128], ff1[128], integrala[128], 
+		integralb[128], timepos[128];
 private:
     float gain;
 };
