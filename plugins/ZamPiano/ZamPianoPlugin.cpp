@@ -230,11 +230,15 @@ void ZamPianoPlugin::e(int n, double vhammer, int *state, float *out, uint32_t f
 	memcpy(fftvars.cmplex[0], oldbuf[0], 4096*sizeof(float));
 	memcpy(fftvars.cmplex[1], oldbuf[1], 4096*sizeof(float));
 	
-	ff0[n] = (*state == STRIKE) ? f0(n) : ff0[n];
-	timepos[n] = (*state == STRIKE) ? 0. : timepos[n];
-	if (*state == STRIKE) *state = ATTACK;
-	
+	ff0[n] = (*state == STRIKE || *state == RELEASE) ? f0(n) : ff0[n];
+	timepos[n] = (*state == STRIKE || *state == RELEASE) ? 0. : timepos[n];
+	if (*state == STRIKE) {
+		integrala[n] = 0.;
+		integralb[n] = 0.;
+		*state = ATTACK;
+	}
 	for (i = 0; i < frames; i++) {
+		double ii = i / (double) (frames + 1.);
 		if (timepos[n] >= t0*sr) {
 			*state = SUSTAIN;
 		}
@@ -246,14 +250,13 @@ void ZamPianoPlugin::e(int n, double vhammer, int *state, float *out, uint32_t f
 			printf("SILENT\n");
 		}
 		if (*state == ATTACK) {
-			double ii = i / (double) (frames + 1.);
 			ff1[n] = fk1(ff0[n], dt, timepos[n], n);
-			integrala[n] += ff1[n]*a(i, n) * cos(w(i, ii) * timepos[n]*sr)*dt;
-			integralb[n] -= ff1[n]*a(i, n) * sin(w(i, ii) * timepos[n]*sr)*dt;
+			integrala[n] += ff1[n]*a(i, n) * cos(w(i, ii) * timepos[n])*dt;
+			integralb[n] -= ff1[n]*a(i, n) * sin(w(i, ii) * timepos[n])*dt;
 	
 			ff0[n] = ff1[n];
 			timepos[n] += dt;
-			//printf("%f, %f, %f\n", integrala[n], integralb[n], ff0[n]);
+			printf("%f %f %f %f %f\n", integrala[n], integralb[n], ff0[n], fftvars.cmplex[0][i], fftvars.cmplex[1][i]);
 			fftvars.cmplex[0][i] += ( 2.*mstring(n)
 				* w(i, ii)*w(i, ii)
 				/ (mhammer(n)*vhammer*vhammer)
@@ -261,14 +264,17 @@ void ZamPianoPlugin::e(int n, double vhammer, int *state, float *out, uint32_t f
 			fftvars.cmplex[1][i] += ( 2.*mstring(n)
 				* w(i, ii)*w(i, ii)
 				/ (mhammer(n)*vhammer*vhammer)
-				* (integrala[n]*integrala[n])+integralb[n]*integralb[n] );
-			//printf("%f %f\n", fftvars.cmplex[0][i], fftvars.cmplex[1][i]);
+				* atan2(integralb[n], integrala[n]));
+			//printf("%f %f\n"
 		} else if (*state == SILENT) {
 			fftvars.cmplex[0][i] = 0.;
 			fftvars.cmplex[1][i] = 0.;
 		} else {
 			timepos[n] += dt;
+			fftvars.cmplex[0][i] = (oldbuf[0][i] < 0.3) ? oldbuf[0][i] : 0.; 
+			//fftvars.cmplex[0][i] = (oldbuf[1][i] > 0.2) ? oldbuf[1][i] : 0.; 
 		}
+		//printf("%f %f\n", fftvars.cmplex[0][i], fftvars.cmplex[1][i]);
 	}
 /*
 	for (i = 0; i < frames; i++) {
@@ -339,10 +345,10 @@ void ZamPianoPlugin::d_run(const float**, float** outputs, uint32_t frames,
 			e(k, 5.*note[k].vel, &note[k].state, outputs[0], frames);
 		} else if (note[k].state == SUSTAIN) {
 			printf("SUS: %d\n", k);
-			e(k, 0., &note[k].state, outputs[0], frames);
+			e(k, 0.1, &note[k].state, outputs[0], frames);
 		} else if (note[k].state == RELEASE) {
 			printf("REL: %d\n", k);
-			e(k, 0., &note[k].state, outputs[0], frames);
+			e(k, 0.1, &note[k].state, outputs[0], frames);
 		}
 	}
 	for (i = 0; i < frames; i++) {
