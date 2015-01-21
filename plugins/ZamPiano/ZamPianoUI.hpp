@@ -52,7 +52,14 @@ protected:
     void onDisplay() override;
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobGain;
+    ScopedPointer<ImageKnob> fKnobBright;
+    ScopedPointer<ImageKnob> fKnobDetune;
+    ScopedPointer<ImageKnob> fKnobHammer;
+    ScopedPointer<ImageKnob> fKnobStiff;
+    ScopedPointer<ImageKnob> fKnobReverbGain;
+    ScopedPointer<ImageKnob> fKnobReverbRoom;
+    ScopedPointer<ImageKnob> fKnobPan;
+    ScopedPointer<ImageKnob> fKnobWidth;
 };
 
 // -----------------------------------------------------------------------

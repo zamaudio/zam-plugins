@@ -11,9 +11,9 @@ namespace ZamPianoArtwork
     const unsigned int knobHeight   = 42;
 
     extern const char* zampianoData;
-    const unsigned int zampianoDataSize = 73359;
-    const unsigned int zampianoWidth    = 143;
-    const unsigned int zampianoHeight   = 171;
+    const unsigned int zampianoDataSize = 189720;
+    const unsigned int zampianoWidth    = 310;
+    const unsigned int zampianoHeight   = 204;
 }
 
 #endif // BINARY_ZAMPIANOARTWORK_HPP

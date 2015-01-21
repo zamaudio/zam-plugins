@@ -13,7 +13,7 @@ NAME = ZamPiano
 # Files to build
 
 OBJS_DSP = \
-	fft.cpp.o \
+	instrument.cpp.o \
 	ZamPianoPlugin.cpp.o
 
 OBJS_UI  = \
