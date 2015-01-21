@@ -68,15 +68,9 @@ inline double 	min (double a, float b) 	{ return (a<b) ? a : b; }
 
 inline int	lsr (int x, int n)		{ return int(((unsigned int)x) >> n); }
 
-#define portno(label) (is_voice_ctrl(label)?-1:nports++)
-
 #ifndef FAUSTFLOAT
 #define FAUSTFLOAT float
 #endif  
-
-#ifndef FAUSTCLASS 
-#define FAUSTCLASS piano
-#endif
 
 START_NAMESPACE_DISTRHO
 
@@ -326,6 +320,9 @@ void ZamPianoPlugin::d_activate()
 		note[i].state = SILENT;
 		note[i].vel = 0.;
 	}
+
+	//Parameters for piano.dsp
+	////(c) Romain Michon (rmichon@ccrma.stanford.edu), 2011
 
 	noteOffDelayTime_points[0] = 89.000;
 	noteOffDelayTime_points[1] =  3.000;
@@ -1528,6 +1525,7 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 {
 	uint32_t i;
 	bool signal;
+	int gate = 1;
 
 	for (i = 0; i < midicount; i++) {
 		int type = midievent[i].data[0] & 0xF0;
@@ -1538,11 +1536,12 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 			// NOTE ON
 			note[n].state = STRIKE;
 			note[n].vel = v / 127.f;
+			gate = 0;
 		}
 		else if (type == 0x80 && chan == 0x0) {
 			// NOTE OFF
-			if (note[n].state != SILENT)
-				note[n].state = RELEASE;
+			note[n].state = RELEASE;
+			gate = 1;
 		}
 	}
 
@@ -1564,10 +1563,11 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 			pgain = note[k].vel;
 			pgate = 0.;
 			ZamPianoPlugin::compute(1, inputs, outputs);
-			pgate = 1.;
+			pgate = gate;
 			ZamPianoPlugin::compute(frames, inputs, outputs);
 			note[k].state = SUSTAIN;
 		} else if (note[k].state == SUSTAIN) {
+			pgate = gate;
 			ZamPianoPlugin::compute(frames, inputs, outputs);
 		} else if (note[k].state == RELEASE) {
 			printf("RELEASE: %d\n", k);
@@ -1575,7 +1575,7 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 			pgain = 0.001;
 			pgate = 0.;
 			ZamPianoPlugin::compute(1, inputs, outputs);
-			pgate = 1.;
+			pgate = gate;
 			ZamPianoPlugin::compute(frames, inputs, outputs);
 			note[k].state++;
 		}
