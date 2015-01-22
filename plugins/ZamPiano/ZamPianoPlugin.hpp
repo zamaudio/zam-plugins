@@ -25,8 +25,9 @@
 #define STRIKE 0
 #define ATTACK 1
 #define SUSTAIN 2
-#define RELEASE 3
-#define SILENT 200
+#define RELEASE 1000
+#define DECAY 1001
+#define SILENT 1011
 
 START_NAMESPACE_DISTRHO
 

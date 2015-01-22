@@ -21,13 +21,12 @@ endif
 # --------------------------------------------------------------
 # Common build and link flags
 
-BASE_FLAGS = -Wall -Wextra -pipe -g
+BASE_FLAGS = -Wall -Wextra -pipe
 BASE_OPTS  = -O2 -ffast-math -fdata-sections -ffunction-sections
 ifneq ($(NOOPT),true)
 BASE_OPTS  += -mtune=generic -msse -msse2 -mfpmath=sse
 endif
 LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,-O1 -Wl,--as-needed -Wl,--gc-sections -Wl,--strip-all 
-LINK_OPTS += $(shell pkg-config --libs fftw3f)
 
 ifeq ($(MACOS),true)
 # MacOS linker flags

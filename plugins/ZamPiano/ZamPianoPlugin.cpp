@@ -1540,8 +1540,10 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 		}
 		else if (type == 0x80 && chan == 0x0) {
 			// NOTE OFF
-			note[n].state = RELEASE;
-			gate = 1;
+			pgate = 1.;
+			if (note[n].state != SILENT) {
+				note[n].state = RELEASE;
+			}
 		}
 	}
 
@@ -1563,18 +1565,25 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 			pgain = note[k].vel;
 			pgate = 0.;
 			ZamPianoPlugin::compute(1, inputs, outputs);
+			pgate = 1.;
+			ZamPianoPlugin::compute(frames, inputs, outputs);
+			note[k].state++;
+		} else if (note[k].state < RELEASE) {
+			printf("SUSTAIN: %d %d\n", k, note[k].state);
 			pgate = gate;
 			ZamPianoPlugin::compute(frames, inputs, outputs);
-			note[k].state = SUSTAIN;
-		} else if (note[k].state == SUSTAIN) {
-			pgate = gate;
-			ZamPianoPlugin::compute(frames, inputs, outputs);
-		} else if (note[k].state == RELEASE) {
-			printf("RELEASE: %d\n", k);
+			note[k].state++;
+		} else if (note[k].state < DECAY) {
+			printf("RELEASE: %d %d\n", k, note[k].state);
 			pfreq = 440. * powf(2., (k-69)/12.);
-			pgain = 0.001;
+			pgain = 0.;
 			pgate = 0.;
 			ZamPianoPlugin::compute(1, inputs, outputs);
+			pgate = gate;
+			ZamPianoPlugin::compute(frames, inputs, outputs);
+			note[k].state++;
+		} else if (note[k].state < SILENT) {
+			printf("DECAY: %d %d\n", k, note[k].state);
 			pgate = gate;
 			ZamPianoPlugin::compute(frames, inputs, outputs);
 			note[k].state++;
