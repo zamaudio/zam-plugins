@@ -369,8 +369,8 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 	}
 	for (i = 0; i < 88; i++) {
 		for (j = 0; j < frames; j++) {
-			outputs[0][j] += intermed[i][0][j];
-			outputs[1][j] += intermed[i][1][j];
+			outputs[0][j] += intermed[i][0][j] * 0.1;
+			outputs[1][j] += intermed[i][1][j] * 0.1;
 		}
 	}
 	for (i = 0; i < frames; i++) {
