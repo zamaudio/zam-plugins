@@ -1,4 +1,4 @@
-#include "instrument.h"
+#include "instrument.hpp"
 
 LookupTable::LookupTable()
 {

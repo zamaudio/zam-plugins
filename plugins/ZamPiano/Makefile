@@ -14,6 +14,7 @@ NAME = ZamPiano
 
 OBJS_DSP = \
 	instrument.cpp.o \
+	PianoNote.cpp.o \
 	ZamPianoPlugin.cpp.o
 
 OBJS_UI  = \
