@@ -338,12 +338,13 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 	int k;
 	for (k = 0; k < 88; k++) {
 		if (note[k].state == SILENT) {
+			N[k].pgate = 1.;
 			continue;
 		}
 		signal = true;
 		if (note[k].state == STRIKE) {
 			//printf("STRIKE: %d\n", k);
-			N[k].pfreq = 440. * powf(2., (k-69)/12.);
+			N[k].pfreq = 220. * powf(2., (k-69)/12.);
 			N[k].pgain = note[k].vel;
 			N[k].pgate = 0.;
 			N[k].compute(1, inputs, intermed[k]);
@@ -354,15 +355,14 @@ void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frame
 			note[k].state++;
 		} else if (note[k].state < DECAY) {
 			//printf("RELEASE: %d %d\n", k, note[k].state);
-			N[k].pfreq = 440. * powf(2., (k-69)/12.);
+			//N[k].pfreq = 440. * powf(2., (k-69)/12.);
 			N[k].pgain = 0.;
-			N[k].pgate = 0.;
-			N[k].compute(1, inputs, intermed[k]);
+			//N[k].pgate = 0.;
+			//N[k].compute(1, inputs, intermed[k]);
 			N[k].pgate = 1.;
 			note[k].state++;
 		} else if (note[k].state < SILENT) {
 			//printf("DECAY: %d %d\n", k, note[k].state);
-			N[k].pgate = gate;
 			note[k].state++;
 		}
 		N[k].compute(frames, inputs, intermed[k]);	
