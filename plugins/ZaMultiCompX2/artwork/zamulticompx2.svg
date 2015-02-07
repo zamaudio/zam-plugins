@@ -15,11 +15,11 @@
    height="320"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="zamulticompx2.svg"
-   inkscape:export-filename="/home/damien/git/audio/zam-plugins-DPF/plugins/ZaMultiCompX2/artwork/zamulticompx22.png"
-   inkscape:export-xdpi="214.875"
-   inkscape:export-ydpi="214.875">
+   inkscape:export-filename="/home/damien/git/zam-plugins/plugins/ZaMultiCompX2/artwork/zamulticompx2.png"
+   inkscape:export-xdpi="83.478264"
+   inkscape:export-ydpi="83.478264">
   <defs
      id="defs4">
     <linearGradient
@@ -4691,7 +4691,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.28"
-     inkscape:cx="368.53641"
+     inkscape:cx="370.09891"
      inkscape:cy="136.29101"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -4714,7 +4714,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -5042,7 +5042,7 @@
              sodipodi:role="line"
              id="tspan2632"
              x="-719.17664"
-             y="-122.87212"> </tspan></text>
+             y="-122.87212" /></text>
       </g>
     </g>
     <use
@@ -7957,8 +7957,8 @@
        sodipodi:nodetypes="cccc"
        inkscape:connector-curvature="0"
        id="path7229"
-       d="m 569.59789,967.4012 c 0,0 44.72716,0 58.44805,0 7.1261,0 6.96973,-7.555 6.96973,-7.555 0,-24.3835 0,-35.8022 0,-35.8022"
-       style="fill:none;stroke:#000000;stroke-width:1.77165353;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+       d="m 592.82845,963.63775 c 0,0 -14.28058,0 -18.66141,0 -2.27523,0 -2.22531,1.70129 -2.22531,1.70129 0,5.49083 0,8.06216 0,8.06216"
+       style="fill:none;stroke:#000000;stroke-width:1.77165365;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     <g
        transform="translate(-327.45272,109.23417)"
        id="g3934">
@@ -8777,5 +8777,23 @@
          x="95.059303"
          id="tspan4085"
          sodipodi:role="line">Thresholds</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.77165365;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 647.25414,963.63775 c 0,0 14.28058,0 18.66141,0 2.27523,0 2.22531,1.70129 2.22531,1.70129 0,5.49083 0,8.06216 0,8.06216"
+       id="path3988"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:'Nova ';-inkscape-font-specification:'Nova '"
+       x="602.35156"
+       y="966.66962"
+       id="text4018"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4020"
+         x="602.35156"
+         y="966.66962"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Allstar4;-inkscape-font-specification:Allstar4">Limiter</tspan></text>
   </g>
 </svg>

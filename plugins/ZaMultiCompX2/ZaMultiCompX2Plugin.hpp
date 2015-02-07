@@ -144,6 +144,7 @@ protected:
 	}
 
     void run_comp(int k, float inL, float inR, float *outL, float *outR);
+    void run_limit(float inL, float inR, float *outL, float *outR);
     float run_filter(int i, int ch, float in);
     void set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
     void set_hp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
@@ -157,6 +158,8 @@ private:
     float attack,release,knee,ratio,thresdb[MAX_COMP],makeup[MAX_COMP],globalgain,stereodet;
     float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],maxL,maxR,outl,outr,xover1,xover2;
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP], old_yg[2][MAX_COMP];
+    float old_ll[2], old_l1[2];
+    float limit;
     bool resetl;
     bool resetr;
     // Crossover filter coefficients
