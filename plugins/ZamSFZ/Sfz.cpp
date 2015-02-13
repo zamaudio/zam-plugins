@@ -49,7 +49,7 @@ void Sfz::clearsamples()
 
 void Sfz::loadsamples(std::string path, std::string filename)
 {
-	int note, layer, i, key;
+	int note, i, key;
 	::sfz::File* sfzfile = NULL;
 	::sfz::Instrument* sfzinstrument = NULL;
 	sfzfile = new ::sfz::File(filename, path);
@@ -59,7 +59,6 @@ void Sfz::loadsamples(std::string path, std::string filename)
 	SF_INFO sfinfo;
 
 	int maxregions = sfzinstrument->regions.size();
-	layer = 0;
   if (maxregions == 0) {
 	printf("No samples found\n");
   } else {

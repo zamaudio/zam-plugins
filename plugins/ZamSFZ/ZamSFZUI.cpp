@@ -75,10 +75,10 @@ void ZamSFZUI::d_programChanged(uint32_t index)
     fKnobGain->setValue(0.0f);
 }
 
-void ZamSFZUI::d_stateChanged(const char* key, const char* value)
+void ZamSFZUI::d_stateChanged(const char* key, const char*)
 {
 	if (strcmp(key, "filepath") == 0) {
-		printf("do something?\n");
+		printf("state changed... do something?\n");
 	}
 }
 
