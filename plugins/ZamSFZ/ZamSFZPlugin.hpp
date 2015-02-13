@@ -35,7 +35,6 @@ public:
     enum Parameters
     {
         paramGain,
-        paramSpeed,
         paramCount
     };
 
@@ -119,7 +118,6 @@ private:
     bool loading;
     float gain, graph, speed;
     int nvoices;
-    float* wave_y[128];
     float env_y[MAX_ENV];
 	typedef struct v {
 		bool playing;

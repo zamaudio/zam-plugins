@@ -44,15 +44,6 @@ void ZamSFZPlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -30.0f;
         parameter.ranges.max = 30.0f;
         break;
-    case paramSpeed:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
-        parameter.name       = "Speed";
-        parameter.symbol     = "speed";
-        parameter.unit       = " ";
-        parameter.ranges.def = 10.0f;
-        parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 20.0f;
-        break;
     }
 }
 
@@ -74,9 +65,6 @@ float ZamSFZPlugin::d_getParameterValue(uint32_t index) const
     case paramGain:
         return gain;
         break;
-    case paramSpeed:
-        return speed;
-        break;
     default:
         return 0.0f;
     }
@@ -88,9 +76,6 @@ void ZamSFZPlugin::d_setParameterValue(uint32_t index, float value)
     {
     case paramGain:
         gain = value;
-        break;
-    case paramSpeed:
-        speed = value;
         break;
     }
 }

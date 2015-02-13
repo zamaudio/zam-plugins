@@ -51,6 +51,9 @@ void Sfz::loadsamples(std::string path, std::string filename)
 
 	int maxregions = sfzinstrument->regions.size();
 	layer = 0;
+  if (maxregions == 0) {
+	printf("No samples found\n");
+  } else {
 	for (i = 0; i < maxregions; i++) {
 		for (note = 0; note < 128; note++) {
 			if (note >= sfzinstrument->regions[i]->lokey &&
@@ -74,5 +77,6 @@ void Sfz::loadsamples(std::string path, std::string filename)
 		}
 	}
 	printf("All samples loaded, Woot!\n");
-	delete sfzfile;
+  }
+  delete sfzfile;
 }
