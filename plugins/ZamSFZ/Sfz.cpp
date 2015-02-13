@@ -36,11 +36,20 @@ void Sfz::clearsamples()
 			}
 		}
 	}
+	for (i = 0; i < 128; i++) {
+		layers[i].max = 0;
+		for (j = 0; j < MAX_LAYERS; j++) {
+			layers[i].l[j].lovel = 0;
+			layers[i].l[j].hivel = 0;
+			layers[i].l[j].lokey = 0;
+			layers[i].l[j].hikey = 0;
+		}
+	}
 }
 
 void Sfz::loadsamples(std::string path, std::string filename)
 {
-	int note, layer, i;
+	int note, layer, i, key;
 	::sfz::File* sfzfile = NULL;
 	::sfz::Instrument* sfzinstrument = NULL;
 	sfzfile = new ::sfz::File(filename, path);
@@ -56,22 +65,28 @@ void Sfz::loadsamples(std::string path, std::string filename)
   } else {
 	for (i = 0; i < maxregions; i++) {
 		for (note = 0; note < 128; note++) {
-			if (note >= sfzinstrument->regions[i]->lokey &&
-				note <= sfzinstrument->regions[i]->hikey) {
-			
+			key = 0;
+			if (sfzinstrument->regions[i]->lokey == sfzinstrument->regions[i]->hikey) {
+				key = sfzinstrument->regions[i]->lokey;
+			} else {
+				key = sfzinstrument->regions[i]->pitch_keycenter;
+			}
+			if (note == key) {
 				infile = NULL;
 				if ((infile = sf_open(sfzinstrument->regions[i]->sample.c_str(), SFM_READ, &sfinfo)) == NULL) {
 						printf("Missing samples\n");
 						puts (sf_strerror (NULL));
+						printf("File: %s\n",sfzinstrument->regions[i]->sample.c_str());
 				}
-				readsamples (infile, sfinfo.channels, note, layer);
+				readsamples (infile, sfinfo.channels, note, layers[note].max);
+				int k = layers[note].max;
+				layers[note].l[k].lovel = sfzinstrument->regions[i]->lovel;
+				layers[note].l[k].hivel = sfzinstrument->regions[i]->hivel;
+				layers[note].l[k].lokey = sfzinstrument->regions[i]->lokey;
+				layers[note].l[k].hikey = sfzinstrument->regions[i]->hikey;
 				sf_close (infile);
-				//printf("N-%d V-%d %s\n", note, layer, sfzinstrument->regions[i]->sample.c_str());
-				layer++;
-				if (sfzinstrument->regions[i]->hivel >= 127) {
-					maxlayers[note] = layer;
-					layer = 0;
-				}
+				printf("N-%d V-%d %s\n", note, k, sfzinstrument->regions[i]->sample.c_str());
+				layers[note].max++;
 				break;
 			}
 		}
@@ -79,4 +94,9 @@ void Sfz::loadsamples(std::string path, std::string filename)
 	printf("All samples loaded, Woot!\n");
   }
   delete sfzfile;
+  for (i = 0; i < 128; i++) {
+	if (layers[i].max) {
+		layers[i].max--;
+	}
+  }
 }

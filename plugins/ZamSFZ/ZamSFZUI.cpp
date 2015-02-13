@@ -131,6 +131,7 @@ void ZamSFZUI::imageButtonClicked(ImageButton*, int)
 	gtk_widget_destroy(dialog);
 */	
 	d_setState("filepath", "/home/damien/Music/rhodes-nord/rhodes-nord.sfz");
+	//d_setState("filepath", "/home/damien/Music/sfz/sfz LatelyBass/TX_LatelyBass.sfz");
 }
 
 void ZamSFZUI::onDisplay()

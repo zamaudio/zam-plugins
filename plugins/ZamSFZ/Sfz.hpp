@@ -12,7 +12,19 @@ class Sfz {
 public:
 	Sfz();
 	float sample[128][MAX_LAYERS][2][MAX_SAMPLES];
-	int maxlayers[128];
+	typedef struct {
+		uint8_t lovel;
+		uint8_t hivel;
+		uint8_t lokey;
+		uint8_t hikey;
+	} hilo_t;
+
+	typedef struct {
+		int max;
+		hilo_t l[MAX_LAYERS];
+	} layer_t;
+
+	layer_t layers[128];
 	void clearsamples();
 	void loadsamples(std::string path, std::string filename);
 	void readsamples (SNDFILE *infile, int channels, int note, int layer);

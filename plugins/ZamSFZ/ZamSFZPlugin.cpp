@@ -279,14 +279,20 @@ void ZamSFZPlugin::d_run(const float**, float** outputs, uint32_t frames,
 				voice[k].vi = 0.f;
 			} else {
 				int n = voice[k].notenum;
-				int vel = (int) (sfz.maxlayers[voice[k].notenum]
-					* voice[k].vi);
+				int v = voice[k].vi * 127.;
+				int l = 0;
+				for (int k = 0; k < sfz.layers[n].max; k++) {
+					if (sfz.layers[n].l[k].lovel <= v && v <= sfz.layers[n].l[k].hivel) {
+						l = k;
+						break;
+					}
+				}
 				int pos = voice[k].rampstate;
-				wavel = sfz.sample[n][vel][0][pos];
-				waver = sfz.sample[n][vel][1][pos];
+				wavel = sfz.sample[n][l][0][pos];
+				waver = sfz.sample[n][l][1][pos];
 			}
-			outl += wavel*voice[k].curamp/5.;
-			outr += waver*voice[k].curamp/5.;
+			outl += wavel*voice[k].curamp/2.;
+			outr += waver*voice[k].curamp/2.;
 		}
 		if (signal) {
 			//outl;

@@ -189,7 +189,7 @@ namespace sfz
 
 	Instrument::~Instrument()
 	{
-		for (int i = 0; i < regions.size(); i++) {
+		for (uint32_t i = 0; i < regions.size(); i++) {
 			delete regions[i];
 		}
 	}
@@ -589,7 +589,7 @@ namespace sfz
 		while (std::getline(fs, line))
 		{
 		    currentLine++;
-		    //printf("line %d: %s\n", currentLine, line.c_str());
+		    printf("line %d: %s\n", currentLine, line.c_str());
 		    // COMMENT
 		    std::string::size_type slash_index = line.find("//");
 		    if (slash_index != std::string::npos)
@@ -739,12 +739,14 @@ namespace sfz
 		// sample definition
 		if ("sample" == key) 
 		{
+			std::string path = default_path + value;
+			for (uint32_t i = 0; i < path.length(); i++) if (path[i] == '\\') path[i] = '/';
 			switch (_current_section)
 			{
 			case REGION:
-				_current_region->sample = default_path + value;
+				_current_region->sample = path;
 			case GROUP:
-				_current_group->sample = default_path + value;
+				_current_group->sample = path;
 			}
 			return;
 		}
