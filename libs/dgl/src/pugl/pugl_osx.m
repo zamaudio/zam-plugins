@@ -35,6 +35,7 @@
                    backing:(NSBackingStoreType)bufferingType
                      defer:(BOOL)flag;
 - (void) setPuglview:(PuglView*)view;
+- (BOOL) canBecomeKeyWindow;
 - (BOOL) windowShouldClose:(id)sender;
 @end
 
@@ -54,7 +55,7 @@
 	[result setAcceptsMouseMovedEvents:YES];
 	[result setLevel: CGShieldingWindowLevel() + 1];
 
-	return result;
+	return (PuglWindow*)result;
 
 	// unused
 	(void)aStyle; (void)bufferingType; (void)flag;
@@ -64,6 +65,11 @@
 {
 	puglview = view;
 	[self setContentSize:NSMakeSize(view->width, view->height)];
+}
+
+- (BOOL)canBecomeKeyWindow
+{
+	return YES;
 }
 
 - (BOOL)windowShouldClose:(id)sender
@@ -81,6 +87,7 @@
 static void
 puglDisplay(PuglView* view)
 {
+	view->redisplay = false;
 	if (view->displayFunc) {
 		view->displayFunc(view);
 	}
@@ -88,28 +95,33 @@ puglDisplay(PuglView* view)
 
 @interface PuglOpenGLView : NSOpenGLView
 {
-	int colorBits;
-	int depthBits;
 @public
 	PuglView* puglview;
-
 	NSTrackingArea* trackingArea;
+	bool doubleBuffered;
 }
 
-- (id) initWithFrame:(NSRect)frame
-           colorBits:(int)numColorBits
-           depthBits:(int)numDepthBits;
+- (BOOL) acceptsFirstMouse:(NSEvent*)e;
+- (BOOL) acceptsFirstResponder;
+- (BOOL) isFlipped;
+- (BOOL) isOpaque;
+- (BOOL) preservesContentInLiveResize;
+- (id)   initWithFrame:(NSRect)frame;
 - (void) reshape;
-- (void) drawRect:(NSRect)rect;
-- (void) mouseEntered:(NSEvent*)event;
-- (void) mouseExited:(NSEvent*)event;
+- (void) drawRect:(NSRect)r;
+- (void) cursorUpdate:(NSEvent*)e;
+- (void) updateTrackingAreas;
+- (void) viewWillMoveToWindow:(NSWindow*)newWindow;
 - (void) mouseMoved:(NSEvent*)event;
 - (void) mouseDragged:(NSEvent*)event;
 - (void) rightMouseDragged:(NSEvent*)event;
+- (void) otherMouseDragged:(NSEvent*)event;
 - (void) mouseDown:(NSEvent*)event;
-- (void) mouseUp:(NSEvent*)event;
 - (void) rightMouseDown:(NSEvent*)event;
+- (void) otherMouseDown:(NSEvent*)event;
+- (void) mouseUp:(NSEvent*)event;
 - (void) rightMouseUp:(NSEvent*)event;
+- (void) otherMouseUp:(NSEvent*)event;
 - (void) scrollWheel:(NSEvent*)event;
 - (void) keyDown:(NSEvent*)event;
 - (void) keyUp:(NSEvent*)event;
@@ -119,22 +131,46 @@ puglDisplay(PuglView* view)
 
 @implementation PuglOpenGLView
 
-- (id) initWithFrame:(NSRect)frame
-           colorBits:(int)numColorBits
-           depthBits:(int)numDepthBits
+- (BOOL) acceptsFirstMouse:(NSEvent*)e
 {
-	colorBits = numColorBits;
-	depthBits = numDepthBits;
-	puglview  = nil;
-	trackingArea = nil;
+	return YES;
 
-	NSOpenGLPixelFormatAttribute pixelAttribs[16] = {
+	// unused
+	(void)e;
+}
+
+- (BOOL) acceptsFirstResponder
+{
+	return YES;
+}
+
+- (BOOL) isFlipped
+{
+	return YES;
+}
+
+- (BOOL) isOpaque
+{
+	return YES;
+}
+
+- (BOOL) preservesContentInLiveResize
+{
+	return NO;
+}
+
+- (id) initWithFrame:(NSRect)frame
+{
+	puglview       = nil;
+	trackingArea   = nil;
+	doubleBuffered = true;
+
+	NSOpenGLPixelFormatAttribute pixelAttribs[] = {
+		NSOpenGLPFAColorSize, 24,
+		NSOpenGLPFAAlphaSize, 8,
+		NSOpenGLPFADepthSize, 16,
 		NSOpenGLPFADoubleBuffer,
 		NSOpenGLPFAAccelerated,
-		NSOpenGLPFAColorSize,
-		colorBits,
-		NSOpenGLPFADepthSize,
-		depthBits,
 		0
 	};
 
@@ -144,12 +180,21 @@ puglDisplay(PuglView* view)
 	if (pixelFormat) {
 		self = [super initWithFrame:frame pixelFormat:pixelFormat];
 		[pixelFormat release];
-		if (self) {
-			[[self openGLContext] makeCurrentContext];
-			[self reshape];
-		}
+		printf("Is doubleBuffered? TRUE\n");
 	} else {
-		self = nil;
+		self = [super initWithFrame:frame];
+		doubleBuffered = false;
+		printf("Is doubleBuffered? FALSE\n");
+	}
+
+	if (self) {	
+		NSOpenGLContext* context = [self openGLContext];
+		[context makeCurrentContext];
+
+		GLint swapInterval = 1;
+		[context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
+
+		[self reshape];
 	}
 
 	return self;
@@ -159,34 +204,81 @@ puglDisplay(PuglView* view)
 {
 	[[self openGLContext] update];
 
-	NSRect bounds = [self bounds];
-	int    width  = bounds.size.width;
-	int    height = bounds.size.height;
-
-	if (puglview) {
+	if (!puglview) {
 		/* NOTE: Apparently reshape gets called when the GC gets around to
 		   deleting the view (?), so we must have reset puglview to NULL when
 		   this comes around.
 		*/
-		if (puglview->reshapeFunc) {
-			puglview->reshapeFunc(puglview, width, height);
-		} else {
-			puglDefaultReshape(puglview, width, height);
-		}
-
-		puglview->width  = width;
-		puglview->height = height;
+		return;
 	}
+
+	NSRect bounds = [self bounds];
+	int    width  = bounds.size.width;
+	int    height = bounds.size.height;
+
+	if (puglview->reshapeFunc) {
+		puglview->reshapeFunc(puglview, width, height);
+	} else {
+		puglDefaultReshape(puglview, width, height);
+	}
+
+	puglview->width  = width;
+	puglview->height = height;
 }
 
-- (void) drawRect:(NSRect)rect
+- (void) drawRect:(NSRect)r
 {
 	puglDisplay(puglview);
-	glFlush();
-	glSwapAPPLE();
+
+	if (doubleBuffered) {
+	    [[self openGLContext] flushBuffer];
+	} else {
+	    glFlush();
+	    //glSwapAPPLE();
+	}
 
 	// unused
-	return; (void)rect;
+	return; (void)r;
+}
+
+- (void) cursorUpdate:(NSEvent*)e
+{
+	[[NSCursor arrowCursor] set];
+
+	// unused
+	return; (void)e;
+}
+
+- (void) updateTrackingAreas
+{
+	static const int opts = NSTrackingMouseEnteredAndExited
+	                      | NSTrackingMouseMoved
+                          | NSTrackingEnabledDuringMouseDrag
+                          | NSTrackingInVisibleRect
+                          | NSTrackingActiveAlways
+                          | NSTrackingCursorUpdate;
+
+	if (trackingArea != nil) {
+		[self removeTrackingArea:trackingArea];
+		[trackingArea release];
+	}
+
+	trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+	                                            options:opts
+	                                              owner:self
+	                                           userInfo:nil];
+	[self addTrackingArea:trackingArea];
+	[super updateTrackingAreas];
+}
+
+- (void) viewWillMoveToWindow:(NSWindow*)newWindow
+{
+	if (newWindow != nil) {
+		[newWindow setAcceptsMouseMovedEvents:YES];
+		[newWindow makeFirstResponder:self];
+	}
+
+	[super viewWillMoveToWindow:newWindow];
 }
 
 static unsigned
@@ -204,111 +296,88 @@ getModifiers(PuglView* view, NSEvent* ev)
 	return mods;
 }
 
--(void)updateTrackingAreas
+static int
+getFixedAppKitButton(NSInteger button)
 {
-	if (trackingArea != nil) {
-		[self removeTrackingArea:trackingArea];
-		[trackingArea release];
+	switch (button) {
+	case 0:  return 1;
+	case 1:  return 3;
+	case 2:  return 2;
+	default: return button;
 	}
-
-	const int opts = (NSTrackingMouseEnteredAndExited |
-	                  NSTrackingMouseMoved |
-	                  NSTrackingActiveAlways);
-	trackingArea = [ [NSTrackingArea alloc] initWithRect:[self bounds]
-	                                             options:opts
-	                                               owner:self
-	                                            userInfo:nil];
-	[self addTrackingArea:trackingArea];
-}
-
-- (void)mouseEntered:(NSEvent*)theEvent
-{
-	[self updateTrackingAreas];
-
-	// unused
-	return; (void)theEvent;
-}
-
-- (void)mouseExited:(NSEvent*)theEvent
-{
-	// unused
-	return; (void)theEvent;
 }
 
 - (void) mouseMoved:(NSEvent*)event
 {
 	if (puglview->motionFunc) {
-		NSPoint loc = [event locationInWindow];
+		NSPoint loc = [self convertPoint:[event locationInWindow] fromView:nil];
 		puglview->mods = getModifiers(puglview, event);
-		puglview->motionFunc(puglview, loc.x, puglview->height - loc.y);
+		puglview->motionFunc(puglview, loc.x, loc.y);
 	}
 }
 
 - (void) mouseDragged:(NSEvent*)event
 {
-	if (puglview->motionFunc) {
-		NSPoint loc = [event locationInWindow];
-		puglview->mods = getModifiers(puglview, event);
-		puglview->motionFunc(puglview, loc.x, puglview->height - loc.y);
-	}
+	[self mouseMoved:event];
 }
 
 - (void) rightMouseDragged:(NSEvent*)event
 {
-	if (puglview->motionFunc) {
-		NSPoint loc = [event locationInWindow];
-		puglview->mods = getModifiers(puglview, event);
-		puglview->motionFunc(puglview, loc.x, puglview->height - loc.y);
-	}
+	[self mouseDragged:event];
+}
+
+- (void) otherMouseDragged:(NSEvent*)event
+{
+	[self mouseDragged:event];
 }
 
 - (void) mouseDown:(NSEvent*)event
 {
 	if (puglview->mouseFunc) {
-		NSPoint loc = [event locationInWindow];
+		NSPoint loc = [self convertPoint:[event locationInWindow] fromView:nil];
 		puglview->mods = getModifiers(puglview, event);
-		puglview->mouseFunc(puglview, 1, true, loc.x, puglview->height - loc.y);
+		puglview->mouseFunc(puglview, getFixedAppKitButton([event buttonNumber]), true, loc.x, loc.y);
 	}
+}
+
+- (void) rightMouseDown:(NSEvent*)event
+{
+	[self mouseDown:event];
+}
+
+- (void) otherMouseDown:(NSEvent*)event
+{
+	[self mouseDown:event];
 }
 
 - (void) mouseUp:(NSEvent*)event
 {
 	if (puglview->mouseFunc) {
-		NSPoint loc = [event locationInWindow];
+		NSPoint loc = [self convertPoint:[event locationInWindow] fromView:nil];
 		puglview->mods = getModifiers(puglview, event);
-		puglview->mouseFunc(puglview, 1, false, loc.x, puglview->height - loc.y);
-	}
-	[self updateTrackingAreas];
-}
-
-- (void) rightMouseDown:(NSEvent*)event
-{
-	if (puglview->mouseFunc) {
-		NSPoint loc = [event locationInWindow];
-		puglview->mods = getModifiers(puglview, event);
-		puglview->mouseFunc(puglview, 3, true, loc.x, puglview->height - loc.y);
+		puglview->mouseFunc(puglview, getFixedAppKitButton([event buttonNumber]), false, loc.x, loc.y);
 	}
 }
 
 - (void) rightMouseUp:(NSEvent*)event
 {
-	if (puglview->mouseFunc) {
-		NSPoint loc = [event locationInWindow];
-		puglview->mods = getModifiers(puglview, event);
-		puglview->mouseFunc(puglview, 3, false, loc.x, puglview->height - loc.y);
-	}
+	[self mouseUp:event];
+}
+
+- (void) otherMouseUp:(NSEvent*)event
+{
+	[self mouseUp:event];
 }
 
 - (void) scrollWheel:(NSEvent*)event
 {
 	if (puglview->scrollFunc) {
-		NSPoint loc = [event locationInWindow];
+		NSPoint loc = [self convertPoint:[event locationInWindow] fromView:nil];
 		puglview->mods = getModifiers(puglview, event);
 		puglview->scrollFunc(puglview,
-		                     loc.x, puglview->height - loc.y,
+		                     loc.x, loc.y,
 		                     [event deltaX], [event deltaY]);
 	}
-	[self updateTrackingAreas];
 }
 
 - (void) keyDown:(NSEvent*)event
@@ -368,6 +437,11 @@ puglCreateWindow(PuglView* view, const char* title)
 	[NSApplication sharedApplication];
 
 	impl->glview = [PuglOpenGLView new];
+
+	if (!impl->glview) {
+		return 1;
+	}
+	
 	impl->glview->puglview = view;
 
 	if (view->resizable) {
@@ -375,6 +449,7 @@ puglCreateWindow(PuglView* view, const char* title)
 	}
 
 	if (view->parent) {
+		[impl->glview retain];
 		NSView* pview = (NSView*)view->parent;
 		[pview addSubview:impl->glview];
 	 	return 0;
@@ -451,15 +526,17 @@ puglDestroy(PuglView* view)
 PuglStatus
 puglProcessEvents(PuglView* view)
 {
-	[view->impl->glview setNeedsDisplay: YES];
-
 	return PUGL_SUCCESS;
+
+	// unused
+	(void)view;
 }
 
 void
 puglPostRedisplay(PuglView* view)
 {
 	view->redisplay = true;
+	[view->impl->glview setNeedsDisplay:YES];
 }
 
 PuglNativeWindow

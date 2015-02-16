@@ -26,6 +26,7 @@ START_NAMESPACE_DGL
 
 class App;
 class Window;
+class StandaloneWindow;
 
 // -----------------------------------------------------------------------
 
@@ -52,12 +53,17 @@ class Widget
 public:
    /**
       Base event data.
-      @a mod  The currently active modifiers.
-      @a time The timestamp (if any) of the currently-processing event.
+      @a mod  The currently active keyboard modifiers, @see Modifier.
+      @a time The timestamp (if any).
     */
     struct BaseEvent {
-        Modifier mod;
+        uint     mod;
         uint32_t time;
+
+        /** Constuctor */
+        BaseEvent() noexcept : mod(0x0), time(0) {}
+        /** Destuctor */
+        virtual ~BaseEvent() noexcept {}
     };
 
    /**
@@ -69,6 +75,12 @@ public:
     struct KeyboardEvent : BaseEvent {
         bool press;
         uint key;
+
+        /** Constuctor */
+        KeyboardEvent() noexcept
+            : BaseEvent(),
+              press(false),
+              key(0) {}
     };
 
    /**
@@ -79,7 +91,13 @@ public:
     */
     struct SpecialEvent : BaseEvent {
         bool press;
-        Key key;
+        Key  key;
+
+        /** Constuctor */
+        SpecialEvent() noexcept
+            : BaseEvent(),
+              press(false),
+              key(Key(0)) {}
     };
 
    /**
@@ -90,9 +108,16 @@ public:
       @see onMouse
     */
     struct MouseEvent : BaseEvent {
-        int button;
+        int  button;
         bool press;
         Point<int> pos;
+
+        /** Constuctor */
+        MouseEvent() noexcept
+            : BaseEvent(),
+              button(0),
+              press(false),
+              pos(0, 0) {}
     };
 
    /**
@@ -102,6 +127,11 @@ public:
     */
     struct MotionEvent : BaseEvent {
         Point<int> pos;
+
+        /** Constuctor */
+        MotionEvent() noexcept
+            : BaseEvent(),
+              pos(0, 0) {}
     };
 
    /**
@@ -113,6 +143,12 @@ public:
     struct ScrollEvent : BaseEvent {
         Point<int> pos;
         Point<float> delta;
+
+        /** Constuctor */
+        ScrollEvent() noexcept
+            : BaseEvent(),
+              pos(0, 0),
+              delta(0.0f, 0.0f) {}
     };
 
    /**
@@ -124,6 +160,11 @@ public:
     struct ResizeEvent {
         Size<uint> size;
         Size<uint> oldSize;
+
+        /** Constuctor */
+        ResizeEvent() noexcept
+            : size(0, 0),
+              oldSize(0, 0) {}
     };
 
    /**
@@ -177,22 +218,22 @@ public:
    /**
       Set width.
     */
-    virtual void setWidth(uint width) noexcept;
+    void setWidth(uint width) noexcept;
 
    /**
       Set height.
     */
-    virtual void setHeight(uint height) noexcept;
+    void setHeight(uint height) noexcept;
 
    /**
       Set size using @a width and @a height values.
     */
-    virtual void setSize(uint width, uint height) noexcept;
+    void setSize(uint width, uint height) noexcept;
 
    /**
       Set size.
     */
-    virtual void setSize(const Size<uint>& size) noexcept;
+    void setSize(const Size<uint>& size) noexcept;
 
    /**
       Get absolute X.
@@ -254,6 +295,18 @@ public:
       Tell this widget's window to repaint itself.
     */
     void repaint() noexcept;
+
+   /**
+      Get the Id associated with this widget.
+      @see setId
+    */
+    uint getId() const noexcept;
+
+   /**
+      Set an Id to be associated with this widget.
+      @see getId
+    */
+    void setId(uint id) noexcept;
 
 protected:
    /**
@@ -317,10 +370,10 @@ private:
     bool    fNeedsFullViewport;
     bool    fNeedsScaling;
     bool    fVisible;
+    uint    fId;
     Point<int> fAbsolutePos;
     Size<uint> fSize;
 
-    friend class CairoWidget;
     friend class Window;
     friend class StandaloneWindow;
 

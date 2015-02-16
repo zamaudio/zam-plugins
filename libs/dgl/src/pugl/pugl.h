@@ -51,7 +51,11 @@
 #        define PUGL_API PUGL_LIB_IMPORT
 #    endif
 #else
-#    define PUGL_API
+#    ifdef _WIN32
+#        define PUGL_API
+#    else
+#        define PUGL_API __attribute__((visibility("hidden")))
+#    endif
 #endif
 
 #ifdef __cplusplus
@@ -196,19 +200,18 @@ typedef void (*PuglReshapeFunc)(PuglView* view, int width, int height);
    so programs should handle any value gracefully.
 
    @param view The view being scrolled.
+   @param x The window-relative x coordinate of the pointer.
+   @param y The window-relative y coordinate of the pointer.
    @param dx The scroll x distance.
    @param dx The scroll y distance.
 */
-typedef void (*PuglScrollFunc)(PuglView* view,
-                               int       x,
-                               int       y,
-                               float     dx,
-                               float     dy);
+typedef void (*PuglScrollFunc)(PuglView* view, int x, int y, float dx, float dy);
 
 /**
    A function called when a special key is pressed or released.
 
    This callback allows the use of keys that do not have unicode points.
+   Note that some are non-printable keys.
 
    @param view The view the event occured in.
    @param press True if the key was pressed, false if released.
@@ -217,16 +220,21 @@ typedef void (*PuglScrollFunc)(PuglView* view,
 typedef void (*PuglSpecialFunc)(PuglView* view, bool press, PuglKey key);
 
 /**
+   A function called when a filename is selected via file-browser.
+
+   @param view The view the event occured in.
+   @param filename The selected file name or NULL if the dialog was canceled.
+*/
+typedef void (*PuglFileSelectedFunc)(PuglView* view, const char* filename);
+
+/**
    Create a Pugl context.
 
    To create a window, call the various puglInit* functions as necessary, then
    call puglCreateWindow().
-
-   @param pargc Pointer to argument count (unused, for GLUT compatibility).
-   @param argv  Arguments (unused, for GLUT compatibility).
 */
 PUGL_API PuglView*
-puglInit(int* pargc, char** argv);
+puglInit(void);
 
 /**
    Set the parent window before creating a window (for embedding).
@@ -244,7 +252,7 @@ puglInitWindowSize(PuglView* view, int width, int height);
    Enable or disable resizing before creating a window.
 */
 PUGL_API void
-puglInitResizable(PuglView* view, bool resizable);
+puglInitUserResizable(PuglView* view, bool resizable);
 
 /**
    Create a window with the settings given by the various puglInit functions.
@@ -351,6 +359,12 @@ puglSetSpecialFunc(PuglView* view, PuglSpecialFunc specialFunc);
 */
 PUGL_API void
 puglSetReshapeFunc(PuglView* view, PuglReshapeFunc reshapeFunc);
+
+/**
+   Set the function to call on file-browser selections.
+*/
+PUGL_API void
+puglSetFileSelectedFunc(PuglView* view, PuglFileSelectedFunc fileSelectedFunc);
 
 /**
    Return the native window handle.
