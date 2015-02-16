@@ -18,6 +18,8 @@
 #include "ZamSFZUI.hpp"
 #include "ZamSFZPlugin.hpp"
 
+#include "Window.hpp"
+
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
@@ -82,6 +84,13 @@ void ZamSFZUI::d_stateChanged(const char* key, const char*)
 	}
 }
 
+void ZamSFZUI::d_uiFileBrowserSelected(const char* filename)
+{
+	// if a file was selected, tell DSP
+	if (filename != nullptr)
+		d_setState("filepath", filename);
+}
+
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
@@ -105,33 +114,11 @@ void ZamSFZUI::imageKnobValueChanged(ImageKnob* knob, float value)
 
 void ZamSFZUI::imageButtonClicked(ImageButton*, int)
 {
-/*
-	GtkWidget* dialog = gtk_file_chooser_dialog_new(
-		"Load SFZ",
-		NULL,
-		GTK_FILE_CHOOSER_ACTION_OPEN,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-		NULL);
-	
-	if (filepath) {
-		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), filepath);
-	}
+    DGL::Window::FileBrowserOptions opts;
+    opts.title = "Load SFZ";
+    //opts.filters = "sfz;";
 
-	if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_ACCEPT) {
-		gtk_widget_destroy(dialog);
-		return;
-	}
-	
-	if (filepath) {
-		g_free(filepath);
-	}
-	filepath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-	
-	gtk_widget_destroy(dialog);
-*/	
-//	d_setState("filepath", "/home/damien/Music/rhodes-nord/rhodes-nord.sfz");
-	d_setState("filepath", "/home/damien/Music/sfz/sfz LatelyBass/TX_LatelyBass.sfz");
+    getParentWindow().openFileBrowser(opts);
 }
 
 void ZamSFZUI::onDisplay()

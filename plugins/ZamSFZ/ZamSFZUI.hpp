@@ -46,6 +46,8 @@ protected:
     void d_programChanged(uint32_t index) override;
     void d_stateChanged(const char* key, const char* value) override;
 
+    void d_uiFileBrowserSelected(const char* filename) override;
+
     // -------------------------------------------------------------------
     // Widget Callbacks
 
@@ -55,6 +57,7 @@ protected:
     void imageButtonClicked(ImageButton*, int) override;
 
     void onDisplay() override;
+
 private:
     Image fImgBackground;
     ScopedPointer<ImageKnob> fKnobGain;
