@@ -64,13 +64,14 @@ void Sfz::loadsamples(std::string path, std::string filename)
   } else {
 	for (i = 0; i < maxregions; i++) {
 		for (note = 0; note < 128; note++) {
-			key = 0;
 			if (sfzinstrument->regions[i]->lokey == sfzinstrument->regions[i]->hikey) {
 				key = sfzinstrument->regions[i]->lokey;
 			} else {
 				key = sfzinstrument->regions[i]->pitch_keycenter;
 			}
 			if (note == key) {
+				layers[note].keymiddle = key;
+				layers[note].dsemitones = 0;
 				infile = NULL;
 				if ((infile = sf_open(sfzinstrument->regions[i]->sample.c_str(), SFM_READ, &sfinfo)) == NULL) {
 						printf("Missing samples\n");
@@ -86,16 +87,48 @@ void Sfz::loadsamples(std::string path, std::string filename)
 				sf_close (infile);
 				printf("N-%d V-%d %s\n", note, k, sfzinstrument->regions[i]->sample.c_str());
 				layers[note].max++;
-				break;
+				continue;
+			} else if (sfzinstrument->regions[i]->lokey <= note && sfzinstrument->regions[i]->hikey >= note) {
+				layers[note].keymiddle = key;
+				layers[note].dsemitones = note - key;
+				//printf("MainKey=%d NoteShiftTo=%d\n", key, note);
 			}
 		}
 	}
 	printf("All samples loaded, Woot!\n");
   }
   delete sfzfile;
-  for (i = 0; i < 128; i++) {
-	if (layers[i].max) {
-		layers[i].max--;
+}
+
+void Sfz::pitchshiftsamples(int srate)
+{
+	::RubberBand::RubberBandStretcher* rbl = NULL;
+	::RubberBand::RubberBandStretcher* rbr = NULL;
+	int i,j;
+	for (i = 0; i < 128; i++) {
+		//printf("i=%d ds=%d\n", i, layers[i].dsemitones);
+		if (!(layers[i].dsemitones == 0)) {
+			int ii = layers[i].keymiddle;
+			//printf("Pitch shifting... %d\n", layers[i].dsemitones);
+			for (j = 0; j < layers[ii].max; j++) {
+				float const * const inl[] = {sample[ii][j][0]};
+				float const * const inr[] = {sample[ii][j][1]};
+				float * const outl[] = {sample[i][j][0]};
+				float * const outr[] = {sample[i][j][1]};
+				rbl = new ::RubberBand::RubberBandStretcher(srate, 1, 0, 1.0, pow(2.0, layers[i].dsemitones / 12.));
+				rbr = new ::RubberBand::RubberBandStretcher(srate, 1, 0, 1.0, pow(2.0, layers[i].dsemitones / 12.));
+
+				rbl->setMaxProcessSize(MAX_SAMPLES);
+				rbr->setMaxProcessSize(MAX_SAMPLES);
+				rbl->setExpectedInputDuration(MAX_SAMPLES);
+				rbr->setExpectedInputDuration(MAX_SAMPLES);
+				rbl->process(inl, MAX_SAMPLES, true);
+				rbr->process(inr, MAX_SAMPLES, true);
+				rbl->retrieve(outl, MAX_SAMPLES);
+				rbr->retrieve(outr, MAX_SAMPLES);
+				delete rbl;
+				delete rbr;
+			}
+		}
 	}
-  }
 }

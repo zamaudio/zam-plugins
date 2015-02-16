@@ -93,6 +93,7 @@ void ZamSFZPlugin::d_setState(const char* key, const char* value)
 		printf("Path: %s\nFile: %s\n", path.c_str(), filename.c_str());
     		sfz.clearsamples();
 		sfz.loadsamples(path, filename);
+		sfz.pitchshiftsamples((int)d_getSampleRate());
 		loading = false;
 	}
 }

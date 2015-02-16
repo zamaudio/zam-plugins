@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "libsfz/sfz.h"
+#include <rubberband/RubberBandStretcher.h>
 #include <sndfile.h>
 #define MAX_LAYERS 8
 #define MAX_SAMPLES 64000
@@ -21,6 +22,8 @@ public:
 
 	typedef struct {
 		int max;
+		int keymiddle;
+		int dsemitones;
 		hilo_t l[MAX_LAYERS];
 	} layer_t;
 
@@ -28,4 +31,5 @@ public:
 	void clearsamples();
 	void loadsamples(std::string path, std::string filename);
 	void readsamples (SNDFILE *infile, int channels, int note, int layer);
+	void pitchshiftsamples(int srate);
 };
