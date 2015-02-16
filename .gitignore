@@ -21,6 +21,9 @@ bin/ZamComp
 bin/ZamCompX2
 bin/ZamEQ2
 bin/ZamGEQ31
+bin/ZamGEQ31X2
 bin/ZamNoise
+bin/ZamPiano
+bin/ZamSFZ
 bin/ZamSynth
 bin/ZamTube
