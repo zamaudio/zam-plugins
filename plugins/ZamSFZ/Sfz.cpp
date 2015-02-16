@@ -49,7 +49,7 @@ void Sfz::clearsamples()
 
 void Sfz::loadsamples(std::string path, std::string filename)
 {
-	int note, i, key;
+	int note, i, j, k, key;
 	::sfz::File* sfzfile = NULL;
 	::sfz::Instrument* sfzinstrument = NULL;
 	sfzfile = new ::sfz::File(filename, path);
@@ -79,7 +79,7 @@ void Sfz::loadsamples(std::string path, std::string filename)
 						printf("File: %s\n",sfzinstrument->regions[i]->sample.c_str());
 				}
 				readsamples (infile, sfinfo.channels, note, layers[note].max);
-				int k = layers[note].max;
+				k = layers[note].max;
 				layers[note].l[k].lovel = sfzinstrument->regions[i]->lovel;
 				layers[note].l[k].hivel = sfzinstrument->regions[i]->hivel;
 				layers[note].l[k].lokey = sfzinstrument->regions[i]->lokey;
@@ -98,6 +98,16 @@ void Sfz::loadsamples(std::string path, std::string filename)
 	printf("All samples loaded, Woot!\n");
   }
   delete sfzfile;
+  for (i = 0; i < 128; i++) {
+  	if (!(layers[i].keymiddle == i)) {
+		k = layers[i].keymiddle;
+		layers[i].max = layers[k].max;
+		for (j = 0; j < layers[i].max; j++) {
+			layers[i].l[j].lovel = layers[k].l[j].lovel;
+			layers[i].l[j].hivel = layers[k].l[j].hivel;
+		}
+	}
+  }
 }
 
 void Sfz::pitchshiftsamples(int srate)
@@ -109,7 +119,7 @@ void Sfz::pitchshiftsamples(int srate)
 		//printf("i=%d ds=%d\n", i, layers[i].dsemitones);
 		if (!(layers[i].dsemitones == 0)) {
 			int ii = layers[i].keymiddle;
-			//printf("Pitch shifting... %d\n", layers[i].dsemitones);
+			printf("Pitch shifting... %d\n", layers[i].dsemitones);
 			for (j = 0; j < layers[ii].max; j++) {
 				float const * const inl[] = {sample[ii][j][0]};
 				float const * const inr[] = {sample[ii][j][1]};
