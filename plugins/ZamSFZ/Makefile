@@ -27,6 +27,12 @@ OBJS_UI  = \
 include ../Makefile.mk
 
 # --------------------------------------------------------------
+# Extra flags
+
+BASE_FLAGS += $(shell pkg-config --cflags sndfile rubberband)
+LINK_FLAGS += $(shell pkg-config --libs sndfile rubberband)
+
+# --------------------------------------------------------------
 # Enable all possible plugin types
 
 ifeq ($(LINUX),true)
