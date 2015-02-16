@@ -270,7 +270,7 @@ public:
         : fAudioMaster(audioMaster),
           fEffect(effect)
     {
-        std::memset(fProgramName, 0, sizeof(char)*(64+1));
+        std::memset(fProgramName, 0, sizeof(char)*(32+1));
         std::strcpy(fProgramName, "Default");
 
 #if DISTRHO_PLUGIN_HAS_MIDI_INPUT
@@ -339,7 +339,7 @@ public:
         case effSetProgramName:
             if (char* const programName = (char*)ptr)
             {
-                DISTRHO::strncpy(fProgramName, programName, 64);
+                DISTRHO::strncpy(fProgramName, programName, 32);
                 return 1;
             }
             break;
@@ -371,8 +371,10 @@ public:
         case effSetSampleRate:
             fPlugin.setSampleRate(opt, true);
 
+#if DISTRHO_PLUGIN_HAS_UI
             if (fVstUI != nullptr)
                 fVstUI->setSampleRate(opt);
+#endif
             break;
 
         case effSetBlockSize:
@@ -424,7 +426,6 @@ public:
 # endif
                 d_lastUiSampleRate = fPlugin.getSampleRate();
 
-                d_stdout("effEditOpen with ptr = %p", ptr);
                 fVstUI = new UIVst(fAudioMaster, fEffect, this, &fPlugin, (intptr_t)ptr);
 
 # if DISTRHO_PLUGIN_WANT_STATE
@@ -584,7 +585,7 @@ public:
         case effCanDo:
             if (const char* const canDo = (const char*)ptr)
             {
-# if DISTRHO_OS_MAC
+# if DISTRHO_OS_MAC && DISTRHO_PLUGIN_HAS_UI
                 if (std::strcmp(canDo, "hasCockosViewAsConfig") == 0)
                 {
                     fUsingNsView = true;
@@ -716,7 +717,7 @@ private:
     PluginExporter fPlugin;
 
     // Temporary data
-    char fProgramName[64+1];
+    char fProgramName[32+1];
 
 #if DISTRHO_PLUGIN_HAS_MIDI_INPUT
     uint32_t  fMidiEventCount;
@@ -903,25 +904,25 @@ static intptr_t vst_dispatcherCallback(AEffect* effect, int32_t opcode, int32_t 
 #endif
 
     case effGetEffectName:
-        if (ptr != nullptr)
+        if (char* const cptr = (char*)ptr)
         {
-            DISTRHO::strncpy((char*)ptr, plugin.getName(), 64);
+            DISTRHO::strncpy(cptr, plugin.getName(), 32);
             return 1;
         }
         return 0;
 
     case effGetVendorString:
-        if (ptr != nullptr)
+        if (char* const cptr = (char*)ptr)
         {
-            DISTRHO::strncpy((char*)ptr, plugin.getMaker(), 64);
+            DISTRHO::strncpy(cptr, plugin.getMaker(), 32);
             return 1;
         }
         return 0;
 
     case effGetProductString:
-        if (ptr != nullptr)
+        if (char* const cptr = (char*)ptr)
         {
-            DISTRHO::strncpy((char*)ptr, plugin.getLabel(), 64);
+            DISTRHO::strncpy(cptr, plugin.getLabel(), 32);
             return 1;
         }
         return 0;

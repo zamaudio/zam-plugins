@@ -21,9 +21,9 @@ START_NAMESPACE_DISTRHO
 /* ------------------------------------------------------------------------------------------------------------
  * Static data, see DistrhoUIInternal.hpp */
 
-double    d_lastUiSampleRate = 0.0;
-void*     d_lastUiDspPtr = nullptr;
-UIWindow* d_lastUiWindow = nullptr;
+double  d_lastUiSampleRate = 0.0;
+void*   d_lastUiDspPtr = nullptr;
+Window* d_lastUiWindow = nullptr;
 
 /* ------------------------------------------------------------------------------------------------------------
  * UI */
@@ -90,35 +90,25 @@ void UI::d_sampleRateChanged(double) {}
 /* ------------------------------------------------------------------------------------------------------------
  * UI Callbacks (optional) */
 
-#if ! DISTRHO_UI_USE_NTK
 void UI::d_uiReshape(uint width, uint height)
 {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, width, height, 0, 0.0f, 1.0f);
-    glViewport(0, 0, width, height);
+    glOrtho(0.0, static_cast<GLdouble>(width), static_cast<GLdouble>(height), 0.0, 0.0, 1.0);
+    glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
-#endif
 
 /* ------------------------------------------------------------------------------------------------------------
  * UI Resize Handling, internal */
 
-#if DISTRHO_UI_USE_NTK
-void UI::resize(int x, int y, int w, int h)
-{
-    UIWidget::resize(x, y, w, h);
-    pData->setSizeCallback(w, h);
-}
-#else
 void UI::onResize(const ResizeEvent& ev)
 {
     pData->setSizeCallback(ev.size.getWidth(), ev.size.getHeight());
 }
-#endif
 
 // -----------------------------------------------------------------------------------------------------------
 
