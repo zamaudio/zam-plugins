@@ -37,7 +37,8 @@ class UiLv2
 public:
     UiLv2(const intptr_t winId,
           const LV2_Options_Option* options, const LV2_URID_Map* const uridMap, const LV2UI_Resize* const uiResz, const LV2UI_Touch* uiTouch,
-          const LV2UI_Controller controller, const LV2UI_Write_Function writeFunc, void* const dspPtr)
+          const LV2UI_Controller controller, const LV2UI_Write_Function writeFunc,
+          LV2UI_Widget* const widget, void* const dspPtr)
         : fUI(this, winId, editParameterCallback, setParameterCallback, setStateCallback, sendNoteCallback, setSizeCallback, dspPtr),
           fUridMap(uridMap),
           fUiResize(uiResz),
@@ -51,6 +52,9 @@ public:
         if (fUiResize != nullptr && winId != 0)
             fUiResize->ui_resize(fUiResize->handle, fUI.getWidth(), fUI.getHeight());
 
+        if (widget != nullptr)
+            *widget = (LV2UI_Widget*)fUI.getWindowId();
+
 #if DISTRHO_PLUGIN_WANT_STATE
         // tell the DSP we're ready to receive msgs
         setState("__dpf_ui_data__", "");
@@ -59,7 +63,7 @@ public:
         if (winId != 0)
             return;
 
-        // if winId != 0 then options must not be null
+        // if winId == 0 then options must not be null
         DISTRHO_SAFE_ASSERT_RETURN(options != nullptr,);
 
         const LV2_URID uridWindowTitle(uridMap->map(uridMap->handle, LV2_UI__windowTitle));
@@ -106,10 +110,8 @@ public:
         {
             const uint32_t parameterOffset(fUI.getParameterOffset());
 
-            if (rindex < parameterOffset)
-                return;
-            if (bufferSize != sizeof(float))
-                return;
+            DISTRHO_SAFE_ASSERT_RETURN(rindex >= parameterOffset,)
+            DISTRHO_SAFE_ASSERT_RETURN(bufferSize == sizeof(float),)
 
             const float value(*(const float*)buffer);
             fUI.parameterChanged(rindex-parameterOffset, value);
@@ -391,8 +393,6 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
     }
 #endif
 
-    *widget = parentId;
-
     const intptr_t winId((intptr_t)parentId);
 
     if (options != nullptr)
@@ -419,7 +419,7 @@ static LV2UI_Handle lv2ui_instantiate(const LV2UI_Descriptor*, const char* uri, 
         d_lastUiSampleRate = 44100.0;
     }
 
-    return new UiLv2(winId, options, uridMap, uiResize, uiTouch, controller, writeFunction, instance);
+    return new UiLv2(winId, options, uridMap, uiResize, uiTouch, controller, writeFunction, widget, instance);
 }
 
 #define uiPtr ((UiLv2*)ui)

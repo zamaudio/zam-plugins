@@ -18,29 +18,21 @@
 #define DISTRHO_UI_INTERNAL_HPP_INCLUDED
 
 #include "../DistrhoUI.hpp"
+#include "../../dgl/App.hpp"
+#include "../../dgl/Window.hpp"
 
-#if DISTRHO_UI_USE_NTK
-# include "../../dgl/ntk/NtkApp.hpp"
-# include "../../dgl/ntk/NtkWindow.hpp"
-typedef DGL::NtkApp    App;
-typedef DGL::NtkWindow UIWindow;
-#else
-# include "../../dgl/App.hpp"
-# include "../../dgl/Window.hpp"
-typedef DGL::App    App;
-typedef DGL::Window UIWindow;
-#endif
-
+using DGL::App;
 using DGL::IdleCallback;
+using DGL::Window;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 // Static data, see DistrhoUI.cpp
 
-extern double    d_lastUiSampleRate;
-extern void*     d_lastUiDspPtr;
-extern UIWindow* d_lastUiWindow;
+extern double  d_lastUiSampleRate;
+extern void*   d_lastUiDspPtr;
+extern Window* d_lastUiWindow;
 
 // -----------------------------------------------------------------------
 // UI callbacks
@@ -83,7 +75,7 @@ struct UI::PrivateData {
           setSizeCallbackFunc(nullptr),
           ptr(nullptr)
     {
-        DISTRHO_SAFE_ASSERT(sampleRate != 0.0);
+        DISTRHO_SAFE_ASSERT(d_isNotZero(sampleRate));
 
 #if defined(DISTRHO_PLUGIN_TARGET_DSSI) || defined(DISTRHO_PLUGIN_TARGET_LV2)
         parameterOffset += DISTRHO_PLUGIN_NUM_INPUTS + DISTRHO_PLUGIN_NUM_OUTPUTS;
@@ -137,25 +129,21 @@ struct UI::PrivateData {
 // Plugin Window, needed to take care of resize properly
 
 static inline
-UI* createUiWrapper(void* const dspPtr, UIWindow* const window)
+UI* createUiWrapper(void* const dspPtr, Window* const window)
 {
     d_lastUiDspPtr = dspPtr;
     d_lastUiWindow = window;
-#if DISTRHO_UI_USE_NTK
-    UI* const ret  = window->getApp().createUI((void*)createUI);
-#else
     UI* const ret  = createUI();
-#endif
     d_lastUiDspPtr = nullptr;
     d_lastUiWindow = nullptr;
     return ret;
 }
 
-class UIExporterWindow : public UIWindow
+class UIExporterWindow : public Window
 {
 public:
     UIExporterWindow(App& app, const intptr_t winId, void* const dspPtr)
-        : UIWindow(app, winId),
+        : Window(app, winId),
           fUI(createUiWrapper(dspPtr, this)),
           fIsReady(false)
     {
@@ -168,11 +156,7 @@ public:
 
     ~UIExporterWindow()
     {
-#if DISTRHO_UI_USE_NTK
-        getApp().deleteUI(fUI);
-#else
         delete fUI;
-#endif
     }
 
     UI* getUI() const noexcept
@@ -185,24 +169,23 @@ public:
         return fIsReady;
     }
 
-//protected:
-#if DISTRHO_UI_USE_NTK
-    void resize(int x, int y, int width, int height) override
-    {
-        UIWindow::resize(x, y, width, height);
-        fIsReady = true;
-    }
-#else
+protected:
+    // custom window reshape
     void onReshape(uint width, uint height) override
     {
         DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
 
-        // custom window reshape
         fUI->d_uiReshape(width, height);
-
         fIsReady = true;
     }
-#endif
+
+    // custom file-browser selected
+    void fileBrowserSelected(const char* filename) override
+    {
+        DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
+
+        fUI->d_uiFileBrowserSelected(filename);
+    }
 
 private:
     UI* const fUI;
@@ -250,6 +233,13 @@ public:
     bool isVisible() const noexcept
     {
         return glWindow.isVisible();
+    }
+
+    // -------------------------------------------------------------------
+
+    intptr_t getWindowId() const noexcept
+    {
+        return glWindow.getWindowId();
     }
 
     // -------------------------------------------------------------------
@@ -306,8 +296,6 @@ public:
     {
         if (glWindow.isReady())
             fUI->d_uiIdle();
-
-        fChangingSize = false;
     }
 
     bool idle()
@@ -318,8 +306,6 @@ public:
 
         if (glWindow.isReady())
             fUI->d_uiIdle();
-
-        fChangingSize = false;
 
         return ! glApp.isQuiting();
     }
@@ -335,9 +321,7 @@ public:
     void setWindowSize(const uint width, const uint height, const bool updateUI = false)
     {
         DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
-
-        if (fChangingSize)
-            return;
+        DISTRHO_SAFE_ASSERT_RETURN(! fChangingSize,);
 
         fChangingSize = true;
 
@@ -345,6 +329,8 @@ public:
             fUI->setSize(width, height);
 
         glWindow.setSize(width, height);
+
+        fChangingSize = false;
     }
 
     void setWindowTitle(const char* const uiTitle)
@@ -352,7 +338,7 @@ public:
         glWindow.setTitle(uiTitle);
     }
 
-    void setWindowTransientWinId(const intptr_t winId)
+    void setWindowTransientWinId(const uintptr_t winId)
     {
         glWindow.setTransientWinId(winId);
     }
@@ -372,7 +358,7 @@ public:
         DISTRHO_SAFE_ASSERT_RETURN(fUI != nullptr,);
         DISTRHO_SAFE_ASSERT(sampleRate > 0.0);
 
-        if (fData->sampleRate == sampleRate)
+        if (d_isEqual(fData->sampleRate, sampleRate))
             return;
 
         fData->sampleRate = sampleRate;

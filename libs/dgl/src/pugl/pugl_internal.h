@@ -51,9 +51,9 @@ struct PuglViewImpl {
 	PuglReshapeFunc  reshapeFunc;
 	PuglScrollFunc   scrollFunc;
 	PuglSpecialFunc  specialFunc;
+	PuglFileSelectedFunc fileSelectedFunc;
 
 	PuglInternals* impl;
-
 	PuglNativeWindow parent;
 
 	int      width;
@@ -66,12 +66,10 @@ struct PuglViewImpl {
 	uint32_t event_timestamp_ms;
 };
 
-PuglInternals* puglInitInternals();
-
-void puglDefaultReshape(PuglView* view, int width, int height);
+PuglInternals* puglInitInternals(void);
 
 PuglView*
-puglInit(int* pargc, char** argv)
+puglInit(void)
 {
 	PuglView* view = (PuglView*)calloc(1, sizeof(PuglView));
 	if (!view) {
@@ -80,6 +78,7 @@ puglInit(int* pargc, char** argv)
 
 	PuglInternals* impl = puglInitInternals();
 	if (!impl) {
+		free(view);
 		return NULL;
 	}
 
@@ -88,9 +87,6 @@ puglInit(int* pargc, char** argv)
 	view->height = 480;
 
 	return view;
-
-	// unused
-	(void)pargc; (void)argv;
 }
 
 void
@@ -136,7 +132,7 @@ puglGetModifiers(PuglView* view)
 	return view->mods;
 }
 
-void
+static void
 puglDefaultReshape(PuglView* view, int width, int height)
 {
 	glMatrixMode(GL_PROJECTION);
@@ -204,4 +200,10 @@ void
 puglSetSpecialFunc(PuglView* view, PuglSpecialFunc specialFunc)
 {
 	view->specialFunc = specialFunc;
+}
+
+void
+puglSetFileSelectedFunc(PuglView* view, PuglFileSelectedFunc fileSelectedFunc)
+{
+	view->fileSelectedFunc = fileSelectedFunc;
 }

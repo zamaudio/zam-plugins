@@ -1,6 +1,7 @@
 /*
   Copyright 2012-2014 David Robillard <http://drobilla.net>
   Copyright 2011-2012 Ben Loftis, Harrison Consoles
+  Copyright 2013 Robin Gareus <robin@gareus.org>
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -31,6 +32,10 @@
 
 #include "pugl_internal.h"
 
+#define SOFD_HAVE_X11
+#include "../sofd/libsofd.h"
+#include "../sofd/libsofd.c"
+
 struct PuglInternalsImpl {
 	Display*   display;
 	int        screen;
@@ -49,6 +54,7 @@ static int attrListSgl[] = {
 	GLX_GREEN_SIZE, 4,
 	GLX_BLUE_SIZE, 4,
 	GLX_DEPTH_SIZE, 16,
+	GLX_ARB_multisample, 1,
 	None
 };
 
@@ -62,11 +68,29 @@ static int attrListDbl[] = {
 	GLX_GREEN_SIZE, 4,
 	GLX_BLUE_SIZE, 4,
 	GLX_DEPTH_SIZE, 16,
+	GLX_ARB_multisample, 1,
+	None
+};
+
+/**
+   Attributes for double-buffered RGBA with multi-sampling
+	 (antialiasing)
+*/
+static int attrListDblMS[] = {
+	GLX_RGBA,
+	GLX_DOUBLEBUFFER    , True,
+	GLX_RED_SIZE        , 4,
+	GLX_GREEN_SIZE      , 4,
+	GLX_BLUE_SIZE       , 4,
+	GLX_ALPHA_SIZE      , 4,
+	GLX_DEPTH_SIZE      , 16,
+	GLX_SAMPLE_BUFFERS  , 1,
+	GLX_SAMPLES         , 4,
 	None
 };
 
 PuglInternals*
-puglInitInternals()
+puglInitInternals(void)
 {
 	return (PuglInternals*)calloc(1, sizeof(PuglInternals));
 }
@@ -76,17 +100,21 @@ puglCreateWindow(PuglView* view, const char* title)
 {
 	PuglInternals* impl = view->impl;
 
-	impl->display = XOpenDisplay(0);
+	impl->display = XOpenDisplay(NULL);
 	impl->screen  = DefaultScreen(impl->display);
+	impl->doubleBuffered = True;
 
-	XVisualInfo* vi = glXChooseVisual(impl->display, impl->screen, attrListDbl);
+	XVisualInfo* vi = glXChooseVisual(impl->display, impl->screen, attrListDblMS);
+
+	if (!vi) {
+		vi = glXChooseVisual(impl->display, impl->screen, attrListDbl);
+		PUGL_LOG("multisampling (antialiasing) is not available\n");
+	}
+
 	if (!vi) {
 		vi = glXChooseVisual(impl->display, impl->screen, attrListSgl);
 		impl->doubleBuffered = False;
-		PUGL_LOG("No double buffering available\n");
-	} else {
-		impl->doubleBuffered = True;
-		PUGL_LOG("Double buffered rendering enabled\n");
+		PUGL_LOG("singlebuffered rendering will be used, no doublebuffering available\n");
 	}
 
 	int glxMajor, glxMinor;
@@ -202,16 +230,17 @@ puglDisplay(PuglView* view)
 {
 	glXMakeCurrent(view->impl->display, view->impl->win, view->impl->ctx);
 
+	view->redisplay = false;
+
 	if (view->displayFunc) {
 		view->displayFunc(view);
 	}
 
 	glFlush();
+
 	if (view->impl->doubleBuffered) {
 		glXSwapBuffers(view->impl->display, view->impl->win);
 	}
-
-	view->redisplay = false;
 }
 
 static PuglKey
@@ -269,9 +298,16 @@ dispatchKey(PuglView* view, XEvent* event, bool press)
 	KeySym    sym;
 	char      str[5];
 	const int n = XLookupString(&event->xkey, str, 4, &sym, NULL);
+
+	if (sym == XK_Escape && view->closeFunc && !press && !view->parent) {
+		view->closeFunc(view);
+		view->redisplay = false;
+		return;
+	}
 	if (n == 0) {
 		return;
-	} else if (n > 1) {
+	}
+	if (n > 1) {
 		fprintf(stderr, "warning: Unsupported multi-byte key %X\n", (int)sym);
 		return;
 	}
@@ -290,6 +326,26 @@ puglProcessEvents(PuglView* view)
 	XEvent event;
 	while (XPending(view->impl->display) > 0) {
 		XNextEvent(view->impl->display, &event);
+
+		if (x_fib_handle_events(view->impl->display, &event)) {
+			const int status = x_fib_status();
+
+			if (status > 0) {
+				char* const filename = x_fib_filename();
+				x_fib_close(view->impl->display);
+				if (view->fileSelectedFunc) {
+					view->fileSelectedFunc(view, filename);
+				}
+				free(filename);
+			} else if (status < 0) {
+				x_fib_close(view->impl->display);
+				if (view->fileSelectedFunc) {
+					view->fileSelectedFunc(view, NULL);
+				}
+			}
+			break;
+		}
+
 		switch (event.type) {
 		case MapNotify:
 			puglReshape(view, view->width, view->height);
@@ -325,9 +381,7 @@ puglProcessEvents(PuglView* view)
 					case 6: dx = -1.0f; break;
 					case 7: dx =  1.0f; break;
 					}
-					view->scrollFunc(view,
-					                 event.xbutton.x, event.xbutton.y,
-					                 dx, dy);
+					view->scrollFunc(view, event.xbutton.x, event.xbutton.y, dx, dy);
 				}
 				break;
 			}
@@ -345,8 +399,9 @@ puglProcessEvents(PuglView* view)
 			setModifiers(view, event.xkey.state, event.xkey.time);
 			dispatchKey(view, &event, true);
 			break;
-		case KeyRelease:
+		case KeyRelease: {
 			setModifiers(view, event.xkey.state, event.xkey.time);
+			bool repeated = false;
 			if (view->ignoreKeyRepeat &&
 			    XEventsQueued(view->impl->display, QueuedAfterReading)) {
 				XEvent next;
@@ -355,27 +410,27 @@ puglProcessEvents(PuglView* view)
 				    next.xkey.time == event.xkey.time &&
 				    next.xkey.keycode == event.xkey.keycode) {
 					XNextEvent(view->impl->display, &event);
-					break;
+					repeated = true;
 				}
 			}
-			dispatchKey(view, &event, false);
-			break;
+			if (!repeated) {
+				dispatchKey(view, &event, false);
+			}
+		}	break;
 		case ClientMessage: {
 			char* type = XGetAtomName(view->impl->display,
 			                          event.xclient.message_type);
 			if (!strcmp(type, "WM_PROTOCOLS")) {
 				if (view->closeFunc) {
 					view->closeFunc(view);
+					view->redisplay = false;
 				}
 			}
 			XFree(type);
-		} break;
+		}	break;
 #ifdef PUGL_GRAB_FOCUS
 		case EnterNotify:
-			XSetInputFocus(view->impl->display,
-			               view->impl->win,
-			               RevertToPointerRoot,
-			               CurrentTime);
+			XSetInputFocus(view->impl->display, view->impl->win, RevertToPointerRoot, CurrentTime);
 			break;
 #endif
 		default:

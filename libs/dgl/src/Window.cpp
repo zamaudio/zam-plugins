@@ -15,11 +15,12 @@
  */
 
 // we need this for now
-#define PUGL_GRAB_FOCUS 1
+//#define PUGL_GRAB_FOCUS 1
 
 #include "AppPrivateData.hpp"
 #include "../Widget.hpp"
 #include "../Window.hpp"
+#include "../../distrho/extra/d_string.hpp"
 
 #include "pugl/pugl.h"
 
@@ -62,13 +63,15 @@ struct Window::PrivateData {
     PrivateData(App& app, Window* const self)
         : fApp(app),
           fSelf(self),
-          fView(puglInit(nullptr, nullptr)),
+          fView(puglInit()),
           fFirstInit(true),
           fVisible(false),
           fResizable(true),
           fUsingEmbed(false),
           fWidth(1),
           fHeight(1),
+          fTitle(nullptr),
+          fWidgets(),
           fModal(),
 #if defined(DISTRHO_OS_WINDOWS)
           hwnd(0),
@@ -89,13 +92,15 @@ struct Window::PrivateData {
     PrivateData(App& app, Window* const self, Window& parent)
         : fApp(app),
           fSelf(self),
-          fView(puglInit(nullptr, nullptr)),
+          fView(puglInit()),
           fFirstInit(true),
           fVisible(false),
           fResizable(true),
           fUsingEmbed(false),
           fWidth(1),
           fHeight(1),
+          fTitle(nullptr),
+          fWidgets(),
           fModal(parent.pData),
 #if defined(DISTRHO_OS_WINDOWS)
           hwnd(0),
@@ -112,23 +117,29 @@ struct Window::PrivateData {
         DBG("Creating window with parent..."); DBGF;
         init();
 
-#ifdef DISTRHO_OS_LINUX
         const PuglInternals* const parentImpl(parent.pData->fView->impl);
-
+#if defined(DISTRHO_OS_LINUX)
         XSetTransientForHint(xDisplay, xWindow, parentImpl->win);
+//#elif defined(DISTRHO_OS_MAC)
+//        [parentImpl->window orderWindow:NSWindowBelow relativeTo:[[mView window] windowNumber]];
+#else
+        // unused
+        return; (void)parentImpl;
 #endif
     }
 
     PrivateData(App& app, Window* const self, const intptr_t parentId)
         : fApp(app),
           fSelf(self),
-          fView(puglInit(nullptr, nullptr)),
+          fView(puglInit()),
           fFirstInit(true),
           fVisible(parentId != 0),
           fResizable(parentId == 0),
           fUsingEmbed(parentId != 0),
           fWidth(1),
           fHeight(1),
+          fTitle(nullptr),
+          fWidgets(),
           fModal(),
 #if defined(DISTRHO_OS_WINDOWS)
           hwnd(0),
@@ -136,7 +147,7 @@ struct Window::PrivateData {
           xDisplay(nullptr),
           xWindow(0),
 #elif defined(DISTRHO_OS_MAC)
-          fNeedsIdle(false),
+          fNeedsIdle(parentId == 0),
           mView(nullptr),
           mWindow(nullptr),
 #endif
@@ -172,7 +183,7 @@ struct Window::PrivateData {
         }
 
         puglInitResizable(fView, fResizable);
-        puglInitWindowSize(fView, fWidth, fHeight);
+        puglInitWindowSize(fView, static_cast<int>(fWidth), static_cast<int>(fHeight));
 
         puglSetHandle(fView, this);
         puglSetDisplayFunc(fView, onDisplayCallback);
@@ -183,6 +194,7 @@ struct Window::PrivateData {
         puglSetSpecialFunc(fView, onSpecialCallback);
         puglSetReshapeFunc(fView, onReshapeCallback);
         puglSetCloseFunc(fView, onCloseCallback);
+        puglSetFileSelectedFunc(fView, fileBrowserSelectedCallback);
 
         puglCreateWindow(fView, nullptr);
 
@@ -221,7 +233,12 @@ struct Window::PrivateData {
     {
         DBG("Destroying window..."); DBGF;
 
-        //fOnModal = false;
+        if (fModal.enabled)
+        {
+            exec_fini();
+            close();
+        }
+
         fWidgets.clear();
 
         if (fUsingEmbed)
@@ -444,7 +461,11 @@ struct Window::PrivateData {
 
         fResizable = yesNo;
 
-#ifdef CARLA_OS_MAC
+#if defined(DISTRHO_OS_WINDOWS)
+        const int winFlags = fResizable ? GetWindowLong(hwnd, GWL_STYLE) |  WS_SIZEBOX
+                                        : GetWindowLong(hwnd, GWL_STYLE) & ~WS_SIZEBOX;
+        SetWindowLong(hwnd, GWL_STYLE, winFlags);
+#elif defined(DISTRHO_OS_MAC)
         // FIXME?
         const uint flags(yesNo ? (NSViewWidthSizable|NSViewHeightSizable) : 0x0);
         [mView setAutoresizingMask:flags];
@@ -457,7 +478,7 @@ struct Window::PrivateData {
 
     void setSize(uint width, uint height, const bool forced = false)
     {
-        if (width == 0 || height == 0)
+        if (width <= 1 || height <= 1)
         {
             DBGp("Window setSize called with invalid value(s) %i %i, ignoring request\n", width, height);
             return;
@@ -472,18 +493,15 @@ struct Window::PrivateData {
         fWidth  = width;
         fHeight = height;
 
-        DBGp("Window setSize called %s, size %i %i\n", forced ? "(forced)" : "(not forced)", width, height);
+        DBGp("Window setSize called %s, size %i %i, resizable %s\n", forced ? "(forced)" : "(not forced)", width, height, fResizable?"true":"false");
 
 #if defined(DISTRHO_OS_WINDOWS)
-        int winFlags = WS_POPUPWINDOW | WS_CAPTION;
-
-        if (fResizable)
-            winFlags |= WS_SIZEBOX;
-
+        const int winFlags = WS_POPUPWINDOW | WS_CAPTION | (fResizable ? WS_SIZEBOX : 0x0);
         RECT wr = { 0, 0, static_cast<long>(width), static_cast<long>(height) };
-        AdjustWindowRectEx(&wr, winFlags, FALSE, WS_EX_TOPMOST);
+        AdjustWindowRectEx(&wr, fUsingEmbed ? WS_CHILD : winFlags, FALSE, WS_EX_TOPMOST);
 
-        SetWindowPos(hwnd, 0, 0, 0, wr.right-wr.left, wr.bottom-wr.top, SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOOWNERZORDER|SWP_NOZORDER);
+        SetWindowPos(hwnd, 0, 0, 0, wr.right-wr.left, wr.bottom-wr.top,
+                     SWP_NOACTIVATE|SWP_NOMOVE|SWP_NOOWNERZORDER|SWP_NOZORDER);
 
         if (! forced)
             UpdateWindow(hwnd);
@@ -522,9 +540,21 @@ struct Window::PrivateData {
 
     // -------------------------------------------------------------------
 
+    const char* getTitle() const noexcept
+    {
+        static const char* const kFallback = "";
+
+        return fTitle != nullptr ? fTitle : kFallback;
+    }
+
     void setTitle(const char* const title)
     {
         DBGp("Window setTitle \"%s\"\n", title);
+
+        if (fTitle != nullptr)
+            std::free(fTitle);
+
+        fTitle = strdup(title);
 
 #if defined(DISTRHO_OS_WINDOWS)
         SetWindowTextA(hwnd, title);
@@ -543,7 +573,7 @@ struct Window::PrivateData {
 #endif
     }
 
-    void setTransientWinId(const intptr_t winId)
+    void setTransientWinId(const uintptr_t winId)
     {
 #if defined(DISTRHO_OS_LINUX)
         XSetTransientForHint(xDisplay, xWindow, static_cast< ::Window>(winId));
@@ -600,7 +630,7 @@ struct Window::PrivateData {
 
     // -------------------------------------------------------------------
 
-    void onDisplay()
+    void onPuglDisplay()
     {
         fSelf->onDisplayBefore();
 
@@ -618,22 +648,35 @@ struct Window::PrivateData {
                 if (widget->fNeedsFullViewport || (widget->fAbsolutePos.isZero() && widget->fSize == Size<uint>(fWidth, fHeight)))
                 {
                     // full viewport size
-                    glViewport(0, 0, fWidth, fHeight);
+                    glViewport(0,
+                               0,
+                               static_cast<GLsizei>(fWidth),
+                               static_cast<GLsizei>(fHeight));
                 }
                 else if (! widget->fNeedsScaling)
                 {
                     // only set viewport pos
-                    glViewport(widget->getAbsoluteX(), /*fView->height - widget->getHeight()*/ - widget->getAbsoluteY(), fWidth, fHeight);
+                    glViewport(widget->getAbsoluteX(),
+                               /*fView->height - static_cast<int>(widget->getHeight())*/ - widget->getAbsoluteY(),
+                               static_cast<GLsizei>(fWidth),
+                               static_cast<GLsizei>(fHeight));
 
                     // then cut the outer bounds
-                    glScissor(widget->getAbsoluteX(), fView->height - widget->getHeight() - widget->getAbsoluteY(), widget->getWidth(), widget->getHeight());
+                    glScissor(widget->getAbsoluteX(),
+                              fView->height - static_cast<int>(widget->getHeight()) - widget->getAbsoluteY(),
+                              static_cast<GLsizei>(widget->getWidth()),
+                              static_cast<GLsizei>(widget->getHeight()));
+
                     glEnable(GL_SCISSOR_TEST);
                     needsDisableScissor = true;
                 }
                 else
                 {
                     // limit viewport to widget bounds
-                    glViewport(widget->getAbsoluteX(), fView->height - widget->getHeight() - widget->getAbsoluteY(), widget->getWidth(), widget->getHeight());
+                    glViewport(widget->getAbsoluteX(),
+                               fView->height - static_cast<int>(widget->getHeight()) - widget->getAbsoluteY(),
+                               static_cast<GLsizei>(widget->getWidth()),
+                               static_cast<GLsizei>(widget->getHeight()));
                 }
 
                 // display widget
@@ -650,7 +693,7 @@ struct Window::PrivateData {
         fSelf->onDisplayAfter();
     }
 
-    void onKeyboard(const bool press, const uint key)
+    void onPuglKeyboard(const bool press, const uint key)
     {
         DBGp("PUGL: onKeyboard : %i %i\n", press, key);
 
@@ -672,7 +715,7 @@ struct Window::PrivateData {
         }
     }
 
-    void onSpecial(const bool press, const Key key)
+    void onPuglSpecial(const bool press, const Key key)
     {
         DBGp("PUGL: onSpecial : %i %i\n", press, key);
 
@@ -681,9 +724,9 @@ struct Window::PrivateData {
 
         Widget::SpecialEvent ev;
         ev.press = press;
-        ev.key  = key;
-        ev.mod  = static_cast<Modifier>(puglGetModifiers(fView));
-        ev.time = puglGetEventTimestamp(fView);
+        ev.key   = key;
+        ev.mod   = static_cast<Modifier>(puglGetModifiers(fView));
+        ev.time  = puglGetEventTimestamp(fView);
 
         FOR_EACH_WIDGET_INV(rit)
         {
@@ -694,18 +737,21 @@ struct Window::PrivateData {
         }
     }
 
-    void onMouse(const int button, const bool press, const int x, const int y)
+    void onPuglMouse(const int button, const bool press, const int x, const int y)
     {
         DBGp("PUGL: onMouse : %i %i %i %i\n", button, press, x, y);
+
+        // FIXME - pugl sends 2 of these for each window on init, don't ask me why. we'll ignore it
+        if (press && button == 0 && x == 0 && y == 0) return;
 
         if (fModal.childFocus != nullptr)
             return fModal.childFocus->focus();
 
         Widget::MouseEvent ev;
         ev.button = button;
-        ev.press = press;
-        ev.mod  = static_cast<Modifier>(puglGetModifiers(fView));
-        ev.time = puglGetEventTimestamp(fView);
+        ev.press  = press;
+        ev.mod    = static_cast<Modifier>(puglGetModifiers(fView));
+        ev.time   = puglGetEventTimestamp(fView);
 
         FOR_EACH_WIDGET_INV(rit)
         {
@@ -718,7 +764,7 @@ struct Window::PrivateData {
         }
     }
 
-    void onMotion(const int x, const int y)
+    void onPuglMotion(const int x, const int y)
     {
         DBGp("PUGL: onMotion : %i %i\n", x, y);
 
@@ -740,7 +786,7 @@ struct Window::PrivateData {
         }
     }
 
-    void onScroll(const int x, const int y, const float dx, const float dy)
+    void onPuglScroll(const int x, const int y, const float dx, const float dy)
     {
         DBGp("PUGL: onScroll : %i %i %f %f\n", x, y, dx, dy);
 
@@ -763,38 +809,38 @@ struct Window::PrivateData {
         }
     }
 
-    void onReshape(const int width, const int height)
+    void onPuglReshape(const int width, const int height)
     {
         DBGp("PUGL: onReshape : %i %i\n", width, height);
 
-        if (width == 1 && height == 1)
+        if (width <= 1 && height <= 1)
             return;
 
-        fWidth  = width;
-        fHeight = height;
+        fWidth  = static_cast<uint>(width);
+        fHeight = static_cast<uint>(height);
 
-        fSelf->onReshape(width, height);
+        fSelf->onReshape(fWidth, fHeight);
 
         FOR_EACH_WIDGET(it)
         {
             Widget* const widget(*it);
 
             if (widget->fNeedsFullViewport)
-                widget->setSize(width, height);
+                widget->setSize(fWidth, fHeight);
         }
     }
 
-    void onClose()
+    void onPuglClose()
     {
         DBG("PUGL: onClose\n");
 
-        if (fModal.enabled && fModal.parent != nullptr)
+        if (fModal.enabled)
             exec_fini();
 
         fSelf->onClose();
 
         if (fModal.childFocus != nullptr)
-            fModal.childFocus->onClose();
+            fModal.childFocus->fSelf->onClose();
 
         close();
     }
@@ -811,6 +857,7 @@ struct Window::PrivateData {
     bool fUsingEmbed;
     uint fWidth;
     uint fHeight;
+    char* fTitle;
     std::list<Widget*> fWidgets;
 
     struct Modal {
@@ -833,6 +880,8 @@ struct Window::PrivateData {
             DISTRHO_SAFE_ASSERT(! enabled);
             DISTRHO_SAFE_ASSERT(childFocus == nullptr);
         }
+
+        DISTRHO_DECLARE_NON_COPY_STRUCT(Modal)
     } fModal;
 
 #if defined(DISTRHO_OS_WINDOWS)
@@ -853,42 +902,47 @@ struct Window::PrivateData {
 
     static void onDisplayCallback(PuglView* view)
     {
-        handlePtr->onDisplay();
+        handlePtr->onPuglDisplay();
     }
 
     static void onKeyboardCallback(PuglView* view, bool press, uint32_t key)
     {
-        handlePtr->onKeyboard(press, key);
+        handlePtr->onPuglKeyboard(press, key);
     }
 
     static void onSpecialCallback(PuglView* view, bool press, PuglKey key)
     {
-        handlePtr->onSpecial(press, static_cast<Key>(key));
+        handlePtr->onPuglSpecial(press, static_cast<Key>(key));
     }
 
     static void onMouseCallback(PuglView* view, int button, bool press, int x, int y)
     {
-        handlePtr->onMouse(button, press, x, y);
+        handlePtr->onPuglMouse(button, press, x, y);
     }
 
     static void onMotionCallback(PuglView* view, int x, int y)
     {
-        handlePtr->onMotion(x, y);
+        handlePtr->onPuglMotion(x, y);
     }
 
     static void onScrollCallback(PuglView* view, int x, int y, float dx, float dy)
     {
-        handlePtr->onScroll(x, y, dx, dy);
+        handlePtr->onPuglScroll(x, y, dx, dy);
     }
 
     static void onReshapeCallback(PuglView* view, int width, int height)
     {
-        handlePtr->onReshape(width, height);
+        handlePtr->onPuglReshape(width, height);
     }
 
     static void onCloseCallback(PuglView* view)
     {
-        handlePtr->onClose();
+        handlePtr->onPuglClose();
+    }
+
+    static void fileBrowserSelectedCallback(PuglView* view, const char* filename)
+    {
+        handlePtr->fSelf->fileBrowserSelected(filename);
     }
 
     #undef handlePtr
@@ -900,13 +954,16 @@ struct Window::PrivateData {
 // Window
 
 Window::Window(App& app)
-    : pData(new PrivateData(app, this)) {}
+    : pData(new PrivateData(app, this)),
+      leakDetector_Window() {}
 
 Window::Window(App& app, Window& parent)
-    : pData(new PrivateData(app, this, parent)) {}
+    : pData(new PrivateData(app, this, parent)),
+      leakDetector_Window() {}
 
 Window::Window(App& app, intptr_t parentId)
-    : pData(new PrivateData(app, this, parentId)) {}
+    : pData(new PrivateData(app, this, parentId)),
+      leakDetector_Window() {}
 
 Window::~Window()
 {
@@ -941,6 +998,73 @@ void Window::focus()
 void Window::repaint() noexcept
 {
     puglPostRedisplay(pData->fView);
+}
+
+// static int fib_filter_filename_filter(const char* const name)
+// {
+//     return 1;
+//     (void)name;
+// }
+
+bool Window::openFileBrowser(const FileBrowserOptions& options)
+{
+    using DISTRHO_NAMESPACE::d_string;
+
+    // --------------------------------------------------------------------------
+    // configure start dir
+
+    // TODO: get abspath if needed
+    // TODO: cross-platform
+
+    d_string startDir(options.startDir);
+
+    if (startDir.isEmpty())
+    {
+        if (char* const dir_name = get_current_dir_name())
+        {
+            startDir = dir_name;
+            std::free(dir_name);
+        }
+    }
+
+    DISTRHO_SAFE_ASSERT_RETURN(startDir.isNotEmpty(), false);
+
+    if (! startDir.endsWith('/'))
+        startDir += "/";
+
+    DISTRHO_SAFE_ASSERT_RETURN(x_fib_configure(0, startDir) == 0, false);
+
+    // --------------------------------------------------------------------------
+    // configure title
+
+    d_string title(options.title);
+
+    if (title.isEmpty())
+    {
+        title = pData->getTitle();
+
+        if (title.isEmpty())
+            title = "FileBrowser";
+    }
+
+    DISTRHO_SAFE_ASSERT_RETURN(x_fib_configure(1, title) == 0, false);
+
+    // --------------------------------------------------------------------------
+    // configure filters
+
+    x_fib_cfg_filter_callback(nullptr); //fib_filter_filename_filter);
+
+    // --------------------------------------------------------------------------
+    // configure buttons
+
+    x_fib_cfg_buttons(3, options.buttons.listAllFiles-1);
+    x_fib_cfg_buttons(1, options.buttons.showHidden-1);
+    x_fib_cfg_buttons(2, options.buttons.showPlaces-1);
+
+    // --------------------------------------------------------------------------
+    // show
+
+    return (x_fib_show(pData->xDisplay, pData->xWindow, /*options.width*/0, /*options.height*/0) == 0);
 }
 
 bool Window::isVisible() const noexcept
@@ -988,12 +1112,17 @@ void Window::setSize(Size<uint> size)
     pData->setSize(size.getWidth(), size.getHeight());
 }
 
+const char* Window::getTitle() const noexcept
+{
+    return pData->getTitle();
+}
+
 void Window::setTitle(const char* title)
 {
     pData->setTitle(title);
 }
 
-void Window::setTransientWinId(intptr_t winId)
+void Window::setTransientWinId(uintptr_t winId)
 {
     pData->setTransientWinId(winId);
 }
@@ -1057,13 +1186,17 @@ void Window::onReshape(uint width, uint height)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, width, height, 0, 0.0f, 1.0f);
-    glViewport(0, 0, width, height);
+    glOrtho(0.0, static_cast<GLdouble>(width), static_cast<GLdouble>(height), 0.0, 0.0, 1.0);
+    glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
 
 void Window::onClose()
+{
+}
+
+void Window::fileBrowserSelected(const char*)
 {
 }
 
