@@ -25,10 +25,10 @@ ZamChild670Plugin::ZamChild670Plugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
     // set default values
-    inputLevel = from_dB(0.0);
-    ACThreshold = from_dB(-6.f);
+    inputLevel = from_dB(-16.0);
+    ACThreshold = from_dB(-3.f);
     timeConstantSelect = 2;
-    DCThreshold = from_dB(-12.f);
+    DCThreshold = from_dB(-6.f);
     outputGain = from_dB(0.0);
     params = new Wavechild670Parameters(inputLevel,
     		ACThreshold, timeConstantSelect, DCThreshold, 
@@ -162,10 +162,10 @@ void ZamChild670Plugin::d_setProgram(uint32_t index)
         return;
 
     /* Default parameter values */
-    inputLevel = 0.0;
-    ACThreshold = -6.f;
+    inputLevel = -16.0;
+    ACThreshold = -3.f;
     timeConstantSelect = 2;
-    DCThreshold = -12.f;
+    DCThreshold = -6.f;
     outputGain = 0.0;
 
     /* reset filter values */
