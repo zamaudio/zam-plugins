@@ -21,7 +21,7 @@ endif
 # --------------------------------------------------------------
 # Common build and link flags
 
-BASE_FLAGS = -Wall -Wextra -pipe -Wno-switch
+BASE_FLAGS = -Wall -Wextra -pipe -Wno-switch -Wno-reorder
 BASE_OPTS  = -O2 -ffast-math -fdata-sections -ffunction-sections
 ifneq ($(NOOPT),true)
 BASE_OPTS  += -mtune=generic -msse -msse2 -mfpmath=sse
