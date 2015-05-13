@@ -38,6 +38,7 @@
 #define LEVELTC_CIRCUIT_DEFAULT_R_R2 1e9
 #define LEVELTC_CIRCUIT_DEFAULT_R_R3 1e9
 
+
 class Wavechild670Parameters {
 public:
 	Wavechild670Parameters(Real inputLevelA_, Real ACThresholdA_, uint timeConstantSelectA_, Real DCThresholdA_, 
@@ -169,8 +170,8 @@ public:
 				VoutLeft = VoutA;
 				VoutRight = VoutB;
 			}
-			VoutLeft = VoutLeft * outputGain;
-			VoutRight = VoutRight * outputGain;
+			VoutLeft = clip(VoutLeft * outputGain);
+			VoutRight = clip(VoutRight * outputGain);
 			
 			VoutInterleaved[0][i] = (float)VoutLeft;
 			VoutInterleaved[1][i] = (float)VoutRight;
@@ -205,6 +206,16 @@ protected:
 			VlevelCapB = levelTimeConstantCircuitB.advance(sidechainCurrentB);
 		}
 	}	
+
+	static Real clip(Real in)
+	{
+		Real out = in;
+		if (in < -1.0)
+			out = -1.0;
+		if (in > 1.0)
+			out = 1.0;
+		return out;
+	}
 
 protected:
 	Real sampleRate;

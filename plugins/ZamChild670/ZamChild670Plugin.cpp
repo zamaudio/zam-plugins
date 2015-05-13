@@ -25,10 +25,10 @@ ZamChild670Plugin::ZamChild670Plugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
     // set default values
-    inputLevel = from_dB(-16.0);
-    ACThreshold = from_dB(-3.f);
+    inputLevel = from_dB(-12.0);
+    ACThreshold = 0.2;
     timeConstantSelect = 2;
-    DCThreshold = from_dB(-6.f);
+    DCThreshold = 0.0;
     outputGain = from_dB(0.0);
     params = new Wavechild670Parameters(inputLevel,
     		ACThreshold, timeConstantSelect, DCThreshold, 
@@ -56,27 +56,27 @@ void ZamChild670Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Input level";
         parameter.symbol     = "inlevel";
         parameter.unit       = "dB";
-        parameter.ranges.def = -16.0f;
-        parameter.ranges.min = -30.0f;
+        parameter.ranges.def = -12.0f;
+        parameter.ranges.min = -20.0f;
         parameter.ranges.max = 0.0f;
         break;
     case paramAC:
         parameter.hints      = kParameterIsAutomable;
         parameter.name       = "AC Threshold";
         parameter.symbol     = "acthres";
-        parameter.unit       = "dB";
-        parameter.ranges.def = -3.0f;
-        parameter.ranges.min = -20.0f;
-        parameter.ranges.max = 0.0f;
+        parameter.unit       = "";
+        parameter.ranges.def = 0.2f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
         break;
     case paramDC:
         parameter.hints      = kParameterIsAutomable;
         parameter.name       = "DC Threshold";
         parameter.symbol     = "dcthres";
-        parameter.unit       = "dB";
-        parameter.ranges.def = -6.0f;
-        parameter.ranges.min = -20.0f;
-        parameter.ranges.max = 0.0f;
+        parameter.unit       = "";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
         break;
     case paramTau:
         parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
@@ -93,8 +93,8 @@ void ZamChild670Plugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "outlevel";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -30.0f;
-        parameter.ranges.max = 0.0f;
+        parameter.ranges.min = -20.0f;
+        parameter.ranges.max = 20.0f;
         break;
     }
 }
@@ -162,11 +162,11 @@ void ZamChild670Plugin::d_setProgram(uint32_t index)
         return;
 
     /* Default parameter values */
-    inputLevel = -16.0;
-    ACThreshold = -3.f;
+    inputLevel = from_dB(-12.0);
+    ACThreshold = 0.2;
     timeConstantSelect = 2;
-    DCThreshold = -6.f;
-    outputGain = 0.0;
+    DCThreshold = 0.0;
+    outputGain = from_dB(0.0);
 
     /* reset filter values */
     d_activate();
@@ -178,9 +178,9 @@ void ZamChild670Plugin::d_setProgram(uint32_t index)
 void ZamChild670Plugin::d_activate()
 {
 	params->inputLevelA = params->inputLevelB = from_dB(inputLevel);
-	params->ACThresholdA = params->ACThresholdB = from_dB(ACThreshold);
+	params->ACThresholdA = params->ACThresholdB = ACThreshold;
 	params->timeConstantSelectA = params->timeConstantSelectB = timeConstantSelect;
-	params->DCThresholdA = params->DCThresholdB = from_dB(DCThreshold);
+	params->DCThresholdA = params->DCThresholdB = DCThreshold;
 	params->outputGain = from_dB(outputGain);
 	zamchild->setParameters(*params);
 	zamchild->warmUp();
@@ -189,9 +189,9 @@ void ZamChild670Plugin::d_activate()
 void ZamChild670Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
 {
 	params->inputLevelA = params->inputLevelB = from_dB(inputLevel);
-	params->ACThresholdA = params->ACThresholdB = from_dB(ACThreshold);
+	params->ACThresholdA = params->ACThresholdB = ACThreshold;
 	params->timeConstantSelectA = params->timeConstantSelectB = timeConstantSelect;
-	params->DCThresholdA = params->DCThresholdB = from_dB(DCThreshold);
+	params->DCThresholdA = params->DCThresholdB = DCThreshold;
 	params->outputGain = from_dB(outputGain);
 	zamchild->setParameters(*params);
 	

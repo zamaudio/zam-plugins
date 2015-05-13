@@ -9,5 +9,4 @@
 #define Confirm(x)
 typedef double Real;
 
-
 #endif
