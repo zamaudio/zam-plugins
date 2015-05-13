@@ -109,7 +109,7 @@ protected:
 // 		return i;
 // 	}
 	
-	inline Real getDriveStageCurrent(Real Vdiff, Real Vcap) {
+	inline Real getDriveStageCurrent(Real Vdiff, Real) {
 		Assert(isfinite(Vdiff));		
 		Assert(isfinite(Vcap));
 		Real current = diodeModel(Vdiff) * nominalOutputConductance;

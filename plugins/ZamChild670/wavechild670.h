@@ -114,14 +114,15 @@ public:
 	}
 	
 	virtual void warmUp(Real warmUpTimeInSeconds=0.5){
+		Real VoutA, VoutB;
 		ulong numSamples = (ulong) warmUpTimeInSeconds*sampleRate;
 		for (ulong i = 0; i < numSamples/2; i += 1) {
-			Real VoutA = signalAmplifierA.advanceAndGetOutputVoltage(0.0, VlevelCapA);
-			Real VoutB = signalAmplifierB.advanceAndGetOutputVoltage(0.0, VlevelCapB);
+			VoutA = signalAmplifierA.advanceAndGetOutputVoltage(0.0, VlevelCapA);
+			VoutB = signalAmplifierB.advanceAndGetOutputVoltage(0.0, VlevelCapB);
 		}
 		for (ulong i = 0; i < numSamples/2; i += 1) {
-			Real VoutA = signalAmplifierA.advanceAndGetOutputVoltage(0.0, VlevelCapA);
-			Real VoutB = signalAmplifierB.advanceAndGetOutputVoltage(0.0, VlevelCapB);
+			VoutA = signalAmplifierA.advanceAndGetOutputVoltage(0.0, VlevelCapA);
+			VoutB = signalAmplifierB.advanceAndGetOutputVoltage(0.0, VlevelCapB);
 			advanceSidechain(VoutA, VoutB); //Feedback topology with implicit unit delay between the sidechain input and the output, 
 		}
 	}

@@ -92,7 +92,7 @@ void ZamChild670UI::d_parameterChanged(uint32_t index, float value)
     }
 }
 
-void ZamChild670UI::d_programChanged(uint32_t index)
+void ZamChild670UI::d_programChanged(uint32_t)
 {
     // Default values
     fKnobIngain->setValue(-12.0f);

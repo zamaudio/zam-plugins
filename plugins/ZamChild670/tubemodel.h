@@ -33,16 +33,16 @@ class TriodeModel {
 public:
 	TriodeModel() {}
 	virtual ~TriodeModel() {}
-	virtual Real getIa(Real Vgk, Real Vak) { 
+	virtual Real getIa(Real, Real) { 
 		return 0.0; 
 	}
-	virtual Real getIg(Real Vgk, Real Vak) { 
+	virtual Real getIg(Real, Real) { 
 		return 0.0; 
 	}
 
 	virtual TriodeModel* clone() const { return new TriodeModel(*this); }
 private:
-	TriodeModel(const TriodeModel& other) { }
+	TriodeModel(const TriodeModel&) { }
 };
 
 class TriodeRemoteCutoff6386 : public TriodeModel {
