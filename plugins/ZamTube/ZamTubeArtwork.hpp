@@ -5,6 +5,16 @@
 
 namespace ZamTubeArtwork
 {
+    extern const char* insaneoffData;
+    const unsigned int insaneoffDataSize = 7104;
+    const unsigned int insaneoffWidth    = 74;
+    const unsigned int insaneoffHeight   = 24;
+
+    extern const char* insaneonData;
+    const unsigned int insaneonDataSize = 7104;
+    const unsigned int insaneonWidth    = 74;
+    const unsigned int insaneonHeight   = 24;
+
     extern const char* knobData;
     const unsigned int knobDataSize = 7056;
     const unsigned int knobWidth    = 42;

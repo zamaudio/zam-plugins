@@ -43,6 +43,11 @@ ZamTubeUI::ZamTubeUI()
     // notch slider
     Image notchImage(ZamTubeArtwork::notchData, ZamTubeArtwork::notchWidth, ZamTubeArtwork::notchHeight);
 
+    // toggle
+    Image insaneImageOn(ZamTubeArtwork::insaneonData, ZamTubeArtwork::insaneonWidth, ZamTubeArtwork::insaneonHeight);
+    Image insaneImageOff(ZamTubeArtwork::insaneoffData, ZamTubeArtwork::insaneoffWidth, ZamTubeArtwork::insaneoffHeight);
+
+
     // knobs
     fKnobTube = new ImageKnob(this, knobImage);
     fKnobTube->setAbsolutePos(177, 76);
@@ -95,6 +100,12 @@ ZamTubeUI::ZamTubeUI()
     fSliderNotch->setValue(0.f);
     fSliderNotch->setCallback(this);
 
+    Point<int> insaneStart(165,140);
+
+    fToggleInsane = new ImageToggle(this, insaneImageOff, insaneImageOn);
+    fToggleInsane->setAbsolutePos(insaneStart);
+    fToggleInsane->setCallback(this);
+
     // set default values
     d_programChanged(0);
 }
@@ -121,6 +132,9 @@ void ZamTubeUI::d_parameterChanged(uint32_t index, float value)
     case ZamTubePlugin::paramGain:
         fKnobGain->setValue(value);
         break;
+    case ZamTubePlugin::paramInsane:
+        fToggleInsane->setValue(value);
+        break;
     }
 }
 
@@ -135,6 +149,7 @@ void ZamTubeUI::d_programChanged(uint32_t index)
     fKnobMids->setValue(0.5f);
     fKnobTreb->setValue(0.0f);
     fKnobGain->setValue(0.0f);
+    fToggleInsane->setValue(0.0f);
     fSliderNotch->setValue(0.0f);
 }
 
@@ -196,6 +211,14 @@ void ZamTubeUI::imageSliderDragFinished(ImageSlider*)
 void ZamTubeUI::imageSliderValueChanged(ImageSlider*, float value)
 {
     d_setParameterValue(ZamTubePlugin::paramToneStack, value);
+}
+
+void ZamTubeUI::imageToggleClicked(ImageToggle* toggle, int)
+{
+    float v = toggle->getValue();
+    if (toggle == fToggleInsane) {
+        d_setParameterValue(ZamTubePlugin::paramInsane, v);
+    }
 }
 
 void ZamTubeUI::onDisplay()

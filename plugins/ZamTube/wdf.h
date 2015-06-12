@@ -78,6 +78,7 @@ public:
 	T ffg(T VG);
 	T fgdash(T VG);
 	T ffp(T VP);
+	T ffp_insane(T VP);
 	T fpdash(T VP);
 	T ffk();
 	T secantfg(T *i1, T *i2);
@@ -93,6 +94,7 @@ public:
 	T r8_max ( T x, T y );
 	T r8_sign ( T x );
 	T zeroffp ( T a, T b, T t );
+	T zeroffp_insane ( T a, T b, T t );
 	T zeroffg ( T a, T b, T t );
 
 };

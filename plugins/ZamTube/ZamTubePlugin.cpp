@@ -96,6 +96,15 @@ void ZamTubePlugin::d_initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -15.0f;
         parameter.ranges.max = 15.0f;
         break;
+    case paramInsane:
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.name       = "Quality Insane";
+        parameter.symbol     = "insane";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     }
 }
 
@@ -132,6 +141,9 @@ float ZamTubePlugin::d_getParameterValue(uint32_t index) const
     case paramGain:
         return mastergain;
         break;
+    case paramInsane:
+        return insane;
+        break;
     default:
         return 0.0f;
     }
@@ -159,6 +171,9 @@ void ZamTubePlugin::d_setParameterValue(uint32_t index, float value)
     case paramGain:
         mastergain = value;
         break;
+    case paramInsane:
+        insane = value;
+        break;
     }
 }
 
@@ -174,6 +189,7 @@ void ZamTubePlugin::d_setProgram(uint32_t index)
     treble = 0.0f;
     tonestack = 0.0f;
     mastergain = 0.0f;
+    insane = 0.0f;
 
     /* Default variable values */
 
@@ -997,7 +1013,11 @@ void ZamTubePlugin::d_run(const float** inputs, float** outputs, uint32_t frames
 
 		vp0 = e;
 		vp1 = 0.0;
-		v.vp = sanitize_denormal(v.zeroffp(vp0,vp1,TOLERANCE));
+		if (insane > 0.5f) {
+			v.vp = sanitize_denormal(v.zeroffp_insane(vp0,vp1,TOLERANCE));
+		} else {
+			v.vp = sanitize_denormal(v.zeroffp(vp0,vp1,TOLERANCE));
+		}
 		//v.vp = v.secantfp(&vp0,&vp1);
 
 		v.vk = sanitize_denormal(v.ffk());

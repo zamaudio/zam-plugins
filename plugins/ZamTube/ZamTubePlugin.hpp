@@ -111,6 +111,7 @@ public:
         paramTreble,
         paramToneStack,
         paramGain,
+	paramInsane,
         paramCount
     };
 
@@ -137,7 +138,7 @@ protected:
 
     uint32_t d_getVersion() const noexcept override
     {
-        return 0x1000;
+        return 0x1500;
     }
 
     int64_t d_getUniqueId() const noexcept override
@@ -184,7 +185,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float tubedrive,bass,middle,treble,tonestack,mastergain; //parameters
+    float tubedrive,bass,middle,treble,tonestack,mastergain,insane; //parameters
 };
 
 // -----------------------------------------------------------------------

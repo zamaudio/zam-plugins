@@ -250,10 +250,11 @@ T Triode::ffp(T VP) {
 
     double A = VP/mu+vg;
     return (P.WD+P.PortRes*((g*(coeff[0]+coeff[1]*A+coeff[2]*A*A))+(G.WD-vg)/G.PortRes)-VP);
+}
 
-    printf("%f\n", VP/mu+vg);
-	return (P.WD+P.PortRes*((g*_pow(_log(1.0+_exp(c*(VP/mu+vg)))/c,gamma))+(G.WD-vg)/G.PortRes)-VP);
-}	//	    ^
+T Triode::ffp_insane(T VP) {
+	return (P.WD+P.PortRes*((g*pow(log(1.0+exp(c*(VP/mu+vg)))/c,gamma))+(G.WD-vg)/G.PortRes)-VP);
+}
 
 T Triode::fpdash(T VP) {
         T a1 = exp(c*(vg+VP/mu));
@@ -402,6 +403,131 @@ T Triode::r8_sign ( T x )
 	return value;
 }
 
+T Triode::zeroffp_insane ( T a, T b, T t )
+{
+	T c;
+	T d;
+	T e;
+	T fa;
+	T fb;
+	T fc;
+	T m;
+	T macheps;
+	T p;
+	T q;
+	T r;
+	T s;
+	T sa;
+	T sb;
+	T tol;
+//
+//	Make local copies of A and B.
+//
+	sa = a;
+	sb = b;
+	fa = ffp_insane ( sa );
+	fb = ffp_insane ( sb );
+
+	c = sa;
+	fc = fa;
+	e = sb - sa;
+	d = e;
+
+	macheps = r8_epsilon;
+
+	for ( ; ; )
+	{
+		if ( abs ( fc ) < abs ( fb ) )
+		{
+			sa = sb;
+			sb = c;
+			c = sa;
+			fa = fb;
+			fb = fc;
+			fc = fa;
+		}
+
+		tol = 2.0 * macheps * abs ( sb ) + t;
+		m = 0.5 * ( c - sb );
+
+		if ( abs ( m ) <= tol || fb == 0.0 )
+		{
+			break;
+		}
+
+		if ( abs ( e ) < tol || abs ( fa ) <= abs ( fb ) )
+		{
+			e = m;
+			d = e;
+		}
+		else
+		{
+			s = fb / fa;
+
+			if ( sa == c )
+			{
+				p = 2.0 * m * s;
+				q = 1.0 - s;
+			}
+			else
+			{
+				q = fa / fc;
+				r = fb / fc;
+				p = s * ( 2.0 * m * q * ( q - r ) - ( sb - sa ) * ( r - 1.0 ) );
+				q = ( q - 1.0 ) * ( r - 1.0 ) * ( s - 1.0 );
+			}
+
+			if ( 0.0 < p )
+			{
+				q = - q;
+			}
+			else
+			{
+				p = - p;
+			}
+
+			s = e;
+			e = d;
+
+			if ( 2.0 * p < 3.0 * m * q - abs ( tol * q ) &&
+				p < abs ( 0.5 * s * q ) )
+			{
+				d = p / q;
+			}
+			else
+			{
+				e = m;
+				d = e;
+			}
+		}
+		sa = sb;
+		fa = fb;
+
+		if ( tol < abs ( d ) )
+		{
+			sb = sb + d;
+		}
+		else if ( 0.0 < m )
+		{
+			sb = sb + tol;
+		}
+		else
+		{
+			sb = sb - tol;
+		}
+
+		fb = ffp ( sb );
+
+		if ( ( 0.0 < fb && 0.0 < fc ) || ( fb <= 0.0 && fc <= 0.0 ) )
+		{
+			c = sa;
+			fc = fa;
+			e = sb - sa;
+			d = e;
+		}
+	}
+	return sb;
+}
 
 T Triode::zeroffp ( T a, T b, T t )
 {
@@ -654,4 +780,3 @@ T Triode::zeroffg ( T a, T b, T t )
 	}
 	return sb;
 }
-

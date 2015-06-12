@@ -15,7 +15,7 @@
    height="336"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="zamtube.svg"
    inkscape:export-filename="/home/damien/git/audio/zam-plugins-DPF/plugins/ZamTube/artwork/zamtube2.png"
    inkscape:export-xdpi="649.28571"
@@ -4646,8 +4646,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.28"
-     inkscape:cx="292.81224"
-     inkscape:cy="195.34795"
+     inkscape:cx="294.37474"
+     inkscape:cy="101.59795"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -4656,10 +4656,10 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:window-width="1508"
+     inkscape:window-width="1280"
      inkscape:window-height="765"
-     inkscape:window-x="305"
-     inkscape:window-y="104"
+     inkscape:window-x="-72"
+     inkscape:window-y="31"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -4669,7 +4669,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -4983,7 +4983,7 @@
              sodipodi:role="line"
              id="tspan2632"
              x="-719.17664"
-             y="-122.87212"> </tspan></text>
+             y="-122.87212" /></text>
       </g>
     </g>
     <text
@@ -6158,5 +6158,74 @@
        d="m 289.26738,1330.859 10.08636,0"
        id="path5008"
        inkscape:connector-curvature="0" />
+    <rect
+       style="fill:#00ff00;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3660"
+       width="77.34375"
+       height="24.024965"
+       x="86.431686"
+       y="1395.2423"
+       ry="14.062501"
+       rx="14.062501"
+       inkscape:export-filename="/home/damien/git/zam-plugins/plugins/ZamTube/artwork/insaneon.png"
+       inkscape:export-xdpi="84.32"
+       inkscape:export-ydpi="84.32" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Amperzand;-inkscape-font-specification:Amperzand"
+       x="100.40044"
+       y="1412.286"
+       id="text4430"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/damien/git/zam-plugins/plugins/ZamTube/artwork/insaneon.png"
+       inkscape:export-xdpi="84.32"
+       inkscape:export-ydpi="84.32"><tspan
+         sodipodi:role="line"
+         id="tspan4432"
+         x="100.40044"
+         y="1412.286"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Allstar4;-inkscape-font-specification:Allstar4">INSANE!</tspan></text>
+    <rect
+       rx="14.062501"
+       ry="14.062501"
+       y="1396.0236"
+       x="179.40044"
+       height="24.024965"
+       width="77.34375"
+       id="rect4434"
+       style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="/home/damien/git/zam-plugins/plugins/ZamTube/artwork/insaneoff.png"
+       inkscape:export-xdpi="84.32"
+       inkscape:export-ydpi="84.32" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4441"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Allstar4;-inkscape-font-specification:Allstar4"
+       d="m 195.06157,1402.4696 1.98926,0 0.12988,0.1299 0,9.9941 -0.12988,0.1299 -1.98926,0 -0.12988,-0.1299 0,-9.9941 0.12988,-0.1299" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4443"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Allstar4;-inkscape-font-specification:Allstar4"
+       d="m 200.70805,1402.4696 c 0.10938,0 1.28743,2.2171 3.53418,6.6514 l 0.0684,0.068 0.0684,0 0,-0.068 -0.007,-6.5147 0.0752,-0.1367 1.80469,0 0.13672,0.1367 0,9.9805 -0.13672,0.1367 -2.22168,0 c -0.41472,-0.6198 -1.59278,-2.8597 -3.53418,-6.7197 l -0.0684,0 0,6.583 -0.13672,0.1367 -1.73633,0 -0.19824,-0.1572 -0.007,-10.0283 0.0684,-0.068 2.29004,0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4445"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Allstar4;-inkscape-font-specification:Allstar4"
+       d="m 208.89751,1402.4696 5.09277,0 1.3877,1.3877 0,1.5244 -0.12989,0.1299 -2.05078,0 -0.13672,-0.1299 0,-0.7314 -0.45801,-0.458 -2.38574,0 -0.46484,0.3964 0,1.7159 0.33496,0.2666 3.83496,0 c 0.25065,0 0.736,0.442 1.45606,1.3261 l 0,3.3702 -1.45606,1.456 -5.09277,0 -1.45606,-1.456 0,-1.5176 0.12989,-0.1367 2.05078,0 0.13672,0.1367 0,0.7929 0.458,0.4581 2.51563,0 0.39648,-0.4581 0,-1.7226 -0.32812,-0.3281 -4.03321,0 -1.25781,-1.2578 0,-3.3086 1.45606,-1.4561" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4447"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Allstar4;-inkscape-font-specification:Allstar4"
+       d="m 222.09087,1402.4696 c 0.14127,0 1.11197,3.3952 2.91211,10.1856 l -0.0684,0.068 -2.14649,0 c -0.12305,-0.073 -0.35547,-0.834 -0.69726,-2.2832 l -3.32227,0 c -0.30534,1.5221 -0.5127,2.2832 -0.62207,2.2832 l -1.94141,0 -0.13671,-0.1367 2.76855,-10.0488 0.0684,-0.068 3.18555,0 m -1.66114,1.4561 -1.17578,4.7099 2.42676,0 -1.18262,-4.7099 -0.0684,0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4449"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Allstar4;-inkscape-font-specification:Allstar4"
+       d="m 228.4893,1402.4696 c 0.10938,0 1.28743,2.2171 3.53418,6.6514 l 0.0684,0.068 0.0684,0 0,-0.068 -0.007,-6.5147 0.0752,-0.1367 1.80469,0 0.13672,0.1367 0,9.9805 -0.13672,0.1367 -2.22168,0 c -0.41472,-0.6198 -1.59278,-2.8597 -3.53418,-6.7197 l -0.0684,0 0,6.583 -0.13672,0.1367 -1.73633,0 -0.19824,-0.1572 -0.007,-10.0283 0.0684,-0.068 2.29004,0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4451"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Allstar4;-inkscape-font-specification:Allstar4"
+       d="m 235.29106,1402.4696 6.44629,0 0.13672,0.1367 0,1.5244 -0.13672,0.1436 -4.2998,0 0,2.3516 3.88281,0 0.13672,0.1367 0,1.5244 -0.13672,0.1435 -3.88281,0 0,2.4883 4.36816,0 0.13672,0.1436 0,1.5244 -0.13672,0.1367 -6.51465,0 -0.13672,-0.1367 0,-9.9805 0.13672,-0.1367" />
   </g>
 </svg>
