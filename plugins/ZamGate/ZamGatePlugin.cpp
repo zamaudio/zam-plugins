@@ -237,17 +237,17 @@ void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames
                 absampler = averageabs(samplesr);
 		absample = std::max(absamplel, absampler);
 		if (absample < from_dB(thresdb)) {
-                        gr -= att;
+                        gr -= rel;
                         if (gr < 0.f)
                                 gr = 0.f;
-                        gl -= att;
+                        gl -= rel;
                         if (gl < 0.f)
                                 gl = 0.f;
                 } else {
-                        gr += rel;
+                        gr += att;
                         if (gr > 1.f)
                                 gr = 1.f;
-                        gl += rel;
+                        gl += att;
                         if (gl > 1.f)
                                 gl = 1.f;
                 }
