@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamEQ2Plugin::ZamEQ2Plugin()
-    : Plugin(paramCount, 1, 0) // 1 program, 0 states
+    : Plugin(paramCount, 4, 0)
 {
     // set default values
     d_setProgram(0);
@@ -148,10 +148,82 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
 
 void ZamEQ2Plugin::d_initProgramName(uint32_t index, d_string& programName)
 {
-    if (index != 0)
-        return;
+	switch(index) {
+	case 0:
+		programName = "Zero";
+		break;
+	case 1:
+		programName = "CarvedBass";
+		break;
+	case 2:
+		programName = "CarvedGuitar";
+		break;
+	case 3:
+		programName = "CarvedVox";
+		break;
+	}
+}
 
-    programName = "Default";
+void ZamEQ2Plugin::loadProgram(uint32_t index)
+{
+	switch(index) {
+	case 0:
+		gain1 = 0.0;
+		q1 = 1.0;
+		freq1 = 500.0;
+		gain2 = 0.0;
+		q2 = 1.0;
+		freq2 = 3000.0;
+		gainl = 0.0;
+		freql = 250.0;
+		gainh = 0.0;
+		freqh = 8000.0;
+		master = 0.0;
+		togglepeaks = 0.0;
+		break;
+	case 1:
+		gain1 = 0.0;
+		q1 = 1.0;
+		freq1 = 500.0;
+		gain2 = 0.0;
+		q2 = 1.0;
+		freq2 = 3000.0;
+		gainl = 6.0;
+		freql = 60.0;
+		gainh = 0.0;
+		freqh = 8000.0;
+		master = -6.0;
+		togglepeaks = 0.0;
+		break;
+	case 2:
+		gain1 = 5.6;
+		q1 = 1.46;
+		freq1 = 175.0;
+		gain2 = 0.7;
+		q2 = 1.33;
+		freq2 = 500.0;
+		gainl = -1.05;
+		freql = 30.0;
+		gainh = 0.0;
+		freqh = 8000.0;
+		master = -6.0;
+		togglepeaks = 0.0;
+		break;
+	case 3:
+		gain1 = 0.0;
+		q1 = 1.0;
+		freq1 = 500.0;
+		gain2 = 0.0;
+		q2 = 1.0;
+		freq2 = 3000.0;
+		gainl = 6.0;
+		freql = 6600.0;
+		gainh = 6.0;
+		freqh = 330.0;
+		master = -12.0;
+		togglepeaks = 0.0;
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------
@@ -247,24 +319,8 @@ void ZamEQ2Plugin::d_setParameterValue(uint32_t index, float value)
 
 void ZamEQ2Plugin::d_setProgram(uint32_t index)
 {
-    if (index != 0)
-        return;
-
     /* Default parameter values */
-    gain1 = 0.0f;
-    q1 = 1.0f;
-    freq1 = 500.0f;
-    gain2 = 0.0f;
-    q2 = 1.0f;
-    freq2 = 3000.0f;
-    gainl = 0.0f;
-    freql = 250.0f;
-    gainh = 0.0f;
-    freqh = 8000.0f;
-    master = 0.f;
-    togglepeaks = 0.f;
-
-    /* Default variable values */
+    loadProgram(index);
 
     /* reset filter values */
     d_activate();

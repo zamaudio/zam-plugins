@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZaMultiCompX2Plugin::ZaMultiCompX2Plugin()
-    : Plugin(paramCount, 1, 0) // 1 program, 0 state
+    : Plugin(paramCount, 2, 0)
 {
     // set default values
     d_setProgram(0);
@@ -265,10 +265,74 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
 
 void ZaMultiCompX2Plugin::d_initProgramName(uint32_t index, d_string& programName)
 {
-    if (index != 0)
-        return;
+	switch(index) {
+	case 0:
+		programName = "Zero";
+		break;
+	case 1:
+		programName = "Presence";
+		break;
+	}
+}
 
-    programName = "Default";
+void ZaMultiCompX2Plugin::loadProgram(uint32_t index)
+{
+	switch(index) {
+	case 0:
+		attack = 10.0;
+		release = 80.0;
+		knee = 0.0;
+		ratio = 4.0;
+		thresdb[0] = -20.0;
+		thresdb[1] = -18.0;
+		thresdb[2] = -16.0;
+		makeup[0] = 0.0;
+		makeup[1] = 0.0;
+		makeup[2] = 0.0;
+		xover1 = 160.0;
+		xover2 = 1400.0;
+		gainr[0] = 0.0;
+		gainr[1] = 0.0;
+		gainr[2] = 0.0;
+		toggle[0] = 0.0;
+		toggle[1] = 0.0;
+		toggle[2] = 0.0;
+		listen[0] = 0.0;
+		listen[1] = 0.0;
+		listen[2] = 0.0;
+		stereodet = 1.0;
+		globalgain = 0.0;
+		outl = -45.0;
+		outr = -45.0;
+		break;
+	case 1:
+		attack = 10.0;
+		release = 200.0;
+		knee = 3.0;
+		ratio = 5.0;
+		thresdb[0] = -20.0;
+		thresdb[1] = -18.0;
+		thresdb[2] = -16.0;
+		makeup[0] = 9.0;
+		makeup[1] = 6.0;
+		makeup[2] = 6.0;
+		xover1 = 160.0;
+		xover2 = 1400.0;
+		gainr[0] = 0.0;
+		gainr[1] = 0.0;
+		gainr[2] = 0.0;
+		toggle[0] = 1.0;
+		toggle[1] = 1.0;
+		toggle[2] = 1.0;
+		listen[0] = 0.0;
+		listen[1] = 0.0;
+		listen[2] = 0.0;
+		stereodet = 1.0;
+		globalgain = 0.0;
+		outl = -45.0;
+		outr = -45.0;
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------
@@ -454,40 +518,13 @@ void ZaMultiCompX2Plugin::d_setParameterValue(uint32_t index, float value)
 
 void ZaMultiCompX2Plugin::d_setProgram(uint32_t index)
 {
-    if (index != 0)
-        return;
-
     /* Default parameter values */
-    attack = 10.0f;
-    release = 80.0f;
-    knee = 0.0f;
-    ratio = 4.0f;
-    thresdb[0] = -20.0f;
-    thresdb[1] = -18.0f;
-    thresdb[2] = -16.0f;
-    makeup[0] = 0.0f;
-    makeup[1] = 0.0f;
-    makeup[2] = 0.0f;
-    gainr[0] = 0.0f;
-    gainr[1] = 0.0f;
-    gainr[2] = 0.0f;
-    xover1 = 160.0f;
-    xover2 = 1400.0f;
-    toggle[0] = 0.0f;
-    toggle[1] = 0.0f;
-    toggle[2] = 0.0f;
-    listen[0] = 0.0f;
-    listen[1] = 0.0f;
-    listen[2] = 0.0f;
-    globalgain = 0.0f;
-    stereodet = 1.0f;
-    outl = -45.f;
-    outr = -45.f;
+    loadProgram(index);
+
+    /* Default variable values */
     maxL = 0.f;
     maxR = 0.f;
     limit = 0.f;
-
-    /* Default variable values */
 
     /* reset filter values */
     d_activate();

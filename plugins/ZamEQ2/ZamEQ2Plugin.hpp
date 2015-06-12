@@ -15,8 +15,8 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#ifndef ZAMCOMPPLUGIN_HPP_INCLUDED
-#define ZAMCOMPPLUGIN_HPP_INCLUDED
+#ifndef ZAMEQ2PLUGIN_HPP_INCLUDED
+#define ZAMEQ2PLUGIN_HPP_INCLUDED
 
 #include "DistrhoPlugin.hpp"
 
@@ -88,7 +88,9 @@ protected:
 
     float d_getParameterValue(uint32_t index) const override;
     void  d_setParameterValue(uint32_t index, float value) override;
-    void  d_setProgram(uint32_t index) ;
+    void  d_setProgram(uint32_t index) override;
+
+    void  loadProgram(uint32_t index);
 
     // -------------------------------------------------------------------
     // Process
@@ -135,4 +137,4 @@ private:
 
 END_NAMESPACE_DISTRHO
 
-#endif  // ZAMCOMP_HPP_INCLUDED
+#endif  // ZAMEQ2_HPP_INCLUDED

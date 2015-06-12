@@ -83,6 +83,7 @@ protected:
     float d_getParameterValue(uint32_t index) const override;
     void  d_setParameterValue(uint32_t index, float value) override;
     void  d_setProgram(uint32_t index) override;
+    void loadProgram(uint32_t index);
 
     // -------------------------------------------------------------------
     // Process

@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamCompX2Plugin::ZamCompX2Plugin()
-    : Plugin(paramCount, 1, 0) // 1 program, 0 states
+    : Plugin(paramCount, 3, 0)
 {
     // set default values
     d_setProgram(0);
@@ -119,12 +119,59 @@ void ZamCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
+
 void ZamCompX2Plugin::d_initProgramName(uint32_t index, d_string& programName)
 {
-    if (index != 0)
-        return;
+	switch(index) {
+	case 0:
+		programName = "Zero";
+		break;
+	case 1:
+		programName = "PoppySnare";
+		break;
+	case 2:
+		programName = "VocalLeveller";
+		break;
+	}
+}
 
-    programName = "Default";
+void ZamCompX2Plugin::loadProgram(uint32_t index)
+{
+	switch(index) {
+	case 0:
+		attack = 10.0;
+		release = 80.0;
+		knee = 0.0;
+		ratio = 4.0;
+		thresdb = 0.0;
+		makeup = 0.0;
+		gainred = 0.0;
+		stereolink = 1.0;
+		outlevel = -45.0;
+		break;
+	case 1:
+		attack = 10.0;
+		release = 50.0;
+		knee = 0.0;
+		ratio = 4.0;
+		thresdb = -20.0;
+		makeup = 9.0;
+		gainred = 0.0;
+		stereolink = 1.0;
+		outlevel = -45.0;
+		break;
+	case 2:
+		attack = 50.0;
+		release = 400.0;
+		knee = 8.0;
+		ratio = 5.0;
+		thresdb = -25.0;
+		makeup = 9.0;
+		gainred = 0.0;
+		stereolink = 1.0;
+		outlevel = -45.0;
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------
@@ -202,17 +249,8 @@ void ZamCompX2Plugin::d_setParameterValue(uint32_t index, float value)
 
 void ZamCompX2Plugin::d_setProgram(uint32_t index)
 {
-    if (index != 0)
-        return;
-
     /* Default parameter values */
-    attack = 10.0f;
-    release = 80.0f;
-    knee = 0.0f;
-    ratio = 4.0f;
-    thresdb = 0.0f;
-    makeup = 0.0f;
-    stereolink = 1.0f;
+    loadProgram(index);
 
     /* reset filter values */
     d_activate();

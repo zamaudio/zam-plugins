@@ -89,6 +89,8 @@ protected:
     void  d_setParameterValue(uint32_t index, float value) override;
     void  d_setProgram(uint32_t index) override;
 
+    void  loadProgram(uint32_t index);
+
     // -------------------------------------------------------------------
     // Process
 
