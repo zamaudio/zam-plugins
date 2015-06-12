@@ -194,7 +194,7 @@ V::V(T ee, T r) : Adaptor(ONEPORT) {
 T V::waveUp() {
 	T watts = 100.0;
 	WU = 2.0*e - WD;
-	//if (Voltage()*Current() > watts) WU *= 0.999;//0.9955;
+	if (Voltage()*Current() > watts) WU *= 0.995;//0.9955;
 	DUMP(printf("UP\tV\tWU=%f\tWD=%f\tV=%f\n",WU, WD,(WD+WU)/2.0));
 	return WU;
 }
