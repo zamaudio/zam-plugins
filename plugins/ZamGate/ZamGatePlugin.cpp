@@ -251,13 +251,14 @@ void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames
                         if (gl > 1.f)
                                 gl = 1.f;
                 }
-                outputs[0][i] = tanh(2.0*gl) * from_dB(makeup) * inputs[0][i];
-                outputs[1][i] = tanh(2.0*gr) * from_dB(makeup) * inputs[1][i];
                 gatestatel = gl;
                 gatestater = gr;
+                outputs[0][i] = tanh(2.0*gatestatel) * from_dB(makeup) * inputs[0][i];
+                outputs[1][i] = tanh(2.0*gatestater) * from_dB(makeup) * inputs[1][i];
 		ming = std::max(gr, gl);
-		gainr = -to_dB(ming);
-		outlevel = to_dB(absample);
+		gainr = (ming > 0) ? sanitize_denormal(-to_dB(ming)) : 40.0;
+		gainr = std::min(gainr, 40.f);
+		outlevel = (absample > 0) ? to_dB(absample) : -60.0;
 	}
 }
 

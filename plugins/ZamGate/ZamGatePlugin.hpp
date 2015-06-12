@@ -90,6 +90,13 @@ protected:
     void d_run(const float** inputs, float** outputs, uint32_t frames) override;
 
 	static inline float
+	sanitize_denormal(float v) {
+	        if(!std::isnormal(v) || !std::isfinite(v))
+	                return 0.f;
+	        return v;
+	}
+
+	static inline float
 	from_dB(float gdb) {
 	        return (exp(gdb/20.f*log(10.f)));
 	}
