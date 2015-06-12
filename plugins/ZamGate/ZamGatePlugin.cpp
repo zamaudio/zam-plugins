@@ -258,7 +258,7 @@ void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames
 		ming = std::max(gr, gl);
 		gainr = (ming > 0) ? sanitize_denormal(-to_dB(ming)) : 40.0;
 		gainr = std::min(gainr, 40.f);
-		outlevel = (absample > 0) ? to_dB(absample) : -60.0;
+		outlevel = (absample > 0) ? to_dB(absample) - thresdb : -60.0;
 	}
 }
 
