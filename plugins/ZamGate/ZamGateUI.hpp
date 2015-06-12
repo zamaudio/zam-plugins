@@ -19,9 +19,7 @@
 #define ZAMGATEUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
 #include "ImageKnob.hpp"
-
 #include "ZamGateArtwork.hpp"
 
 using DGL::Image;
@@ -32,35 +30,35 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamGateUI : public UI,
-                  public ImageKnob::Callback
+	  public ImageKnob::Callback
 {
 public:
-    ZamGateUI();
+	ZamGateUI();
 
 protected:
-    // -------------------------------------------------------------------
-    // DSP Callbacks
+	// -------------------------------------------------------------------
+	// DSP Callbacks
 
-    void d_parameterChanged(uint32_t index, float value) override;
-    void d_programChanged(uint32_t index) ;
+	void d_parameterChanged(uint32_t index, float value) override;
+	void d_programChanged(uint32_t index) ;
 
-    // -------------------------------------------------------------------
+	// -------------------------------------------------------------------
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+	void imageKnobDragStarted(ImageKnob* knob) override;
+	void imageKnobDragFinished(ImageKnob* knob) override;
+	void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void onDisplay() override;
+	void onDisplay() override;
 
 private:
-    Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
-    ScopedPointer<ImageKnob> fKnobMakeup;
+	Image fImgBackground;
+	ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
+	ScopedPointer<ImageKnob> fKnobMakeup;
 
-    Image fLedRedImg;
-    float fLedRedValue;
-    Image fLedYellowImg;
-    float fLedYellowValue;
+	Image fLedRedImg;
+	float fLedRedValue;
+	Image fLedYellowImg;
+	float fLedYellowValue;
 };
 
 // -----------------------------------------------------------------------

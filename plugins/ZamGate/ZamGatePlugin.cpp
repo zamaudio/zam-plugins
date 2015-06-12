@@ -22,10 +22,10 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamGatePlugin::ZamGatePlugin()
-    : Plugin(paramCount, 1, 0) // 1 program, 0 states
+	: Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
-    // set default values
-    d_setProgram(0);
+	// set default values
+	d_setProgram(0);
 }
 
 // -----------------------------------------------------------------------
@@ -33,10 +33,10 @@ ZamGatePlugin::ZamGatePlugin()
 
 void ZamGatePlugin::d_initProgramName(uint32_t index, d_string& programName)
 {
-    if (index != 0)
-        return;
+	if (index != 0)
+		return;
 
-    programName = "Default";
+	programName = "Default";
 }
 
 // -----------------------------------------------------------------------
@@ -44,63 +44,63 @@ void ZamGatePlugin::d_initProgramName(uint32_t index, d_string& programName)
 
 void ZamGatePlugin::d_initParameter(uint32_t index, Parameter& parameter)
 {
-    switch (index)
-    {
-    case paramAttack:
-        parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Attack";
-        parameter.symbol     = "att";
-        parameter.unit       = "ms";
-        parameter.ranges.def = 50.0f;
-        parameter.ranges.min = 0.1f;
-        parameter.ranges.max = 500.0f;
-        break;
-    case paramRelease:
-        parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Release";
-        parameter.symbol     = "rel";
-        parameter.unit       = "ms";
-        parameter.ranges.def = 100.0f;
-        parameter.ranges.min = 0.1f;
-        parameter.ranges.max = 500.0f;
-        break;
-    case paramThresh:
-        parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Threshold";
-        parameter.symbol     = "thr";
-        parameter.unit       = "dB";
-        parameter.ranges.def = -60.0f;
-        parameter.ranges.min = -60.0f;
-        parameter.ranges.max = 0.0f;
-        break;
-    case paramMakeup:
-        parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Makeup";
-        parameter.symbol     = "mak";
-        parameter.unit       = "dB";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -30.0f;
-        parameter.ranges.max = 30.0f;
-        break;
-    case paramGainR:
-        parameter.hints      = kParameterIsOutput;
-        parameter.name       = "Gain Reduction";
-        parameter.symbol     = "gainr";
-        parameter.unit       = "dB";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 40.0f;
-        break;
-    case paramOutputLevel:
-        parameter.hints      = kParameterIsOutput;
-        parameter.name       = "Output Level";
-        parameter.symbol     = "outlevel";
-        parameter.unit       = "dB";
-        parameter.ranges.def = -45.0f;
-        parameter.ranges.min = -45.0f;
-        parameter.ranges.max = 20.0f;
-        break;
-    }
+	switch (index)
+	{
+	case paramAttack:
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Attack";
+		parameter.symbol = "att";
+		parameter.unit = "ms";
+		parameter.ranges.def = 50.0f;
+		parameter.ranges.min = 0.1f;
+		parameter.ranges.max = 500.0f;
+		break;
+	case paramRelease:
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Release";
+		parameter.symbol = "rel";
+		parameter.unit = "ms";
+		parameter.ranges.def = 100.0f;
+		parameter.ranges.min = 0.1f;
+		parameter.ranges.max = 500.0f;
+		break;
+	case paramThresh:
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Threshold";
+		parameter.symbol = "thr";
+		parameter.unit = "dB";
+		parameter.ranges.def = -60.0f;
+		parameter.ranges.min = -60.0f;
+		parameter.ranges.max = 0.0f;
+		break;
+	case paramMakeup:
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Makeup";
+		parameter.symbol = "mak";
+		parameter.unit = "dB";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = -30.0f;
+		parameter.ranges.max = 30.0f;
+		break;
+	case paramGainR:
+		parameter.hints = kParameterIsOutput;
+		parameter.name = "Gain Reduction";
+		parameter.symbol = "gainr";
+		parameter.unit = "dB";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = 0.0f;
+		parameter.ranges.max = 40.0f;
+		break;
+	case paramOutputLevel:
+		parameter.hints = kParameterIsOutput;
+		parameter.name = "Output Level";
+		parameter.symbol = "outlevel";
+		parameter.unit = "dB";
+		parameter.ranges.def = -45.0f;
+		parameter.ranges.min = -45.0f;
+		parameter.ranges.max = 20.0f;
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------
@@ -108,54 +108,54 @@ void ZamGatePlugin::d_initParameter(uint32_t index, Parameter& parameter)
 
 float ZamGatePlugin::d_getParameterValue(uint32_t index) const
 {
-    switch (index)
-    {
-    case paramAttack:
-        return attack;
-        break;
-    case paramRelease:
-        return release;
-        break;
-    case paramThresh:
-        return thresdb;
-        break;
-    case paramMakeup:
-        return makeup;
-        break;
-    case paramGainR:
-        return gainr;
-        break;
-    case paramOutputLevel:
-        return outlevel;
-        break;
-    default:
-        return 0.0f;
-    }
+	switch (index)
+	{
+	case paramAttack:
+		return attack;
+		break;
+	case paramRelease:
+		return release;
+		break;
+	case paramThresh:
+		return thresdb;
+		break;
+	case paramMakeup:
+		return makeup;
+		break;
+	case paramGainR:
+		return gainr;
+		break;
+	case paramOutputLevel:
+		return outlevel;
+		break;
+	default:
+		return 0.0f;
+	}
 }
 
 void ZamGatePlugin::d_setParameterValue(uint32_t index, float value)
 {
-    switch (index)
-    {
-    case paramAttack:
-        attack = value;
-        break;
-    case paramRelease:
-        release = value;
-        break;
-    case paramThresh:
-        thresdb = value;
-        break;
-    case paramMakeup:
-        makeup = value;
-        break;
-    case paramGainR:
-        gainr = value;
-        break;
-    case paramOutputLevel:
-        outlevel = value;
-        break;
-    }
+	switch (index)
+	{
+	case paramAttack:
+		attack = value;
+		break;
+	case paramRelease:
+		release = value;
+		break;
+	case paramThresh:
+		thresdb = value;
+		break;
+	case paramMakeup:
+		makeup = value;
+		break;
+	case paramGainR:
+		gainr = value;
+		break;
+	case paramOutputLevel:
+		outlevel = value;
+		break;
+	}
 }
 
 void ZamGatePlugin::d_setProgram(uint32_t index)
@@ -166,7 +166,6 @@ void ZamGatePlugin::d_setProgram(uint32_t index)
 	gainr = 0.0;
 	makeup = 0.0;
 	outlevel = -45.0;
-
 	d_activate();
 }
 
@@ -217,44 +216,45 @@ float ZamGatePlugin::averageabs(float samples[])
 void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
-	
-        float absamplel, absampler, absample;
-        float att;
-        float rel;
-        float gl, gr;
+	float absamplel, absampler, absample;
+	float att;
+	float rel;
+	float gl, gr;
 	float ming;
 	float fs;
 	fs = d_getSampleRate();
-        gl = gatestatel;
-        gr = gatestater;
-        att = 1000.f / (attack * fs);
-        rel = 1000.f / (release * fs);
+	gl = gatestatel;
+	gr = gatestater;
+	att = 1000.f / (attack * fs);
+	rel = 1000.f / (release * fs);
 
-        for(i = 0; i < frames; i++) {
+	for(i = 0; i < frames; i++) {
 		pushsamplel(samplesl, inputs[0][i]);
 		pushsampler(samplesr, inputs[1][i]);
-                absamplel = averageabs(samplesl);
-                absampler = averageabs(samplesr);
+		absamplel = averageabs(samplesl);
+		absampler = averageabs(samplesr);
 		absample = std::max(absamplel, absampler);
 		if (absample < from_dB(thresdb)) {
-                        gr -= rel;
-                        if (gr < 0.f)
-                                gr = 0.f;
-                        gl -= rel;
-                        if (gl < 0.f)
-                                gl = 0.f;
-                } else {
-                        gr += att;
-                        if (gr > 1.f)
-                                gr = 1.f;
-                        gl += att;
-                        if (gl > 1.f)
-                                gl = 1.f;
-                }
-                gatestatel = gl;
-                gatestater = gr;
-                outputs[0][i] = tanh(2.0*gatestatel) * from_dB(makeup) * inputs[0][i];
-                outputs[1][i] = tanh(2.0*gatestater) * from_dB(makeup) * inputs[1][i];
+			gr -= rel;
+			if (gr < 0.f)
+				gr = 0.f;
+			gl -= rel;
+			if (gl < 0.f)
+				gl = 0.f;
+		} else {
+			gr += att;
+			if (gr > 1.f)
+				gr = 1.f;
+			gl += att;
+			if (gl > 1.f)
+				gl = 1.f;
+		}
+
+		gatestatel = gl;
+		gatestater = gr;
+
+		outputs[0][i] = gl * from_dB(makeup) * inputs[0][i];
+		outputs[1][i] = gr * from_dB(makeup) * inputs[1][i];
 		ming = std::max(gr, gl);
 		gainr = (ming > 0) ? sanitize_denormal(-to_dB(ming)) : 40.0;
 		gainr = std::min(gainr, 40.f);
@@ -266,7 +266,7 @@ void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames
 
 Plugin* createPlugin()
 {
-    return new ZamGatePlugin();
+	return new ZamGatePlugin();
 }
 
 // -----------------------------------------------------------------------

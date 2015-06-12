@@ -23,63 +23,63 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamGateUI::ZamGateUI()
-    : UI()
+	: UI()
 {
-    setSize(ZamGateArtwork::zamgateWidth, ZamGateArtwork::zamgateHeight);
+	setSize(ZamGateArtwork::zamgateWidth, ZamGateArtwork::zamgateHeight);
 
-    // background
-    fImgBackground = Image(ZamGateArtwork::zamgateData, ZamGateArtwork::zamgateWidth, ZamGateArtwork::zamgateHeight, GL_BGR);
+	// background
+	fImgBackground = Image(ZamGateArtwork::zamgateData, ZamGateArtwork::zamgateWidth, ZamGateArtwork::zamgateHeight, GL_BGR);
 
-    // led images
-    fLedRedImg = Image(ZamGateArtwork::ledredData, ZamGateArtwork::ledredWidth, ZamGateArtwork::ledredHeight);
-    fLedYellowImg = Image(ZamGateArtwork::ledyellowData, ZamGateArtwork::ledyellowWidth, ZamGateArtwork::ledyellowHeight);
+	// led images
+	fLedRedImg = Image(ZamGateArtwork::ledredData, ZamGateArtwork::ledredWidth, ZamGateArtwork::ledredHeight);
+	fLedYellowImg = Image(ZamGateArtwork::ledyellowData, ZamGateArtwork::ledyellowWidth, ZamGateArtwork::ledyellowHeight);
 
-    // led values
-    fLedRedValue = 0.0f;
-    fLedYellowValue = 0.0f;
+	// led values
+	fLedRedValue = 0.0f;
+	fLedYellowValue = 0.0f;
 
-    // knob
-    Image knobImage(ZamGateArtwork::knobData, ZamGateArtwork::knobWidth, ZamGateArtwork::knobHeight);
+	// knob
+	Image knobImage(ZamGateArtwork::knobData, ZamGateArtwork::knobWidth, ZamGateArtwork::knobHeight);
 
-    // knob
-    fKnobAttack = new ImageKnob(this, knobImage);
-    fKnobAttack->setAbsolutePos(24, 45);
-    fKnobAttack->setId(ZamGatePlugin::paramAttack);
-    fKnobAttack->setRange(0.1f, 500.0f);
-    fKnobAttack->setStep(0.1f);
-    fKnobAttack->setDefault(50.0f);
-    fKnobAttack->setRotationAngle(240);
-    fKnobAttack->setCallback(this);
+	// knob
+	fKnobAttack = new ImageKnob(this, knobImage);
+	fKnobAttack->setAbsolutePos(24, 45);
+	fKnobAttack->setId(ZamGatePlugin::paramAttack);
+	fKnobAttack->setRange(0.1f, 500.0f);
+	fKnobAttack->setStep(0.1f);
+	fKnobAttack->setDefault(50.0f);
+	fKnobAttack->setRotationAngle(240);
+	fKnobAttack->setCallback(this);
 
-    fKnobRelease = new ImageKnob(this, knobImage);
-    fKnobRelease->setAbsolutePos(108, 45);
-    fKnobRelease->setId(ZamGatePlugin::paramRelease);
-    fKnobRelease->setRange(0.1f, 500.0f);
-    fKnobRelease->setStep(0.1f);
-    fKnobRelease->setDefault(100.0f);
-    fKnobRelease->setRotationAngle(240);
-    fKnobRelease->setCallback(this);
+	fKnobRelease = new ImageKnob(this, knobImage);
+	fKnobRelease->setAbsolutePos(108, 45);
+	fKnobRelease->setId(ZamGatePlugin::paramRelease);
+	fKnobRelease->setRange(0.1f, 500.0f);
+	fKnobRelease->setStep(0.1f);
+	fKnobRelease->setDefault(100.0f);
+	fKnobRelease->setRotationAngle(240);
+	fKnobRelease->setCallback(this);
 
-    fKnobThresh = new ImageKnob(this, knobImage);
-    fKnobThresh->setAbsolutePos(191.7, 45);
-    fKnobThresh->setId(ZamGatePlugin::paramThresh);
-    fKnobThresh->setRange(-60.0f, 0.0f);
-    fKnobThresh->setStep(1.0f);
-    fKnobThresh->setDefault(-60.0f);
-    fKnobThresh->setRotationAngle(240);
-    fKnobThresh->setCallback(this);
+	fKnobThresh = new ImageKnob(this, knobImage);
+	fKnobThresh->setAbsolutePos(191.7, 45);
+	fKnobThresh->setId(ZamGatePlugin::paramThresh);
+	fKnobThresh->setRange(-60.0f, 0.0f);
+	fKnobThresh->setStep(1.0f);
+	fKnobThresh->setDefault(-60.0f);
+	fKnobThresh->setRotationAngle(240);
+	fKnobThresh->setCallback(this);
 
-    fKnobMakeup = new ImageKnob(this, knobImage);
-    fKnobMakeup->setAbsolutePos(273, 45);
-    fKnobMakeup->setId(ZamGatePlugin::paramMakeup);
-    fKnobMakeup->setRange(-30.0f, 30.0f);
-    fKnobMakeup->setStep(1.0f);
-    fKnobMakeup->setDefault(0.0f);
-    fKnobMakeup->setRotationAngle(240);
-    fKnobMakeup->setCallback(this);
+	fKnobMakeup = new ImageKnob(this, knobImage);
+	fKnobMakeup->setAbsolutePos(273, 45);
+	fKnobMakeup->setId(ZamGatePlugin::paramMakeup);
+	fKnobMakeup->setRange(-30.0f, 30.0f);
+	fKnobMakeup->setStep(1.0f);
+	fKnobMakeup->setDefault(0.0f);
+	fKnobMakeup->setRotationAngle(240);
+	fKnobMakeup->setCallback(this);
 
-    // set default values
-    d_programChanged(0);
+	// set default values
+	d_programChanged(0);
 }
 
 // -----------------------------------------------------------------------
@@ -87,44 +87,44 @@ ZamGateUI::ZamGateUI()
 
 void ZamGateUI::d_parameterChanged(uint32_t index, float value)
 {
-    switch (index)
-    {
-    case ZamGatePlugin::paramAttack:
-        fKnobAttack->setValue(value);
-        break;
-    case ZamGatePlugin::paramRelease:
-        fKnobRelease->setValue(value);
-        break;
-    case ZamGatePlugin::paramThresh:
-        fKnobThresh->setValue(value);
-        break;
-    case ZamGatePlugin::paramMakeup:
-        fKnobMakeup->setValue(value);
-        break;
-    case ZamGatePlugin::paramGainR:
-        if (fLedRedValue != value)
-        {
-            fLedRedValue = value;
-            repaint();
-        }
-        break;
-    case ZamGatePlugin::paramOutputLevel:
-        if (fLedYellowValue != value)
-        {
-            fLedYellowValue = value;
-            repaint();
-        }
-        break;
-    }
+	switch (index)
+	{
+	case ZamGatePlugin::paramAttack:
+		fKnobAttack->setValue(value);
+		break;
+	case ZamGatePlugin::paramRelease:
+		fKnobRelease->setValue(value);
+		break;
+	case ZamGatePlugin::paramThresh:
+		fKnobThresh->setValue(value);
+		break;
+	case ZamGatePlugin::paramMakeup:
+		fKnobMakeup->setValue(value);
+		break;
+	case ZamGatePlugin::paramGainR:
+		if (fLedRedValue != value)
+		{
+			fLedRedValue = value;
+			repaint();
+		}
+		break;
+	case ZamGatePlugin::paramOutputLevel:
+		if (fLedYellowValue != value)
+		{
+			fLedYellowValue = value;
+			repaint();
+		}
+		break;
+	}
 }
 
 void ZamGateUI::d_programChanged(uint32_t index)
 {
-    // Default values
-    fKnobAttack->setValue(50.0f);
-    fKnobRelease->setValue(100.0f);
-    fKnobThresh->setValue(-60.0f);
-    fKnobMakeup->setValue(0.0f);
+	// Default values
+	fKnobAttack->setValue(50.0f);
+	fKnobRelease->setValue(100.0f);
+	fKnobThresh->setValue(-60.0f);
+	fKnobMakeup->setValue(0.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -132,32 +132,32 @@ void ZamGateUI::d_programChanged(uint32_t index)
 
 void ZamGateUI::imageKnobDragStarted(ImageKnob* knob)
 {
-    d_editParameter(knob->getId(), true);
+	d_editParameter(knob->getId(), true);
 }
 
 void ZamGateUI::imageKnobDragFinished(ImageKnob* knob)
 {
-    d_editParameter(knob->getId(), false);
+	d_editParameter(knob->getId(), false);
 }
 
 void ZamGateUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-    d_setParameterValue(knob->getId(), value);
+	d_setParameterValue(knob->getId(), value);
 }
 
 void ZamGateUI::onDisplay()
 {
-    fImgBackground.draw();
+	fImgBackground.draw();
 
-    // draw leds
-    static const float sLedSpacing  = 15.5f;
-    static const int   sLedInitialX = 344.7;
+	// draw leds
+	static const float sLedSpacing  = 15.5f;
+	static const int   sLedInitialX = 344.7;
 
-    static const int sYellowLedStaticY = 16;
-    static const int sRedLedStaticY    = 45;
+	static const int sYellowLedStaticY = 16;
+	static const int sRedLedStaticY	= 45;
 
-    int numRedLeds;
-    int numYellowLeds;
+	int numRedLeds;
+	int numYellowLeds;
 
 	if (fLedRedValue >= 40.f)
 		numRedLeds = 12;
@@ -185,8 +185,8 @@ void ZamGateUI::onDisplay()
 		numRedLeds = 1;
 	else numRedLeds = 0;
 
-    for (int i=numRedLeds; i>0; --i)
-        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
+	for (int i=numRedLeds; i>0; --i)
+		fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
 
 	if (fLedYellowValue >= 20.f)
 		numYellowLeds = 19;
@@ -243,7 +243,7 @@ void ZamGateUI::onDisplay()
 
 UI* createUI()
 {
-    return new ZamGateUI();
+	return new ZamGateUI();
 }
 
 // -----------------------------------------------------------------------
