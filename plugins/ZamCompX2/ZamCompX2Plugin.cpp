@@ -278,7 +278,9 @@ void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t fram
         int slew;
         float slewfactor = 1.f + knee/2.f;
 	float max = 0.f;
-        float Lgain = 1.f;
+	float lgaininp = 0.f;
+	float rgaininp = 0.f;
+	float Lgain = 1.f;
         float Rgain = 1.f;
         float Lxg, Lxl, Lyg, Lyl, Ly1;
         float Rxg, Rxl, Ryg, Ryl, Ry1;
@@ -352,13 +354,13 @@ void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t fram
                 cdb = -Ryl;
                 Rgain = from_dB(cdb);
 
-                outputs[0][i] = inputs[0][i];
-                outputs[0][i] *= Lgain * from_dB(makeup);
-                outputs[1][i] = inputs[1][i];
-                outputs[1][i] *= Rgain * from_dB(makeup);
+		lgaininp = inputs[0][i] * Lgain;
+		rgaininp = inputs[1][i] * Rgain;
+                outputs[0][i] = lgaininp * from_dB(makeup);
+                outputs[1][i] = rgaininp * from_dB(makeup);
 
-		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : sanitize_denormal(max);
-		max = (fabsf(outputs[1][i]) > max) ? fabsf(outputs[1][i]) : sanitize_denormal(max);
+		max = (fabsf(lgaininp) > max) ? fabsf(lgaininp) : sanitize_denormal(max);
+		max = (fabsf(rgaininp) > max) ? fabsf(rgaininp) : sanitize_denormal(max);
 
                 oldL_yl = Lyl;
                 oldR_yl = Ryl;
@@ -367,7 +369,7 @@ void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t fram
                 oldL_yg = Lyg;
                 oldR_yg = Ryg;
         }
-	outlevel = (max == 0.f) ? -45.f : to_dB(max);
+	outlevel = (max == 0.f) ? -45.f : to_dB(max) - thresdb;
     }
 
 // -----------------------------------------------------------------------
