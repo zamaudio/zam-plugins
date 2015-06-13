@@ -8,22 +8,30 @@ VERSION = $(shell cat .version)
 PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZamTube ZamEQ2 ZamAutoSat ZamGEQ31 ZamGEQ31X2 ZaMultiCompX2 ZamGate ZamGateX2
 #ZamPiano ZamSFZ ZamChild670
 
+include Makefile.mk
+
+# --------------------------------------------------------------
+
 all: libs $(PLUGINS) gen
 
-libs: FORCE
-	$(MAKE) -C libs/dgl
-
-gen: plugins libs/lv2_ttl_generator
-	@./libs/generate-ttl.sh
-ifeq ($(MACOS),true)
-	@./libs/generate-vst-bundles.sh
+libs:
+ifeq ($(HAVE_DGL),true)
+	$(MAKE) -C dpf/dgl
 endif
 
-libs/lv2_ttl_generator:
-	$(MAKE) -C libs/lv2-ttl-generator
+gen: $(PLUGINS) dpf/utils/lv2_ttl_generator
+	@$(CURDIR)/dpf/utils/generate-ttl.sh
+ifeq ($(MACOS),true)
+	@$(CURDIR)/dpf/utils/generate-vst-bundles.sh
+endif
+
+dpf/utils/lv2_ttl_generator:
+	$(MAKE) -C dpf/utils/lv2-ttl-generator
 
 $(PLUGINS): libs
 	$(MAKE) -C plugins/$@
+
+# --------------------------------------------------------------
 
 install: all
 	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa \
@@ -47,16 +55,18 @@ uninstall:
 		rm -f $(DESTDIR)$(PREFIX)/$(BINDIR)/"$$plugin" ; \
 	done
 
+# --------------------------------------------------------------
 
-plugins: FORCE
-
-
-clean: FORCE
+clean:
 	for plugin in $(PLUGINS); do \
-		$(MAKE) PREFIX="$(PREFIX)" LIBDIR="$(LIBDIR)" -C plugins/"$$plugin" clean; \
+		$(MAKE) -C plugins/"$$plugin" clean; \
 	done
-	$(MAKE) clean -C libs/dgl
-	$(MAKE) clean -C libs/lv2-ttl-generator
+ifeq ($(HAVE_DGL),true)
+	$(MAKE) clean -C dpf/dgl
+endif
+	$(MAKE) clean -C dpf/utils/lv2-ttl-generator
+
+# --------------------------------------------------------------
 
 .version: FORCE
 	if test -d .git; then \

@@ -27,10 +27,29 @@ include ../Makefile.mk
 # --------------------------------------------------------------
 # Enable all possible plugin types
 
-ifeq ($(LINUX),true)
-all: jack dssi lv2_sep vst
-else
-all: dssi lv2_sep vst
+ifeq ($(HAVE_DGL),true)
+ifeq ($(HAVE_JACK),true)
+TARGETS += jack
 endif
+endif
+
+ifeq ($(LINUX),true)
+TARGETS += dssi_dsp
+ifeq ($(HAVE_DGL),true)
+ifeq ($(HAVE_LIBLO),true)
+TARGETS += dssi_ui
+endif
+endif
+endif
+
+ifeq ($(HAVE_DGL),true)
+TARGETS += lv2_sep
+else
+TARGETS += lv2_dsp
+endif
+
+TARGETS += vst
+
+all: $(TARGETS)
 
 # --------------------------------------------------------------

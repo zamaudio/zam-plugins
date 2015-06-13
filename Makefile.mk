@@ -4,6 +4,7 @@
 # Created by falkTX
 #
 
+AR  ?= ar
 CC  ?= gcc
 CXX ?= g++
 
@@ -19,36 +20,39 @@ endif
 endif
 
 # --------------------------------------------------------------
-# Common build and link flags
+# Set build and link flags
 
-BASE_FLAGS = -Wall -Wextra -pipe -Wno-switch -Wno-reorder
-BASE_OPTS  = -O2 -ffast-math -fdata-sections -ffunction-sections
-ifneq ($(NOOPT),true)
-BASE_OPTS  += -mtune=generic -msse -msse2 -mfpmath=sse
+BASE_FLAGS = -Wall -Wextra -pipe
+BASE_OPTS  = -O2 -ffast-math -mtune=generic -msse -msse2 -fdata-sections -ffunction-sections
+
+ifneq ($(MACOS),true)
+# MacOS doesn't support this
+BASE_OPTS += -mfpmath=sse
 endif
-LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,-O1 -Wl,--as-needed -Wl,--gc-sections -Wl,--strip-all
 
 ifeq ($(MACOS),true)
 # MacOS linker flags
 LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,-dead_strip -Wl,-dead_strip_dylibs
+else
+# Common linker flags
+LINK_OPTS  = -fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-O1 -Wl,--as-needed -Wl,--strip-all
 endif
 
 ifeq ($(RASPPI),true)
-# Raspberry-Pi flags
-BASE_OPTS  = -O2 -ffast-math
-ifneq ($(NOOPT),true)
-BASE_OPTS += -march=armv6 -mfpu=vfp -mfloat-abi=hard
-endif
+# Raspberry-Pi optimization flags
+BASE_OPTS  = -O2 -ffast-math -march=armv6 -mfpu=vfp -mfloat-abi=hard
 LINK_OPTS  = -Wl,-O1 -Wl,--as-needed -Wl,--strip-all
 endif
 
 ifeq ($(PANDORA),true)
-# OpenPandora flags
-BASE_OPTS  = -O2 -ffast-math
-ifneq ($(NOOPT),true)
-BASE_OPTS += -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
-endif
+# OpenPandora optimization flags
+BASE_OPTS  = -O2 -ffast-math -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
 LINK_OPTS  = -Wl,-O1 -Wl,--as-needed -Wl,--strip-all
+endif
+
+ifeq ($(NOOPT),true)
+# No optimization flags
+BASE_OPTS  = -O2 -ffast-math -fdata-sections -ffunction-sections
 endif
 
 ifneq ($(WIN32),true)
@@ -75,26 +79,26 @@ LINK_FLAGS      = $(LINK_OPTS) $(LDFLAGS)
 endif
 
 # --------------------------------------------------------------
-# Check for required libs
+# Check for optional libs
 
 ifeq ($(LINUX),true)
-ifneq ($(shell pkg-config --exists jack && echo true),true)
-$(error JACK missing, cannot continue)
-endif
-ifneq ($(shell pkg-config --exists gl && echo true),true)
-$(error OpenGL missing, cannot continue)
-endif
-ifneq ($(shell pkg-config --exists x11 && echo true),true)
-$(error X11 missing, cannot continue)
-endif
+HAVE_DGL   = $(shell pkg-config --exists gl x11 && echo true)
+HAVE_JACK  = $(shell pkg-config --exists jack   && echo true)
+HAVE_LIBLO = $(shell pkg-config --exists liblo  && echo true)
 endif
 
-ifneq ($(shell pkg-config --exists liblo && echo true),true)
-$(error liblo missing, cannot continue)
+ifeq ($(MACOS),true)
+HAVE_DGL = true
+endif
+
+ifeq ($(WIN32),true)
+HAVE_DGL = true
 endif
 
 # --------------------------------------------------------------
 # Set libs stuff
+
+ifeq ($(HAVE_DGL),true)
 
 ifeq ($(LINUX),true)
 DGL_FLAGS = $(shell pkg-config --cflags gl x11)
@@ -109,17 +113,26 @@ ifeq ($(WIN32),true)
 DGL_LIBS  = -lopengl32 -lgdi32
 endif
 
-# --------------------------------------------------------------
-# Set extension
+endif # HAVE_DGL
 
-EXT = so
+# --------------------------------------------------------------
+# Set app extension
+
+ifeq ($(WIN32),true)
+APP_EXT = .exe
+endif
+
+# --------------------------------------------------------------
+# Set shared lib extension
+
+LIB_EXT = .so
 
 ifeq ($(MACOS),true)
-EXT = dylib
+LIB_EXT = .dylib
 endif
 
 ifeq ($(WIN32),true)
-EXT = dll
+LIB_EXT = .dll
 endif
 
 # --------------------------------------------------------------
