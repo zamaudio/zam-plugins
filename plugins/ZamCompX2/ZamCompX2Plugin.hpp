@@ -39,8 +39,8 @@ public:
         paramRatio,
         paramThresh,
         paramMakeup,
+        paramSlew,
         paramGainRed,
-        paramStereo,
         paramOutputLevel,
         paramCount
     };
@@ -87,7 +87,7 @@ protected:
 
     float getParameterValue(uint32_t index) const override;
     void  setParameterValue(uint32_t index, float value) override;
-    void  loadProgram(uint32_t index) override;
+    void  loadProgram(uint32_t index);
 
     // -------------------------------------------------------------------
     // Process
@@ -115,7 +115,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup,gainred,stereolink,outlevel; //parameters
+    float attack,release,knee,ratio,thresdb,makeup,gainred,outlevel,slewfactor; //parameters
     float oldL_yl, oldL_y1, oldR_yl, oldR_y1, oldL_yg, oldR_yg;
 };
 
