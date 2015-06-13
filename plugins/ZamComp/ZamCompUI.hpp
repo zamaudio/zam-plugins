@@ -19,9 +19,7 @@
 #define ZAMCOMPUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
 #include "ImageKnob.hpp"
-
 #include "ZamCompArtwork.hpp"
 
 using DGL::Image;
@@ -32,36 +30,36 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamCompUI : public UI,
-                  public ImageKnob::Callback
+		  public ImageKnob::Callback
 {
 public:
-    ZamCompUI();
+	ZamCompUI();
 
 protected:
-    // -------------------------------------------------------------------
-    // DSP Callbacks
+	// -------------------------------------------------------------------
+	// DSP Callbacks
 
-    void d_parameterChanged(uint32_t index, float value) override;
-    void d_programChanged(uint32_t index) override;
+	void d_parameterChanged(uint32_t index, float value) override;
+	void d_programChanged(uint32_t index) override;
 
-    // -------------------------------------------------------------------
-    // Widget Callbacks
+	// -------------------------------------------------------------------
+	// Widget Callbacks
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+	void imageKnobDragStarted(ImageKnob* knob) override;
+	void imageKnobDragFinished(ImageKnob* knob) override;
+	void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void onDisplay() override;
+	void onDisplay() override;
 
 private:
-    Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
-    ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup;
+	Image fImgBackground;
+	ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
+	ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup;
 
-    Image fLedRedImg;
-    float fLedRedValue;
-    Image fLedYellowImg;
-    float fLedYellowValue;
+	Image fLedRedImg;
+	float fLedRedValue;
+	Image fLedYellowImg;
+	float fLedYellowValue;
 };
 
 // -----------------------------------------------------------------------

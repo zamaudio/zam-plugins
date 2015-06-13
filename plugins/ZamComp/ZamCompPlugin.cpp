@@ -36,77 +36,77 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
 	switch (index)
 	{
 	case paramAttack:
-	parameter.hints	  = kParameterIsAutomable;
-	parameter.name	   = "Attack";
-	parameter.symbol	 = "att";
-	parameter.unit	   = "ms";
-	parameter.ranges.def = 10.0f;
-	parameter.ranges.min = 0.1f;
-	parameter.ranges.max = 200.0f;
-	break;
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Attack";
+		parameter.symbol = "att";
+		parameter.unit = "ms";
+		parameter.ranges.def = 10.0f;
+		parameter.ranges.min = 0.1f;
+		parameter.ranges.max = 200.0f;
+		break;
 	case paramRelease:
-	parameter.hints	  = kParameterIsAutomable;
-	parameter.name	   = "Release";
-	parameter.symbol	 = "rel";
-	parameter.unit	   = "ms";
-	parameter.ranges.def = 80.0f;
-	parameter.ranges.min = 50.0f;
-	parameter.ranges.max = 500.0f;
-	break;
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Release";
+		parameter.symbol = "rel";
+		parameter.unit = "ms";
+		parameter.ranges.def = 80.0f;
+		parameter.ranges.min = 50.0f;
+		parameter.ranges.max = 500.0f;
+		break;
 	case paramKnee:
-	parameter.hints	  = kParameterIsAutomable;
-	parameter.name	   = "Knee";
-	parameter.symbol	 = "kn";
-	parameter.unit	   = "dB";
-	parameter.ranges.def = 0.0f;
-	parameter.ranges.min = 0.0f;
-	parameter.ranges.max = 8.0f;
-	break;
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Knee";
+		parameter.symbol = "kn";
+		parameter.unit = "dB";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = 0.0f;
+		parameter.ranges.max = 8.0f;
+		break;
 	case paramRatio:
-	parameter.hints	  = kParameterIsAutomable;
-	parameter.name	   = "Ratio";
-	parameter.symbol	 = "rat";
-	parameter.unit	   = " ";
-	parameter.ranges.def = 4.0f;
-	parameter.ranges.min = 1.0f;
-	parameter.ranges.max = 20.0f;
-	break;
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Ratio";
+		parameter.symbol = "rat";
+		parameter.unit = " ";
+		parameter.ranges.def = 4.0f;
+		parameter.ranges.min = 1.0f;
+		parameter.ranges.max = 20.0f;
+		break;
 	case paramThresh:
-	parameter.hints	  = kParameterIsAutomable;
-	parameter.name	   = "Threshold";
-	parameter.symbol	 = "thr";
-	parameter.unit	   = "dB";
-	parameter.ranges.def = 0.0f;
-	parameter.ranges.min = -60.0f;
-	parameter.ranges.max = 0.0f;
-	break;
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Threshold";
+		parameter.symbol = "thr";
+		parameter.unit = "dB";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = -60.0f;
+		parameter.ranges.max = 0.0f;
+		break;
 	case paramMakeup:
-	parameter.hints	  = kParameterIsAutomable;
-	parameter.name	   = "Makeup";
-	parameter.symbol	 = "mak";
-	parameter.unit	   = "dB";
-	parameter.ranges.def = 0.0f;
-	parameter.ranges.min = -30.0f;
-	parameter.ranges.max = 30.0f;
-	break;
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Makeup";
+		parameter.symbol = "mak";
+		parameter.unit = "dB";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = -30.0f;
+		parameter.ranges.max = 30.0f;
+		break;
 	case paramGainR:
-	parameter.hints	  = kParameterIsOutput;
-	parameter.name	   = "Gain Reduction";
-	parameter.symbol	 = "gr";
-	parameter.unit	   = "dB";
-	parameter.ranges.def = 0.0f;
-	parameter.ranges.min = 0.0f;
-	parameter.ranges.max = 40.0f;
-	break;
+		parameter.hints = kParameterIsOutput;
+		parameter.name = "Gain Reduction";
+		parameter.symbol = "gr";
+		parameter.unit = "dB";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = 0.0f;
+		parameter.ranges.max = 40.0f;
+		break;
 	case paramOutputLevel:
-	parameter.hints	  = kParameterIsOutput;
-	parameter.name	   = "Output Level";
-	parameter.symbol	 = "outlevel";
-	parameter.unit	   = "dB";
-	parameter.ranges.def = -45.0f;
-	parameter.ranges.min = -45.0f;
-	parameter.ranges.max = 20.0f;
-	break;
+		parameter.hints = kParameterIsOutput;
+		parameter.name = "Output Level";
+		parameter.symbol = "outlevel";
+		parameter.unit = "dB";
+		parameter.ranges.def = -45.0f;
+		parameter.ranges.min = -45.0f;
+		parameter.ranges.max = 20.0f;
+		break;
 	}
 }
 
@@ -142,9 +142,9 @@ void ZamCompPlugin::loadProgram(uint32_t index)
 		attack = 10.0;
 		release = 50.0;
 		knee = 0.0;
-		ratio = 4.0;
-		thresdb = -20.0;
-		makeup = 9.0;
+		ratio = 5.0;
+		thresdb = -11.0;
+		makeup = 6.0;
 		gainr = 0.0;
 		outlevel = -45.0;
 		break;
@@ -153,7 +153,7 @@ void ZamCompPlugin::loadProgram(uint32_t index)
 		release = 400.0;
 		knee = 8.0;
 		ratio = 5.0;
-		thresdb = -25.0;
+		thresdb = -16.0;
 		makeup = 9.0;
 		gainr = 0.0;
 		outlevel = -45.0;
@@ -166,34 +166,33 @@ void ZamCompPlugin::loadProgram(uint32_t index)
 
 float ZamCompPlugin::d_getParameterValue(uint32_t index) const
 {
-	switch (index)
-	{
+	switch (index) {
 	case paramAttack:
-	return attack;
-	break;
+		return attack;
+		break;
 	case paramRelease:
-	return release;
-	break;
+		return release;
+		break;
 	case paramKnee:
-	return knee;
-	break;
+		return knee;
+		break;
 	case paramRatio:
-	return ratio;
-	break;
+		return ratio;
+		break;
 	case paramThresh:
-	return thresdb;
-	break;
+		return thresdb;
+		break;
 	case paramMakeup:
-	return makeup;
-	break;
+		return makeup;
+		break;
 	case paramGainR:
-	return gainr;
-	break;
+		return gainr;
+		break;
 	case paramOutputLevel:
-	return outlevel;
-	break;
+		return outlevel;
+		break;
 	default:
-	return 0.0f;
+		return 0.0f;
 	}
 }
 
