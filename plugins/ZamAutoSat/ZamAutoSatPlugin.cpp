@@ -22,11 +22,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamAutoSatPlugin::ZamAutoSatPlugin()
-    : Plugin(paramCount, 1, 0) // 1 program, 0 states
+    : Plugin(paramCount, 0, 0) // 0 programs, 0 states
 {
-    // set default values
-    loadProgram(0);
-
     // reset
     deactivate();
 }
@@ -42,14 +39,6 @@ void ZamAutoSatPlugin::initParameter(uint32_t, Parameter&)
 {
 }
 
-void ZamAutoSatPlugin::initProgramName(uint32_t index, String& programName)
-{
-    if (index != 0)
-        return;
-
-    programName = "Default";
-}
-
 // -----------------------------------------------------------------------
 // Internal data
 
@@ -60,14 +49,6 @@ float ZamAutoSatPlugin::getParameterValue(uint32_t) const
 
 void ZamAutoSatPlugin::setParameterValue(uint32_t, float)
 {
-}
-
-void ZamAutoSatPlugin::loadProgram(uint32_t index)
-{
-    if (index != 0)
-        return;
-
-    activate();
 }
 
 // -----------------------------------------------------------------------

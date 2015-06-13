@@ -42,10 +42,6 @@ void ZamAutoSatUI::parameterChanged(uint32_t, float)
 {
 }
 
-void ZamAutoSatUI::programLoaded(uint32_t)
-{
-}
-
 // -----------------------------------------------------------------------
 
 void ZamAutoSatUI::onDisplay()
