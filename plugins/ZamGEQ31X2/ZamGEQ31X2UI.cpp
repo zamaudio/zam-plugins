@@ -740,13 +740,13 @@ ZamGEQ31X2UI::ZamGEQ31X2UI()
     fSliderGain31R->setInverted(true);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamGEQ31X2UI::d_parameterChanged(uint32_t index, float value)
+void ZamGEQ31X2UI::parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
@@ -942,7 +942,7 @@ void ZamGEQ31X2UI::d_parameterChanged(uint32_t index, float value)
     }
 }
 
-void ZamGEQ31X2UI::d_programChanged(uint32_t index)
+void ZamGEQ31X2UI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -1020,391 +1020,391 @@ void ZamGEQ31X2UI::d_programChanged(uint32_t index)
 void ZamGEQ31X2UI::imageSliderDragStarted(ImageSlider* slider)
 {
     if (slider == fSliderMaster)
-        d_editParameter(ZamGEQ31X2Plugin::paramMaster, true);
+        editParameter(ZamGEQ31X2Plugin::paramMaster, true);
     else if (slider == fSliderGain1L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain1L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain1L, true);
     else if (slider == fSliderGain2L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain2L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain2L, true);
     else if (slider == fSliderGain3L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain3L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain3L, true);
     else if (slider == fSliderGain4L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain4L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain4L, true);
     else if (slider == fSliderGain5L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain5L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain5L, true);
     else if (slider == fSliderGain6L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain6L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain6L, true);
     else if (slider == fSliderGain7L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain7L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain7L, true);
     else if (slider == fSliderGain8L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain8L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain8L, true);
     else if (slider == fSliderGain9L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain9L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain9L, true);
     else if (slider == fSliderGain10L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain10L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain10L, true);
     else if (slider == fSliderGain11L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain11L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain11L, true);
     else if (slider == fSliderGain12L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain12L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain12L, true);
     else if (slider == fSliderGain13L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain13L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain13L, true);
     else if (slider == fSliderGain14L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain14L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain14L, true);
     else if (slider == fSliderGain15L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain15L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain15L, true);
     else if (slider == fSliderGain16L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain16L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain16L, true);
     else if (slider == fSliderGain17L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain17L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain17L, true);
     else if (slider == fSliderGain18L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain18L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain18L, true);
     else if (slider == fSliderGain19L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain19L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain19L, true);
     else if (slider == fSliderGain20L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain20L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain20L, true);
     else if (slider == fSliderGain21L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain21L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain21L, true);
     else if (slider == fSliderGain22L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain22L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain22L, true);
     else if (slider == fSliderGain23L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain23L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain23L, true);
     else if (slider == fSliderGain24L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain24L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain24L, true);
     else if (slider == fSliderGain25L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain25L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain25L, true);
     else if (slider == fSliderGain26L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain26L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain26L, true);
     else if (slider == fSliderGain27L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain27L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain27L, true);
     else if (slider == fSliderGain28L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain28L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain28L, true);
     else if (slider == fSliderGain29L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain29L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain29L, true);
     else if (slider == fSliderGain30L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain30L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain30L, true);
     else if (slider == fSliderGain31L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain31L, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain31L, true);
     else if (slider == fSliderGain1R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain1R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain1R, true);
     else if (slider == fSliderGain2R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain2R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain2R, true);
     else if (slider == fSliderGain3R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain3R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain3R, true);
     else if (slider == fSliderGain4R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain4R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain4R, true);
     else if (slider == fSliderGain5R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain5R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain5R, true);
     else if (slider == fSliderGain6R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain6R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain6R, true);
     else if (slider == fSliderGain7R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain7R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain7R, true);
     else if (slider == fSliderGain8R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain8R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain8R, true);
     else if (slider == fSliderGain9R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain9R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain9R, true);
     else if (slider == fSliderGain10R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain10R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain10R, true);
     else if (slider == fSliderGain11R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain11R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain11R, true);
     else if (slider == fSliderGain12R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain12R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain12R, true);
     else if (slider == fSliderGain13R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain13R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain13R, true);
     else if (slider == fSliderGain14R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain14R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain14R, true);
     else if (slider == fSliderGain15R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain15R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain15R, true);
     else if (slider == fSliderGain16R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain16R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain16R, true);
     else if (slider == fSliderGain17R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain17R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain17R, true);
     else if (slider == fSliderGain18R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain18R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain18R, true);
     else if (slider == fSliderGain19R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain19R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain19R, true);
     else if (slider == fSliderGain20R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain20R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain20R, true);
     else if (slider == fSliderGain21R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain21R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain21R, true);
     else if (slider == fSliderGain22R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain22R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain22R, true);
     else if (slider == fSliderGain23R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain23R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain23R, true);
     else if (slider == fSliderGain24R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain24R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain24R, true);
     else if (slider == fSliderGain25R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain25R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain25R, true);
     else if (slider == fSliderGain26R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain26R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain26R, true);
     else if (slider == fSliderGain27R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain27R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain27R, true);
     else if (slider == fSliderGain28R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain28R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain28R, true);
     else if (slider == fSliderGain29R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain29R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain29R, true);
     else if (slider == fSliderGain30R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain30R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain30R, true);
     else if (slider == fSliderGain31R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain31R, true);
+        editParameter(ZamGEQ31X2Plugin::paramGain31R, true);
 }
 
 void ZamGEQ31X2UI::imageSliderDragFinished(ImageSlider* slider)
 {
     if (slider == fSliderMaster)
-        d_editParameter(ZamGEQ31X2Plugin::paramMaster, false);
+        editParameter(ZamGEQ31X2Plugin::paramMaster, false);
     else if (slider == fSliderGain1L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain1L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain1L, false);
     else if (slider == fSliderGain2L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain2L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain2L, false);
     else if (slider == fSliderGain3L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain3L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain3L, false);
     else if (slider == fSliderGain4L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain4L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain4L, false);
     else if (slider == fSliderGain5L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain5L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain5L, false);
     else if (slider == fSliderGain6L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain6L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain6L, false);
     else if (slider == fSliderGain7L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain7L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain7L, false);
     else if (slider == fSliderGain8L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain8L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain8L, false);
     else if (slider == fSliderGain9L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain9L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain9L, false);
     else if (slider == fSliderGain10L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain10L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain10L, false);
     else if (slider == fSliderGain11L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain11L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain11L, false);
     else if (slider == fSliderGain12L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain12L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain12L, false);
     else if (slider == fSliderGain13L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain13L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain13L, false);
     else if (slider == fSliderGain14L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain14L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain14L, false);
     else if (slider == fSliderGain15L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain15L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain15L, false);
     else if (slider == fSliderGain16L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain16L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain16L, false);
     else if (slider == fSliderGain17L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain17L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain17L, false);
     else if (slider == fSliderGain18L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain18L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain18L, false);
     else if (slider == fSliderGain19L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain19L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain19L, false);
     else if (slider == fSliderGain20L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain20L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain20L, false);
     else if (slider == fSliderGain21L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain21L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain21L, false);
     else if (slider == fSliderGain22L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain22L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain22L, false);
     else if (slider == fSliderGain23L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain23L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain23L, false);
     else if (slider == fSliderGain24L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain24L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain24L, false);
     else if (slider == fSliderGain25L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain25L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain25L, false);
     else if (slider == fSliderGain26L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain26L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain26L, false);
     else if (slider == fSliderGain27L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain27L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain27L, false);
     else if (slider == fSliderGain28L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain28L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain28L, false);
     else if (slider == fSliderGain29L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain29L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain29L, false);
     else if (slider == fSliderGain30L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain30L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain30L, false);
     else if (slider == fSliderGain31L)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain31L, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain31L, false);
     else if (slider == fSliderGain1R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain1R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain1R, false);
     else if (slider == fSliderGain2R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain2R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain2R, false);
     else if (slider == fSliderGain3R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain3R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain3R, false);
     else if (slider == fSliderGain4R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain4R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain4R, false);
     else if (slider == fSliderGain5R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain5R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain5R, false);
     else if (slider == fSliderGain6R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain6R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain6R, false);
     else if (slider == fSliderGain7R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain7R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain7R, false);
     else if (slider == fSliderGain8R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain8R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain8R, false);
     else if (slider == fSliderGain9R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain9R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain9R, false);
     else if (slider == fSliderGain10R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain10R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain10R, false);
     else if (slider == fSliderGain11R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain11R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain11R, false);
     else if (slider == fSliderGain12R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain12R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain12R, false);
     else if (slider == fSliderGain13R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain13R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain13R, false);
     else if (slider == fSliderGain14R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain14R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain14R, false);
     else if (slider == fSliderGain15R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain15R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain15R, false);
     else if (slider == fSliderGain16R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain16R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain16R, false);
     else if (slider == fSliderGain17R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain17R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain17R, false);
     else if (slider == fSliderGain18R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain18R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain18R, false);
     else if (slider == fSliderGain19R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain19R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain19R, false);
     else if (slider == fSliderGain20R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain20R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain20R, false);
     else if (slider == fSliderGain21R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain21R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain21R, false);
     else if (slider == fSliderGain22R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain22R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain22R, false);
     else if (slider == fSliderGain23R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain23R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain23R, false);
     else if (slider == fSliderGain24R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain24R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain24R, false);
     else if (slider == fSliderGain25R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain25R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain25R, false);
     else if (slider == fSliderGain26R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain26R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain26R, false);
     else if (slider == fSliderGain27R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain27R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain27R, false);
     else if (slider == fSliderGain28R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain28R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain28R, false);
     else if (slider == fSliderGain29R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain29R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain29R, false);
     else if (slider == fSliderGain30R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain30R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain30R, false);
     else if (slider == fSliderGain31R)
-        d_editParameter(ZamGEQ31X2Plugin::paramGain31R, false);
+        editParameter(ZamGEQ31X2Plugin::paramGain31R, false);
 }
 
 void ZamGEQ31X2UI::imageSliderValueChanged(ImageSlider* slider, float value)
 {
     if (slider == fSliderMaster)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramMaster, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramMaster, value);
     else if (slider == fSliderGain1L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain1L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain1L, value);
     else if (slider == fSliderGain2L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain2L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain2L, value);
     else if (slider == fSliderGain3L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain3L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain3L, value);
     else if (slider == fSliderGain4L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain4L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain4L, value);
     else if (slider == fSliderGain5L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain5L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain5L, value);
     else if (slider == fSliderGain6L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain6L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain6L, value);
     else if (slider == fSliderGain7L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain7L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain7L, value);
     else if (slider == fSliderGain8L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain8L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain8L, value);
     else if (slider == fSliderGain9L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain9L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain9L, value);
     else if (slider == fSliderGain10L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain10L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain10L, value);
     else if (slider == fSliderGain11L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain11L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain11L, value);
     else if (slider == fSliderGain12L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain12L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain12L, value);
     else if (slider == fSliderGain13L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain13L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain13L, value);
     else if (slider == fSliderGain14L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain14L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain14L, value);
     else if (slider == fSliderGain15L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain15L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain15L, value);
     else if (slider == fSliderGain16L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain16L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain16L, value);
     else if (slider == fSliderGain17L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain17L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain17L, value);
     else if (slider == fSliderGain18L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain18L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain18L, value);
     else if (slider == fSliderGain19L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain19L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain19L, value);
     else if (slider == fSliderGain20L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain20L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain20L, value);
     else if (slider == fSliderGain21L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain21L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain21L, value);
     else if (slider == fSliderGain22L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain22L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain22L, value);
     else if (slider == fSliderGain23L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain23L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain23L, value);
     else if (slider == fSliderGain24L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain24L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain24L, value);
     else if (slider == fSliderGain25L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain25L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain25L, value);
     else if (slider == fSliderGain26L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain26L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain26L, value);
     else if (slider == fSliderGain27L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain27L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain27L, value);
     else if (slider == fSliderGain28L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain28L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain28L, value);
     else if (slider == fSliderGain29L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain29L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain29L, value);
     else if (slider == fSliderGain30L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain30L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain30L, value);
     else if (slider == fSliderGain31L)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain31L, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain31L, value);
     else if (slider == fSliderGain1R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain1R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain1R, value);
     else if (slider == fSliderGain2R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain2R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain2R, value);
     else if (slider == fSliderGain3R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain3R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain3R, value);
     else if (slider == fSliderGain4R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain4R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain4R, value);
     else if (slider == fSliderGain5R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain5R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain5R, value);
     else if (slider == fSliderGain6R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain6R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain6R, value);
     else if (slider == fSliderGain7R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain7R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain7R, value);
     else if (slider == fSliderGain8R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain8R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain8R, value);
     else if (slider == fSliderGain9R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain9R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain9R, value);
     else if (slider == fSliderGain10R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain10R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain10R, value);
     else if (slider == fSliderGain11R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain11R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain11R, value);
     else if (slider == fSliderGain12R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain12R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain12R, value);
     else if (slider == fSliderGain13R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain13R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain13R, value);
     else if (slider == fSliderGain14R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain14R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain14R, value);
     else if (slider == fSliderGain15R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain15R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain15R, value);
     else if (slider == fSliderGain16R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain16R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain16R, value);
     else if (slider == fSliderGain17R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain17R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain17R, value);
     else if (slider == fSliderGain18R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain18R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain18R, value);
     else if (slider == fSliderGain19R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain19R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain19R, value);
     else if (slider == fSliderGain20R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain20R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain20R, value);
     else if (slider == fSliderGain21R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain21R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain21R, value);
     else if (slider == fSliderGain22R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain22R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain22R, value);
     else if (slider == fSliderGain23R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain23R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain23R, value);
     else if (slider == fSliderGain24R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain24R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain24R, value);
     else if (slider == fSliderGain25R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain25R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain25R, value);
     else if (slider == fSliderGain26R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain26R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain26R, value);
     else if (slider == fSliderGain27R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain27R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain27R, value);
     else if (slider == fSliderGain28R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain28R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain28R, value);
     else if (slider == fSliderGain29R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain29R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain29R, value);
     else if (slider == fSliderGain30R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain30R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain30R, value);
     else if (slider == fSliderGain31R)
-        d_setParameterValue(ZamGEQ31X2Plugin::paramGain31R, value);
+        setParameterValue(ZamGEQ31X2Plugin::paramGain31R, value);
 }
 
 void ZamGEQ31X2UI::onDisplay()

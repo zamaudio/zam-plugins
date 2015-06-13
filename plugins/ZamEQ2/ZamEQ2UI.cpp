@@ -127,13 +127,13 @@ ZamEQ2UI::ZamEQ2UI()
     fCanvasArea.setSize(305,180);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamEQ2UI::d_parameterChanged(uint32_t index, float value)
+void ZamEQ2UI::parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
@@ -173,7 +173,7 @@ void ZamEQ2UI::d_parameterChanged(uint32_t index, float value)
     }
 }
 
-void ZamEQ2UI::d_programChanged(uint32_t index)
+void ZamEQ2UI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -199,91 +199,91 @@ void ZamEQ2UI::d_programChanged(uint32_t index)
 void ZamEQ2UI::imageKnobDragStarted(ImageKnob* knob)
 {
     if (knob == fKnobGain1)
-        d_editParameter(ZamEQ2Plugin::paramGain1, true);
+        editParameter(ZamEQ2Plugin::paramGain1, true);
     else if (knob == fKnobQ1)
-        d_editParameter(ZamEQ2Plugin::paramQ1, true);
+        editParameter(ZamEQ2Plugin::paramQ1, true);
     else if (knob == fKnobFreq1)
-        d_editParameter(ZamEQ2Plugin::paramFreq1, true);
+        editParameter(ZamEQ2Plugin::paramFreq1, true);
     else if (knob == fKnobGain2)
-        d_editParameter(ZamEQ2Plugin::paramGain2, true);
+        editParameter(ZamEQ2Plugin::paramGain2, true);
     else if (knob == fKnobQ2)
-        d_editParameter(ZamEQ2Plugin::paramQ2, true);
+        editParameter(ZamEQ2Plugin::paramQ2, true);
     else if (knob == fKnobFreq2)
-        d_editParameter(ZamEQ2Plugin::paramFreq2, true);
+        editParameter(ZamEQ2Plugin::paramFreq2, true);
     else if (knob == fKnobGainL)
-        d_editParameter(ZamEQ2Plugin::paramGainL, true);
+        editParameter(ZamEQ2Plugin::paramGainL, true);
     else if (knob == fKnobFreqL)
-        d_editParameter(ZamEQ2Plugin::paramFreqL, true);
+        editParameter(ZamEQ2Plugin::paramFreqL, true);
     else if (knob == fKnobGainH)
-        d_editParameter(ZamEQ2Plugin::paramGainH, true);
+        editParameter(ZamEQ2Plugin::paramGainH, true);
     else if (knob == fKnobFreqH)
-        d_editParameter(ZamEQ2Plugin::paramFreqH, true);
+        editParameter(ZamEQ2Plugin::paramFreqH, true);
 }
 
 void ZamEQ2UI::imageKnobDragFinished(ImageKnob* knob)
 {
     if (knob == fKnobGain1)
-        d_editParameter(ZamEQ2Plugin::paramGain1, false);
+        editParameter(ZamEQ2Plugin::paramGain1, false);
     else if (knob == fKnobQ1)
-        d_editParameter(ZamEQ2Plugin::paramQ1, false);
+        editParameter(ZamEQ2Plugin::paramQ1, false);
     else if (knob == fKnobFreq1)
-        d_editParameter(ZamEQ2Plugin::paramFreq1, false);
+        editParameter(ZamEQ2Plugin::paramFreq1, false);
     else if (knob == fKnobGain2)
-        d_editParameter(ZamEQ2Plugin::paramGain2, false);
+        editParameter(ZamEQ2Plugin::paramGain2, false);
     else if (knob == fKnobQ2)
-        d_editParameter(ZamEQ2Plugin::paramQ2, false);
+        editParameter(ZamEQ2Plugin::paramQ2, false);
     else if (knob == fKnobFreq2)
-        d_editParameter(ZamEQ2Plugin::paramFreq2, false);
+        editParameter(ZamEQ2Plugin::paramFreq2, false);
     else if (knob == fKnobGainL)
-        d_editParameter(ZamEQ2Plugin::paramGainL, false);
+        editParameter(ZamEQ2Plugin::paramGainL, false);
     else if (knob == fKnobFreqL)
-        d_editParameter(ZamEQ2Plugin::paramFreqL, false);
+        editParameter(ZamEQ2Plugin::paramFreqL, false);
     else if (knob == fKnobGainH)
-        d_editParameter(ZamEQ2Plugin::paramGainH, false);
+        editParameter(ZamEQ2Plugin::paramGainH, false);
     else if (knob == fKnobFreqH)
-        d_editParameter(ZamEQ2Plugin::paramFreqH, false);
+        editParameter(ZamEQ2Plugin::paramFreqH, false);
 }
 
 void ZamEQ2UI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobGain1)
-        d_setParameterValue(ZamEQ2Plugin::paramGain1, value);
+        setParameterValue(ZamEQ2Plugin::paramGain1, value);
     else if (knob == fKnobQ1)
-        d_setParameterValue(ZamEQ2Plugin::paramQ1, value);
+        setParameterValue(ZamEQ2Plugin::paramQ1, value);
     else if (knob == fKnobFreq1)
-        d_setParameterValue(ZamEQ2Plugin::paramFreq1, value);
+        setParameterValue(ZamEQ2Plugin::paramFreq1, value);
     else if (knob == fKnobGain2)
-        d_setParameterValue(ZamEQ2Plugin::paramGain2, value);
+        setParameterValue(ZamEQ2Plugin::paramGain2, value);
     else if (knob == fKnobQ2)
-        d_setParameterValue(ZamEQ2Plugin::paramQ2, value);
+        setParameterValue(ZamEQ2Plugin::paramQ2, value);
     else if (knob == fKnobFreq2)
-        d_setParameterValue(ZamEQ2Plugin::paramFreq2, value);
+        setParameterValue(ZamEQ2Plugin::paramFreq2, value);
     else if (knob == fKnobGainL)
-        d_setParameterValue(ZamEQ2Plugin::paramGainL, value);
+        setParameterValue(ZamEQ2Plugin::paramGainL, value);
     else if (knob == fKnobFreqL)
-        d_setParameterValue(ZamEQ2Plugin::paramFreqL, value);
+        setParameterValue(ZamEQ2Plugin::paramFreqL, value);
     else if (knob == fKnobGainH)
-        d_setParameterValue(ZamEQ2Plugin::paramGainH, value);
+        setParameterValue(ZamEQ2Plugin::paramGainH, value);
     else if (knob == fKnobFreqH)
-        d_setParameterValue(ZamEQ2Plugin::paramFreqH, value);
+        setParameterValue(ZamEQ2Plugin::paramFreqH, value);
 }
 
 void ZamEQ2UI::imageSliderDragStarted(ImageSlider* slider)
 {
     if (slider == fSliderMaster)
-        d_editParameter(ZamEQ2Plugin::paramMaster, true);
+        editParameter(ZamEQ2Plugin::paramMaster, true);
 }
 
 void ZamEQ2UI::imageSliderDragFinished(ImageSlider* slider)
 {
     if (slider == fSliderMaster)
-        d_editParameter(ZamEQ2Plugin::paramMaster, false);
+        editParameter(ZamEQ2Plugin::paramMaster, false);
 }
 
 void ZamEQ2UI::imageSliderValueChanged(ImageSlider* slider, float value)
 {
     if (slider == fSliderMaster)
-        d_setParameterValue(ZamEQ2Plugin::paramMaster, value);
+        setParameterValue(ZamEQ2Plugin::paramMaster, value);
 }
 
 void ZamEQ2UI::lowshelf(int i, int ch, float srate, float fc, float g)
@@ -367,7 +367,7 @@ void ZamEQ2UI::peq(int i, int ch, float srate, float fc, float g, float bw)
 
 void ZamEQ2UI::calceqcurve(float x[], float y[])
 {
-        float SR = d_getSampleRate();
+        float SR = getSampleRate();
         float p1 = 10000.;
         float p2 = 5000.;
         float c2 = log10(1.+SR);

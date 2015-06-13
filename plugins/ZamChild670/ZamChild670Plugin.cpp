@@ -34,8 +34,8 @@ ZamChild670Plugin::ZamChild670Plugin()
     		ACThreshold, timeConstantSelect, DCThreshold, 
 		inputLevel, ACThreshold, timeConstantSelect, DCThreshold, 
 		true, false, true, outputGain, false);
-    zamchild = new Wavechild670(d_getSampleRate(), *params);
-    d_setProgram(0);
+    zamchild = new Wavechild670(getSampleRate(), *params);
+    loadProgram(0);
 }
 
 ZamChild670Plugin::~ZamChild670Plugin()
@@ -47,7 +47,7 @@ ZamChild670Plugin::~ZamChild670Plugin()
 // -----------------------------------------------------------------------
 // Init
 
-void ZamChild670Plugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamChild670Plugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -99,7 +99,7 @@ void ZamChild670Plugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamChild670Plugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamChild670Plugin::initProgramName(uint32_t index, String& programName)
 {
     if (index != 0)
         return;
@@ -110,7 +110,7 @@ void ZamChild670Plugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamChild670Plugin::d_getParameterValue(uint32_t index) const
+float ZamChild670Plugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -134,7 +134,7 @@ float ZamChild670Plugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamChild670Plugin::d_setParameterValue(uint32_t index, float value)
+void ZamChild670Plugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -156,7 +156,7 @@ void ZamChild670Plugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamChild670Plugin::d_setProgram(uint32_t index)
+void ZamChild670Plugin::loadProgram(uint32_t index)
 {
     if (index != 0)
         return;
@@ -169,13 +169,13 @@ void ZamChild670Plugin::d_setProgram(uint32_t index)
     outputGain = from_dB(0.0);
 
     /* reset filter values */
-    d_activate();
+    activate();
 }
 
 // -----------------------------------------------------------------------
 // Process
 
-void ZamChild670Plugin::d_activate()
+void ZamChild670Plugin::activate()
 {
 	params->inputLevelA = params->inputLevelB = from_dB(inputLevel);
 	params->ACThresholdA = params->ACThresholdB = ACThreshold;
@@ -186,7 +186,7 @@ void ZamChild670Plugin::d_activate()
 	zamchild->warmUp();
 }
 
-void ZamChild670Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamChild670Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	params->inputLevelA = params->inputLevelB = from_dB(inputLevel);
 	params->ACThresholdA = params->ACThresholdB = ACThreshold;

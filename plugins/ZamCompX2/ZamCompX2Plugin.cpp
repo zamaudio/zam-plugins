@@ -25,13 +25,13 @@ ZamCompX2Plugin::ZamCompX2Plugin()
     : Plugin(paramCount, 3, 0)
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -120,7 +120,7 @@ void ZamCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
 }
 
 
-void ZamCompX2Plugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamCompX2Plugin::initProgramName(uint32_t index, String& programName)
 {
 	switch(index) {
 	case 0:
@@ -172,12 +172,14 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		outlevel = -45.0;
 		break;
 	}
+    /* reset filter values */
+    activate();
 }
 
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamCompX2Plugin::d_getParameterValue(uint32_t index) const
+float ZamCompX2Plugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -213,7 +215,7 @@ float ZamCompX2Plugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamCompX2Plugin::d_setParameterValue(uint32_t index, float value)
+void ZamCompX2Plugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -247,28 +249,19 @@ void ZamCompX2Plugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamCompX2Plugin::d_setProgram(uint32_t index)
-{
-    /* Default parameter values */
-    loadProgram(index);
-
-    /* reset filter values */
-    d_activate();
-}
-
 // -----------------------------------------------------------------------
 // Process
 
-void ZamCompX2Plugin::d_activate()
+void ZamCompX2Plugin::activate()
 {
     gainred = 0.0f;
     outlevel = -45.0f;
     oldL_yl = oldL_y1 = oldR_yl = oldR_y1 = oldL_yg = oldR_yg = 0.f;
 }
 
-void ZamCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
         float width=(knee-0.99f)*6.f;
         float cdb=0.f;
         float attack_coeff = exp(-1000.f/(attack * srate));

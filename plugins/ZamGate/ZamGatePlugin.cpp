@@ -25,13 +25,13 @@ ZamGatePlugin::ZamGatePlugin()
 	: Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
 	// set default values
-	d_setProgram(0);
+	loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamGatePlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamGatePlugin::initProgramName(uint32_t index, String& programName)
 {
 	if (index != 0)
 		return;
@@ -42,7 +42,7 @@ void ZamGatePlugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-void ZamGatePlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamGatePlugin::initParameter(uint32_t index, Parameter& parameter)
 {
 	switch (index)
 	{
@@ -106,7 +106,7 @@ void ZamGatePlugin::d_initParameter(uint32_t index, Parameter& parameter)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamGatePlugin::d_getParameterValue(uint32_t index) const
+float ZamGatePlugin::getParameterValue(uint32_t index) const
 {
 	switch (index)
 	{
@@ -133,7 +133,7 @@ float ZamGatePlugin::d_getParameterValue(uint32_t index) const
 	}
 }
 
-void ZamGatePlugin::d_setParameterValue(uint32_t index, float value)
+void ZamGatePlugin::setParameterValue(uint32_t index, float value)
 {
 	switch (index)
 	{
@@ -158,7 +158,7 @@ void ZamGatePlugin::d_setParameterValue(uint32_t index, float value)
 	}
 }
 
-void ZamGatePlugin::d_setProgram(uint32_t index)
+void ZamGatePlugin::loadProgram(uint32_t index)
 {
 	attack = 50.0;
 	release = 100.0;
@@ -166,13 +166,13 @@ void ZamGatePlugin::d_setProgram(uint32_t index)
 	gainr = 0.0;
 	makeup = 0.0;
 	outlevel = -45.0;
-	d_activate();
+	activate();
 }
 
 // -----------------------------------------------------------------------
 // Process
 
-void ZamGatePlugin::d_activate()
+void ZamGatePlugin::activate()
 {
 	int i;
 	gatestatel = 0.f;
@@ -202,7 +202,7 @@ float ZamGatePlugin::averageabs(float samples[])
 	return sqrt(average);
 }
 
-void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamGatePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
 	float absamplel, absample;
@@ -211,7 +211,7 @@ void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames
 	float gl;
 	float ming;
 	float fs;
-	fs = d_getSampleRate();
+	fs = getSampleRate();
 	gl = gatestatel;
 	att = 1000.f / (attack * fs);
 	rel = 1000.f / (release * fs);

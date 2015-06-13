@@ -25,13 +25,13 @@ ZamSynthPlugin::ZamSynthPlugin()
     : Plugin(paramCount, 1, 1) // 1 program, 1 state
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamSynthPlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamSynthPlugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -65,7 +65,7 @@ void ZamSynthPlugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamSynthPlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamSynthPlugin::initProgramName(uint32_t index, String& programName)
 {
     if (index != 0)
         return;
@@ -76,7 +76,7 @@ void ZamSynthPlugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamSynthPlugin::d_getParameterValue(uint32_t index) const
+float ZamSynthPlugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -94,7 +94,7 @@ float ZamSynthPlugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamSynthPlugin::d_setParameterValue(uint32_t index, float value)
+void ZamSynthPlugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -110,7 +110,7 @@ void ZamSynthPlugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamSynthPlugin::d_setProgram(uint32_t index)
+void ZamSynthPlugin::loadProgram(uint32_t index)
 {
     if (index != 0)
         return;
@@ -134,17 +134,17 @@ void ZamSynthPlugin::d_setProgram(uint32_t index)
     curvoice = voice; //ptr to first voice
 
     for (int i = 0; i < AREAHEIGHT; i++) {
-        wave_y[i] = sin(i*2.*M_PI/d_getSampleRate());//*1000
+        wave_y[i] = sin(i*2.*M_PI/getSampleRate());//*1000
     }
 
     for (int i = 0; i < MAX_ENV; i++) {
-        env_y[i] = (sin(i*2.*M_PI/d_getSampleRate()*1000./2.)) > 0.f ? sin(i*2.*M_PI/d_getSampleRate()*1000./2.) : 0.f;
+        env_y[i] = (sin(i*2.*M_PI/getSampleRate()*1000./2.)) > 0.f ? sin(i*2.*M_PI/d_getSampleRate()*1000./2.) : 0.f;
     }
     /* reset filter values */
-    d_activate();
+    activate();
 }
 
-void ZamSynthPlugin::d_setState(const char* key, const char* value)
+void ZamSynthPlugin::setState(const char* key, const char* value)
 {
 	if (strcmp(key, "waveform") == 0) {
 		char* tmp;
@@ -173,7 +173,7 @@ void ZamSynthPlugin::d_setState(const char* key, const char* value)
 	}
 }
 
-void ZamSynthPlugin::d_initStateKey(unsigned int index, d_string& key)
+void ZamSynthPlugin::initStateKey(unsigned int index, String& key)
 {
 	if (index == 0) key = "waveform";
 	if (index == 1) key = "envelope";
@@ -182,7 +182,7 @@ void ZamSynthPlugin::d_initStateKey(unsigned int index, d_string& key)
 // -----------------------------------------------------------------------
 // Process
 
-void ZamSynthPlugin::d_activate()
+void ZamSynthPlugin::activate()
 {
 }
 
@@ -193,10 +193,10 @@ float ZamSynthPlugin::wavetable(float in)
 	//return (sin(in));
 }
 
-void ZamSynthPlugin::d_run(const float**, float** outputs, uint32_t frames,
+void ZamSynthPlugin::run(const float**, float** outputs, uint32_t frames,
 				const MidiEvent* midievent, uint32_t midicount)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
 	int slowfactor = (int) srate / (speed * 2400); // 1-20 ~ 20-1
 	uint32_t i;
 	float RD_0;

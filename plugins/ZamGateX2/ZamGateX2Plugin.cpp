@@ -25,13 +25,13 @@ ZamGateX2Plugin::ZamGateX2Plugin()
 	: Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
 	// set default values
-	d_setProgram(0);
+	loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamGateX2Plugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamGateX2Plugin::initProgramName(uint32_t index, String& programName)
 {
 	if (index != 0)
 		return;
@@ -42,7 +42,7 @@ void ZamGateX2Plugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-void ZamGateX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 {
 	switch (index)
 	{
@@ -106,7 +106,7 @@ void ZamGateX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamGateX2Plugin::d_getParameterValue(uint32_t index) const
+float ZamGateX2Plugin::getParameterValue(uint32_t index) const
 {
 	switch (index)
 	{
@@ -133,7 +133,7 @@ float ZamGateX2Plugin::d_getParameterValue(uint32_t index) const
 	}
 }
 
-void ZamGateX2Plugin::d_setParameterValue(uint32_t index, float value)
+void ZamGateX2Plugin::setParameterValue(uint32_t index, float value)
 {
 	switch (index)
 	{
@@ -158,7 +158,7 @@ void ZamGateX2Plugin::d_setParameterValue(uint32_t index, float value)
 	}
 }
 
-void ZamGateX2Plugin::d_setProgram(uint32_t index)
+void ZamGateX2Plugin::loadProgram(uint32_t index)
 {
 	attack = 50.0;
 	release = 100.0;
@@ -166,13 +166,13 @@ void ZamGateX2Plugin::d_setProgram(uint32_t index)
 	gainr = 0.0;
 	makeup = 0.0;
 	outlevel = -45.0;
-	d_activate();
+	activate();
 }
 
 // -----------------------------------------------------------------------
 // Process
 
-void ZamGateX2Plugin::d_activate()
+void ZamGateX2Plugin::activate()
 {
 	int i;
 	gatestatel = 0.f;
@@ -213,7 +213,7 @@ float ZamGateX2Plugin::averageabs(float samples[])
 	return sqrt(average);
 }
 
-void ZamGateX2Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamGateX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
 	float absamplel, absampler, absample;
@@ -222,7 +222,7 @@ void ZamGateX2Plugin::d_run(const float** inputs, float** outputs, uint32_t fram
 	float gl, gr;
 	float ming;
 	float fs;
-	fs = d_getSampleRate();
+	fs = getSampleRate();
 	gl = gatestatel;
 	gr = gatestater;
 	att = 1000.f / (attack * fs);

@@ -25,13 +25,13 @@ ZamEQ2Plugin::ZamEQ2Plugin()
     : Plugin(paramCount, 4, 0)
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -146,7 +146,7 @@ void ZamEQ2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamEQ2Plugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamEQ2Plugin::initProgramName(uint32_t index, String& programName)
 {
 	switch(index) {
 	case 0:
@@ -224,12 +224,14 @@ void ZamEQ2Plugin::loadProgram(uint32_t index)
 		togglepeaks = 0.0;
 		break;
 	}
+    /* reset filter values */
+    activate();
 }
 
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamEQ2Plugin::d_getParameterValue(uint32_t index) const
+float ZamEQ2Plugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -274,7 +276,7 @@ float ZamEQ2Plugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamEQ2Plugin::d_setParameterValue(uint32_t index, float value)
+void ZamEQ2Plugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -317,19 +319,10 @@ void ZamEQ2Plugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamEQ2Plugin::d_setProgram(uint32_t index)
-{
-    /* Default parameter values */
-    loadProgram(index);
-
-    /* reset filter values */
-    d_activate();
-}
-
 // -----------------------------------------------------------------------
 // Process
 
-void ZamEQ2Plugin::d_activate()
+void ZamEQ2Plugin::activate()
 {
         int i;
 	for (i = 0; i < MAX_FILT; ++i) {
@@ -436,9 +429,9 @@ float ZamEQ2Plugin::run_filter(int i, int ch, double in)
 	return (float) out;
 }
 
-void ZamEQ2Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamEQ2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
 
 	lowshelf(0, 0, srate, freql, gainl);
         peq(1, 0, srate, freq1, gain1, q1);

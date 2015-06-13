@@ -25,13 +25,13 @@ ZamGEQ31Plugin::ZamGEQ31Plugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamGEQ31Plugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -326,7 +326,7 @@ void ZamGEQ31Plugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamGEQ31Plugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamGEQ31Plugin::initProgramName(uint32_t index, String& programName)
 {
     if (index != 0)
         return;
@@ -337,7 +337,7 @@ void ZamGEQ31Plugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamGEQ31Plugin::d_getParameterValue(uint32_t index) const
+float ZamGEQ31Plugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -442,7 +442,7 @@ float ZamGEQ31Plugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamGEQ31Plugin::d_setParameterValue(uint32_t index, float value)
+void ZamGEQ31Plugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -590,7 +590,7 @@ double ZamGEQ31Plugin::run_filter(int i, int ch, double in)
         return out;
 }
 
-void ZamGEQ31Plugin::d_setProgram(uint32_t index)
+void ZamGEQ31Plugin::loadProgram(uint32_t index)
 {
     if (index != 0)
         return;
@@ -633,19 +633,19 @@ void ZamGEQ31Plugin::d_setProgram(uint32_t index)
     freq[29] = 16000.;
     freq[30] = 20000.;
     master = 0.f;
-    float srate = d_getSampleRate();
+    float srate = getSampleRate();
     for (int i=0; i < MAX_FILT; ++i) {
     	peq(i, srate, freq[i], 0., 1./3.);
     }
 
     /* reset filter values */
-    d_activate();
+    activate();
 }
 
 // -----------------------------------------------------------------------
 // Process
 
-void ZamGEQ31Plugin::d_activate()
+void ZamGEQ31Plugin::activate()
 {
         int i;
 	for (i = 0; i < MAX_FILT; ++i) {
@@ -682,9 +682,9 @@ double ZamGEQ31Plugin::run_filter(int i, int ch, double in)
 }
 */
 
-void ZamGEQ31Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamGEQ31Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
 	
 	int i;
 	for (i = 0; i < MAX_FILT; i++) {

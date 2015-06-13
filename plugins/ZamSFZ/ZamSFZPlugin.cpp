@@ -25,13 +25,13 @@ ZamSFZPlugin::ZamSFZPlugin()
     : Plugin(paramCount, 1, 1) // 1 program, 1 state
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamSFZPlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamSFZPlugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -47,7 +47,7 @@ void ZamSFZPlugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamSFZPlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamSFZPlugin::initProgramName(uint32_t index, String& programName)
 {
     if (index != 0)
         return;
@@ -58,7 +58,7 @@ void ZamSFZPlugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamSFZPlugin::d_getParameterValue(uint32_t index) const
+float ZamSFZPlugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -70,7 +70,7 @@ float ZamSFZPlugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamSFZPlugin::d_setParameterValue(uint32_t index, float value)
+void ZamSFZPlugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -80,7 +80,7 @@ void ZamSFZPlugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamSFZPlugin::d_setState(const char* key, const char* value)
+void ZamSFZPlugin::setState(const char* key, const char* value)
 {
 	if (strcmp(key, "filepath") == 0) {
 		char *tmp;
@@ -93,18 +93,18 @@ void ZamSFZPlugin::d_setState(const char* key, const char* value)
 		printf("Path: %s\nFile: %s\n", path.c_str(), filename.c_str());
     		sfz.clearsamples();
 		sfz.loadsamples(path, filename);
-		sfz.pitchshiftsamples((int)d_getSampleRate());
+		sfz.pitchshiftsamples((int)getSampleRate());
 		loading = false;
 	}
 }
 
-void ZamSFZPlugin::d_initState(unsigned int key, d_string& val, d_string&)
+void ZamSFZPlugin::initState(unsigned int key, String& val, d_string&)
 {
 	if (key == 0)
 		val = "filepath";	
 }
 
-void ZamSFZPlugin::d_setProgram(uint32_t index)
+void ZamSFZPlugin::loadProgram(uint32_t index)
 {
     if (index != 0)
         return;
@@ -136,21 +136,21 @@ void ZamSFZPlugin::d_setProgram(uint32_t index)
     env_y[0] = 0.f;
     env_y[MAX_ENV-1] = 0.f;
     /* reset filter values */
-    d_activate();
+    activate();
 }
 
 // -----------------------------------------------------------------------
 // Process
 
-void ZamSFZPlugin::d_activate()
+void ZamSFZPlugin::activate()
 {
 }
 
 
-void ZamSFZPlugin::d_run(const float**, float** outputs, uint32_t frames,
+void ZamSFZPlugin::run(const float**, float** outputs, uint32_t frames,
 				const MidiEvent* midievent, uint32_t midicount)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
 	int slowfactor = (int) srate / (speed * 2400); // 1-20 ~ 20-1
 	uint32_t i;
 

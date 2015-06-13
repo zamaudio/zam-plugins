@@ -25,13 +25,13 @@ ZaMultiCompX2Plugin::ZaMultiCompX2Plugin()
     : Plugin(paramCount, 2, 0)
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZaMultiCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -263,7 +263,7 @@ void ZaMultiCompX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZaMultiCompX2Plugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZaMultiCompX2Plugin::initProgramName(uint32_t index, String& programName)
 {
 	switch(index) {
 	case 0:
@@ -333,12 +333,19 @@ void ZaMultiCompX2Plugin::loadProgram(uint32_t index)
 		outr = -45.0;
 		break;
 	}
+    /* Default variable values */
+    maxL = 0.f;
+    maxR = 0.f;
+    limit = 0.f;
+
+    /* reset filter values */
+    activate();
 }
 
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZaMultiCompX2Plugin::d_getParameterValue(uint32_t index) const
+float ZaMultiCompX2Plugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -422,7 +429,7 @@ float ZaMultiCompX2Plugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZaMultiCompX2Plugin::d_setParameterValue(uint32_t index, float value)
+void ZaMultiCompX2Plugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -516,34 +523,20 @@ void ZaMultiCompX2Plugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZaMultiCompX2Plugin::d_setProgram(uint32_t index)
-{
-    /* Default parameter values */
-    loadProgram(index);
-
-    /* Default variable values */
-    maxL = 0.f;
-    maxR = 0.f;
-    limit = 0.f;
-
-    /* reset filter values */
-    d_activate();
-}
-
-void ZaMultiCompX2Plugin::d_setState(const char*, const char*)
+void ZaMultiCompX2Plugin::setState(const char*, const char*)
 {
     resetl = true;
     resetr = true;
 }
 
-void ZaMultiCompX2Plugin::d_initState(unsigned int, d_string&, d_string&)
+void ZaMultiCompX2Plugin::initState(unsigned int, String&, String&)
 {
 }
 
 // -----------------------------------------------------------------------
 // Process
 
-void ZaMultiCompX2Plugin::d_activate()
+void ZaMultiCompX2Plugin::activate()
 {
         int i,j;
         for (i = 0; i < MAX_COMP; i++)
@@ -613,7 +606,7 @@ void ZaMultiCompX2Plugin::set_hp_coeffs(float fc, float q, float sr, int i, int 
 
 void ZaMultiCompX2Plugin::run_limit(float inL, float inR, float *outL, float *outR)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
         float width=0.01;
 	float threshdb = -0.5;
         float attack_coeff = exp(-1000.f/(0.001 * srate));
@@ -692,7 +685,7 @@ void ZaMultiCompX2Plugin::run_limit(float inL, float inR, float *outL, float *ou
 
 void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, float *outR)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
         float width=(knee-0.99f)*6.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
@@ -792,9 +785,9 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         old_yg[1][k] = Ryg;
 }
 
-void ZaMultiCompX2Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
 	float maxxL = maxL;
 	float maxxR = maxR;
 

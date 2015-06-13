@@ -32,13 +32,13 @@ ZamTubePlugin::ZamTubePlugin()
 		I1(&S1), I3(&Ck,&Rk), S2(&Co,&Ro), I4(&S2), P2(&I4,&E) 
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamTubePlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -108,7 +108,7 @@ void ZamTubePlugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamTubePlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamTubePlugin::initProgramName(uint32_t index, String& programName)
 {
     if (index != 0)
         return;
@@ -119,7 +119,7 @@ void ZamTubePlugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamTubePlugin::d_getParameterValue(uint32_t index) const
+float ZamTubePlugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -149,7 +149,7 @@ float ZamTubePlugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamTubePlugin::d_setParameterValue(uint32_t index, float value)
+void ZamTubePlugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -177,7 +177,7 @@ void ZamTubePlugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamTubePlugin::d_setProgram(uint32_t index)
+void ZamTubePlugin::loadProgram(uint32_t index)
 {
     if (index != 0)
         return;
@@ -194,16 +194,16 @@ void ZamTubePlugin::d_setProgram(uint32_t index)
     /* Default variable values */
 
     /* reset filter values */
-    d_activate();
+    activate();
 }
 
 // -----------------------------------------------------------------------
 // Process
 
-void ZamTubePlugin::d_activate()
+void ZamTubePlugin::activate()
 {
 
-	T Fs = d_getSampleRate();
+	T Fs = getSampleRate();
 	
 	// Passive components
 	T ci = 0.0000001;	//100nF
@@ -297,7 +297,7 @@ void ZamTubePlugin::d_activate()
         for (int i=0; i<4; i++) fRec24[i] = 0;
 }
 
-void ZamTubePlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	T tubetone = 0.f;
 	

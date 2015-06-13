@@ -180,13 +180,13 @@ ZaMultiCompUI::ZaMultiCompUI()
     fToggleListen1->setCallback(this);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
+void ZaMultiCompUI::parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
@@ -272,7 +272,7 @@ void ZaMultiCompUI::d_parameterChanged(uint32_t index, float value)
     }
 }
 
-void ZaMultiCompUI::d_programChanged(uint32_t index)
+void ZaMultiCompUI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -305,96 +305,96 @@ void ZaMultiCompUI::d_programChanged(uint32_t index)
 void ZaMultiCompUI::imageKnobDragStarted(ImageKnob* knob)
 {
     if (knob == fKnobAttack)
-        d_editParameter(ZaMultiCompPlugin::paramAttack, true);
+        editParameter(ZaMultiCompPlugin::paramAttack, true);
     else if (knob == fKnobRelease)
-        d_editParameter(ZaMultiCompPlugin::paramRelease, true);
+        editParameter(ZaMultiCompPlugin::paramRelease, true);
     else if (knob == fKnobThresh)
-        d_editParameter(ZaMultiCompPlugin::paramThresh, true);
+        editParameter(ZaMultiCompPlugin::paramThresh, true);
     else if (knob == fKnobRatio)
-        d_editParameter(ZaMultiCompPlugin::paramRatio, true);
+        editParameter(ZaMultiCompPlugin::paramRatio, true);
     else if (knob == fKnobKnee)
-        d_editParameter(ZaMultiCompPlugin::paramKnee, true);
+        editParameter(ZaMultiCompPlugin::paramKnee, true);
     else if (knob == fKnobGlobalGain)
-        d_editParameter(ZaMultiCompPlugin::paramGlobalGain, true);
+        editParameter(ZaMultiCompPlugin::paramGlobalGain, true);
     else if (knob == fKnobMakeup1)
-        d_editParameter(ZaMultiCompPlugin::paramMakeup1, true);
+        editParameter(ZaMultiCompPlugin::paramMakeup1, true);
     else if (knob == fKnobMakeup2)
-        d_editParameter(ZaMultiCompPlugin::paramMakeup2, true);
+        editParameter(ZaMultiCompPlugin::paramMakeup2, true);
     else if (knob == fKnobMakeup3)
-        d_editParameter(ZaMultiCompPlugin::paramMakeup3, true);
+        editParameter(ZaMultiCompPlugin::paramMakeup3, true);
     else if (knob == fKnobXover1)
-        d_editParameter(ZaMultiCompPlugin::paramXover1, true);
+        editParameter(ZaMultiCompPlugin::paramXover1, true);
     else if (knob == fKnobXover2)
-        d_editParameter(ZaMultiCompPlugin::paramXover2, true);
+        editParameter(ZaMultiCompPlugin::paramXover2, true);
 }
 
 void ZaMultiCompUI::imageKnobDragFinished(ImageKnob* knob)
 {
     if (knob == fKnobAttack)
-        d_editParameter(ZaMultiCompPlugin::paramAttack, false);
+        editParameter(ZaMultiCompPlugin::paramAttack, false);
     else if (knob == fKnobRelease)
-        d_editParameter(ZaMultiCompPlugin::paramRelease, false);
+        editParameter(ZaMultiCompPlugin::paramRelease, false);
     else if (knob == fKnobThresh)
-        d_editParameter(ZaMultiCompPlugin::paramThresh, false);
+        editParameter(ZaMultiCompPlugin::paramThresh, false);
     else if (knob == fKnobRatio)
-        d_editParameter(ZaMultiCompPlugin::paramRatio, false);
+        editParameter(ZaMultiCompPlugin::paramRatio, false);
     else if (knob == fKnobKnee)
-        d_editParameter(ZaMultiCompPlugin::paramKnee, false);
+        editParameter(ZaMultiCompPlugin::paramKnee, false);
     else if (knob == fKnobGlobalGain)
-        d_editParameter(ZaMultiCompPlugin::paramGlobalGain, false);
+        editParameter(ZaMultiCompPlugin::paramGlobalGain, false);
     else if (knob == fKnobMakeup1)
-        d_editParameter(ZaMultiCompPlugin::paramMakeup1, false);
+        editParameter(ZaMultiCompPlugin::paramMakeup1, false);
     else if (knob == fKnobMakeup2)
-        d_editParameter(ZaMultiCompPlugin::paramMakeup2, false);
+        editParameter(ZaMultiCompPlugin::paramMakeup2, false);
     else if (knob == fKnobMakeup3)
-        d_editParameter(ZaMultiCompPlugin::paramMakeup3, false);
+        editParameter(ZaMultiCompPlugin::paramMakeup3, false);
     else if (knob == fKnobXover1)
-        d_editParameter(ZaMultiCompPlugin::paramXover1, false);
+        editParameter(ZaMultiCompPlugin::paramXover1, false);
     else if (knob == fKnobXover2)
-        d_editParameter(ZaMultiCompPlugin::paramXover2, false);
+        editParameter(ZaMultiCompPlugin::paramXover2, false);
 }
 
 void ZaMultiCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobAttack)
-        d_setParameterValue(ZaMultiCompPlugin::paramAttack, value);
+        setParameterValue(ZaMultiCompPlugin::paramAttack, value);
     else if (knob == fKnobRelease)
-        d_setParameterValue(ZaMultiCompPlugin::paramRelease, value);
+        setParameterValue(ZaMultiCompPlugin::paramRelease, value);
     else if (knob == fKnobThresh)
-        d_setParameterValue(ZaMultiCompPlugin::paramThresh, value);
+        setParameterValue(ZaMultiCompPlugin::paramThresh, value);
     else if (knob == fKnobRatio)
-        d_setParameterValue(ZaMultiCompPlugin::paramRatio, value);
+        setParameterValue(ZaMultiCompPlugin::paramRatio, value);
     else if (knob == fKnobKnee)
-        d_setParameterValue(ZaMultiCompPlugin::paramKnee, value);
+        setParameterValue(ZaMultiCompPlugin::paramKnee, value);
     else if (knob == fKnobGlobalGain)
-        d_setParameterValue(ZaMultiCompPlugin::paramGlobalGain, value);
+        setParameterValue(ZaMultiCompPlugin::paramGlobalGain, value);
     else if (knob == fKnobMakeup1)
-        d_setParameterValue(ZaMultiCompPlugin::paramMakeup1, value);
+        setParameterValue(ZaMultiCompPlugin::paramMakeup1, value);
     else if (knob == fKnobMakeup2)
-        d_setParameterValue(ZaMultiCompPlugin::paramMakeup2, value);
+        setParameterValue(ZaMultiCompPlugin::paramMakeup2, value);
     else if (knob == fKnobMakeup3)
-        d_setParameterValue(ZaMultiCompPlugin::paramMakeup3, value);
+        setParameterValue(ZaMultiCompPlugin::paramMakeup3, value);
     else if (knob == fKnobXover1)
-        d_setParameterValue(ZaMultiCompPlugin::paramXover1, value);
+        setParameterValue(ZaMultiCompPlugin::paramXover1, value);
     else if (knob == fKnobXover2)
-        d_setParameterValue(ZaMultiCompPlugin::paramXover2, value);
+        setParameterValue(ZaMultiCompPlugin::paramXover2, value);
 }
 
 void ZaMultiCompUI::imageToggleClicked(ImageToggle* toggle, int)
 {
     float v = toggle->getValue();
     if (toggle == fToggleBypass1)
-        d_setParameterValue(ZaMultiCompPlugin::paramToggle1, v);
+        setParameterValue(ZaMultiCompPlugin::paramToggle1, v);
     else if (toggle == fToggleBypass2)
-        d_setParameterValue(ZaMultiCompPlugin::paramToggle2, v);
+        setParameterValue(ZaMultiCompPlugin::paramToggle2, v);
     else if (toggle == fToggleBypass3)
-        d_setParameterValue(ZaMultiCompPlugin::paramToggle3, v);
+        setParameterValue(ZaMultiCompPlugin::paramToggle3, v);
     else if (toggle == fToggleListen1)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen1, v);
+        setParameterValue(ZaMultiCompPlugin::paramListen1, v);
     else if (toggle == fToggleListen2)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen2, v);
+        setParameterValue(ZaMultiCompPlugin::paramListen2, v);
     else if (toggle == fToggleListen3)
-        d_setParameterValue(ZaMultiCompPlugin::paramListen3, v);
+        setParameterValue(ZaMultiCompPlugin::paramListen3, v);
 }
 
 void ZaMultiCompUI::onDisplay()
