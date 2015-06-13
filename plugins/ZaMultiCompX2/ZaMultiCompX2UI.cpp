@@ -411,29 +411,52 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
 
 void ZaMultiCompX2UI::programLoaded(uint32_t index)
 {
-    if (index != 0)
-        return;
-
-    // Default values
-/*
-    fKnobAttack->setValue(10.0f);
-    fKnobRelease->setValue(80.0f);
-    fKnobRatio->setValue(4.0f);
-    fKnobKnee->setValue(0.0f);
-    fKnobGlobalGain->setValue(0.0f);
-    fKnobMakeup1->setValue(0.0f);
-    fKnobMakeup2->setValue(0.0f);
-    fKnobMakeup3->setValue(0.0f);
-    fKnobXover1->setValue(160.0f);
-    fKnobXover2->setValue(1400.0f);
-*/
-    fToggleBypass1->setValue(0.0f);
-    fToggleBypass2->setValue(0.0f);
-    fToggleBypass3->setValue(0.0f);
-    fToggleListen1->setValue(0.0f);
-    fToggleListen2->setValue(0.0f);
-    fToggleListen3->setValue(0.0f);
-    fToggleStereo->setValue(0.0f);
+	switch(index) {
+	case 0:
+		fKnobAttack->setValue(10.0f);
+		fKnobRelease->setValue(80.0f);
+		fKnobKnee->setValue(0.0f);
+		fKnobRatio->setValue(4.0f);
+		fKnobThresh1->setValue(-20.0f);
+		fKnobThresh2->setValue(-18.0f);
+		fKnobThresh3->setValue(-16.0f);
+		fKnobMakeup1->setValue(0.0f);
+		fKnobMakeup2->setValue(0.0f);
+		fKnobMakeup3->setValue(0.0f);
+		fKnobXover1->setValue(160.0f);
+		fKnobXover2->setValue(1400.0f);
+		fToggleBypass1->setValue(0.0f);
+		fToggleBypass2->setValue(0.0f);
+		fToggleBypass3->setValue(0.0f);
+		fToggleListen1->setValue(0.0f);
+		fToggleListen2->setValue(0.0f);
+		fToggleListen3->setValue(0.0f);
+		fToggleStereo->setValue(1.0f);
+		fKnobGlobalGain->setValue(0.0f);
+		break;
+	case 1:
+		fKnobAttack->setValue(10.0f);
+		fKnobRelease->setValue(200.0f);
+		fKnobKnee->setValue(3.0f);
+		fKnobRatio->setValue(5.0f);
+		fKnobThresh1->setValue(-20.0f);
+		fKnobThresh2->setValue(-18.0f);
+		fKnobThresh3->setValue(-16.0f);
+		fKnobMakeup1->setValue(9.0f);
+		fKnobMakeup2->setValue(6.0f);
+		fKnobMakeup3->setValue(6.0f);
+		fKnobXover1->setValue(160.0f);
+		fKnobXover2->setValue(1400.0f);
+		fToggleBypass1->setValue(1.0f);
+		fToggleBypass2->setValue(1.0f);
+		fToggleBypass3->setValue(1.0f);
+		fToggleListen1->setValue(0.0f);
+		fToggleListen2->setValue(0.0f);
+		fToggleListen3->setValue(0.0f);
+		fToggleStereo->setValue(1.0f);
+		fKnobGlobalGain->setValue(0.0f);
+		break;
+	}
 }
 
 void ZaMultiCompX2UI::stateChanged(const char*, const char*)

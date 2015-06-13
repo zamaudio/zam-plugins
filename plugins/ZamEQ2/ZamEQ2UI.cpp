@@ -175,22 +175,60 @@ void ZamEQ2UI::parameterChanged(uint32_t index, float value)
 
 void ZamEQ2UI::programLoaded(uint32_t index)
 {
-    if (index != 0)
-        return;
-
-    // Default values
-
-    fKnobGain1->setValue(0.0f);
-    fKnobQ1->setValue(1.0f);
-    fKnobFreq1->setValue(500.0f);
-    fKnobGain2->setValue(0.0f);
-    fKnobQ2->setValue(1.0f);
-    fKnobFreq2->setValue(3000.0f);
-    fKnobGainL->setValue(0.0f);
-    fKnobFreqL->setValue(250.0f);
-    fKnobGainH->setValue(0.0f);
-    fKnobFreqH->setValue(8000.0f);
-    fSliderMaster->setValue(0.f);
+	switch(index) {
+	case 0:
+		fKnobGain1->setValue(0.0f);
+		fKnobGain2->setValue(0.0f);
+		fKnobGainL->setValue(0.0f);
+		fKnobGainH->setValue(0.0f);
+		fKnobQ1->setValue(1.0f);
+		fKnobQ2->setValue(1.0f);
+		fKnobFreq1->setValue(500.0f);
+		fKnobFreq2->setValue(3000.0f);
+		fKnobFreqL->setValue(250.0f);
+		fKnobFreqH->setValue(8000.0f);
+		fSliderMaster->setValue(0.f);
+		break;
+	case 1:
+		fKnobGain1->setValue(0.0f);
+		fKnobGain2->setValue(0.0f);
+		fKnobGainL->setValue(6.0f);
+		fKnobGainH->setValue(0.0f);
+		fKnobQ1->setValue(1.0f);
+		fKnobQ2->setValue(1.0f);
+		fKnobFreq1->setValue(500.0f);
+		fKnobFreq2->setValue(3000.0f);
+		fKnobFreqL->setValue(60.0f);
+		fKnobFreqH->setValue(8000.0f);
+		fSliderMaster->setValue(-6.f);
+		break;
+	case 2:
+		fKnobGain1->setValue(5.6f);
+		fKnobGain2->setValue(0.7f);
+		fKnobGainL->setValue(-1.05f);
+		fKnobGainH->setValue(0.0f);
+		fKnobQ1->setValue(1.46f);
+		fKnobQ2->setValue(1.33f);
+		fKnobFreq1->setValue(175.0f);
+		fKnobFreq2->setValue(500.0f);
+		fKnobFreqL->setValue(30.0f);
+		fKnobFreqH->setValue(8000.0f);
+		fSliderMaster->setValue(-6.f);
+		break;
+	case 3:
+		fKnobGain1->setValue(0.0f);
+		fKnobGain2->setValue(0.0f);
+		fKnobGainL->setValue(6.0f);
+		fKnobGainH->setValue(6.0f);
+		fKnobQ1->setValue(1.0f);
+		fKnobQ2->setValue(1.0f);
+		fKnobFreq1->setValue(500.0f);
+		fKnobFreq2->setValue(3000.0f);
+		fKnobFreqL->setValue(6600.0f);
+		fKnobFreqH->setValue(330.0f);
+		fSliderMaster->setValue(-12.f);
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------
