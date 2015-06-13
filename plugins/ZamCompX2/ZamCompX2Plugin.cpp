@@ -153,9 +153,9 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		attack = 10.0;
 		release = 50.0;
 		knee = 0.0;
-		ratio = 4.0;
-		thresdb = -20.0;
-		makeup = 9.0;
+		ratio = 5.0;
+		thresdb = -11.0;
+		makeup = 6.0;
 		gainred = 0.0;
 		stereolink = 1.0;
 		outlevel = -45.0;
@@ -165,7 +165,7 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		release = 400.0;
 		knee = 8.0;
 		ratio = 5.0;
-		thresdb = -25.0;
+		thresdb = -16.0;
 		makeup = 9.0;
 		gainred = 0.0;
 		stereolink = 1.0;
