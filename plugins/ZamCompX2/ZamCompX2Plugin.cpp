@@ -262,7 +262,8 @@ void ZamCompX2Plugin::activate()
 void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = getSampleRate();
-        float width=(knee-0.99f)*6.f;
+	float width = (6.f * knee) + 0.01;
+	float slewwidth = 1.8f;
         float cdb=0.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
@@ -277,7 +278,8 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
         float Rgain = 1.f;
         float Lxg, Lxl, Lyg, Lyl, Ly1;
         float Rxg, Rxl, Ryg, Ryl, Ry1;
-        uint32_t i;
+        float checkwidth = 0.f;
+	uint32_t i;
 
         for (i = 0; i < frames; i++) {
                 relslew = 0;
@@ -291,38 +293,44 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
                 Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb+width/2.f)*(Rxg-thresdb+width/2.f)/(2.f*width);
 
-                if (2.f*(Lxg-thresdb)<-width) {
+		checkwidth = 2.f*fabs(Lxg-thresdb);
+                if (2.f*(Lxg-thresdb) < -width) {
                         Lyg = Lxg;
-                } else if (2.f*fabs(Lxg-thresdb)<=width && Lyg >= oldL_yg) {
-		        attslew = 1;
+                } else if (checkwidth <= width) {
 			Lyg = thresdb + (Lxg-thresdb)/ratio;
 			Lyg = sanitize_denormal(Lyg);
-                } else if (2.f*fabs(Lxg-thresdb)<=width && Lyg < oldL_yg) {
-		        relslew = 1;
-			Lyg = thresdb + (Lxg-thresdb)/ratio;
-			Lyg = sanitize_denormal(Lyg);
-                } else if (2.f*(Lxg-thresdb)>width) {
+			if (checkwidth <= slewwidth) {
+				if (Lyg >= oldL_yg) {
+					attslew = 1;
+				} else {
+					relslew = 1;
+				}
+			}
+                } else if (2.f*(Lxg-thresdb) > width) {
                         Lyg = thresdb + (Lxg-thresdb)/ratio;
                         Lyg = sanitize_denormal(Lyg);
                 }
 
-                if (2.f*(Rxg-thresdb)<-width) {
+		checkwidth = 2.f*fabs(Rxg-thresdb);
+                if (2.f*(Rxg-thresdb) < -width) {
                         Ryg = Rxg;
-                } else if (2.f*fabs(Rxg-thresdb)<=width && Ryg >= oldR_yg) {
-		        attslew = 1;
-                        Ryg = thresdb + (Rxg-thresdb)/ratio;
-                        Ryg = sanitize_denormal(Ryg);
-                } else if (2.f*fabs(Rxg-thresdb)<=width && Ryg < oldR_yg) {
-		        relslew = 1;
-                        Ryg = thresdb + (Rxg-thresdb)/ratio;
-                        Ryg = sanitize_denormal(Ryg);
-                } else if (2.f*(Rxg-thresdb)>width) {
+                } else if (checkwidth <= width) {
+			Ryg = thresdb + (Rxg-thresdb)/ratio;
+			Ryg = sanitize_denormal(Ryg);
+			if (checkwidth <= slewwidth) {
+				if (Ryg >= oldR_yg) {
+					attslew = 1;
+				} else {
+					relslew = 1;
+				}
+			}
+                } else if (2.f*(Rxg-thresdb) > width) {
                         Ryg = thresdb + (Rxg-thresdb)/ratio;
                         Ryg = sanitize_denormal(Ryg);
                 }
 
-                attack_coeff = attslew ? exp(-1000.f/(attack*slewfactor * srate)) : attack_coeff;
-                release_coeff = relslew ? exp(-1000.f/(slewfactor * srate)) : release_coeff;
+                attack_coeff = attslew ? exp(-1000.f/((attack + 2.0*(slewfactor - 1)) * srate)) : attack_coeff;
+                release_coeff = relslew ? exp(-1000.f/((release + 2.0*(slewfactor - 1)) * srate)) : release_coeff;
 
                 if (stereo == STEREOLINK_UNCOUPLED) {
                         Lxl = Lxg - Lyg;
