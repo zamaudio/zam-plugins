@@ -67,13 +67,13 @@ ZamChild670UI::ZamChild670UI()
     fKnobOutgain->setCallback(this);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamChild670UI::d_parameterChanged(uint32_t index, float value)
+void ZamChild670UI::parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
@@ -92,7 +92,7 @@ void ZamChild670UI::d_parameterChanged(uint32_t index, float value)
     }
 }
 
-void ZamChild670UI::d_programChanged(uint32_t)
+void ZamChild670UI::programLoaded(uint32_t)
 {
     // Default values
     fKnobIngain->setValue(-12.0f);
@@ -106,17 +106,17 @@ void ZamChild670UI::d_programChanged(uint32_t)
 
 void ZamChild670UI::imageKnobDragStarted(ImageKnob* knob)
 {
-    d_editParameter(knob->getId(), true);
+    editParameter(knob->getId(), true);
 }
 
 void ZamChild670UI::imageKnobDragFinished(ImageKnob* knob)
 {
-    d_editParameter(knob->getId(), false);
+    editParameter(knob->getId(), false);
 }
 
 void ZamChild670UI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-    d_setParameterValue(knob->getId(), value);
+    setParameterValue(knob->getId(), value);
 }
 
 void ZamChild670UI::onDisplay()

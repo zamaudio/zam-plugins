@@ -38,11 +38,11 @@ ZamAutoSatUI::~ZamAutoSatUI()
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamAutoSatUI::d_parameterChanged(uint32_t, float)
+void ZamAutoSatUI::parameterChanged(uint32_t, float)
 {
 }
 
-void ZamAutoSatUI::d_programChanged(uint32_t)
+void ZamAutoSatUI::programLoaded(uint32_t)
 {
 }
 

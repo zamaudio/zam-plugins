@@ -42,9 +42,9 @@ protected:
     // -------------------------------------------------------------------
     // DSP Callbacks
 
-    void d_parameterChanged(uint32_t index, float value) override;
-    void d_programChanged(uint32_t index) override;
-    void d_stateChanged(const char* key, const char* value) override;
+    void parameterChanged(uint32_t index, float value) override;
+    void programLoaded(uint32_t index) override;
+    void stateChanged(const char* key, const char* value) override;
 
     void d_uiFileBrowserSelected(const char* filename) override;
 

@@ -39,8 +39,8 @@ protected:
     // -------------------------------------------------------------------
     // DSP Callbacks
 
-    void d_parameterChanged(uint32_t index, float value) override;
-    void d_programChanged(uint32_t index) override;
+    void parameterChanged(uint32_t index, float value) override;
+    void programLoaded(uint32_t index) override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks

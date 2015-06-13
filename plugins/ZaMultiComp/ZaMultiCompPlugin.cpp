@@ -25,13 +25,13 @@ ZaMultiCompPlugin::ZaMultiCompPlugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -227,7 +227,7 @@ void ZaMultiCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZaMultiCompPlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZaMultiCompPlugin::initProgramName(uint32_t index, String& programName)
 {
     if (index != 0)
         return;
@@ -238,7 +238,7 @@ void ZaMultiCompPlugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZaMultiCompPlugin::d_getParameterValue(uint32_t index) const
+float ZaMultiCompPlugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -310,7 +310,7 @@ float ZaMultiCompPlugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZaMultiCompPlugin::d_setParameterValue(uint32_t index, float value)
+void ZaMultiCompPlugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -392,7 +392,7 @@ void ZaMultiCompPlugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZaMultiCompPlugin::d_setProgram(uint32_t index)
+void ZaMultiCompPlugin::loadProgram(uint32_t index)
 {
     if (index != 0)
         return;
@@ -423,13 +423,13 @@ void ZaMultiCompPlugin::d_setProgram(uint32_t index)
     /* Default variable values */
 
     /* reset filter values */
-    d_activate();
+    activate();
 }
 
 // -----------------------------------------------------------------------
 // Process
 
-void ZaMultiCompPlugin::d_activate()
+void ZaMultiCompPlugin::activate()
 {
         int i;
         for (i = 0; i < MAX_COMP; i++) {
@@ -493,7 +493,7 @@ void ZaMultiCompPlugin::set_hp_coeffs(float fc, float q, float sr, int i, float 
 
 float ZaMultiCompPlugin::run_comp(int k, float in)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
         float width=(knee-0.99f)*6.f;
         float release_coeff = exp(-1000.f/(release * srate));
         float attack_coeff;
@@ -548,9 +548,9 @@ float ZaMultiCompPlugin::run_comp(int k, float in)
 	return sanitize_denormal(out);
 }
 
-void ZaMultiCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
 	float max = 0.f;
 
         int tog1 = (toggle[0] > 0.5f) ? 1 : 0;

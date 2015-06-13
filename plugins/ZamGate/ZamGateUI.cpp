@@ -79,13 +79,13 @@ ZamGateUI::ZamGateUI()
 	fKnobMakeup->setCallback(this);
 
 	// set default values
-	d_programChanged(0);
+	programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamGateUI::d_parameterChanged(uint32_t index, float value)
+void ZamGateUI::parameterChanged(uint32_t index, float value)
 {
 	switch (index)
 	{
@@ -118,7 +118,7 @@ void ZamGateUI::d_parameterChanged(uint32_t index, float value)
 	}
 }
 
-void ZamGateUI::d_programChanged(uint32_t index)
+void ZamGateUI::programLoaded(uint32_t index)
 {
 	// Default values
 	fKnobAttack->setValue(50.0f);
@@ -132,17 +132,17 @@ void ZamGateUI::d_programChanged(uint32_t index)
 
 void ZamGateUI::imageKnobDragStarted(ImageKnob* knob)
 {
-	d_editParameter(knob->getId(), true);
+	editParameter(knob->getId(), true);
 }
 
 void ZamGateUI::imageKnobDragFinished(ImageKnob* knob)
 {
-	d_editParameter(knob->getId(), false);
+	editParameter(knob->getId(), false);
 }
 
 void ZamGateUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-	d_setParameterValue(knob->getId(), value);
+	setParameterValue(knob->getId(), value);
 }
 
 void ZamGateUI::onDisplay()

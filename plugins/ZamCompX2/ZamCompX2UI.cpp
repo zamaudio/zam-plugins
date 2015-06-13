@@ -108,13 +108,13 @@ ZamCompX2UI::ZamCompX2UI()
     fToggleStereo->setCallback(this);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamCompX2UI::d_parameterChanged(uint32_t index, float value)
+void ZamCompX2UI::parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
@@ -156,7 +156,7 @@ void ZamCompX2UI::d_parameterChanged(uint32_t index, float value)
     }
 }
 
-void ZamCompX2UI::d_programChanged(uint32_t index)
+void ZamCompX2UI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -176,24 +176,24 @@ void ZamCompX2UI::d_programChanged(uint32_t index)
 
 void ZamCompX2UI::imageKnobDragStarted(ImageKnob* knob)
 {
-    d_editParameter(knob->getId(), true);
+    editParameter(knob->getId(), true);
 }
 
 void ZamCompX2UI::imageKnobDragFinished(ImageKnob* knob)
 {
-    d_editParameter(knob->getId(), false);
+    editParameter(knob->getId(), false);
 }
 
 void ZamCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-    d_setParameterValue(knob->getId(), value);
+    setParameterValue(knob->getId(), value);
 }
 
 void ZamCompX2UI::imageToggleClicked(ImageToggle* imageToggle, int)
 {
     int flip = !imageToggle->getValue();
     if (imageToggle == fToggleStereo)
-        d_setParameterValue(ZamCompX2Plugin::paramStereo, flip);
+        setParameterValue(ZamCompX2Plugin::paramStereo, flip);
 }
 
 void ZamCompX2UI::onDisplay()

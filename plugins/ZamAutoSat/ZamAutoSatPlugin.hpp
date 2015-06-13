@@ -39,27 +39,27 @@ protected:
     // -------------------------------------------------------------------
     // Information
 
-    const char* d_getLabel() const noexcept override
+    const char* getLabel() const noexcept override
     {
         return "ZamAutoSat";
     }
 
-    const char* d_getMaker() const noexcept override
+    const char* getMaker() const noexcept override
     {
         return "Damien Zammit";
     }
 
-    const char* d_getLicense() const noexcept override
+    const char* getLicense() const noexcept override
     {
         return "GPL v2+";
     }
 
-    uint32_t d_getVersion() const noexcept override
+    uint32_t getVersion() const noexcept override
     {
         return 0x1000;
     }
 
-    int64_t d_getUniqueId() const noexcept override
+    int64_t getUniqueId() const noexcept override
     {
         return d_cconst('Z', 'S', 'A', 'T');
     }
@@ -67,20 +67,20 @@ protected:
     // -------------------------------------------------------------------
     // Init
 
-    void d_initParameter(uint32_t index, Parameter& parameter) ;
-    void d_initProgramName(uint32_t index, d_string& programName) ;
+    void initParameter(uint32_t index, Parameter& parameter) override;
+    void initProgramName(uint32_t index, String& programName) override;
 
     // -------------------------------------------------------------------
     // Internal data
 
-    float d_getParameterValue(uint32_t index) const ;
-    void  d_setParameterValue(uint32_t index, float value) ;
-    void  d_setProgram(uint32_t index) ;
+    float getParameterValue(uint32_t index) const override;
+    void  setParameterValue(uint32_t index, float value) override;
+    void  loadProgram(uint32_t index) override;
 
     // -------------------------------------------------------------------
-    void d_activate() ;
-    void d_deactivate() ;
-    void d_run(const float** inputs, float** outputs, uint32_t frames) override;
+    void activate() override;
+    void deactivate() override;
+    void run(const float** inputs, float** outputs, uint32_t frames) override;
 
     // -------------------------------------------------------------------
 

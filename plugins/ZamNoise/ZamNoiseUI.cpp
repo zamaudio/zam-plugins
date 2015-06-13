@@ -40,7 +40,7 @@ ZamNoiseUI::ZamNoiseUI()
     fToggleNoise->setCallback(this);
     fToggleNoise->setValue(0.f);
 
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 ZamNoiseUI::~ZamNoiseUI()
@@ -50,7 +50,7 @@ ZamNoiseUI::~ZamNoiseUI()
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamNoiseUI::d_parameterChanged(uint32_t index, float value)
+void ZamNoiseUI::parameterChanged(uint32_t index, float value)
 {
         switch (index)
         {
@@ -61,7 +61,7 @@ void ZamNoiseUI::d_parameterChanged(uint32_t index, float value)
 }
 
 
-void ZamNoiseUI::d_programChanged(uint32_t index)
+void ZamNoiseUI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -73,7 +73,7 @@ void ZamNoiseUI::imageToggleClicked(ImageToggle*, int)
 {
         float toggle = fToggleNoise->getValue();
         fToggleNoise->setValue(toggle);
-        d_setParameterValue(ZamNoisePlugin::paramNoiseToggle, toggle);
+        setParameterValue(ZamNoisePlugin::paramNoiseToggle, toggle);
 }
 
 

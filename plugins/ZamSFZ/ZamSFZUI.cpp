@@ -53,13 +53,13 @@ ZamSFZUI::ZamSFZUI()
     fButtonLoad->setCallback(this);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamSFZUI::d_parameterChanged(uint32_t index, float value)
+void ZamSFZUI::parameterChanged(uint32_t index, float value)
 {
 	switch (index)
 	{
@@ -69,7 +69,7 @@ void ZamSFZUI::d_parameterChanged(uint32_t index, float value)
 	}
 }
 
-void ZamSFZUI::d_programChanged(uint32_t index)
+void ZamSFZUI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -77,7 +77,7 @@ void ZamSFZUI::d_programChanged(uint32_t index)
     fKnobGain->setValue(0.0f);
 }
 
-void ZamSFZUI::d_stateChanged(const char* key, const char*)
+void ZamSFZUI::stateChanged(const char* key, const char*)
 {
 	if (strcmp(key, "filepath") == 0) {
 		printf("state changed... do something?\n");
@@ -88,7 +88,7 @@ void ZamSFZUI::d_uiFileBrowserSelected(const char* filename)
 {
 	// if a file was selected, tell DSP
 	if (filename != nullptr)
-		d_setState("filepath", filename);
+		setState("filepath", filename);
 }
 
 // -----------------------------------------------------------------------
@@ -97,19 +97,19 @@ void ZamSFZUI::d_uiFileBrowserSelected(const char* filename)
 void ZamSFZUI::imageKnobDragStarted(ImageKnob* knob)
 {
     if (knob == fKnobGain)
-        d_editParameter(ZamSFZPlugin::paramGain, true);
+        editParameter(ZamSFZPlugin::paramGain, true);
 }
 
 void ZamSFZUI::imageKnobDragFinished(ImageKnob* knob)
 {
     if (knob == fKnobGain)
-        d_editParameter(ZamSFZPlugin::paramGain, false);
+        editParameter(ZamSFZPlugin::paramGain, false);
 }
 
 void ZamSFZUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobGain)
-        d_setParameterValue(ZamSFZPlugin::paramGain, value);
+        setParameterValue(ZamSFZPlugin::paramGain, value);
 }
 
 void ZamSFZUI::imageButtonClicked(ImageButton*, int)

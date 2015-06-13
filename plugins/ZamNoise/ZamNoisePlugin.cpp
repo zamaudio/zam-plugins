@@ -25,14 +25,14 @@ ZamNoisePlugin::ZamNoisePlugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
 
-    ZamNoisePlugin::init(d_getSampleRate());
-    zamnoise = new Denoise(d_getSampleRate());
+    ZamNoisePlugin::init(getSampleRate());
+    zamnoise = new Denoise(getSampleRate());
 
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 
     // reset
-    d_deactivate();
+    deactivate();
 }
 
 ZamNoisePlugin::~ZamNoisePlugin()
@@ -44,7 +44,7 @@ ZamNoisePlugin::~ZamNoisePlugin()
 // -----------------------------------------------------------------------
 // Init
 
-void ZamNoisePlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamNoisePlugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -62,7 +62,7 @@ void ZamNoisePlugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamNoisePlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamNoisePlugin::initProgramName(uint32_t index, String& programName)
 {
     if (index != 0)
         return;
@@ -73,7 +73,7 @@ void ZamNoisePlugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamNoisePlugin::d_getParameterValue(uint32_t index) const
+float ZamNoisePlugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -86,7 +86,7 @@ float ZamNoisePlugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamNoisePlugin::d_setParameterValue(uint32_t index, float value)
+void ZamNoisePlugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -99,14 +99,14 @@ void ZamNoisePlugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamNoisePlugin::d_setProgram(uint32_t index)
+void ZamNoisePlugin::loadProgram(uint32_t index)
 {
     if (index != 0)
         return;
 
     noisetoggle = 0.f;
 
-    d_activate();
+    activate();
 }
 
 
@@ -126,15 +126,15 @@ void ZamNoisePlugin::init (float fsamp)
 // -----------------------------------------------------------------------
 // Process
 
-void ZamNoisePlugin::d_activate()
+void ZamNoisePlugin::activate()
 {
 }
 
-void ZamNoisePlugin::d_deactivate()
+void ZamNoisePlugin::deactivate()
 {
 }
 
-void ZamNoisePlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamNoisePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	zamnoise->process(inputs[0], outputs[0], buffer.cbi, frames, (int)noisetoggle);
 }

@@ -107,13 +107,13 @@ ZamTubeUI::ZamTubeUI()
     fToggleInsane->setCallback(this);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamTubeUI::d_parameterChanged(uint32_t index, float value)
+void ZamTubeUI::parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
@@ -138,7 +138,7 @@ void ZamTubeUI::d_parameterChanged(uint32_t index, float value)
     }
 }
 
-void ZamTubeUI::d_programChanged(uint32_t index)
+void ZamTubeUI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -159,65 +159,65 @@ void ZamTubeUI::d_programChanged(uint32_t index)
 void ZamTubeUI::imageKnobDragStarted(ImageKnob* knob)
 {
     if (knob == fKnobTube)
-        d_editParameter(ZamTubePlugin::paramTubedrive, true);
+        editParameter(ZamTubePlugin::paramTubedrive, true);
     else if (knob == fKnobBass)
-        d_editParameter(ZamTubePlugin::paramBass, true);
+        editParameter(ZamTubePlugin::paramBass, true);
     else if (knob == fKnobMids)
-        d_editParameter(ZamTubePlugin::paramMiddle, true);
+        editParameter(ZamTubePlugin::paramMiddle, true);
     else if (knob == fKnobTreb)
-        d_editParameter(ZamTubePlugin::paramTreble, true);
+        editParameter(ZamTubePlugin::paramTreble, true);
     else if (knob == fKnobGain)
-        d_editParameter(ZamTubePlugin::paramGain, true);
+        editParameter(ZamTubePlugin::paramGain, true);
 }
 
 void ZamTubeUI::imageKnobDragFinished(ImageKnob* knob)
 {
     if (knob == fKnobTube)
-        d_editParameter(ZamTubePlugin::paramTubedrive, false);
+        editParameter(ZamTubePlugin::paramTubedrive, false);
     else if (knob == fKnobBass)
-        d_editParameter(ZamTubePlugin::paramBass, false);
+        editParameter(ZamTubePlugin::paramBass, false);
     else if (knob == fKnobMids)
-        d_editParameter(ZamTubePlugin::paramMiddle, false);
+        editParameter(ZamTubePlugin::paramMiddle, false);
     else if (knob == fKnobTreb)
-        d_editParameter(ZamTubePlugin::paramTreble, false);
+        editParameter(ZamTubePlugin::paramTreble, false);
     else if (knob == fKnobGain)
-        d_editParameter(ZamTubePlugin::paramGain, false);
+        editParameter(ZamTubePlugin::paramGain, false);
 }
 
 void ZamTubeUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobTube)
-        d_setParameterValue(ZamTubePlugin::paramTubedrive, value);
+        setParameterValue(ZamTubePlugin::paramTubedrive, value);
     else if (knob == fKnobBass)
-        d_setParameterValue(ZamTubePlugin::paramBass, value);
+        setParameterValue(ZamTubePlugin::paramBass, value);
     else if (knob == fKnobMids)
-        d_setParameterValue(ZamTubePlugin::paramMiddle, value);
+        setParameterValue(ZamTubePlugin::paramMiddle, value);
     else if (knob == fKnobTreb)
-        d_setParameterValue(ZamTubePlugin::paramTreble, value);
+        setParameterValue(ZamTubePlugin::paramTreble, value);
     else if (knob == fKnobGain)
-        d_setParameterValue(ZamTubePlugin::paramGain, value);
+        setParameterValue(ZamTubePlugin::paramGain, value);
 }
 
 void ZamTubeUI::imageSliderDragStarted(ImageSlider*)
 {
-    d_editParameter(ZamTubePlugin::paramToneStack, true);
+    editParameter(ZamTubePlugin::paramToneStack, true);
 }
 
 void ZamTubeUI::imageSliderDragFinished(ImageSlider*)
 {
-    d_editParameter(ZamTubePlugin::paramToneStack, false);
+    editParameter(ZamTubePlugin::paramToneStack, false);
 }
 
 void ZamTubeUI::imageSliderValueChanged(ImageSlider*, float value)
 {
-    d_setParameterValue(ZamTubePlugin::paramToneStack, value);
+    setParameterValue(ZamTubePlugin::paramToneStack, value);
 }
 
 void ZamTubeUI::imageToggleClicked(ImageToggle* toggle, int)
 {
     float v = toggle->getValue();
     if (toggle == fToggleInsane) {
-        d_setParameterValue(ZamTubePlugin::paramInsane, v);
+        setParameterValue(ZamTubePlugin::paramInsane, v);
     }
 }
 

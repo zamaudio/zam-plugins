@@ -96,13 +96,13 @@ ZamPianoUI::ZamPianoUI()
     fKnobWidth->setCallback(this);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamPianoUI::d_parameterChanged(uint32_t index, float value)
+void ZamPianoUI::parameterChanged(uint32_t index, float value)
 {
 	switch (index)
 	{
@@ -133,7 +133,7 @@ void ZamPianoUI::d_parameterChanged(uint32_t index, float value)
 	}
 }
 
-void ZamPianoUI::d_programChanged(uint32_t index)
+void ZamPianoUI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -154,61 +154,61 @@ void ZamPianoUI::d_programChanged(uint32_t index)
 void ZamPianoUI::imageKnobDragStarted(ImageKnob* knob)
 {
     if (knob == fKnobBright)
-        d_editParameter(ZamPianoPlugin::paramBright, true);
+        editParameter(ZamPianoPlugin::paramBright, true);
     else if (knob == fKnobDetune)
-        d_editParameter(ZamPianoPlugin::paramDetuning, true);
+        editParameter(ZamPianoPlugin::paramDetuning, true);
     else if (knob == fKnobHammer)
-        d_editParameter(ZamPianoPlugin::paramHammerHard, true);
+        editParameter(ZamPianoPlugin::paramHammerHard, true);
     else if (knob == fKnobStiff)
-        d_editParameter(ZamPianoPlugin::paramStiffness, true);
+        editParameter(ZamPianoPlugin::paramStiffness, true);
     else if (knob == fKnobReverbGain)
-        d_editParameter(ZamPianoPlugin::paramReverbGain, true);
+        editParameter(ZamPianoPlugin::paramReverbGain, true);
     else if (knob == fKnobReverbRoom)
-        d_editParameter(ZamPianoPlugin::paramReverbRoom, true);
+        editParameter(ZamPianoPlugin::paramReverbRoom, true);
     else if (knob == fKnobPan)
-        d_editParameter(ZamPianoPlugin::paramPanAngle, true);
+        editParameter(ZamPianoPlugin::paramPanAngle, true);
     else if (knob == fKnobWidth)
-        d_editParameter(ZamPianoPlugin::paramSpatialWidth, true);
+        editParameter(ZamPianoPlugin::paramSpatialWidth, true);
 }
 
 void ZamPianoUI::imageKnobDragFinished(ImageKnob* knob)
 {
     if (knob == fKnobBright)
-        d_editParameter(ZamPianoPlugin::paramBright, false);
+        editParameter(ZamPianoPlugin::paramBright, false);
     else if (knob == fKnobDetune)
-        d_editParameter(ZamPianoPlugin::paramDetuning, false);
+        editParameter(ZamPianoPlugin::paramDetuning, false);
     else if (knob == fKnobHammer)
-        d_editParameter(ZamPianoPlugin::paramHammerHard, false);
+        editParameter(ZamPianoPlugin::paramHammerHard, false);
     else if (knob == fKnobStiff)
-        d_editParameter(ZamPianoPlugin::paramStiffness, false);
+        editParameter(ZamPianoPlugin::paramStiffness, false);
     else if (knob == fKnobReverbGain)
-        d_editParameter(ZamPianoPlugin::paramReverbGain, false);
+        editParameter(ZamPianoPlugin::paramReverbGain, false);
     else if (knob == fKnobReverbRoom)
-        d_editParameter(ZamPianoPlugin::paramReverbRoom, false);
+        editParameter(ZamPianoPlugin::paramReverbRoom, false);
     else if (knob == fKnobPan)
-        d_editParameter(ZamPianoPlugin::paramPanAngle, false);
+        editParameter(ZamPianoPlugin::paramPanAngle, false);
     else if (knob == fKnobWidth)
-        d_editParameter(ZamPianoPlugin::paramSpatialWidth, false);
+        editParameter(ZamPianoPlugin::paramSpatialWidth, false);
 }
 
 void ZamPianoUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobBright)
-        d_setParameterValue(ZamPianoPlugin::paramBright, value);
+        setParameterValue(ZamPianoPlugin::paramBright, value);
     else if (knob == fKnobDetune)
-        d_setParameterValue(ZamPianoPlugin::paramDetuning, value);
+        setParameterValue(ZamPianoPlugin::paramDetuning, value);
     else if (knob == fKnobHammer)
-        d_setParameterValue(ZamPianoPlugin::paramHammerHard, value);
+        setParameterValue(ZamPianoPlugin::paramHammerHard, value);
     else if (knob == fKnobStiff)
-        d_setParameterValue(ZamPianoPlugin::paramStiffness, value);
+        setParameterValue(ZamPianoPlugin::paramStiffness, value);
     else if (knob == fKnobReverbGain)
-        d_setParameterValue(ZamPianoPlugin::paramReverbGain, value);
+        setParameterValue(ZamPianoPlugin::paramReverbGain, value);
     else if (knob == fKnobReverbRoom)
-        d_setParameterValue(ZamPianoPlugin::paramReverbRoom, value);
+        setParameterValue(ZamPianoPlugin::paramReverbRoom, value);
     else if (knob == fKnobPan)
-        d_setParameterValue(ZamPianoPlugin::paramPanAngle, value);
+        setParameterValue(ZamPianoPlugin::paramPanAngle, value);
     else if (knob == fKnobWidth)
-        d_setParameterValue(ZamPianoPlugin::paramSpatialWidth, value);
+        setParameterValue(ZamPianoPlugin::paramSpatialWidth, value);
 }
 
 void ZamPianoUI::onDisplay()

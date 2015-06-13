@@ -25,7 +25,7 @@ ZamPianoPlugin::ZamPianoPlugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
     // set default values
-    d_setProgram(0);
+    loadProgram(0);
 }
 
 ZamPianoPlugin::~ZamPianoPlugin()
@@ -40,7 +40,7 @@ ZamPianoPlugin::~ZamPianoPlugin()
 // -----------------------------------------------------------------------
 // Init
 
-void ZamPianoPlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
@@ -146,7 +146,7 @@ void ZamPianoPlugin::d_initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamPianoPlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamPianoPlugin::initProgramName(uint32_t index, String& programName)
 {
     if (index != 0)
         return;
@@ -157,7 +157,7 @@ void ZamPianoPlugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamPianoPlugin::d_getParameterValue(uint32_t index) const
+float ZamPianoPlugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
@@ -200,7 +200,7 @@ float ZamPianoPlugin::d_getParameterValue(uint32_t index) const
     }
 }
 
-void ZamPianoPlugin::d_setParameterValue(uint32_t index, float value)
+void ZamPianoPlugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
@@ -240,22 +240,22 @@ void ZamPianoPlugin::d_setParameterValue(uint32_t index, float value)
     }
 }
 
-void ZamPianoPlugin::d_setProgram(uint32_t index)
+void ZamPianoPlugin::loadProgram(uint32_t index)
 {
     if (index != 0)
         return;
 
     /* Default parameter values */
     /* reset filter values */
-    d_activate();
+    activate();
 }
 
 /*
-void ZamPianoPlugin::d_setState(const char*, const char*)
+void ZamPianoPlugin::setState(const char*, const char*)
 {
 }
 
-void ZamPianoPlugin::d_initStateKey(unsigned int, d_string&)
+void ZamPianoPlugin::initStateKey(unsigned int, String&)
 {
 }
 */
@@ -263,7 +263,7 @@ void ZamPianoPlugin::d_initStateKey(unsigned int, d_string&)
 // -----------------------------------------------------------------------
 // Process
 
-void ZamPianoPlugin::d_activate()
+void ZamPianoPlugin::activate()
 {
 	int i;
 	for (i = 0; i < 88; i++) {
@@ -288,7 +288,7 @@ void ZamPianoPlugin::d_activate()
 	}
 }
 
-void ZamPianoPlugin::d_run(const float** inputs, float** outputs, uint32_t frames,
+void ZamPianoPlugin::run(const float** inputs, float** outputs, uint32_t frames,
 				const MidiEvent* midievent, uint32_t midicount)
 {
 	uint32_t i, j;

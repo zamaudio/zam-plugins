@@ -52,27 +52,27 @@ protected:
     // -------------------------------------------------------------------
     // Information
 
-    const char* d_getLabel() const noexcept override
+    const char* getLabel() const noexcept override
     {
         return "ZamEQ2";
     }
 
-    const char* d_getMaker() const noexcept override
+    const char* getMaker() const noexcept override
     {
         return "Damien Zammit";
     }
 
-    const char* d_getLicense() const noexcept override
+    const char* getLicense() const noexcept override
     {
         return "GPL v2+";
     }
 
-    uint32_t d_getVersion() const noexcept override
+    uint32_t getVersion() const noexcept override
     {
         return 0x1000;
     }
 
-    int64_t d_getUniqueId() const noexcept override
+    int64_t getUniqueId() const noexcept override
     {
         return d_cconst('Z', 'E', 'Q', '2');
     }
@@ -80,17 +80,15 @@ protected:
     // -------------------------------------------------------------------
     // Init
 
-    void d_initParameter(uint32_t index, Parameter& parameter) ;
-    void d_initProgramName(uint32_t index, d_string& programName) ;
+    void initParameter(uint32_t index, Parameter& parameter) ;
+    void initProgramName(uint32_t index, String& programName) ;
 
     // -------------------------------------------------------------------
     // Internal data
 
-    float d_getParameterValue(uint32_t index) const override;
-    void  d_setParameterValue(uint32_t index, float value) override;
-    void  d_setProgram(uint32_t index) override;
-
-    void  loadProgram(uint32_t index);
+    float getParameterValue(uint32_t index) const override;
+    void  setParameterValue(uint32_t index, float value) override;
+    void  loadProgram(uint32_t index) override;
 
     // -------------------------------------------------------------------
     // Process
@@ -117,8 +115,8 @@ protected:
         	return (x >= 0.f ? 1 : -1);
 	}
 
-    void d_activate() override;
-    void d_run(const float** inputs, float** outputs, uint32_t frames) override;
+    void activate() override;
+    void run(const float** inputs, float** outputs, uint32_t frames) override;
 
     void peq(int i, int ch, float srate, float fc, float g, float bw);
     void lowshelf(int i, int ch, float srate, float fc, float g);

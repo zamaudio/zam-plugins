@@ -79,10 +79,10 @@ ZamSynthUI::ZamSynthUI()
     fToggleGraph->setValue(0.f);
 
     // set default values
-    d_programChanged(0);
+    programLoaded(0);
 }
 
-void ZamSynthUI::d_stateChanged(const char* key, const char* value)
+void ZamSynthUI::stateChanged(const char* key, const char* value)
 {
         if (strcmp(key, "waveform") == 0) {
 	        char* tmp;
@@ -114,7 +114,7 @@ void ZamSynthUI::d_stateChanged(const char* key, const char* value)
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamSynthUI::d_parameterChanged(uint32_t index, float value)
+void ZamSynthUI::parameterChanged(uint32_t index, float value)
 {
 	switch (index)
 	{
@@ -130,7 +130,7 @@ void ZamSynthUI::d_parameterChanged(uint32_t index, float value)
 	}
 }
 
-void ZamSynthUI::d_programChanged(uint32_t index)
+void ZamSynthUI::programLoaded(uint32_t index)
 {
     if (index != 0)
         return;
@@ -145,25 +145,25 @@ void ZamSynthUI::d_programChanged(uint32_t index)
 void ZamSynthUI::imageKnobDragStarted(ImageKnob* knob)
 {
     if (knob == fKnobGain)
-        d_editParameter(ZamSynthPlugin::paramGain, true);
+        editParameter(ZamSynthPlugin::paramGain, true);
     else if (knob == fKnobSpeed)
-        d_editParameter(ZamSynthPlugin::paramSpeed, true);
+        editParameter(ZamSynthPlugin::paramSpeed, true);
 }
 
 void ZamSynthUI::imageKnobDragFinished(ImageKnob* knob)
 {
     if (knob == fKnobGain)
-        d_editParameter(ZamSynthPlugin::paramGain, false);
+        editParameter(ZamSynthPlugin::paramGain, false);
     else if (knob == fKnobSpeed)
-        d_editParameter(ZamSynthPlugin::paramSpeed, false);
+        editParameter(ZamSynthPlugin::paramSpeed, false);
 }
 
 void ZamSynthUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     if (knob == fKnobGain)
-        d_setParameterValue(ZamSynthPlugin::paramGain, value);
+        setParameterValue(ZamSynthPlugin::paramGain, value);
     else if (knob == fKnobSpeed)
-        d_setParameterValue(ZamSynthPlugin::paramSpeed, value);
+        setParameterValue(ZamSynthPlugin::paramSpeed, value);
 }
 
 void ZamSynthUI::imageButtonClicked(ImageButton*, int)
@@ -189,16 +189,16 @@ void ZamSynthUI::imageButtonClicked(ImageButton*, int)
 	}
 
 	if (fToggleGraph->getValue() == 1.f)
-		d_setState("envelope", tmp);
+		setState("envelope", tmp);
 	else
-		d_setState("waveform", tmp);
+		setState("waveform", tmp);
 }
 
 void ZamSynthUI::imageToggleClicked(ImageToggle*, int)
 {
 	float toggle = fToggleGraph->getValue();
 	fToggleGraph->setValue(toggle);
-	d_setParameterValue(ZamSynthPlugin::paramGraph, toggle);
+	setParameterValue(ZamSynthPlugin::paramGraph, toggle);
 }
 
 void ZamSynthUI::gaussiansmooth(float* smoothed, float* xs, float* ys, int n, int radius)
@@ -284,9 +284,9 @@ bool ZamSynthUI::onMotion(const MotionEvent& ev)
         gr[x-10] = y-10;
 
 	if (gr == env_y)
-		d_setState("envelope",tmp);
+		setState("envelope",tmp);
 	else
-		d_setState("waveform",tmp);
+		setState("waveform",tmp);
 
 	repaint();
     }
