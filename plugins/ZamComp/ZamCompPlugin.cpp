@@ -25,13 +25,13 @@ ZamCompPlugin::ZamCompPlugin()
 	: Plugin(paramCount, 3, 0)
 {
 	// set default values
-	d_setProgram(0);
+	loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
 // Init
 
-void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamCompPlugin::initParameter(uint32_t index, Parameter& parameter)
 {
 	switch (index)
 	{
@@ -110,7 +110,7 @@ void ZamCompPlugin::d_initParameter(uint32_t index, Parameter& parameter)
 	}
 }
 
-void ZamCompPlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamCompPlugin::initProgramName(uint32_t index, String& programName)
 {
 	switch(index) {
 	case 0:
@@ -159,12 +159,14 @@ void ZamCompPlugin::loadProgram(uint32_t index)
 		outlevel = -45.0;
 		break;
 	}
+	/* reset filter values */
+	activate();
 }
 
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamCompPlugin::d_getParameterValue(uint32_t index) const
+float ZamCompPlugin::getParameterValue(uint32_t index) const
 {
 	switch (index) {
 	case paramAttack:
@@ -196,7 +198,7 @@ float ZamCompPlugin::d_getParameterValue(uint32_t index) const
 	}
 }
 
-void ZamCompPlugin::d_setParameterValue(uint32_t index, float value)
+void ZamCompPlugin::setParameterValue(uint32_t index, float value)
 {
 	switch (index) {
 	case paramAttack:
@@ -226,28 +228,19 @@ void ZamCompPlugin::d_setParameterValue(uint32_t index, float value)
 	}
 }
 
-void ZamCompPlugin::d_setProgram(uint32_t index)
-{
-	/* Default parameter values */
-	loadProgram(index);
-
-	/* reset filter values */
-	d_activate();
-}
-
 // -----------------------------------------------------------------------
 // Process
 
-void ZamCompPlugin::d_activate()
+void ZamCompPlugin::activate()
 {
 	gainr = 0.0f;
 	outlevel = -45.f;
 	old_yl = old_y1 = old_yg = 0.0f;
 }
 
-void ZamCompPlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = d_getSampleRate();
+	float srate = getSampleRate();
 	float width=(knee-0.99f)*6.f;
 	float cdb=0.f;
 	float attack_coeff = exp(-1000.f/(attack * srate));

@@ -98,13 +98,13 @@ ZamCompUI::ZamCompUI()
 	fKnobMakeup->setCallback(this);
 
 	// set default values
-	d_programChanged(0);
+	programLoaded(0);
 }
 
 // -----------------------------------------------------------------------
 // DSP Callbacks
 
-void ZamCompUI::d_parameterChanged(uint32_t index, float value)
+void ZamCompUI::parameterChanged(uint32_t index, float value)
 {
 	switch (index)
 	{
@@ -143,7 +143,7 @@ void ZamCompUI::d_parameterChanged(uint32_t index, float value)
 	}
 }
 
-void ZamCompUI::d_programChanged(uint32_t index)
+void ZamCompUI::programLoaded(uint32_t index)
 {
 	if (index != 0)
 	return;
@@ -162,17 +162,17 @@ void ZamCompUI::d_programChanged(uint32_t index)
 
 void ZamCompUI::imageKnobDragStarted(ImageKnob* knob)
 {
-	d_editParameter(knob->getId(), true);
+	editParameter(knob->getId(), true);
 }
 
 void ZamCompUI::imageKnobDragFinished(ImageKnob* knob)
 {
-	d_editParameter(knob->getId(), false);
+	editParameter(knob->getId(), false);
 }
 
 void ZamCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-	d_setParameterValue(knob->getId(), value);
+	setParameterValue(knob->getId(), value);
 }
 
 void ZamCompUI::onDisplay()
