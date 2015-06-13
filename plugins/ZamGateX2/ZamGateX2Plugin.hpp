@@ -1,5 +1,5 @@
 /*
- * ZamGate
+ * ZamGateX2
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
-class ZamGatePlugin : public Plugin
+class ZamGateX2Plugin : public Plugin
 {
 public:
 	enum Parameters
@@ -41,7 +41,7 @@ public:
 		paramCount
 	};
 
-	ZamGatePlugin();
+	ZamGateX2Plugin();
 
 protected:
 	// -------------------------------------------------------------------
@@ -49,7 +49,7 @@ protected:
 
 	const char* d_getLabel() const noexcept override
 	{
-		return "ZamGate";
+		return "ZamGateX2";
 	}
 
 	const char* d_getMaker() const noexcept override
@@ -69,7 +69,7 @@ protected:
 
 	int64_t d_getUniqueId() const noexcept override
 	{
-		return d_cconst('Z', 'G', 'A', 'T');
+		return d_cconst('Z', 'G', 'T', '2');
 	}
 
 	// -------------------------------------------------------------------
@@ -110,11 +110,13 @@ protected:
 	float attack,release,thresdb,makeup,gainr,outlevel; //parameters
 
 	void pushsamplel(float samples[], float sample);
+	void pushsampler(float samples[], float sample);
 	float averageabs(float samples[]);
 
 	float samplesl[MAX_GATE];
-	float gatestatel;
-	int posl;
+	float samplesr[MAX_GATE];
+	float gatestatel, gatestater;
+	int posl, posr;
 };
 
 // -----------------------------------------------------------------------

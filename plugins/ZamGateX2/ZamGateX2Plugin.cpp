@@ -1,5 +1,5 @@
 /*
- * ZamGate gate plugin
+ * ZamGateX2 stereo gate plugin
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -15,13 +15,13 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#include "ZamGatePlugin.hpp"
+#include "ZamGateX2Plugin.hpp"
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
-ZamGatePlugin::ZamGatePlugin()
+ZamGateX2Plugin::ZamGateX2Plugin()
 	: Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
 	// set default values
@@ -31,7 +31,7 @@ ZamGatePlugin::ZamGatePlugin()
 // -----------------------------------------------------------------------
 // Init
 
-void ZamGatePlugin::d_initProgramName(uint32_t index, d_string& programName)
+void ZamGateX2Plugin::d_initProgramName(uint32_t index, d_string& programName)
 {
 	if (index != 0)
 		return;
@@ -42,7 +42,7 @@ void ZamGatePlugin::d_initProgramName(uint32_t index, d_string& programName)
 // -----------------------------------------------------------------------
 // Internal data
 
-void ZamGatePlugin::d_initParameter(uint32_t index, Parameter& parameter)
+void ZamGateX2Plugin::d_initParameter(uint32_t index, Parameter& parameter)
 {
 	switch (index)
 	{
@@ -106,7 +106,7 @@ void ZamGatePlugin::d_initParameter(uint32_t index, Parameter& parameter)
 // -----------------------------------------------------------------------
 // Internal data
 
-float ZamGatePlugin::d_getParameterValue(uint32_t index) const
+float ZamGateX2Plugin::d_getParameterValue(uint32_t index) const
 {
 	switch (index)
 	{
@@ -133,7 +133,7 @@ float ZamGatePlugin::d_getParameterValue(uint32_t index) const
 	}
 }
 
-void ZamGatePlugin::d_setParameterValue(uint32_t index, float value)
+void ZamGateX2Plugin::d_setParameterValue(uint32_t index, float value)
 {
 	switch (index)
 	{
@@ -158,7 +158,7 @@ void ZamGatePlugin::d_setParameterValue(uint32_t index, float value)
 	}
 }
 
-void ZamGatePlugin::d_setProgram(uint32_t index)
+void ZamGateX2Plugin::d_setProgram(uint32_t index)
 {
 	attack = 50.0;
 	release = 100.0;
@@ -172,17 +172,20 @@ void ZamGatePlugin::d_setProgram(uint32_t index)
 // -----------------------------------------------------------------------
 // Process
 
-void ZamGatePlugin::d_activate()
+void ZamGateX2Plugin::d_activate()
 {
 	int i;
 	gatestatel = 0.f;
+	gatestater = 0.f;
 	posl = 0;
+	posr = 0;
 	for (i = 0; i < MAX_GATE; i++) {
 		samplesl[i] = 0.f;
+		samplesr[i] = 0.f;
 	}
 }
 
-void ZamGatePlugin::pushsamplel(float samples[], float sample)
+void ZamGateX2Plugin::pushsamplel(float samples[], float sample)
 {
 	++posl;
 	if (posl >= MAX_GATE)
@@ -190,7 +193,15 @@ void ZamGatePlugin::pushsamplel(float samples[], float sample)
 	samples[posl] = sample;
 }
 
-float ZamGatePlugin::averageabs(float samples[])
+void ZamGateX2Plugin::pushsampler(float samples[], float sample)
+{
+	++posr;
+	if (posr >= MAX_GATE)
+		posr = 0;
+	samples[posr] = sample;
+}
+
+float ZamGateX2Plugin::averageabs(float samples[])
 {
 	int i;
 	float average = 0.f;
@@ -202,37 +213,50 @@ float ZamGatePlugin::averageabs(float samples[])
 	return sqrt(average);
 }
 
-void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames)
+void ZamGateX2Plugin::d_run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
-	float absamplel, absample;
+	float absamplel, absampler, absample;
 	float att;
 	float rel;
-	float gl;
+	float gl, gr;
 	float ming;
 	float fs;
 	fs = d_getSampleRate();
 	gl = gatestatel;
+	gr = gatestater;
 	att = 1000.f / (attack * fs);
 	rel = 1000.f / (release * fs);
 
 	for(i = 0; i < frames; i++) {
 		pushsamplel(samplesl, inputs[0][i]);
-		absample = averageabs(samplesl);
+		pushsampler(samplesr, inputs[1][i]);
+		absamplel = averageabs(samplesl);
+		absampler = averageabs(samplesr);
+		absample = std::max(absamplel, absampler);
 		if (absample < from_dB(thresdb)) {
+			gr -= rel;
+			if (gr < 0.f)
+				gr = 0.f;
 			gl -= rel;
 			if (gl < 0.f)
 				gl = 0.f;
 		} else {
+			gr += att;
+			if (gr > 1.f)
+				gr = 1.f;
 			gl += att;
 			if (gl > 1.f)
 				gl = 1.f;
 		}
 
 		gatestatel = gl;
+		gatestater = gr;
 
 		outputs[0][i] = gl * from_dB(makeup) * inputs[0][i];
-		gainr = (gl > 0) ? sanitize_denormal(-to_dB(gl)) : 40.0;
+		outputs[1][i] = gr * from_dB(makeup) * inputs[1][i];
+		ming = std::max(gr, gl);
+		gainr = (ming > 0) ? sanitize_denormal(-to_dB(ming)) : 40.0;
 		gainr = std::min(gainr, 40.f);
 		outlevel = (absample > 0) ? to_dB(absample) - thresdb : -60.0;
 	}
@@ -242,7 +266,7 @@ void ZamGatePlugin::d_run(const float** inputs, float** outputs, uint32_t frames
 
 Plugin* createPlugin()
 {
-	return new ZamGatePlugin();
+	return new ZamGateX2Plugin();
 }
 
 // -----------------------------------------------------------------------

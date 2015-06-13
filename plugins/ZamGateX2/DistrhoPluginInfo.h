@@ -1,5 +1,5 @@
 /*
- * ZamGate
+ * ZamGateX2
  * Copyright (C) 2014 Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -18,19 +18,19 @@
 #ifndef DISTRHO_PLUGIN_INFO_H_INCLUDED
 #define DISTRHO_PLUGIN_INFO_H_INCLUDED
 
-#define DISTRHO_PLUGIN_NAME "ZamGate"
+#define DISTRHO_PLUGIN_NAME "ZamGateX2"
 
 #define DISTRHO_PLUGIN_HAS_UI        1
 #define DISTRHO_PLUGIN_IS_SYNTH      0
 
-#define DISTRHO_PLUGIN_NUM_INPUTS    1
-#define DISTRHO_PLUGIN_NUM_OUTPUTS   1
+#define DISTRHO_PLUGIN_NUM_INPUTS    2
+#define DISTRHO_PLUGIN_NUM_OUTPUTS   2
 
 #define DISTRHO_PLUGIN_WANT_LATENCY  0
 #define DISTRHO_PLUGIN_WANT_PROGRAMS 1
 #define DISTRHO_PLUGIN_WANT_STATE    0
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamGate"
+#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamGateX2"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED
