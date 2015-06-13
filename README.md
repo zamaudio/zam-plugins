@@ -16,9 +16,11 @@ Build Dependencies:
 	pkg-config libx11-dev libgl-dev liblo-dev libjack-dev ladspa-sdk
 
 
-Installation:
-=============
+Bleeding edge installation:
+===========================
 
+	git submodule init
+	git submodule update
 	make
 	sudo make install
 
