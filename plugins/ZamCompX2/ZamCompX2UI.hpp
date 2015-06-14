@@ -27,15 +27,13 @@
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageToggle;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZamCompX2UI : public UI,
-                    public ImageKnob::Callback,
-                    public ImageToggle::Callback
+                    public ImageKnob::Callback
 {
 public:
     ZamCompX2UI();
@@ -53,17 +51,13 @@ protected:
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
-    void imageToggleClicked(ImageToggle* imageToggle, int button) override;
 
     void onDisplay() override;
 
 private:
     Image fImgBackground;
     ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
-    ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup;
-
-    Image fImgSwitchSlider;
-    ScopedPointer<ImageToggle> fToggleStereo;
+    ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup, fKnobSlew;
 
     Image fLedRedImg;
     float fLedRedValue;

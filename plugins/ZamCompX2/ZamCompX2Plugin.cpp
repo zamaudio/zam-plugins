@@ -89,6 +89,15 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 30.0f;
         break;
+    case paramSlew:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Slew";
+        parameter.symbol     = "slew";
+        parameter.unit       = " ";
+        parameter.ranges.def = 1.0f;
+        parameter.ranges.min = 1.0f;
+        parameter.ranges.max = 150.0f;
+        break;
     case paramGainRed:
         parameter.hints      = kParameterIsOutput;
         parameter.name       = "Gain Reduction";
@@ -97,15 +106,6 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 20.0f;
-        break;
-    case paramStereo:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
-        parameter.name       = "Stereolink";
-        parameter.symbol     = "stereo";
-        parameter.unit       = " ";
-        parameter.ranges.def = 1.0f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 2.0f;
         break;
     case paramOutputLevel:
         parameter.hints      = kParameterIsOutput;
@@ -146,18 +146,18 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		thresdb = 0.0;
 		makeup = 0.0;
 		gainred = 0.0;
-		stereolink = 1.0;
+		slewfactor = 1.0;
 		outlevel = -45.0;
 		break;
 	case 1:
 		attack = 10.0;
 		release = 50.0;
-		knee = 0.0;
+		knee = 1.0;
 		ratio = 5.0;
-		thresdb = -11.0;
+		thresdb = -18.0;
 		makeup = 6.0;
 		gainred = 0.0;
-		stereolink = 1.0;
+		slewfactor = 20.0;
 		outlevel = -45.0;
 		break;
 	case 2:
@@ -168,12 +168,12 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		thresdb = -16.0;
 		makeup = 9.0;
 		gainred = 0.0;
-		stereolink = 1.0;
+		slewfactor = 1.0;
 		outlevel = -45.0;
 		break;
 	}
-    /* reset filter values */
-    activate();
+
+	activate();
 }
 
 // -----------------------------------------------------------------------
@@ -201,11 +201,11 @@ float ZamCompX2Plugin::getParameterValue(uint32_t index) const
     case paramMakeup:
         return makeup;
         break;
+    case paramSlew:
+        return slewfactor;
+        break;
     case paramGainRed:
         return gainred;
-        break;
-    case paramStereo:
-        return stereolink;
         break;
     case paramOutputLevel:
         return outlevel;
@@ -237,11 +237,11 @@ void ZamCompX2Plugin::setParameterValue(uint32_t index, float value)
     case paramMakeup:
         makeup = value;
         break;
+    case paramSlew:
+        slewfactor = value;
+        break;
     case paramGainRed:
         gainred = value;
-        break;
-    case paramStereo:
-        stereolink = value;
         break;
     case paramOutputLevel:
         outlevel = value;
@@ -262,14 +262,15 @@ void ZamCompX2Plugin::activate()
 void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = getSampleRate();
-        float width=(knee-0.99f)*6.f;
+	float width = (6.f * knee) + 0.01;
+	float slewwidth = 1.8f;
         float cdb=0.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
-	int stereo = (stereolink > 1.f) ? STEREOLINK_MAX : (stereolink > 0.f) ? STEREOLINK_AVERAGE : STEREOLINK_UNCOUPLED;
+	int stereo = STEREOLINK_MAX;
 
-        int slew;
-        float slewfactor = 1.f + knee/2.f;
+        int attslew = 0;
+        int relslew = 0;
 	float max = 0.f;
 	float lgaininp = 0.f;
 	float rgaininp = 0.f;
@@ -277,10 +278,12 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
         float Rgain = 1.f;
         float Lxg, Lxl, Lyg, Lyl, Ly1;
         float Rxg, Rxl, Ryg, Ryl, Ry1;
-        uint32_t i;
+        float checkwidth = 0.f;
+	uint32_t i;
 
         for (i = 0; i < frames; i++) {
-                slew = 0;
+                relslew = 0;
+                attslew = 0;
 		Lyg = Ryg = 0.f;
                 Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
                 Rxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
@@ -290,31 +293,44 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
                 Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb+width/2.f)*(Rxg-thresdb+width/2.f)/(2.f*width);
 
-                if (2.f*(Lxg-thresdb)<-width) {
+		checkwidth = 2.f*fabs(Lxg-thresdb);
+                if (2.f*(Lxg-thresdb) < -width) {
                         Lyg = Lxg;
-                } else if (2.f*fabs(Lxg-thresdb)<=width && Lyg >= oldL_yg) {
-		        slew = 1;
-                } else if (2.f*fabs(Lxg-thresdb)<=width && Lyg < oldL_yg) {
-		        Lyg = thresdb + (Lxg-thresdb)/ratio;
+                } else if (checkwidth <= width) {
+			Lyg = thresdb + (Lxg-thresdb)/ratio;
 			Lyg = sanitize_denormal(Lyg);
-                } else if (2.f*(Lxg-thresdb)>width) {
+			if (checkwidth <= slewwidth) {
+				if (Lyg >= oldL_yg) {
+					attslew = 1;
+				} else {
+					relslew = 1;
+				}
+			}
+                } else if (2.f*(Lxg-thresdb) > width) {
                         Lyg = thresdb + (Lxg-thresdb)/ratio;
                         Lyg = sanitize_denormal(Lyg);
                 }
 
-                if (2.f*(Rxg-thresdb)<-width) {
+		checkwidth = 2.f*fabs(Rxg-thresdb);
+                if (2.f*(Rxg-thresdb) < -width) {
                         Ryg = Rxg;
-                } else if (2.f*fabs(Rxg-thresdb)<=width && Ryg >= oldR_yg) {
-		        slew = 1;
-                } else if (2.f*fabs(Rxg-thresdb)<=width && Ryg < oldR_yg) {
-                        Ryg = thresdb + (Rxg-thresdb)/ratio;
-                        Ryg = sanitize_denormal(Ryg);
-                } else if (2.f*(Rxg-thresdb)>width) {
+                } else if (checkwidth <= width) {
+			Ryg = thresdb + (Rxg-thresdb)/ratio;
+			Ryg = sanitize_denormal(Ryg);
+			if (checkwidth <= slewwidth) {
+				if (Ryg >= oldR_yg) {
+					attslew = 1;
+				} else {
+					relslew = 1;
+				}
+			}
+                } else if (2.f*(Rxg-thresdb) > width) {
                         Ryg = thresdb + (Rxg-thresdb)/ratio;
                         Ryg = sanitize_denormal(Ryg);
                 }
 
-                attack_coeff = slew ? exp(-1000.f/(attack*slewfactor * srate)) : attack_coeff;
+                attack_coeff = attslew ? exp(-1000.f/((attack + 2.0*(slewfactor - 1)) * srate)) : attack_coeff;
+                release_coeff = relslew ? exp(-1000.f/((release + 2.0*(slewfactor - 1)) * srate)) : release_coeff;
 
                 if (stereo == STEREOLINK_UNCOUPLED) {
                         Lxl = Lxg - Lyg;
