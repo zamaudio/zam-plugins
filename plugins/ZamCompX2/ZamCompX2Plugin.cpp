@@ -152,12 +152,12 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 	case 1:
 		attack = 10.0;
 		release = 50.0;
-		knee = 0.0;
+		knee = 1.0;
 		ratio = 5.0;
-		thresdb = -11.0;
+		thresdb = -18.0;
 		makeup = 6.0;
 		gainred = 0.0;
-		slewfactor = 1.0;
+		slewfactor = 20.0;
 		outlevel = -45.0;
 		break;
 	case 2:

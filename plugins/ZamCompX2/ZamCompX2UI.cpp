@@ -155,16 +155,35 @@ void ZamCompX2UI::parameterChanged(uint32_t index, float value)
 
 void ZamCompX2UI::programLoaded(uint32_t index)
 {
-    if (index != 0)
-        return;
-
-    // Default values
-    fKnobAttack->setValue(10.0f);
-    fKnobRelease->setValue(80.0f);
-    fKnobThresh->setValue(0.0f);
-    fKnobRatio->setValue(4.0f);
-    fKnobKnee->setValue(0.0f);
-    fKnobMakeup->setValue(0.0f);
+	switch(index) {
+	case 0:
+		fKnobAttack->setValue(10.0f);
+		fKnobRelease->setValue(80.0f);
+		fKnobKnee->setValue(0.0f);
+		fKnobRatio->setValue(4.0f);
+		fKnobThresh->setValue(0.0f);
+		fKnobMakeup->setValue(0.0f);
+		fKnobSlew->setValue(1.0f);
+		break;
+	case 1:
+		fKnobAttack->setValue(10.0f);
+		fKnobRelease->setValue(80.0f);
+		fKnobKnee->setValue(1.0f);
+		fKnobRatio->setValue(5.0f);
+		fKnobThresh->setValue(-18.0f);
+		fKnobMakeup->setValue(6.0f);
+		fKnobSlew->setValue(20.0f);
+		break;
+	case 2:
+		fKnobAttack->setValue(50.0f);
+		fKnobRelease->setValue(400.0f);
+		fKnobKnee->setValue(8.0f);
+		fKnobRatio->setValue(5.0f);
+		fKnobThresh->setValue(-16.0f);
+		fKnobMakeup->setValue(9.0f);
+		fKnobSlew->setValue(1.0f);
+		break;
+	}
 }
 
 // -----------------------------------------------------------------------
