@@ -25,6 +25,7 @@ START_NAMESPACE_DISTRHO
 
 #define MAX_FILT 8
 #define MAX_COMP 3
+#define MAX_SAMPLES 960
 #define ONEOVERROOT2 0.7071068f
 #define ROOT2 1.4142135f
 #define STEREOLINK_MAX 1
@@ -156,6 +157,8 @@ protected:
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
+	void pushsample(float samples[], float sample, int k);
+	float averageabs(float samples[]);
     // -------------------------------------------------------------------
 
 private:
@@ -164,6 +167,8 @@ private:
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP], old_yg[2][MAX_COMP];
     float old_ll[2], old_l1[2];
     float limit, outlevel[3];
+    int pos[3];
+    float outlevelold[3][MAX_SAMPLES];
     bool resetl;
     bool resetr;
     // Crossover filter coefficients

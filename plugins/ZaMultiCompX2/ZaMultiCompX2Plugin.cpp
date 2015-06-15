@@ -606,6 +606,14 @@ void ZaMultiCompX2Plugin::activate()
 		}
         }
 	maxL = maxR = 0.f;
+	for (i = 0; i < MAX_SAMPLES; i++) {
+		outlevelold[0][i] = 0.f;
+		outlevelold[1][i] = 0.f;
+		outlevelold[2][i] = 0.f;
+	}
+	pos[0] = 0;
+	pos[1] = 0;
+	pos[2] = 0;
 }
 
 float ZaMultiCompX2Plugin::run_filter(int i, int ch, float in)
@@ -851,6 +859,26 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         old_yg[1][k] = Ryg;
 }
 
+void ZaMultiCompX2Plugin::pushsample(float samples[], float sample, int k)
+{
+	++pos[k];
+	if (pos[k] >= MAX_SAMPLES)
+		pos[k] = 0;
+	samples[pos[k]] = sample;
+}
+
+float ZaMultiCompX2Plugin::averageabs(float samples[])
+{
+	int i;
+	float average = 0.f;
+
+	for (i = 0; i < MAX_SAMPLES; i++) {
+		average += samples[i]*samples[i];
+	}
+	average /= (float) MAX_SAMPLES;
+	return sqrt(average);
+}
+
 void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = getSampleRate();
@@ -900,8 +928,9 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 fil1[1] = run_filter(0, 1, inr);
                 tmp1[0] = run_filter(1, 0, fil1[0]);
                 tmp1[1] = run_filter(1, 1, fil1[1]);
-		outlevel[0] = to_dB(std::max(tmp1[0], tmp1[1]));
-
+		pushsample(outlevelold[0], std::max(tmp1[0], tmp1[1]), 0);
+		outlevel[0] = averageabs(outlevelold[0]);
+		outlevel[0] = (outlevel[0] == 0.f) ? -45.0 : to_dB(outlevel[0]);
 		if (tog1)
 			run_comp(0, tmp1[0], tmp1[1], &outL[0], &outR[0]);
 
@@ -916,7 +945,9 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 fil3[1] = run_filter(4, 1, tmp3[1]);
                 tmp4[0] = run_filter(5, 0, fil3[0]);
                 tmp4[1] = run_filter(5, 1, fil3[1]);
-		outlevel[1] = to_dB(std::max(tmp4[0], tmp4[1]));
+		pushsample(outlevelold[1], std::max(tmp4[0], tmp4[1]), 1);
+		outlevel[1] = averageabs(outlevelold[1]);
+		outlevel[1] = (outlevel[1] == 0.f) ? -45.0 : to_dB(outlevel[1]);
 
 		if (tog2)
 			run_comp(1, tmp4[0], tmp4[1], &outL[1], &outR[1]);
@@ -928,7 +959,9 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 fil4[1] = run_filter(6, 1, inr);
                 tmp5[0] = run_filter(7, 0, fil4[0]);
                 tmp5[1] = run_filter(7, 1, fil4[1]);
-		outlevel[2] = to_dB(std::max(tmp5[0], tmp5[1]));
+		pushsample(outlevelold[2], std::max(tmp5[0], tmp5[1]), 2);
+		outlevel[2] = averageabs(outlevelold[2]);
+		outlevel[2] = (outlevel[2] == 0.f) ? -45.0 : to_dB(outlevel[2]);
 
 		if (tog3)
 			run_comp(2, tmp5[0], tmp5[1], &outL[2], &outR[2]);
