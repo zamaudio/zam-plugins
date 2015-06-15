@@ -100,7 +100,7 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return 0x1000;
+        return 0x1500;
     }
 
     int64_t getUniqueId() const noexcept override

@@ -97,9 +97,7 @@ private:
     ScopedPointer<ImageToggle> fToggleStereo;
 
     Image fLedRedImg;
-    float fLedRedValue1;
-    float fLedRedValue2;
-    float fLedRedValue3;
+    float fLedRedValue[3];
     Image fLedYellowImg;
     float fLedYellowValueL;
     float fLedYellowValueR;
@@ -112,6 +110,8 @@ private:
     float fMaster;
     float compx[MAX_COMP][COMPOINTS];
     float compy[MAX_COMP][COMPOINTS];
+    float dotx[MAX_COMP];
+    float doty[MAX_COMP];
 };
 
 // -----------------------------------------------------------------------

@@ -37,9 +37,9 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fLedYellowImg = Image(ZaMultiCompX2Artwork::ledyellowData, ZaMultiCompX2Artwork::ledyellowWidth, ZaMultiCompX2Artwork::ledyellowHeight);
 
     // led values
-    fLedRedValue1 = 0.0f;
-    fLedRedValue2 = 0.0f;
-    fLedRedValue3 = 0.0f;
+    fLedRedValue[0] = 0.0f;
+    fLedRedValue[1] = 0.0f;
+    fLedRedValue[2] = 0.0f;
     fLedYellowValueL = 0.0f;
     fLedYellowValueR = 0.0f;
 
@@ -195,18 +195,6 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
 
     fCanvasArea.setPos(540, 32);
     fCanvasArea.setSize(102, 102);
-    fThresh[0] = -20.f;
-    fThresh[1] = -18.f;
-    fThresh[2] = -16.f;
-    fRatio = 4.f;
-    fKnee = 0.f;
-    fMakeup[0] = 0.f;
-    fMakeup[1] = 0.f;
-    fMakeup[2] = 0.f;
-    fBypass[0] = 0.f;
-    fBypass[1] = 0.f;
-    fBypass[2] = 0.f;
-    fMaster = 0.f;
 
     int i,k;
 
@@ -215,6 +203,8 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
                 compx[k][i] = fCanvasArea.getX();
 		compy[k][i] = fCanvasArea.getY() + fCanvasArea.getHeight();
 	}
+	dotx[k] = 0.f;
+	doty[k] = 0.f;
     }
 
     // set default values
@@ -226,7 +216,7 @@ void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
         float ratio = fRatio;
         float makeup = fMakeup[k] + fMaster;
         float thresdb = fThresh[k];
-        float width=((knee+1.f)-0.99f)*6.f;
+        float width=6.f*knee+0.01;
         float xg, yg;
 
         yg = 0.f;
@@ -258,16 +248,11 @@ void ZaMultiCompX2UI::calc_compcurves() {
                         compx[k][i] = fCanvasArea.getX() + compx[k][i]*fCanvasArea.getWidth();
                         compy[k][i] = fCanvasArea.getY() + (1.-compy[k][i])*fCanvasArea.getHeight();
 		}
-	       	 //dot follows curve:
-	        //compcurve(from_dB(-ui->gainred), k, &dotx[0], &doty[0]);
-	        //dotx[0] = -(1-dotx[0])*280. + 280.;
-	        //doty[0] = (1.-doty[0])*280.;
-
-	        //dot follows centre:
-	        //dotx[0] = -(1.- from_dB(-gainred))*280. + 280.;
-	        //doty[0] = (1.- from_dB(-gainred))*280.;
-
-	        //printf("gainr=%.2f x=%.2f y=%.2f\n",ui->gainred, ui->dotx[0], ui->doty[0]);
+		 //dot follows curve:
+		float out = std::max(fLedYellowValueL, fLedYellowValueR) - fMaster;
+	        compcurve((max_x - min_x)*from_dB(out), k, &dotx[k], &doty[k]);
+	        dotx[k] = fCanvasArea.getX() + dotx[k]*fCanvasArea.getWidth();
+	        doty[k] = fCanvasArea.getY() + (1. - doty[k])*fCanvasArea.getHeight();
 	}
 }
 
@@ -315,23 +300,23 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         fKnobXover2->setValue(value);
         break;
     case ZaMultiCompX2Plugin::paramGainR1:
-        if (fLedRedValue1 != value)
+        if (fLedRedValue[0] != value)
         {
-            fLedRedValue1 = value;
+            fLedRedValue[0] = value;
             repaint();
         }
         break;
     case ZaMultiCompX2Plugin::paramGainR2:
-        if (fLedRedValue2 != value)
+        if (fLedRedValue[1] != value)
         {
-            fLedRedValue2 = value;
+            fLedRedValue[1] = value;
             repaint();
         }
         break;
     case ZaMultiCompX2Plugin::paramGainR3:
-        if (fLedRedValue3 != value)
+        if (fLedRedValue[2] != value)
         {
-            fLedRedValue3 = value;
+            fLedRedValue[2] = value;
             repaint();
         }
         break;
@@ -347,7 +332,7 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         {
             fLedYellowValueR = value;
             repaint();
-        }
+	}
         break;
     case ZaMultiCompX2Plugin::paramMakeup1:
         fKnobMakeup1->setValue(value);
@@ -621,81 +606,81 @@ void ZaMultiCompX2UI::onDisplay()
     int numYellowLedsL;
     int numYellowLedsR;
 
-	if (fLedRedValue1 >= 40.f)
+	if (fLedRedValue[0] >= 40.f)
 		numRedLeds1 = 12;
-	else if (fLedRedValue1 >= 30.f)
+	else if (fLedRedValue[0] >= 30.f)
 		numRedLeds1 = 11;
-	else if (fLedRedValue1 >= 20.f)
+	else if (fLedRedValue[0] >= 20.f)
 		numRedLeds1 = 10;
-	else if (fLedRedValue1 >= 15.f)
+	else if (fLedRedValue[0] >= 15.f)
 		numRedLeds1 = 9;
-	else if (fLedRedValue1 >= 10.f)
+	else if (fLedRedValue[0] >= 10.f)
 		numRedLeds1 = 8;
-	else if (fLedRedValue1 >= 8.f)
+	else if (fLedRedValue[0] >= 8.f)
 		numRedLeds1 = 7;
-	else if (fLedRedValue1 >= 6.f)
+	else if (fLedRedValue[0] >= 6.f)
 		numRedLeds1 = 6;
-	else if (fLedRedValue1 >= 5.f)
+	else if (fLedRedValue[0] >= 5.f)
 		numRedLeds1 = 5;
-	else if (fLedRedValue1 >= 4.f)
+	else if (fLedRedValue[0] >= 4.f)
 		numRedLeds1 = 4;
-	else if (fLedRedValue1 >= 3.f)
+	else if (fLedRedValue[0] >= 3.f)
 		numRedLeds1 = 3;
-	else if (fLedRedValue1 >= 2.f)
+	else if (fLedRedValue[0] >= 2.f)
 		numRedLeds1 = 2;
-	else if (fLedRedValue1 >= 1.f)
+	else if (fLedRedValue[0] >= 1.f)
 		numRedLeds1 = 1;
 	else numRedLeds1 = 0;
 
-	if (fLedRedValue2 >= 40.f)
+	if (fLedRedValue[1] >= 40.f)
 		numRedLeds2 = 12;
-	else if (fLedRedValue2 >= 30.f)
+	else if (fLedRedValue[1] >= 30.f)
 		numRedLeds2 = 11;
-	else if (fLedRedValue2 >= 20.f)
+	else if (fLedRedValue[1] >= 20.f)
 		numRedLeds2 = 10;
-	else if (fLedRedValue2 >= 15.f)
+	else if (fLedRedValue[1] >= 15.f)
 		numRedLeds2 = 9;
-	else if (fLedRedValue2 >= 10.f)
+	else if (fLedRedValue[1] >= 10.f)
 		numRedLeds2 = 8;
-	else if (fLedRedValue2 >= 8.f)
+	else if (fLedRedValue[1] >= 8.f)
 		numRedLeds2 = 7;
-	else if (fLedRedValue2 >= 6.f)
+	else if (fLedRedValue[1] >= 6.f)
 		numRedLeds2 = 6;
-	else if (fLedRedValue2 >= 5.f)
+	else if (fLedRedValue[1] >= 5.f)
 		numRedLeds2 = 5;
-	else if (fLedRedValue2 >= 4.f)
+	else if (fLedRedValue[1] >= 4.f)
 		numRedLeds2 = 4;
-	else if (fLedRedValue2 >= 3.f)
+	else if (fLedRedValue[1] >= 3.f)
 		numRedLeds2 = 3;
-	else if (fLedRedValue2 >= 2.f)
+	else if (fLedRedValue[1] >= 2.f)
 		numRedLeds2 = 2;
-	else if (fLedRedValue2 >= 1.f)
+	else if (fLedRedValue[1] >= 1.f)
 		numRedLeds2 = 1;
 	else numRedLeds2 = 0;
 
-	if (fLedRedValue3 >= 40.f)
+	if (fLedRedValue[2] >= 40.f)
 		numRedLeds3 = 12;
-	else if (fLedRedValue3 >= 30.f)
+	else if (fLedRedValue[2] >= 30.f)
 		numRedLeds3 = 11;
-	else if (fLedRedValue3 >= 20.f)
+	else if (fLedRedValue[2] >= 20.f)
 		numRedLeds3 = 10;
-	else if (fLedRedValue3 >= 15.f)
+	else if (fLedRedValue[2] >= 15.f)
 		numRedLeds3 = 9;
-	else if (fLedRedValue3 >= 10.f)
+	else if (fLedRedValue[2] >= 10.f)
 		numRedLeds3 = 8;
-	else if (fLedRedValue3 >= 8.f)
+	else if (fLedRedValue[2] >= 8.f)
 		numRedLeds3 = 7;
-	else if (fLedRedValue3 >= 6.f)
+	else if (fLedRedValue[2] >= 6.f)
 		numRedLeds3 = 6;
-	else if (fLedRedValue3 >= 5.f)
+	else if (fLedRedValue[2] >= 5.f)
 		numRedLeds3 = 5;
-	else if (fLedRedValue3 >= 4.f)
+	else if (fLedRedValue[2] >= 4.f)
 		numRedLeds3 = 4;
-	else if (fLedRedValue3 >= 3.f)
+	else if (fLedRedValue[2] >= 3.f)
 		numRedLeds3 = 3;
-	else if (fLedRedValue3 >= 2.f)
+	else if (fLedRedValue[2] >= 2.f)
 		numRedLeds3 = 2;
-	else if (fLedRedValue3 >= 1.f)
+	else if (fLedRedValue[2] >= 1.f)
 		numRedLeds3 = 1;
 	else numRedLeds3 = 0;
 
@@ -844,6 +829,9 @@ glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glEnable(GL_POINT_SMOOTH);
+    glPointSize(8.0);
+    glEnable(GL_POINT_SPRITE);
 
     glLineWidth(2);
     int i,k;
@@ -860,6 +848,15 @@ glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
                 }
 	    glEnd();
         }
+
+	glBegin(GL_POINTS);
+		if (doty[k] < fCanvasArea.getY() + fCanvasArea.getHeight()
+				&& doty[k] > fCanvasArea.getY()
+				&& dotx[k] < fCanvasArea.getX() + fCanvasArea.getWidth()
+				&& dotx[k] > fCanvasArea.getX()) {
+			glVertex2i(dotx[k], doty[k]);
+		}
+	glEnd();
     }
     // reset color
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
