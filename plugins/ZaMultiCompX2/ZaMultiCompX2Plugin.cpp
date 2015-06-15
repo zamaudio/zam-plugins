@@ -260,6 +260,33 @@ void ZaMultiCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -45.0f;
         parameter.ranges.max = 20.0f;
         break;
+    case paramOutputLevelLow:
+        parameter.hints      = kParameterIsOutput;
+        parameter.name       = "Output low";
+        parameter.symbol     = "outlo";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -45.0f;
+        parameter.ranges.min = -45.0f;
+        parameter.ranges.max = 20.0f;
+        break;
+    case paramOutputLevelMed:
+        parameter.hints      = kParameterIsOutput;
+        parameter.name       = "Output medium";
+        parameter.symbol     = "outmed";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -45.0f;
+        parameter.ranges.min = -45.0f;
+        parameter.ranges.max = 20.0f;
+        break;
+    case paramOutputLevelHigh:
+        parameter.hints      = kParameterIsOutput;
+        parameter.name       = "Output high";
+        parameter.symbol     = "outhi";
+        parameter.unit       = "dB";
+        parameter.ranges.def = -45.0f;
+        parameter.ranges.min = -45.0f;
+        parameter.ranges.max = 20.0f;
+        break;
     }
 }
 
@@ -304,6 +331,9 @@ void ZaMultiCompX2Plugin::loadProgram(uint32_t index)
 		globalgain = 0.0;
 		outl = -45.0;
 		outr = -45.0;
+		outlevel[0] = -45;
+		outlevel[1] = -45;
+		outlevel[2] = -45;
 		break;
 	case 1:
 		attack = 10.0;
@@ -331,6 +361,9 @@ void ZaMultiCompX2Plugin::loadProgram(uint32_t index)
 		globalgain = 0.0;
 		outl = -45.0;
 		outr = -45.0;
+		outlevel[0] = -45.0;
+		outlevel[1] = -45.0;
+		outlevel[2] = -45.0;
 		break;
 	}
     /* Default variable values */
@@ -423,6 +456,15 @@ float ZaMultiCompX2Plugin::getParameterValue(uint32_t index) const
         break;
     case paramOutputLevelR:
         return outr;
+        break;
+    case paramOutputLevelLow:
+        return outlevel[0];
+        break;
+    case paramOutputLevelMed:
+        return outlevel[1];
+        break;
+    case paramOutputLevelHigh:
+        return outlevel[2];
         break;
     default:
         return 0.0f;
@@ -519,6 +561,15 @@ void ZaMultiCompX2Plugin::setParameterValue(uint32_t index, float value)
         break;
     case paramOutputLevelR:
         outr = value;
+        break;
+    case paramOutputLevelLow:
+        outlevel[0] = value;
+        break;
+    case paramOutputLevelMed:
+        outlevel[1] = value;
+        break;
+    case paramOutputLevelHigh:
+        outlevel[2] = value;
         break;
     }
 }
@@ -849,6 +900,8 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 fil1[1] = run_filter(0, 1, inr);
                 tmp1[0] = run_filter(1, 0, fil1[0]);
                 tmp1[1] = run_filter(1, 1, fil1[1]);
+		outlevel[0] = to_dB(std::max(tmp1[0], tmp1[1]));
+
 		if (tog1)
 			run_comp(0, tmp1[0], tmp1[1], &outL[0], &outR[0]);
 
@@ -863,6 +916,8 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 fil3[1] = run_filter(4, 1, tmp3[1]);
                 tmp4[0] = run_filter(5, 0, fil3[0]);
                 tmp4[1] = run_filter(5, 1, fil3[1]);
+		outlevel[1] = to_dB(std::max(tmp4[0], tmp4[1]));
+
 		if (tog2)
 			run_comp(1, tmp4[0], tmp4[1], &outL[1], &outR[1]);
 
@@ -873,12 +928,13 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 fil4[1] = run_filter(6, 1, inr);
                 tmp5[0] = run_filter(7, 0, fil4[0]);
                 tmp5[1] = run_filter(7, 1, fil4[1]);
+		outlevel[2] = to_dB(std::max(tmp5[0], tmp5[1]));
+
 		if (tog3)
 			run_comp(2, tmp5[0], tmp5[1], &outL[2], &outR[2]);
 
                 tmp6[0] = tog3 ? outL[2] * from_dB(makeup[2]) : tmp5[0];
                 tmp6[1] = tog3 ? outR[2] * from_dB(makeup[2]) : tmp5[1];
-
 
 		outputs[0][i] = outputs[1][i] = 0.f;
 		if (listen1) {

@@ -103,6 +103,7 @@ private:
     float fLedYellowValueR;
     DGL::Rectangle<int> fCanvasArea;
     float fThresh[MAX_COMP];
+    float fListen[MAX_COMP];
     float fRatio;
     float fKnee;
     float fMakeup[MAX_COMP];
@@ -112,6 +113,7 @@ private:
     float compy[MAX_COMP][COMPOINTS];
     float dotx[MAX_COMP];
     float doty[MAX_COMP];
+    float outlevel[3];
 };
 
 // -----------------------------------------------------------------------

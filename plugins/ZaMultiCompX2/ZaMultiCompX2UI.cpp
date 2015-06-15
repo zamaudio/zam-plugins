@@ -249,8 +249,7 @@ void ZaMultiCompX2UI::calc_compcurves() {
                         compy[k][i] = fCanvasArea.getY() + (1.-compy[k][i])*fCanvasArea.getHeight();
 		}
 		 //dot follows curve:
-		float out = std::max(fLedYellowValueL, fLedYellowValueR) - fMaster;
-	        compcurve((max_x - min_x)*from_dB(out), k, &dotx[k], &doty[k]);
+	        compcurve((max_x - min_x)*from_dB(outlevel[k]), k, &dotx[k], &doty[k]);
 	        dotx[k] = fCanvasArea.getX() + dotx[k]*fCanvasArea.getWidth();
 	        doty[k] = fCanvasArea.getY() + (1. - doty[k])*fCanvasArea.getHeight();
 	}
@@ -334,6 +333,24 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
             repaint();
 	}
         break;
+    case ZaMultiCompX2Plugin::paramOutputLevelLow:
+        if (outlevel[0] != value) {
+		outlevel[0] = value;
+		repaint();
+	}
+	break;
+    case ZaMultiCompX2Plugin::paramOutputLevelMed:
+        if (outlevel[1] != value) {
+		outlevel[1] = value;
+		repaint();
+	}
+	break;
+    case ZaMultiCompX2Plugin::paramOutputLevelHigh:
+        if (outlevel[2] != value) {
+		outlevel[2] = value;
+		repaint();
+	}
+	break;
     case ZaMultiCompX2Plugin::paramMakeup1:
         fKnobMakeup1->setValue(value);
         if (fMakeup[0] != value)
@@ -384,12 +401,27 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         break;
     case ZaMultiCompX2Plugin::paramListen1:
         fToggleListen1->setValue(value);
+        if (fListen[0] != value)
+        {
+            fListen[0] = value;
+            repaint();
+        }
         break;
     case ZaMultiCompX2Plugin::paramListen2:
         fToggleListen2->setValue(value);
+        if (fListen[1] != value)
+        {
+            fListen[1] = value;
+            repaint();
+        }
         break;
     case ZaMultiCompX2Plugin::paramListen3:
         fToggleListen3->setValue(value);
+        if (fListen[2] != value)
+        {
+            fListen[2] = value;
+            repaint();
+        }
         break;
     }
 }
@@ -574,12 +606,18 @@ void ZaMultiCompX2UI::imageToggleClicked(ImageToggle* toggle, int)
         setParameterValue(ZaMultiCompX2Plugin::paramToggle3, v);
         fBypass[2] = v;
     }
-    else if (toggle == fToggleListen1)
+    else if (toggle == fToggleListen1) {
         setParameterValue(ZaMultiCompX2Plugin::paramListen1, v);
-    else if (toggle == fToggleListen2)
+        fListen[0] = v;
+    }
+    else if (toggle == fToggleListen2) {
         setParameterValue(ZaMultiCompX2Plugin::paramListen2, v);
-    else if (toggle == fToggleListen3)
+        fListen[1] = v;
+    }
+    else if (toggle == fToggleListen3) {
         setParameterValue(ZaMultiCompX2Plugin::paramListen3, v);
+        fListen[2] = v;
+    }
     else if (toggle == fToggleStereo)
         setParameterValue(ZaMultiCompX2Plugin::paramStereoDet, v);
 }
@@ -835,9 +873,23 @@ glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     glLineWidth(2);
     int i,k;
+    int flip[3] = {1,1,1};
+    if (fListen[0]) {
+    	flip[1] = 0;
+    	flip[2] = 0;
+    }
+    if (fListen[1]) {
+    	flip[0] = 0;
+    	flip[2] = 0;
+    }
+    if (fListen[2]) {
+    	flip[0] = 0;
+    	flip[1] = 0;
+    }
     for (k = 0; k < MAX_COMP; ++k) {
         glColor4f((k==0)?1.f:0.235f, (k==1)?1.f:0.235f, (k==2)?1.f:0.235f, 1.0f);
-        for (i = 2; i < COMPOINTS; ++i) {
+	if (flip[k]) {
+	for (i = 2; i < COMPOINTS; ++i) {
             glBegin(GL_LINES);
                 if (compy[k][i-1] < fCanvasArea.getY() + fCanvasArea.getHeight()
 			&& compy[k][i-1] > fCanvasArea.getY()
@@ -857,6 +909,7 @@ glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			glVertex2i(dotx[k], doty[k]);
 		}
 	glEnd();
+	}
     }
     // reset color
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

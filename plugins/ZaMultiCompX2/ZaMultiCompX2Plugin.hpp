@@ -19,6 +19,7 @@
 #define ZAMULTICOMPX2PLUGIN_HPP_INCLUDED
 
 #include "DistrhoPlugin.hpp"
+#include <algorithm>
 
 START_NAMESPACE_DISTRHO
 
@@ -68,6 +69,9 @@ public:
 	paramGlobalGain,
 	paramOutputLevelL,
 	paramOutputLevelR,
+	paramOutputLevelLow,
+	paramOutputLevelMed,
+	paramOutputLevelHigh,
         paramCount
     };
 
@@ -159,7 +163,7 @@ private:
     float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],maxL,maxR,outl,outr,xover1,xover2;
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP], old_yg[2][MAX_COMP];
     float old_ll[2], old_l1[2];
-    float limit;
+    float limit, outlevel[3];
     bool resetl;
     bool resetr;
     // Crossover filter coefficients
