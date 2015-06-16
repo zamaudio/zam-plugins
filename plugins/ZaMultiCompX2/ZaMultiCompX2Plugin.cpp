@@ -769,16 +769,12 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         Lxg = sanitize_denormal(Lxg);
         Rxg = sanitize_denormal(Rxg);
 
-        Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb[k]+width/2.f)*(Lxg-thresdb[k]+width/2.f)/(2.f*width);
-        Lyg = sanitize_denormal(Lyg);
-        Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb[k]+width/2.f)*(Rxg-thresdb[k]+width/2.f)/(2.f*width);
-        Ryg = sanitize_denormal(Ryg);
-
 	checkwidth = 2.f*fabs(Lxg-thresdb[k]);
 	if (2.f*(Lxg-thresdb[k]) < -width) {
 		Lyg = Lxg;
 	} else if (checkwidth <= width) {
-		Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio;
+		Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb[k]+width/2.f)*(Lxg-thresdb[k]+width/2.f)/(2.f*width);
+		//Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio;
 		Lyg = sanitize_denormal(Lyg);
 		if (checkwidth <= slewwidth) {
 			if (Lyg >= old_yg[0][k]) {
@@ -796,7 +792,8 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 	if (2.f*(Rxg-thresdb[k]) < -width) {
 		Ryg = Rxg;
 	} else if (checkwidth <= width) {
-		Ryg = thresdb[k] + (Rxg-thresdb[k])/ratio;
+		Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb[k]+width/2.f)*(Rxg-thresdb[k]+width/2.f)/(2.f*width);
+		//Ryg = thresdb[k] + (Rxg-thresdb[k])/ratio;
 		Ryg = sanitize_denormal(Ryg);
 		if (checkwidth <= slewwidth) {
 			if (Ryg >= old_yg[1][k]) {

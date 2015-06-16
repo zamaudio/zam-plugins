@@ -255,7 +255,8 @@ void ZaMultiCompX2UI::compdot(float in, int k, float *outx, float* outy) {
                 yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
         } else if (2.f*(xg-thresdb)>width) {
                 //yg = thresdb + (xg-thresdb)/ratio;
-                yg = thresdb + (xg-thresdb - fLedRedValue[k])/ratio;
+                //yg = thresdb + (xg-thresdb - fLedRedValue[k])/ratio;
+                yg = (xg - fLedRedValue[k]);
         }
         yg = sanitize_denormal(yg);
 
