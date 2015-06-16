@@ -47,6 +47,7 @@ protected:
     // -------------------------------------------------------------------
 
     void compcurve(float in, int k, float* x, float* y);
+    void compdot(float in, int k, float* x, float* y);
     void calc_compcurves(void);
 
     // -------------------------------------------------------------------
