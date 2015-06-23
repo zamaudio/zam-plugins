@@ -5,7 +5,7 @@ BINDIR ?= bin
 NAME    = zam-plugins
 VERSION = $(shell cat .version)
 
-PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZamTube ZamEQ2 ZamAutoSat ZamGEQ31 ZamGEQ31X2 ZaMultiCompX2 ZamGate ZamGateX2 ZamWidthX2
+PLUGINS=ZamComp ZamCompX2 ZaMultiComp ZamTube ZamEQ2 ZamAutoSat ZamGEQ31 ZamGEQ31X2 ZaMultiCompX2 ZamGate ZamGateX2 ZamHeadX2
 #ZamPiano ZamSFZ ZamChild670
 
 include Makefile.mk
