@@ -40,7 +40,7 @@ void ZamHeadX2Plugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramAzimuth:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Azimuth";
         parameter.symbol     = "az";
         parameter.unit       = " ";
@@ -49,7 +49,7 @@ void ZamHeadX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 270.0f;
         break;
     case paramElevation:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Elevation";
         parameter.symbol     = "elev";
         parameter.unit       = " ";
