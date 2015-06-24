@@ -54,7 +54,7 @@ protected:
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobAzimuth, fKnobElevation;
+    ScopedPointer<ImageKnob> fKnobAzimuth, fKnobElevation, fKnobWidth;
 };
 
 // -----------------------------------------------------------------------

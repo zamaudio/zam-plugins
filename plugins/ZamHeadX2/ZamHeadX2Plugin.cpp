@@ -57,6 +57,15 @@ void ZamHeadX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -45.0f;
         parameter.ranges.max = 90.0f;
         break;
+    case paramWidth:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Width";
+        parameter.symbol     = "width";
+        parameter.unit       = " ";
+        parameter.ranges.def = 1.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 2.5f;
+        break;
     }
 }
 
@@ -76,6 +85,7 @@ void ZamHeadX2Plugin::loadProgram(uint32_t index)
 	case 0:
 		azimuth = 0.0;
 		elevation = 0.0;
+		width = 1.0;
 		break;
 	}
 
@@ -95,6 +105,9 @@ float ZamHeadX2Plugin::getParameterValue(uint32_t index) const
     case paramElevation:
         return elevation;
         break;
+    case paramWidth:
+        return width;
+        break;
     }
     return 0.f;
 }
@@ -108,6 +121,9 @@ void ZamHeadX2Plugin::setParameterValue(uint32_t index, float value)
         break;
     case paramElevation:
         elevation = value;
+        break;
+    case paramWidth:
+        width = value;
         break;
     }
 }
@@ -471,6 +487,7 @@ void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	float ltmp = 0.f;
 	float rtmp = 0.f;
 	int k;
+	float m, s;
 
 	for (i = 0; i < frames; i++) {
 		pushsample(&inbuf[0][0], inputs[0][i], 0, 200);
@@ -483,8 +500,10 @@ void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 			rtmp += getsample(&inbuf[1][0], 1, 200) *
 					fir_right[el][az][(200-k+200)%200];
 		}
-		outputs[0][i] = ltmp;
-		outputs[1][i] = rtmp;
+		m = (ltmp + rtmp) * 0.5;
+		s = (ltmp - rtmp) * 0.5 * width;
+		outputs[0][i] = m - s;
+		outputs[1][i] = m + s;
 	}
 }
 

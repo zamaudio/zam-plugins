@@ -54,6 +54,15 @@ ZamHeadX2UI::ZamHeadX2UI()
     fKnobElevation->setRotationAngle(120);
     fKnobElevation->setCallback(this);
 
+    fKnobWidth = new ImageKnob(this, knobImage);
+    fKnobWidth->setAbsolutePos(45, 170);
+    fKnobWidth->setId(ZamHeadX2Plugin::paramWidth);
+    fKnobWidth->setRange(0.0f, 2.5f);
+    fKnobWidth->setStep(0.1f);
+    fKnobWidth->setDefault(1.0f);
+    fKnobWidth->setRotationAngle(300);
+    fKnobWidth->setCallback(this);
+
     // set default values
     programLoaded(0);
 }
@@ -71,6 +80,9 @@ void ZamHeadX2UI::parameterChanged(uint32_t index, float value)
     case ZamHeadX2Plugin::paramElevation:
         fKnobElevation->setValue(value);
         break;
+    case ZamHeadX2Plugin::paramWidth:
+        fKnobWidth->setValue(value);
+        break;
     }
 }
 
@@ -80,6 +92,7 @@ void ZamHeadX2UI::programLoaded(uint32_t index)
 	case 0:
 		fKnobAzimuth->setValue(0.0f);
 		fKnobElevation->setValue(0.0f);
+		fKnobWidth->setValue(1.0f);
 		break;
 	}
 }

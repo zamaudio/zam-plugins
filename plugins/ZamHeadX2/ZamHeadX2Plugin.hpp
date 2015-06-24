@@ -31,6 +31,7 @@ public:
     {
         paramAzimuth = 0,
         paramElevation,
+        paramWidth,
         paramCount
     };
 
@@ -107,7 +108,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float elevation, azimuth;
+    float elevation, azimuth, width;
 	float inbuf[2][4096+200];
 	float outbuf[2][4096+200];
 	int pos[6];
