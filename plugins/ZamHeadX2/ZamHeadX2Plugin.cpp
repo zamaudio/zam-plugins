@@ -490,8 +490,10 @@ void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	float m, s;
 
 	for (i = 0; i < frames; i++) {
-		pushsample(&inbuf[0][0], inputs[0][i], 0, 200);
-		pushsample(&inbuf[1][0], inputs[1][i], 1, 200);
+		m = (inputs[0][i] + inputs[1][i]) * 0.5;
+		s = (inputs[0][i] - inputs[1][i]) * 0.5 * width;
+		pushsample(&inbuf[0][0], m - s, 0, 200);
+		pushsample(&inbuf[1][0], m + s, 1, 200);
 		ltmp = 0.f;
 		rtmp = 0.f;
 		for (k = 0; k < 200; k++) {
@@ -500,10 +502,8 @@ void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 			rtmp += getsample(&inbuf[1][0], 1, 200) *
 					fir_right[el][az][(200-k+200)%200];
 		}
-		m = (ltmp + rtmp) * 0.5;
-		s = (ltmp - rtmp) * 0.5 * width;
-		outputs[0][i] = m - s;
-		outputs[1][i] = m + s;
+		outputs[0][i] = ltmp;
+		outputs[1][i] = rtmp;
 	}
 }
 
