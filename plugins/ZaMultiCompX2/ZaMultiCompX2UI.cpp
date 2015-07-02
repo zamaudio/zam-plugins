@@ -58,7 +58,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
 
     fKnobRelease = new ImageKnob(this, knobImage);
     fKnobRelease->setAbsolutePos(108, 43);
-    fKnobRelease->setRange(50.0f, 500.0f);
+    fKnobRelease->setRange(1.0f, 500.0f);
     fKnobRelease->setDefault(80.0f);
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
@@ -238,31 +238,17 @@ void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
 }
 
 void ZaMultiCompX2UI::compdot(float in, int k, float *outx, float* outy) {
-        float knee = fKnee;
-        float ratio = fRatio;
         float makeup = fMakeup[k] + fMaster;
-        float thresdb = fThresh[k];
-        float width=6.f*knee+0.01;
         float xg, yg;
 
         yg = 0.f;
         xg = (in==0.f) ? -160.f : to_dB(fabs(in));
         xg = sanitize_denormal(xg);
-
-        if (2.f*(xg-thresdb)<-width) {
-                yg = xg;
-        } else if (2.f*fabs(xg-thresdb)<=width) {
-                yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
-        } else if (2.f*(xg-thresdb)>width) {
-                //yg = thresdb + (xg-thresdb)/ratio;
-                //yg = thresdb + (xg-thresdb - fLedRedValue[k])/ratio;
-                yg = (xg - fLedRedValue[k]);
-        }
+	yg = xg - fLedRedValue[k];
         yg = sanitize_denormal(yg);
 
         *outx = (to_dB(in) + 1.) / 55. + 1.;
         *outy = !fBypass[k] ? (to_dB(in) + fMaster + 1.) / 55. + 1. : (yg + makeup + 1.) / 55. + 1.;
-	//printf("x = %f  y = %f\n",*outx,*outy);
 }
 
 void ZaMultiCompX2UI::calc_compcurves() {

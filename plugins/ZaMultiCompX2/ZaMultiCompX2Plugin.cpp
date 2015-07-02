@@ -50,7 +50,7 @@ void ZaMultiCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
         parameter.ranges.def = 80.0f;
-        parameter.ranges.min = 50.0f;
+        parameter.ranges.min = 1.0f;
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
