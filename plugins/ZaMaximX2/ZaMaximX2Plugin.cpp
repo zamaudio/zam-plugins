@@ -40,8 +40,8 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
-        parameter.ranges.def = 1.0f;
-        parameter.ranges.min = 0.1f;
+        parameter.ranges.def = 10.0f;
+        parameter.ranges.min = 1.0f;
         parameter.ranges.max = 100.0f;
         break;
     case paramCeiling:
@@ -49,8 +49,8 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Output Ceiling";
         parameter.symbol     = "ceil";
         parameter.unit       = "dB";
-        parameter.ranges.def = -6.0f;
-        parameter.ranges.min = -40.0f;
+        parameter.ranges.def = -0.5f;
+        parameter.ranges.min = -30.0f;
         parameter.ranges.max = 0.0f;
         break;
     case paramThresh:
@@ -59,7 +59,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "thresh";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -60.0f;
+        parameter.ranges.min = -30.0f;
         parameter.ranges.max = 0.0f;
         break;
     case paramGainRed:
@@ -97,8 +97,8 @@ void ZaMaximX2Plugin::loadProgram(uint32_t index)
 {
 	switch(index) {
 	case 0:
-		release = 1.0;
-		ceiling = -6.0;
+		release = 10.0;
+		ceiling = -0.5;
 		thresdb = 0.0;
 		gainred = 0.0;
 		outlevel = -45.0;
@@ -162,18 +162,42 @@ void ZaMaximX2Plugin::setParameterValue(uint32_t index, float value)
 
 void ZaMaximX2Plugin::activate()
 {
+    int i;
     gainred = 0.0f;
     outlevel = -45.0f;
+    leftpos = rightpos = 0;
+    for (i = 0; i < MAX_SAMPLES; i++) {
+    	leftsamples[i] = rightsamples[i] = 0.f;
+    }
     oldL_yl = oldL_y1 = oldR_yl = oldR_y1 = oldL_yg = oldR_yg = 0.f;
 }
 
-float ZaMaximX2Plugin::normalise(float in)
+float ZaMaximX2Plugin::normalise(float in, float gainr)
 {
 	if (ceiling < thresdb) {
-		ceiling = thresdb;
 		return in;
 	}
-	return from_dB(ceiling - thresdb) * in;
+	return from_dB(-(thresdb - ceiling + gainr)) * in;
+}
+
+void ZaMaximX2Plugin::pushsample(float in[], float sample, int *pos)
+{
+	(*pos)++;
+	if (*pos >= MAX_SAMPLES) {
+		*pos = 0;
+	}
+	in[*pos] = sample;
+}
+
+float ZaMaximX2Plugin::rmsdb(float in[])
+{
+	int i;
+	float rms = 0.f;
+	for (i = 0; i < MAX_SAMPLES; i++) {
+		rms += in[i] * in[i];
+	}
+	rms = sqrt(rms/MAX_SAMPLES);
+	return to_dB(rms);
 }
 
 void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
@@ -181,7 +205,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	float srate = getSampleRate();
 	float width = 0.01;
         float cdb=0.f;
-        float attack_coeff = exp(-1000.f/(1.0 * srate));
+        float attack_coeff = exp(-1000.f/(0.01 * srate));
         float release_coeff = exp(-1000.f/(release * srate));
 
 	float max = 0.f;
@@ -196,9 +220,9 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 
         for (i = 0; i < frames; i++) {
 		Lyg = Ryg = 0.f;
-                Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
-                Rxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
-                Lxg = sanitize_denormal(Lxg);
+                Lxg = to_dB(fabsf(inputs[0][i]));
+		Rxg = to_dB(fabsf(inputs[1][i]));
+		Lxg = sanitize_denormal(Lxg);
                 Rxg = sanitize_denormal(Rxg);
 
                 Lyg = Lxg - (Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
@@ -246,11 +270,14 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 cdb = -Ryl;
                 Rgain = from_dB(cdb);
 
-		lgaininp = inputs[0][i] * Lgain;
-		rgaininp = inputs[1][i] * Rgain;
+		pushsample(&leftsamples[0], from_dB(Lgain), &leftpos);
+		pushsample(&rightsamples[0], from_dB(Rgain), &rightpos);
 
-		outputs[0][i] = normalise(lgaininp);
-		outputs[1][i] = normalise(rgaininp);
+		lgaininp = normalise(inputs[0][i] * Lgain, rmsdb(&leftsamples[0]));
+		rgaininp = normalise(inputs[1][i] * Rgain, rmsdb(&rightsamples[0]));
+
+		outputs[0][i] = lgaininp;
+		outputs[1][i] = rgaininp;
 
 		max = (fabsf(lgaininp) > max) ? fabsf(lgaininp) : sanitize_denormal(max);
 		max = (fabsf(rgaininp) > max) ? fabsf(rgaininp) : sanitize_denormal(max);
@@ -262,7 +289,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 oldL_yg = Lyg;
                 oldR_yg = Ryg;
         }
-	outlevel = (max == 0.f) ? -45.f : to_dB(max) - thresdb;
+	outlevel = (max == 0.f) ? -45.f : to_dB(max);
     }
 
 // -----------------------------------------------------------------------

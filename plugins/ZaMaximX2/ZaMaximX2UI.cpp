@@ -47,16 +47,16 @@ ZaMaximX2UI::ZaMaximX2UI()
     fKnobRelease = new ImageKnob(this, knobImage);
     fKnobRelease->setAbsolutePos(27, 46);
     fKnobRelease->setId(ZaMaximX2Plugin::paramRelease);
-    fKnobRelease->setRange(0.1f, 100.0f);
-    fKnobRelease->setStep(0.1f);
-    fKnobRelease->setDefault(1.0f);
+    fKnobRelease->setRange(1.0f, 100.0f);
+    fKnobRelease->setStep(1.0f);
+    fKnobRelease->setDefault(10.0f);
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
 
     fKnobThresh = new ImageKnob(this, knobImage);
     fKnobThresh->setAbsolutePos(110, 46);
     fKnobThresh->setId(ZaMaximX2Plugin::paramThresh);
-    fKnobThresh->setRange(-60.0f, 0.0f);
+    fKnobThresh->setRange(-30.0f, 0.0f);
     fKnobThresh->setStep(1.0f);
     fKnobThresh->setDefault(0.0f);
     fKnobThresh->setRotationAngle(240);
@@ -65,9 +65,9 @@ ZaMaximX2UI::ZaMaximX2UI()
     fKnobCeiling = new ImageKnob(this, knobImage);
     fKnobCeiling->setAbsolutePos(192, 46);
     fKnobCeiling->setId(ZaMaximX2Plugin::paramCeiling);
-    fKnobCeiling->setRange(-40.0f, 0.0f);
-    fKnobCeiling->setStep(1.0f);
-    fKnobCeiling->setDefault(-6.0f);
+    fKnobCeiling->setRange(-30.0f, 0.0f);
+    fKnobCeiling->setStep(0.1f);
+    fKnobCeiling->setDefault(-0.5f);
     fKnobCeiling->setRotationAngle(240);
     fKnobCeiling->setCallback(this);
 

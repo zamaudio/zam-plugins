@@ -20,6 +20,8 @@
 
 #include "DistrhoPlugin.hpp"
 
+#define MAX_SAMPLES 240
+
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
@@ -103,13 +105,19 @@ protected:
 
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
-    float normalise(float in);
+    float normalise(float in, float gainr);
+    float clip(float in, float level);
+    float rmsdb(float in[]);
+    void pushsample(float in[], float sample, int *pos);
 
     // -------------------------------------------------------------------
 
 private:
     float release,ceiling,thresdb,gainred,outlevel;//parameters
     float oldL_yl, oldL_y1, oldR_yl, oldR_y1, oldL_yg, oldR_yg;
+    int leftpos, rightpos;
+    float leftsamples[MAX_SAMPLES];
+    float rightsamples[MAX_SAMPLES];
 };
 
 // -----------------------------------------------------------------------
