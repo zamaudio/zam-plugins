@@ -23,14 +23,13 @@
 
 START_NAMESPACE_DISTRHO
 
-#define MAX_FILT 8
+#define MAX_FILT 2
 #define MAX_COMP 3
 #define MAX_SAMPLES 480
-#define ONEOVERROOT2 0.7071068f
-#define ROOT2 1.4142135f
 #define STEREOLINK_MAX 1
 #define STEREOLINK_AVERAGE 0
 #define DANGER 100000.f
+#define EPS 1e-20f
 
 // -----------------------------------------------------------------------
 
@@ -150,9 +149,8 @@ protected:
 
     void run_comp(int k, float inL, float inR, float *outL, float *outR);
     void run_limit(float inL, float inR, float *outL, float *outR);
-    float run_filter(int i, int ch, float in);
-    void set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
-    void set_hp_coeffs(float fc, float q, float sr, int i, int ch, float gain);
+    void run_lr4(int i, int ch, float in, float *outlo, float *outhi);
+    void calc_lr4(float f, int i, int ch);
 
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
@@ -172,17 +170,20 @@ private:
     bool resetl;
     bool resetr;
     // Crossover filter coefficients
-    float a0[2][MAX_FILT];
-    float a1[2][MAX_FILT];
-    float a2[2][MAX_FILT];
-    float b1[2][MAX_FILT];
-    float b2[2][MAX_FILT];
+    float c1[2][MAX_FILT];
+    float c2[2][MAX_FILT];
+    float c3[2][MAX_FILT];
+    float c4[2][MAX_FILT];
+    float gl[2][MAX_FILT];
+    float gh[2][MAX_FILT];
 
     //Crossover filter states
-    float w1[2][MAX_FILT];
-    float w2[2][MAX_FILT];
     float z1[2][MAX_FILT];
     float z2[2][MAX_FILT];
+    float z3[2][MAX_FILT];
+    float z4[2][MAX_FILT];
+    float z5[2][MAX_FILT];
+    float z6[2][MAX_FILT];
 };
 
 // -----------------------------------------------------------------------

@@ -598,11 +598,11 @@ void ZaMultiCompX2Plugin::activate()
 		old_ll[j]=old_l1[j]=0.f;
 
 	for (i = 0; i < MAX_FILT; i++) {
-        	for (j = 0; j < 2; j++) {
-                	a0[j][i] = a1[j][i] = a2[j][i] = 0.f;
-                	b1[j][i] = b2[j][i] = 0.f;
-                	w1[j][i] = w2[j][i] = 0.f;
-                	z1[j][i] = z2[j][i] = 0.f;
+		for (j = 0; j < 2; j++) {
+			c1[j][i] = c2[j][i] = c3[j][i] = c4[j][i] = 0.f;
+			z1[j][i] = z2[j][i] = z3[j][i] = 0.f;
+			z4[j][i] = z5[j][i] = z6[j][i] = 0.f;
+			gl[j][i] = gh[j][i] = 0.f;
 		}
         }
 	maxL = maxR = 0.f;
@@ -616,51 +616,76 @@ void ZaMultiCompX2Plugin::activate()
 	pos[2] = 0;
 }
 
-float ZaMultiCompX2Plugin::run_filter(int i, int ch, float in)
+// LR4 filters adapted from zita-lrx
+void ZaMultiCompX2Plugin::calc_lr4(float f, int i, int ch)
 {
-        in = sanitize_denormal(in);
-        w1[ch][i] = sanitize_denormal(w1[ch][i]);
-        w2[ch][i] = sanitize_denormal(w2[ch][i]);
-	z1[ch][i] = sanitize_denormal(z1[ch][i]);
-	z2[ch][i] = sanitize_denormal(z2[ch][i]);
+    float a, b, d1, d2, q, p, s;
 
-        float out = in * a0[ch][i] 	+ w1[ch][i] * a1[ch][i] + w2[ch][i] * a2[ch][i]
-					- z1[ch][i] * b1[ch][i] - z2[ch][i] * b2[ch][i];
-	out = sanitize_denormal(out);
-        w2[ch][i] = w1[ch][i];
-        z2[ch][i] = z1[ch][i];
-        w1[ch][i] = in;
-	z1[ch][i] = out;
-        return out;
+    s = 0.f;
+
+    // Damping for first and second sections, from pole locations.
+    d1 = 2.f * cosf (2.f * M_PI / 8.f);
+    d2 = d1;
+    // Basic coefficients.
+    a = tanf (M_PI * f);
+    b = a * a;
+    // First section.
+    q = a / d1;
+    p = q * b;
+    s = p + q + b;
+    c1[ch][i] = (4 * p + 2 * b) / s;
+    c2[ch][i] = (4 * p) / s;
+    gl[ch][i] = p / s;
+    gh[ch][i] = q / s;
+    // Second section.
+    q = a / d2;
+    p = q * b;
+    s = p + q + b;
+    c3[ch][i] = (4 * p + 2 * b) / s;
+    c4[ch][i] = (4 * p) / s;
+    gl[ch][i] *= p / s;
+    gh[ch][i] *= q / s;
 }
 
-void ZaMultiCompX2Plugin::set_lp_coeffs(float fc, float q, float sr, int i, int ch, float gain=1.0)
+// LR4 filters adapted from zita-lrx
+void ZaMultiCompX2Plugin::run_lr4(int i, int ch, float in, float *outlo, float *outhi)
 {
-        float omega=(float)(2.f*M_PI*fc/sr);
-        float sn=sin(omega);
-        float cs=cos(omega);
-        float alpha=(float)(sn/(2.f*q));
-        float inv=(float)(1.0/(1.0+alpha));
+    float x, y, zz1, zz2, zz3, zz4, zz5, zz6;
+    float glo = 1.f;
+    float ghi = 1.f;
 
-        a2[ch][i] = a0[ch][i] =  (float)(gain*inv*(1.f - cs)*0.5f);
-        a1[ch][i] = a0[ch][i] + a0[ch][i];
-        b1[ch][i] = (float)(-2.f*cs*inv);
-        b2[ch][i] = (float)((1.f - alpha)*inv);
-}
-
-void ZaMultiCompX2Plugin::set_hp_coeffs(float fc, float q, float sr, int i, int ch, float gain=1.0)
-{
-        float omega=(float)(2.f*M_PI*fc/sr);
-        float sn=sin(omega);
-        float cs=cos(omega);
-        float alpha=(float)(sn/(2.f*q));
-        float inv=(float)(1.f/(1.f+alpha));
-
-        a0[ch][i] =  (float)(gain*inv*(1.f + cs)/2.f);
-        a1[ch][i] =  -2.f * a0[ch][i];
-        a2[ch][i] =  a0[ch][i];
-        b1[ch][i] =  (float)(-2.f*cs*inv);
-        b2[ch][i] =  (float)((1.f - alpha)*inv);
+    // Get filter state.
+    zz1 = z1[ch][i];
+    zz2 = z2[ch][i];
+    zz3 = z3[ch][i];
+    zz4 = z4[ch][i];
+    zz5 = z5[ch][i];
+    zz6 = z6[ch][i];
+    // Get gain factors.
+    glo *= gl[ch][i];
+    ghi *= gh[ch][i];
+        // Run filter for 1 sample
+        x = in;
+        x -= c1[ch][i] * zz1 + c2[ch][i] * zz2 + EPS;
+        y = x + 4 * (zz1 + zz2);
+        zz2 += zz1;
+        zz1 += x;
+        x -= c3[ch][i] * zz3 + c4[ch][i] * zz4 - EPS;
+        *outhi = ghi * x;
+        zz4 += zz3;
+        zz3 += x;
+        y -= c3[ch][i] * zz5 + c4[ch][i] * zz6 - EPS;
+        x = y + 4 * (zz5 + zz6);
+        *outlo = glo * x;
+        zz6 += zz5;
+        zz5 += y;
+    // Save filter state.
+    z1[ch][i] = zz1;
+    z2[ch][i] = zz2;
+    z3[ch][i] = zz3;
+    z4[ch][i] = zz4;
+    z5[ch][i] = zz5;
+    z6[ch][i] = zz6;
 }
 
 void ZaMultiCompX2Plugin::run_limit(float inL, float inR, float *outL, float *outR)
@@ -890,26 +915,13 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
         int listen2 = (listen[1] > 0.5f) ? 1 : 0;
         int listen3 = (listen[2] > 0.5f) ? 1 : 0;
 
-        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 0, 0);
-        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 1, 0);
-        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 2, 0);
-        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 3, 0);
-        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 4, 0);
-        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 5, 0);
-        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 6, 0);
-        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 7, 0);
-
-        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 0, 1);
-        set_lp_coeffs(xover1, ONEOVERROOT2, srate, 1, 1);
-        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 2, 1);
-        set_hp_coeffs(xover1, ONEOVERROOT2, srate, 3, 1);
-        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 4, 1);
-        set_lp_coeffs(xover2, ONEOVERROOT2, srate, 5, 1);
-        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 6, 1);
-        set_hp_coeffs(xover2, ONEOVERROOT2, srate, 7, 1);
+        calc_lr4(xover1/srate, 0, 0);
+        calc_lr4(xover2/srate, 1, 0);
+        calc_lr4(xover1/srate, 0, 1);
+        calc_lr4(xover2/srate, 1, 1);
 
         for (uint32_t i = 0; i < frames; ++i) {
-                float tmp1[2], tmp2[2], tmp3[2], tmp4[2], tmp5[2], tmp6[2];
+                float tmp1[2], tmp2[2], tmp3[2];
 		float fil1[2], fil2[2], fil3[2], fil4[2];
 		float outL[MAX_COMP+1] = {0.f};
 		float outR[MAX_COMP+1] = {0.f};
@@ -921,50 +933,37 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 		int listenmode = 0;
 
 		// Interleaved channel processing
-                fil1[0] = run_filter(0, 0, inl);
-                fil1[1] = run_filter(0, 1, inr);
-                tmp1[0] = run_filter(1, 0, fil1[0]);
-                tmp1[1] = run_filter(1, 1, fil1[1]);
-		pushsample(outlevelold[0], std::max(tmp1[0], tmp1[1]), 0);
+                run_lr4(0, 0, inl, &fil1[0], &fil2[0]);
+                run_lr4(0, 1, inr, &fil1[1], &fil2[1]);
+                run_lr4(1, 0, fil2[0], &fil3[0], &fil4[0]);
+                run_lr4(1, 1, fil2[1], &fil3[1], &fil4[1]);
+
+		pushsample(outlevelold[0], std::max(fil1[0], fil1[1]), 0);
 		outlevel[0] = averageabs(outlevelold[0]);
 		outlevel[0] = (outlevel[0] == 0.f) ? -45.0 : to_dB(outlevel[0]);
 		if (tog1)
-			run_comp(0, tmp1[0], tmp1[1], &outL[0], &outR[0]);
+			run_comp(0, fil1[0], fil1[1], &outL[0], &outR[0]);
 
-		tmp2[0] = tog1 ? outL[0] * from_dB(makeup[0]) : tmp1[0];
-                tmp2[1] = tog1 ? outR[0] * from_dB(makeup[0]) : tmp1[1];
+		tmp1[0] = tog1 ? outL[0] * from_dB(makeup[0]) : fil1[0];
+                tmp1[1] = tog1 ? outR[0] * from_dB(makeup[0]) : fil1[1];
 
-                fil2[0] = run_filter(2, 0, inl);
-                fil2[1] = run_filter(2, 1, inr);
-                tmp3[0] = run_filter(3, 0, fil2[0]);
-                tmp3[1] = run_filter(3, 1, fil2[1]);
-                fil3[0] = run_filter(4, 0, tmp3[0]);
-                fil3[1] = run_filter(4, 1, tmp3[1]);
-                tmp4[0] = run_filter(5, 0, fil3[0]);
-                tmp4[1] = run_filter(5, 1, fil3[1]);
-		pushsample(outlevelold[1], std::max(tmp4[0], tmp4[1]), 1);
+		pushsample(outlevelold[1], std::max(fil3[0], fil3[1]), 1);
 		outlevel[1] = averageabs(outlevelold[1]);
 		outlevel[1] = (outlevel[1] == 0.f) ? -45.0 : to_dB(outlevel[1]);
-
 		if (tog2)
-			run_comp(1, tmp4[0], tmp4[1], &outL[1], &outR[1]);
+			run_comp(1, fil3[0], fil3[1], &outL[1], &outR[1]);
 
-                tmp3[0] = tog2 ? outL[1] * from_dB(makeup[1]) : tmp4[0];
-                tmp3[1] = tog2 ? outR[1] * from_dB(makeup[1]) : tmp4[1];
+                tmp2[0] = tog2 ? outL[1] * from_dB(makeup[1]) : fil3[0];
+                tmp2[1] = tog2 ? outR[1] * from_dB(makeup[1]) : fil3[1];
 
-                fil4[0] = run_filter(6, 0, inl);
-                fil4[1] = run_filter(6, 1, inr);
-                tmp5[0] = run_filter(7, 0, fil4[0]);
-                tmp5[1] = run_filter(7, 1, fil4[1]);
-		pushsample(outlevelold[2], std::max(tmp5[0], tmp5[1]), 2);
+		pushsample(outlevelold[2], std::max(fil4[0], fil4[1]), 2);
 		outlevel[2] = averageabs(outlevelold[2]);
 		outlevel[2] = (outlevel[2] == 0.f) ? -45.0 : to_dB(outlevel[2]);
-
 		if (tog3)
-			run_comp(2, tmp5[0], tmp5[1], &outL[2], &outR[2]);
+			run_comp(2, fil4[0], fil4[1], &outL[2], &outR[2]);
 
-                tmp6[0] = tog3 ? outL[2] * from_dB(makeup[2]) : tmp5[0];
-                tmp6[1] = tog3 ? outR[2] * from_dB(makeup[2]) : tmp5[1];
+                tmp3[0] = tog3 ? outL[2] * from_dB(makeup[2]) : fil4[0];
+                tmp3[1] = tog3 ? outR[2] * from_dB(makeup[2]) : fil4[1];
 
 		outputs[0][i] = outputs[1][i] = 0.f;
 		if (listen1) {
@@ -977,20 +976,20 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 		if (listen2) {
 			listenmode = 1;
 			outputs[0][i] += outL[1] * tog2*from_dB(makeup[1])
-					+ (1.-tog2) * tmp4[0];
+					+ (1.-tog2) * tmp2[0];
 			outputs[1][i] += outR[1] * tog2*from_dB(makeup[1])
-					+ (1.-tog2) * tmp4[1];
+					+ (1.-tog2) * tmp2[1];
 		}
 		if (listen3) {
 			listenmode = 1;
 			outputs[0][i] += outL[2] * tog3*from_dB(makeup[2])
-					+ (1.-tog3) * tmp5[0];
+					+ (1.-tog3) * tmp3[0];
 			outputs[1][i] += outR[2] * tog3*from_dB(makeup[2])
-					+ (1.-tog3) * tmp5[1];
+					+ (1.-tog3) * tmp3[1];
 		}
 		if (!listenmode) {
-                	outputs[0][i] = tmp2[0] + tmp3[0] + tmp6[0];
-                	outputs[1][i] = tmp2[1] + tmp3[1] + tmp6[1];
+			outputs[0][i] = tmp1[0] + tmp2[0] + tmp3[0];
+			outputs[1][i] = tmp1[1] + tmp2[1] + tmp3[1];
 		}
                 outputs[0][i] = sanitize_denormal(outputs[0][i]);
                 outputs[1][i] = sanitize_denormal(outputs[1][i]);
