@@ -104,9 +104,10 @@ protected:
 	}
 
     void activate() override;
+    void deactivate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
     float normalise(float in, float gainr);
-    float clip(float in, float level);
+    float clip(float in);
     float rmsdb(float in[]);
     void pushsample(float in[], float sample, int *pos);
 

@@ -172,12 +172,26 @@ void ZaMaximX2Plugin::activate()
     oldL_yl = oldL_y1 = oldR_yl = oldR_y1 = oldL_yg = oldR_yg = 0.f;
 }
 
+void ZaMaximX2Plugin::deactivate()
+{
+	activate();
+}
+
 float ZaMaximX2Plugin::normalise(float in, float gainr)
 {
 	if (ceiling < thresdb) {
 		return in;
 	}
 	return from_dB(-(thresdb - ceiling + gainr)) * in;
+}
+
+float ZaMaximX2Plugin::clip(float in)
+{
+	if (in < -1.f)
+		in = -1.f;
+	if (in > 1.f)
+		in = 1.f;
+	return in;
 }
 
 void ZaMaximX2Plugin::pushsample(float in[], float sample, int *pos)
@@ -276,8 +290,8 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		lgaininp = normalise(inputs[0][i] * Lgain, rmsdb(&leftsamples[0]));
 		rgaininp = normalise(inputs[1][i] * Rgain, rmsdb(&rightsamples[0]));
 
-		outputs[0][i] = lgaininp;
-		outputs[1][i] = rgaininp;
+		outputs[0][i] = clip(sanitize_denormal(lgaininp));
+		outputs[1][i] = clip(sanitize_denormal(rgaininp));
 
 		max = (fabsf(lgaininp) > max) ? fabsf(lgaininp) : sanitize_denormal(max);
 		max = (fabsf(rgaininp) > max) ? fabsf(rgaininp) : sanitize_denormal(max);
