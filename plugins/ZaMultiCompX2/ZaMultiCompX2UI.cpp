@@ -437,6 +437,9 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
             repaint();
         }
         break;
+    case ZaMultiCompX2Plugin::paramStereoDet:
+        fToggleStereo->setValue(value);
+        break;
     }
 }
 

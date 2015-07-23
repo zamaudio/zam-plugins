@@ -6,9 +6,9 @@ Collection of LV2/LADSPA audio plugins for high quality processing
 Note:
 
 This is a new repo that contains the full history of the old repo.
-Submodules are no longer required.
+Submodules are now required (> 3.5).
 Uses Distrho Plugin Framework.
-Please use versions >= 3.3 of this package.
+Please use versions >= 3.5 of this package.
 
 Build Dependencies:
 ===================
