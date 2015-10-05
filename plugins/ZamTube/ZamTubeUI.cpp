@@ -117,6 +117,9 @@ void ZamTubeUI::parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
+    case ZamTubePlugin::paramToneStack:
+        fSliderNotch->setValue(value);
+        break;
     case ZamTubePlugin::paramTubedrive:
         fKnobTube->setValue(value);
         break;
