@@ -88,9 +88,16 @@ sanitize_denormal(double value) {
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease;
+    ScopedPointer<ImageKnob> fKnobAttack1, fKnobAttack2, fKnobAttack3; 
+    ScopedPointer<ImageKnob> fKnobRelease1, fKnobRelease2, fKnobRelease3;
     ScopedPointer<ImageKnob> fKnobThresh1, fKnobThresh2, fKnobThresh3;
-    ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobGlobalGain;
+    ScopedPointer<ImageKnob> fKnobRatio1;
+    ScopedPointer<ImageKnob> fKnobRatio2;
+    ScopedPointer<ImageKnob> fKnobRatio3;
+    ScopedPointer<ImageKnob> fKnobKnee1;
+    ScopedPointer<ImageKnob> fKnobKnee2;
+    ScopedPointer<ImageKnob> fKnobKnee3;
+    ScopedPointer<ImageKnob> fKnobGlobalGain;
     ScopedPointer<ImageKnob> fKnobMakeup1, fKnobMakeup2, fKnobMakeup3;
     ScopedPointer<ImageKnob> fKnobXover1, fKnobXover2;
     ScopedPointer<ImageToggle> fToggleBypass1, fToggleBypass2, fToggleBypass3;
@@ -105,8 +112,8 @@ private:
     DGL::Rectangle<int> fCanvasArea;
     float fThresh[MAX_COMP];
     float fListen[MAX_COMP];
-    float fRatio;
-    float fKnee;
+    float fRatio[MAX_COMP];
+    float fKnee[MAX_COMP];
     float fMakeup[MAX_COMP];
     float fBypass[MAX_COMP];
     float fMaster;

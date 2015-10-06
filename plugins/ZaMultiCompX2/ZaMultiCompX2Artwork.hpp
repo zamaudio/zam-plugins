@@ -46,9 +46,9 @@ namespace ZaMultiCompX2Artwork
     const unsigned int togglesliderHeight   = 13;
 
     extern const char* zamulticompx2Data;
-    const unsigned int zamulticompx2DataSize = 582300;
-    const unsigned int zamulticompx2Width    = 647;
-    const unsigned int zamulticompx2Height   = 300;
+    const unsigned int zamulticompx2DataSize = 714630;
+    const unsigned int zamulticompx2Width    = 581;
+    const unsigned int zamulticompx2Height   = 410;
 }
 
 #endif // BINARY_ZAMULTICOMPX2ARTWORK_HPP

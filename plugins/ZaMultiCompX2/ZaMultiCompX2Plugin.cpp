@@ -35,37 +35,109 @@ void ZaMultiCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
-    case paramAttack:
+    case paramAttack1:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Attack";
-        parameter.symbol     = "att";
+        parameter.name       = "Attack1";
+        parameter.symbol     = "att1";
         parameter.unit       = "ms";
         parameter.ranges.def = 10.0f;
         parameter.ranges.min = 0.1f;
         parameter.ranges.max = 100.0f;
         break;
-    case paramRelease:
+    case paramAttack2:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Release";
-        parameter.symbol     = "rel";
+        parameter.name       = "Attack2";
+        parameter.symbol     = "att2";
+        parameter.unit       = "ms";
+        parameter.ranges.def = 10.0f;
+        parameter.ranges.min = 0.1f;
+        parameter.ranges.max = 100.0f;
+        break;
+    case paramAttack3:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Attack3";
+        parameter.symbol     = "att3";
+        parameter.unit       = "ms";
+        parameter.ranges.def = 10.0f;
+        parameter.ranges.min = 0.1f;
+        parameter.ranges.max = 100.0f;
+        break;
+    case paramRelease1:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Release1";
+        parameter.symbol     = "rel1";
         parameter.unit       = "ms";
         parameter.ranges.def = 80.0f;
         parameter.ranges.min = 1.0f;
         parameter.ranges.max = 500.0f;
         break;
-    case paramKnee:
+    case paramRelease2:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Knee";
-        parameter.symbol     = "kn";
+        parameter.name       = "Release2";
+        parameter.symbol     = "rel2";
+        parameter.unit       = "ms";
+        parameter.ranges.def = 80.0f;
+        parameter.ranges.min = 1.0f;
+        parameter.ranges.max = 500.0f;
+        break;
+    case paramRelease3:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Release3";
+        parameter.symbol     = "rel3";
+        parameter.unit       = "ms";
+        parameter.ranges.def = 80.0f;
+        parameter.ranges.min = 1.0f;
+        parameter.ranges.max = 500.0f;
+        break;
+    case paramKnee1:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Knee1";
+        parameter.symbol     = "kn1";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 8.0f;
         break;
-    case paramRatio:
+    case paramKnee2:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Ratio";
-        parameter.symbol     = "rat";
+        parameter.name       = "Knee2";
+        parameter.symbol     = "kn2";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 8.0f;
+        break;
+    case paramKnee3:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Knee3";
+        parameter.symbol     = "kn3";
+        parameter.unit       = "dB";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 8.0f;
+        break;
+    case paramRatio1:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Ratio1";
+        parameter.symbol     = "rat1";
+        parameter.unit       = " ";
+        parameter.ranges.def = 4.0f;
+        parameter.ranges.min = 1.0f;
+        parameter.ranges.max = 20.0f;
+        break;
+    case paramRatio2:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Ratio2";
+        parameter.symbol     = "rat2";
+        parameter.unit       = " ";
+        parameter.ranges.def = 4.0f;
+        parameter.ranges.min = 1.0f;
+        parameter.ranges.max = 20.0f;
+        break;
+    case paramRatio3:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Ratio3";
+        parameter.symbol     = "rat3";
         parameter.unit       = " ";
         parameter.ranges.def = 4.0f;
         parameter.ranges.min = 1.0f;
@@ -306,10 +378,18 @@ void ZaMultiCompX2Plugin::loadProgram(uint32_t index)
 {
 	switch(index) {
 	case 0:
-		attack = 10.0;
-		release = 80.0;
-		knee = 0.0;
-		ratio = 4.0;
+		attack[0] = 10.0;
+		attack[1] = 10.0;
+		attack[2] = 10.0;
+		release[0] = 80.0;
+		release[1] = 80.0;
+		release[2] = 80.0;
+		knee[0] = 0.0;
+		knee[1] = 0.0;
+		knee[2] = 0.0;
+		ratio[0] = 4.0;
+		ratio[1] = 4.0;
+		ratio[2] = 4.0;
 		thresdb[0] = -20.0;
 		thresdb[1] = -18.0;
 		thresdb[2] = -16.0;
@@ -336,10 +416,18 @@ void ZaMultiCompX2Plugin::loadProgram(uint32_t index)
 		outlevel[2] = -45;
 		break;
 	case 1:
-		attack = 10.0;
-		release = 200.0;
-		knee = 3.0;
-		ratio = 5.0;
+		attack[0] = 10.0;
+		attack[1] = 10.0;
+		attack[2] = 10.0;
+		release[0] = 200.0;
+		release[1] = 200.0;
+		release[2] = 200.0;
+		knee[0] = 3.0;
+		knee[1] = 3.0;
+		knee[2] = 3.0;
+		ratio[0] = 5.0;
+		ratio[1] = 5.0;
+		ratio[2] = 5.0;
 		thresdb[0] = -20.0;
 		thresdb[1] = -18.0;
 		thresdb[2] = -16.0;
@@ -382,17 +470,41 @@ float ZaMultiCompX2Plugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
-    case paramAttack:
-        return attack;
+    case paramAttack1:
+        return attack[0];
         break;
-    case paramRelease:
-        return release;
+    case paramAttack2:
+        return attack[1];
         break;
-    case paramKnee:
-        return knee;
+    case paramAttack3:
+        return attack[2];
         break;
-    case paramRatio:
-        return ratio;
+    case paramRelease1:
+        return release[0];
+        break;
+    case paramRelease2:
+        return release[1];
+        break;
+    case paramRelease3:
+        return release[2];
+        break;
+    case paramKnee1:
+        return knee[0];
+        break;
+    case paramKnee2:
+        return knee[1];
+        break;
+    case paramKnee3:
+        return knee[2];
+        break;
+    case paramRatio1:
+        return ratio[0];
+        break;
+    case paramRatio2:
+        return ratio[1];
+        break;
+    case paramRatio3:
+        return ratio[2];
         break;
     case paramThresh1:
         return thresdb[0];
@@ -475,17 +587,41 @@ void ZaMultiCompX2Plugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
-    case paramAttack:
-        attack = value;
+    case paramAttack1:
+        attack[0] = value;
         break;
-    case paramRelease:
-        release = value;
+    case paramAttack2:
+        attack[1] = value;
         break;
-    case paramKnee:
-        knee = value;
+    case paramAttack3:
+        attack[2] = value;
         break;
-    case paramRatio:
-        ratio = value;
+    case paramRelease1:
+        release[0] = value;
+        break;
+    case paramRelease2:
+        release[1] = value;
+        break;
+    case paramRelease3:
+        release[2] = value;
+        break;
+    case paramKnee1:
+        knee[0] = value;
+        break;
+    case paramKnee2:
+        knee[1] = value;
+        break;
+    case paramKnee3:
+        knee[2] = value;
+        break;
+    case paramRatio1:
+        ratio[0] = value;
+        break;
+    case paramRatio2:
+        ratio[1] = value;
+        break;
+    case paramRatio3:
+        ratio[2] = value;
         break;
     case paramThresh1:
         thresdb[0] = value;
@@ -770,10 +906,10 @@ void ZaMultiCompX2Plugin::run_limit(float inL, float inR, float *outL, float *ou
 void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, float *outR)
 {
 	float srate = getSampleRate();
-        float width = (6.f * knee) + 0.01;
+        float width = (6.f * knee[k]) + 0.01;
         float slewwidth = 1.8f;
-        float attack_coeff = exp(-1000.f/(attack * srate));
-        float release_coeff = exp(-1000.f/(release * srate));
+        float attack_coeff = exp(-1000.f/(attack[k] * srate));
+        float release_coeff = exp(-1000.f/(release[k] * srate));
 	int stereolink = (stereodet > 0.5f) ? STEREOLINK_MAX : STEREOLINK_AVERAGE;
 	int attslew = 0;
 	int relslew = 0;
@@ -798,7 +934,7 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 	if (2.f*(Lxg-thresdb[k]) < -width) {
 		Lyg = Lxg;
 	} else if (checkwidth <= width) {
-		Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb[k]+width/2.f)*(Lxg-thresdb[k]+width/2.f)/(2.f*width);
+		Lyg = Lxg + (1.f/ratio[k]-1.f)*(Lxg-thresdb[k]+width/2.f)*(Lxg-thresdb[k]+width/2.f)/(2.f*width);
 		//Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio;
 		Lyg = sanitize_denormal(Lyg);
 		if (checkwidth <= slewwidth) {
@@ -809,7 +945,7 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 			}
 		}
 	} else if (2.f*(Lxg-thresdb[k]) > width) {
-		Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio;
+		Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio[k];
 		Lyg = sanitize_denormal(Lyg);
 	}
 
@@ -817,7 +953,7 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 	if (2.f*(Rxg-thresdb[k]) < -width) {
 		Ryg = Rxg;
 	} else if (checkwidth <= width) {
-		Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb[k]+width/2.f)*(Rxg-thresdb[k]+width/2.f)/(2.f*width);
+		Ryg = Rxg + (1.f/ratio[k]-1.f)*(Rxg-thresdb[k]+width/2.f)*(Rxg-thresdb[k]+width/2.f)/(2.f*width);
 		//Ryg = thresdb[k] + (Rxg-thresdb[k])/ratio;
 		Ryg = sanitize_denormal(Ryg);
 		if (checkwidth <= slewwidth) {
@@ -828,7 +964,7 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 			}
 		}
 	} else if (2.f*(Rxg-thresdb[k]) > width) {
-		Ryg = thresdb[k] + (Rxg-thresdb[k])/ratio;
+		Ryg = thresdb[k] + (Rxg-thresdb[k])/ratio[k];
 		Ryg = sanitize_denormal(Ryg);
 	}
 

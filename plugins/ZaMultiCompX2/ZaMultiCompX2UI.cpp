@@ -46,67 +46,129 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     // knob
     Image knobImage(ZaMultiCompX2Artwork::knobData, ZaMultiCompX2Artwork::knobWidth, ZaMultiCompX2Artwork::knobHeight);
 
+    int x = 250;
+    int y = 291;
     // knob
-    fKnobAttack = new ImageKnob(this, knobImage);
-    fKnobAttack->setAbsolutePos(24, 43);
-    fKnobAttack->setRange(0.1f, 200.0f);
-    fKnobAttack->setUsingLogScale(true);
-    fKnobAttack->setDefault(10.0f);
-    fKnobAttack->setStep(0.1f);
-    fKnobAttack->setRotationAngle(240);
-    fKnobAttack->setCallback(this);
+    fKnobAttack1 = new ImageKnob(this, knobImage);
+    fKnobAttack1->setAbsolutePos(26+x, 43+y);
+    fKnobAttack1->setRange(0.1f, 200.0f);
+    fKnobAttack1->setUsingLogScale(true);
+    fKnobAttack1->setDefault(10.0f);
+    fKnobAttack1->setStep(0.1f);
+    fKnobAttack1->setRotationAngle(240);
+    fKnobAttack1->setCallback(this);
 
-    fKnobRelease = new ImageKnob(this, knobImage);
-    fKnobRelease->setAbsolutePos(108, 43);
-    fKnobRelease->setRange(1.0f, 500.0f);
-    fKnobRelease->setDefault(80.0f);
-    fKnobRelease->setRotationAngle(240);
-    fKnobRelease->setCallback(this);
+    fKnobAttack2 = new ImageKnob(this, knobImage);
+    fKnobAttack2->setAbsolutePos(26+x, 43+y-50);
+    fKnobAttack2->setRange(0.1f, 200.0f);
+    fKnobAttack2->setUsingLogScale(true);
+    fKnobAttack2->setDefault(10.0f);
+    fKnobAttack2->setStep(0.1f);
+    fKnobAttack2->setRotationAngle(240);
+    fKnobAttack2->setCallback(this);
+
+    fKnobAttack3 = new ImageKnob(this, knobImage);
+    fKnobAttack3->setAbsolutePos(26+x, 43+y-100);
+    fKnobAttack3->setRange(0.1f, 200.0f);
+    fKnobAttack3->setUsingLogScale(true);
+    fKnobAttack3->setDefault(10.0f);
+    fKnobAttack3->setStep(0.1f);
+    fKnobAttack3->setRotationAngle(240);
+    fKnobAttack3->setCallback(this);
+
+    fKnobRelease1 = new ImageKnob(this, knobImage);
+    fKnobRelease1->setAbsolutePos(108+x, 43+y);
+    fKnobRelease1->setRange(1.0f, 500.0f);
+    fKnobRelease1->setDefault(80.0f);
+    fKnobRelease1->setRotationAngle(240);
+    fKnobRelease1->setCallback(this);
+
+    fKnobRelease2 = new ImageKnob(this, knobImage);
+    fKnobRelease2->setAbsolutePos(108+x, 43+y-50);
+    fKnobRelease2->setRange(1.0f, 500.0f);
+    fKnobRelease2->setDefault(80.0f);
+    fKnobRelease2->setRotationAngle(240);
+    fKnobRelease2->setCallback(this);
+
+    fKnobRelease3 = new ImageKnob(this, knobImage);
+    fKnobRelease3->setAbsolutePos(108+x, 43+y-100);
+    fKnobRelease3->setRange(1.0f, 500.0f);
+    fKnobRelease3->setDefault(80.0f);
+    fKnobRelease3->setRotationAngle(240);
+    fKnobRelease3->setCallback(this);
 
     fKnobThresh3 = new ImageKnob(this, knobImage);
-    fKnobThresh3->setAbsolutePos(94.5, 99);
+    fKnobThresh3->setAbsolutePos(94.5+31, 99+134);
     fKnobThresh3->setRange(-60.0f, 0.0f);
     fKnobThresh3->setDefault(-16.0f);
     fKnobThresh3->setRotationAngle(240);
     fKnobThresh3->setCallback(this);
 
     fKnobThresh2 = new ImageKnob(this, knobImage);
-    fKnobThresh2->setAbsolutePos(94.5, 150);
+    fKnobThresh2->setAbsolutePos(94.5+31, 150+134);
     fKnobThresh2->setRange(-60.0f, 0.0f);
     fKnobThresh2->setDefault(-18.0f);
     fKnobThresh2->setRotationAngle(240);
     fKnobThresh2->setCallback(this);
 
     fKnobThresh1 = new ImageKnob(this, knobImage);
-    fKnobThresh1->setAbsolutePos(94.5, 201);
+    fKnobThresh1->setAbsolutePos(94.5+31, 201+134);
     fKnobThresh1->setRange(-60.0f, 0.0f);
     fKnobThresh1->setDefault(-20.0f);
     fKnobThresh1->setRotationAngle(240);
     fKnobThresh1->setCallback(this);
 
-    fKnobRatio = new ImageKnob(this, knobImage);
-    fKnobRatio->setAbsolutePos(191.5, 43);
-    fKnobRatio->setRange(1.0f, 20.0f);
-    fKnobRatio->setDefault(4.0f);
-    fKnobRatio->setRotationAngle(240);
-    fKnobRatio->setCallback(this);
+    fKnobRatio1 = new ImageKnob(this, knobImage);
+    fKnobRatio1->setAbsolutePos(191.5+x, 43+y);
+    fKnobRatio1->setRange(1.0f, 20.0f);
+    fKnobRatio1->setDefault(4.0f);
+    fKnobRatio1->setRotationAngle(240);
+    fKnobRatio1->setCallback(this);
 
-    fKnobKnee = new ImageKnob(this, knobImage);
-    fKnobKnee->setAbsolutePos(273, 43);
-    fKnobKnee->setRange(0.0f, 8.0f);
-    fKnobKnee->setDefault(0.0f);
-    fKnobKnee->setRotationAngle(240);
-    fKnobKnee->setCallback(this);
+    fKnobRatio2 = new ImageKnob(this, knobImage);
+    fKnobRatio2->setAbsolutePos(191.5+x, 43+y-50);
+    fKnobRatio2->setRange(1.0f, 20.0f);
+    fKnobRatio2->setDefault(4.0f);
+    fKnobRatio2->setRotationAngle(240);
+    fKnobRatio2->setCallback(this);
+
+    fKnobRatio3 = new ImageKnob(this, knobImage);
+    fKnobRatio3->setAbsolutePos(191.5+x, 43+y-100);
+    fKnobRatio3->setRange(1.0f, 20.0f);
+    fKnobRatio3->setDefault(4.0f);
+    fKnobRatio3->setRotationAngle(240);
+    fKnobRatio3->setCallback(this);
+
+    fKnobKnee1 = new ImageKnob(this, knobImage);
+    fKnobKnee1->setAbsolutePos(273+x, 43+y);
+    fKnobKnee1->setRange(0.0f, 8.0f);
+    fKnobKnee1->setDefault(0.0f);
+    fKnobKnee1->setRotationAngle(240);
+    fKnobKnee1->setCallback(this);
+
+    fKnobKnee2 = new ImageKnob(this, knobImage);
+    fKnobKnee2->setAbsolutePos(273+x, 43+y-50);
+    fKnobKnee2->setRange(0.0f, 8.0f);
+    fKnobKnee2->setDefault(0.0f);
+    fKnobKnee2->setRotationAngle(240);
+    fKnobKnee2->setCallback(this);
+
+    fKnobKnee3 = new ImageKnob(this, knobImage);
+    fKnobKnee3->setAbsolutePos(273+x, 43+y-100);
+    fKnobKnee3->setRange(0.0f, 8.0f);
+    fKnobKnee3->setDefault(0.0f);
+    fKnobKnee3->setRotationAngle(240);
+    fKnobKnee3->setCallback(this);
 
     fKnobGlobalGain = new ImageKnob(this, knobImage);
-    fKnobGlobalGain->setAbsolutePos(427.3, 43);
+    fKnobGlobalGain->setAbsolutePos(427-170, 41);
     fKnobGlobalGain->setRange(-30.0f, 30.0f);
     fKnobGlobalGain->setDefault(0.0f);
     fKnobGlobalGain->setRotationAngle(240);
     fKnobGlobalGain->setCallback(this);
 
     fKnobXover2 = new ImageKnob(this, knobImage);
-    fKnobXover2->setAbsolutePos(23, 121);
+    fKnobXover2->setAbsolutePos(22+333, 121-80);
     fKnobXover2->setRange(1400.f, 14000.f);
     fKnobXover2->setUsingLogScale(true);
     fKnobXover2->setDefault(1400.f);
@@ -115,7 +177,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fKnobXover2->setCallback(this);
 
     fKnobXover1 = new ImageKnob(this, knobImage);
-    fKnobXover1->setAbsolutePos(23, 175.5);
+    fKnobXover1->setAbsolutePos(22+333, 175.5-80);
     fKnobXover1->setRange(20.0f, 1400.0f);
     fKnobXover1->setUsingLogScale(true);
     fKnobXover1->setDefault(160.0f);
@@ -124,21 +186,21 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     fKnobXover1->setCallback(this);
 
     fKnobMakeup3 = new ImageKnob(this, knobImage);
-    fKnobMakeup3->setAbsolutePos(167.75, 99.5);
+    fKnobMakeup3->setAbsolutePos(167.75+30, 99.5+134);
     fKnobMakeup3->setRange(0.0f, 30.0f);
     fKnobMakeup3->setDefault(0.0f);
     fKnobMakeup3->setRotationAngle(240);
     fKnobMakeup3->setCallback(this);
 
     fKnobMakeup2 = new ImageKnob(this, knobImage);
-    fKnobMakeup2->setAbsolutePos(167.75, 150.25);
+    fKnobMakeup2->setAbsolutePos(167.75+30, 150.25+134);
     fKnobMakeup2->setRange(0.0f, 30.0f);
     fKnobMakeup2->setDefault(0.0f);
     fKnobMakeup2->setRotationAngle(240);
     fKnobMakeup2->setCallback(this);
 
     fKnobMakeup1 = new ImageKnob(this, knobImage);
-    fKnobMakeup1->setAbsolutePos(167.75, 201.4);
+    fKnobMakeup1->setAbsolutePos(167.75+30, 201.4+134);
     fKnobMakeup1->setRange(0.0f, 30.0f);
     fKnobMakeup1->setDefault(0.0f);
     fKnobMakeup1->setRotationAngle(240);
@@ -149,52 +211,52 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     Image toggleonhImage(ZaMultiCompX2Artwork::toggleonhorizData, ZaMultiCompX2Artwork::toggleonhorizWidth, ZaMultiCompX2Artwork::toggleonhorizHeight);
     Image toggleoffhImage(ZaMultiCompX2Artwork::toggleoffhorizData, ZaMultiCompX2Artwork::toggleoffhorizWidth, ZaMultiCompX2Artwork::toggleoffhorizHeight);
 
-    Point<int> togglePosStart(247,108);
+    Point<int> togglePosStart(247-230+4,108+130+5);
 
     fToggleBypass3 = new ImageToggle(this, toggleoffImage, toggleonImage);
     fToggleBypass3->setAbsolutePos(togglePosStart);
     fToggleBypass3->setCallback(this);
 
-    togglePosStart.setY(158);
+    togglePosStart.setY(158+130+5);
 
     fToggleBypass2 = new ImageToggle(this, toggleoffImage, toggleonImage);
     fToggleBypass2->setAbsolutePos(togglePosStart);
     fToggleBypass2->setCallback(this);
 
-    togglePosStart.setY(209);
+    togglePosStart.setY(209+130+5);
 
     fToggleBypass1 = new ImageToggle(this, toggleoffImage, toggleonImage);
     fToggleBypass1->setAbsolutePos(togglePosStart);
     fToggleBypass1->setCallback(this);
 
-    togglePosStart.setX(278);
-    togglePosStart.setY(113);
+    togglePosStart.setX(278-230+4);
+    togglePosStart.setY(113+130+5);
 
     fToggleListen3 = new ImageToggle(this, toggleoffhImage, toggleonhImage);
     fToggleListen3->setAbsolutePos(togglePosStart);
     fToggleListen3->setCallback(this);
 
-    togglePosStart.setY(164);
+    togglePosStart.setY(164+130+5);
 
     fToggleListen2 = new ImageToggle(this, toggleoffhImage, toggleonhImage);
     fToggleListen2->setAbsolutePos(togglePosStart);
     fToggleListen2->setCallback(this);
 
-    togglePosStart.setY(214);
+    togglePosStart.setY(214+130+5);
 
     fToggleListen1 = new ImageToggle(this, toggleoffhImage, toggleonhImage);
     fToggleListen1->setAbsolutePos(togglePosStart);
     fToggleListen1->setCallback(this);
 
-    togglePosStart.setX(285.5);
-    togglePosStart.setY(254);
+    togglePosStart.setX(369);
+    togglePosStart.setY(181);
 
     fToggleStereo = new ImageToggle(this, toggleoffImage, toggleonImage);
     fToggleStereo->setAbsolutePos(togglePosStart);
     fToggleStereo->setCallback(this);
 
-    fCanvasArea.setPos(540, 32);
-    fCanvasArea.setSize(102, 102);
+    fCanvasArea.setPos(430, 42);
+    fCanvasArea.setSize(145, 145);
 
     int i,k;
 
@@ -212,8 +274,8 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
 }
 
 void ZaMultiCompX2UI::compcurve(float in, int k, float *outx, float* outy) {
-        float knee = fKnee;
-        float ratio = fRatio;
+        float knee = fKnee[k];
+        float ratio = fRatio[k];
         float makeup = fMakeup[k] + fMaster;
         float thresdb = fThresh[k];
         float width=6.f*knee+0.01;
@@ -276,11 +338,23 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
 {
     switch (index)
     {
-    case ZaMultiCompX2Plugin::paramAttack:
-        fKnobAttack->setValue(value);
+    case ZaMultiCompX2Plugin::paramAttack1:
+        fKnobAttack1->setValue(value);
         break;
-    case ZaMultiCompX2Plugin::paramRelease:
-        fKnobRelease->setValue(value);
+    case ZaMultiCompX2Plugin::paramAttack2:
+        fKnobAttack2->setValue(value);
+        break;
+    case ZaMultiCompX2Plugin::paramAttack3:
+        fKnobAttack3->setValue(value);
+        break;
+    case ZaMultiCompX2Plugin::paramRelease1:
+        fKnobRelease1->setValue(value);
+        break;
+    case ZaMultiCompX2Plugin::paramRelease2:
+        fKnobRelease2->setValue(value);
+        break;
+    case ZaMultiCompX2Plugin::paramRelease3:
+        fKnobRelease3->setValue(value);
         break;
     case ZaMultiCompX2Plugin::paramThresh1:
         fKnobThresh1->setValue(value);
@@ -294,13 +368,29 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         fKnobThresh3->setValue(value);
         fThresh[2] = value;
         break;
-    case ZaMultiCompX2Plugin::paramRatio:
-        fKnobRatio->setValue(value);
-        fRatio = value;
+    case ZaMultiCompX2Plugin::paramRatio1:
+        fKnobRatio1->setValue(value);
+        fRatio[0] = value;
         break;
-    case ZaMultiCompX2Plugin::paramKnee:
-        fKnobKnee->setValue(value);
-        fKnee = value;
+    case ZaMultiCompX2Plugin::paramRatio2:
+        fKnobRatio2->setValue(value);
+        fRatio[1] = value;
+        break;
+    case ZaMultiCompX2Plugin::paramRatio3:
+        fKnobRatio3->setValue(value);
+        fRatio[2] = value;
+        break;
+    case ZaMultiCompX2Plugin::paramKnee1:
+        fKnobKnee1->setValue(value);
+        fKnee[0] = value;
+        break;
+    case ZaMultiCompX2Plugin::paramKnee2:
+        fKnobKnee2->setValue(value);
+        fKnee[1] = value;
+        break;
+    case ZaMultiCompX2Plugin::paramKnee3:
+        fKnobKnee3->setValue(value);
+        fKnee[2] = value;
         break;
     case ZaMultiCompX2Plugin::paramGlobalGain:
         fKnobGlobalGain->setValue(value);
@@ -447,10 +537,18 @@ void ZaMultiCompX2UI::programLoaded(uint32_t index)
 {
 	switch(index) {
 	case 0:
-		fKnobAttack->setValue(10.0f);
-		fKnobRelease->setValue(80.0f);
-		fKnobKnee->setValue(0.0f);
-		fKnobRatio->setValue(4.0f);
+		fKnobAttack1->setValue(10.0f);
+		fKnobRelease1->setValue(80.0f);
+		fKnobKnee1->setValue(0.0f);
+		fKnobRatio1->setValue(4.0f);
+		fKnobAttack2->setValue(10.0f);
+		fKnobRelease2->setValue(80.0f);
+		fKnobKnee2->setValue(0.0f);
+		fKnobRatio2->setValue(4.0f);
+		fKnobAttack3->setValue(10.0f);
+		fKnobRelease3->setValue(80.0f);
+		fKnobKnee3->setValue(0.0f);
+		fKnobRatio3->setValue(4.0f);
 		fKnobThresh1->setValue(-20.0f);
 		fKnobThresh2->setValue(-18.0f);
 		fKnobThresh3->setValue(-16.0f);
@@ -469,10 +567,18 @@ void ZaMultiCompX2UI::programLoaded(uint32_t index)
 		fKnobGlobalGain->setValue(0.0f);
 		break;
 	case 1:
-		fKnobAttack->setValue(10.0f);
-		fKnobRelease->setValue(200.0f);
-		fKnobKnee->setValue(3.0f);
-		fKnobRatio->setValue(5.0f);
+		fKnobAttack1->setValue(10.0f);
+		fKnobRelease1->setValue(200.0f);
+		fKnobKnee1->setValue(3.0f);
+		fKnobRatio1->setValue(5.0f);
+		fKnobAttack2->setValue(10.0f);
+		fKnobRelease2->setValue(200.0f);
+		fKnobKnee2->setValue(3.0f);
+		fKnobRatio2->setValue(5.0f);
+		fKnobAttack3->setValue(10.0f);
+		fKnobRelease3->setValue(200.0f);
+		fKnobKnee3->setValue(3.0f);
+		fKnobRatio3->setValue(5.0f);
 		fKnobThresh1->setValue(-20.0f);
 		fKnobThresh2->setValue(-18.0f);
 		fKnobThresh3->setValue(-16.0f);
@@ -502,20 +608,36 @@ void ZaMultiCompX2UI::stateChanged(const char*, const char*)
 
 void ZaMultiCompX2UI::imageKnobDragStarted(ImageKnob* knob)
 {
-    if (knob == fKnobAttack)
-        editParameter(ZaMultiCompX2Plugin::paramAttack, true);
-    else if (knob == fKnobRelease)
-        editParameter(ZaMultiCompX2Plugin::paramRelease, true);
+    if (knob == fKnobAttack1)
+        editParameter(ZaMultiCompX2Plugin::paramAttack1, true);
+    else if (knob == fKnobAttack2)
+        editParameter(ZaMultiCompX2Plugin::paramAttack2, true);
+    else if (knob == fKnobAttack3)
+        editParameter(ZaMultiCompX2Plugin::paramAttack3, true);
+    else if (knob == fKnobRelease1)
+        editParameter(ZaMultiCompX2Plugin::paramRelease1, true);
+    else if (knob == fKnobRelease2)
+        editParameter(ZaMultiCompX2Plugin::paramRelease2, true);
+    else if (knob == fKnobRelease3)
+        editParameter(ZaMultiCompX2Plugin::paramRelease3, true);
     else if (knob == fKnobThresh1)
         editParameter(ZaMultiCompX2Plugin::paramThresh1, true);
     else if (knob == fKnobThresh2)
         editParameter(ZaMultiCompX2Plugin::paramThresh2, true);
     else if (knob == fKnobThresh3)
         editParameter(ZaMultiCompX2Plugin::paramThresh3, true);
-    else if (knob == fKnobRatio)
-        editParameter(ZaMultiCompX2Plugin::paramRatio, true);
-    else if (knob == fKnobKnee)
-        editParameter(ZaMultiCompX2Plugin::paramKnee, true);
+    else if (knob == fKnobRatio1)
+        editParameter(ZaMultiCompX2Plugin::paramRatio1, true);
+    else if (knob == fKnobRatio2)
+        editParameter(ZaMultiCompX2Plugin::paramRatio2, true);
+    else if (knob == fKnobRatio3)
+        editParameter(ZaMultiCompX2Plugin::paramRatio3, true);
+    else if (knob == fKnobKnee1)
+        editParameter(ZaMultiCompX2Plugin::paramKnee1, true);
+    else if (knob == fKnobKnee2)
+        editParameter(ZaMultiCompX2Plugin::paramKnee2, true);
+    else if (knob == fKnobKnee3)
+        editParameter(ZaMultiCompX2Plugin::paramKnee3, true);
     else if (knob == fKnobGlobalGain)
         editParameter(ZaMultiCompX2Plugin::paramGlobalGain, true);
     else if (knob == fKnobMakeup1)
@@ -532,20 +654,36 @@ void ZaMultiCompX2UI::imageKnobDragStarted(ImageKnob* knob)
 
 void ZaMultiCompX2UI::imageKnobDragFinished(ImageKnob* knob)
 {
-    if (knob == fKnobAttack)
-        editParameter(ZaMultiCompX2Plugin::paramAttack, false);
-    else if (knob == fKnobRelease)
-        editParameter(ZaMultiCompX2Plugin::paramRelease, false);
+    if (knob == fKnobAttack1)
+        editParameter(ZaMultiCompX2Plugin::paramAttack1, false);
+    else if (knob == fKnobAttack2)
+        editParameter(ZaMultiCompX2Plugin::paramAttack2, false);
+    else if (knob == fKnobAttack3)
+        editParameter(ZaMultiCompX2Plugin::paramAttack3, false);
+    else if (knob == fKnobRelease1)
+        editParameter(ZaMultiCompX2Plugin::paramRelease1, false);
+    else if (knob == fKnobRelease2)
+        editParameter(ZaMultiCompX2Plugin::paramRelease2, false);
+    else if (knob == fKnobRelease3)
+        editParameter(ZaMultiCompX2Plugin::paramRelease3, false);
     else if (knob == fKnobThresh1)
         editParameter(ZaMultiCompX2Plugin::paramThresh1, false);
     else if (knob == fKnobThresh2)
         editParameter(ZaMultiCompX2Plugin::paramThresh2, false);
     else if (knob == fKnobThresh3)
         editParameter(ZaMultiCompX2Plugin::paramThresh3, false);
-    else if (knob == fKnobRatio)
-        editParameter(ZaMultiCompX2Plugin::paramRatio, false);
-    else if (knob == fKnobKnee)
-        editParameter(ZaMultiCompX2Plugin::paramKnee, false);
+    else if (knob == fKnobRatio1)
+        editParameter(ZaMultiCompX2Plugin::paramRatio1, false);
+    else if (knob == fKnobRatio2)
+        editParameter(ZaMultiCompX2Plugin::paramRatio2, false);
+    else if (knob == fKnobRatio3)
+        editParameter(ZaMultiCompX2Plugin::paramRatio3, false);
+    else if (knob == fKnobKnee1)
+        editParameter(ZaMultiCompX2Plugin::paramKnee1, false);
+    else if (knob == fKnobKnee2)
+        editParameter(ZaMultiCompX2Plugin::paramKnee2, false);
+    else if (knob == fKnobKnee3)
+        editParameter(ZaMultiCompX2Plugin::paramKnee3, false);
     else if (knob == fKnobGlobalGain)
         editParameter(ZaMultiCompX2Plugin::paramGlobalGain, false);
     else if (knob == fKnobMakeup1)
@@ -562,10 +700,18 @@ void ZaMultiCompX2UI::imageKnobDragFinished(ImageKnob* knob)
 
 void ZaMultiCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
-    if (knob == fKnobAttack)
-        setParameterValue(ZaMultiCompX2Plugin::paramAttack, value);
-    else if (knob == fKnobRelease)
-        setParameterValue(ZaMultiCompX2Plugin::paramRelease, value);
+    if (knob == fKnobAttack1)
+        setParameterValue(ZaMultiCompX2Plugin::paramAttack1, value);
+    else if (knob == fKnobAttack2)
+        setParameterValue(ZaMultiCompX2Plugin::paramAttack2, value);
+    else if (knob == fKnobAttack3)
+        setParameterValue(ZaMultiCompX2Plugin::paramAttack3, value);
+    else if (knob == fKnobRelease1)
+        setParameterValue(ZaMultiCompX2Plugin::paramRelease1, value);
+    else if (knob == fKnobRelease2)
+        setParameterValue(ZaMultiCompX2Plugin::paramRelease2, value);
+    else if (knob == fKnobRelease3)
+        setParameterValue(ZaMultiCompX2Plugin::paramRelease3, value);
     else if (knob == fKnobThresh1) {
         setParameterValue(ZaMultiCompX2Plugin::paramThresh1, value);
 	fThresh[0] = value;
@@ -578,13 +724,29 @@ void ZaMultiCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
         setParameterValue(ZaMultiCompX2Plugin::paramThresh3, value);
 	fThresh[2] = value;
     }
-    else if (knob == fKnobRatio) {
-        setParameterValue(ZaMultiCompX2Plugin::paramRatio, value);
-        fRatio = value;
+    else if (knob == fKnobRatio1) {
+        setParameterValue(ZaMultiCompX2Plugin::paramRatio1, value);
+        fRatio[0] = value;
     }
-    else if (knob == fKnobKnee) {
-        setParameterValue(ZaMultiCompX2Plugin::paramKnee, value);
-	fKnee = value;
+    else if (knob == fKnobRatio2) {
+        setParameterValue(ZaMultiCompX2Plugin::paramRatio2, value);
+        fRatio[1] = value;
+    }
+    else if (knob == fKnobRatio3) {
+        setParameterValue(ZaMultiCompX2Plugin::paramRatio3, value);
+        fRatio[2] = value;
+    }
+    else if (knob == fKnobKnee1) {
+        setParameterValue(ZaMultiCompX2Plugin::paramKnee1, value);
+	fKnee[0] = value;
+    }
+    else if (knob == fKnobKnee2) {
+        setParameterValue(ZaMultiCompX2Plugin::paramKnee2, value);
+	fKnee[1] = value;
+    }
+    else if (knob == fKnobKnee3) {
+        setParameterValue(ZaMultiCompX2Plugin::paramKnee3, value);
+	fKnee[2] = value;
     }
     else if (knob == fKnobGlobalGain) {
         setParameterValue(ZaMultiCompX2Plugin::paramGlobalGain, value);
@@ -646,14 +808,14 @@ void ZaMultiCompX2UI::onDisplay()
     setState("stateMeterReset", "");
 
     // draw leds
-    static const float sLedSpacing  = 15.5f;
-    static const int   sLedInitialX = 343;
+    static const float sLedSpacing  = 15.3f;
+    static const int   sLedInitialX = 35.5;
 
-    static const int sYellowLedStaticYL = 254.5;
-    static const int sYellowLedStaticYR = 269.5;
-    static const int sRedLed1StaticY    = 215;
-    static const int sRedLed2StaticY    = 164;
-    static const int sRedLed3StaticY    = 113;
+    static const int sYellowLedStaticYL = 254.5-70+3;
+    static const int sYellowLedStaticYR = 269.5-70+3;
+    static const int sRedLed1StaticY    = 215-70+3;
+    static const int sRedLed2StaticY    = 164-70+4;
+    static const int sRedLed3StaticY    = 113-70+5;
 
     int numRedLeds1;
     int numRedLeds2;

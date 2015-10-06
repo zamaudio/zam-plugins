@@ -38,10 +38,18 @@ class ZaMultiCompX2Plugin : public Plugin
 public:
     enum Parameters
     {
-        paramAttack = 0,
-        paramRelease,
-        paramKnee,
-        paramRatio,
+        paramAttack1 = 0,
+        paramAttack2,
+        paramAttack3,
+        paramRelease1,
+        paramRelease2,
+        paramRelease3,
+        paramKnee1,
+        paramKnee2,
+        paramKnee3,
+        paramRatio1,
+        paramRatio2,
+        paramRatio3,
         paramThresh1,
         paramThresh2,
         paramThresh3,
@@ -104,7 +112,7 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return 0x1500;
+        return 0x1700;
     }
 
     int64_t getUniqueId() const noexcept override
@@ -160,7 +168,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb[MAX_COMP],makeup[MAX_COMP],globalgain,stereodet;
+    float attack[MAX_COMP],release[MAX_COMP],knee[MAX_COMP],ratio[MAX_COMP],thresdb[MAX_COMP],makeup[MAX_COMP],globalgain,stereodet;
     float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],maxL,maxR,outl,outr,xover1,xover2;
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP], old_yg[2][MAX_COMP];
     float old_ll[2], old_l1[2];
