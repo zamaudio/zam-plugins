@@ -347,8 +347,9 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                         Ryg = sanitize_denormal(Ryg);
                 }
 
-                attack_coeff = attslew ? exp(-1000.f/((attack + 10.0*(slewfactor - 1)) * srate)) : attack_coeff;
-                release_coeff = relslew ? exp(-1000.f/((release + 10.0*(slewfactor - 1)) * srate)) : release_coeff;
+                attack_coeff = attslew ? exp(-1000.f/((attack + 2.0*(slewfactor - 1)) * srate)) : attack_coeff;
+                // Don't slew on release
+		//release_coeff = relslew ? exp(-1000.f/((release + 2.0*(slewfactor - 1)) * srate)) : release_coeff;
 
                 if (stereo == STEREOLINK_UNCOUPLED) {
                         Lxl = Lxg - Lyg;
