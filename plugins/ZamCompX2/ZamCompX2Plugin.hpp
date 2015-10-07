@@ -40,6 +40,7 @@ public:
         paramThresh,
         paramMakeup,
         paramSlew,
+	paramStereo,
         paramGainRed,
         paramOutputLevel,
         paramCount
@@ -68,7 +69,7 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return 0x1000;
+        return 0x1300;
     }
 
     int64_t getUniqueId() const noexcept override
@@ -115,7 +116,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup,gainred,outlevel,slewfactor; //parameters
+    float attack,release,knee,ratio,thresdb,makeup,gainred,outlevel,stereodet,slewfactor; //parameters
     float oldL_yl, oldL_y1, oldR_yl, oldR_y1, oldL_yg, oldR_yg;
 };
 

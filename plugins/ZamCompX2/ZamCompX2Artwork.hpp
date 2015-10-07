@@ -22,13 +22,13 @@ namespace ZamCompX2Artwork
 
     extern const char* toggleoffData;
     const unsigned int toggleoffDataSize = 1056;
-    const unsigned int toggleoffWidth    = 12;
-    const unsigned int toggleoffHeight   = 22;
+    const unsigned int toggleoffWidth    = 22;
+    const unsigned int toggleoffHeight   = 12;
 
     extern const char* toggleonData;
     const unsigned int toggleonDataSize = 1056;
-    const unsigned int toggleonWidth    = 12;
-    const unsigned int toggleonHeight   = 22;
+    const unsigned int toggleonWidth    = 22;
+    const unsigned int toggleonHeight   = 12;
 
     extern const char* zamcompx2Data;
     const unsigned int zamcompx2DataSize = 256800;

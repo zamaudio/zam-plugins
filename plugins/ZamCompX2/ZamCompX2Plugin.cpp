@@ -50,7 +50,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
         parameter.ranges.def = 80.0f;
-        parameter.ranges.min = 50.0f;
+        parameter.ranges.min = 1.0f;
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
@@ -97,6 +97,15 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.def = 1.0f;
         parameter.ranges.min = 1.0f;
         parameter.ranges.max = 150.0f;
+        break;
+    case paramStereo:
+        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.name       = "Stereo Detection";
+        parameter.symbol     = "stereodet";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
         break;
     case paramGainRed:
         parameter.hints      = kParameterIsOutput;
@@ -147,17 +156,19 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		makeup = 0.0;
 		gainred = 0.0;
 		slewfactor = 1.0;
+		stereodet = 0.0;
 		outlevel = -45.0;
 		break;
 	case 1:
 		attack = 10.0;
-		release = 50.0;
+		release = 10.0;
 		knee = 1.0;
 		ratio = 5.0;
 		thresdb = -18.0;
 		makeup = 6.0;
 		gainred = 0.0;
 		slewfactor = 20.0;
+		stereodet = 1.0;
 		outlevel = -45.0;
 		break;
 	case 2:
@@ -169,6 +180,7 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		makeup = 9.0;
 		gainred = 0.0;
 		slewfactor = 1.0;
+		stereodet = 1.0;
 		outlevel = -45.0;
 		break;
 	}
@@ -203,6 +215,9 @@ float ZamCompX2Plugin::getParameterValue(uint32_t index) const
         break;
     case paramSlew:
         return slewfactor;
+        break;
+    case paramStereo:
+        return stereodet;
         break;
     case paramGainRed:
         return gainred;
@@ -240,6 +255,9 @@ void ZamCompX2Plugin::setParameterValue(uint32_t index, float value)
     case paramSlew:
         slewfactor = value;
         break;
+    case paramStereo:
+        stereodet = value;
+        break;
     case paramGainRed:
         gainred = value;
         break;
@@ -267,7 +285,7 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
         float cdb=0.f;
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
-	int stereo = STEREOLINK_MAX;
+	int stereo = (stereodet < 0.5) ? STEREOLINK_AVERAGE : STEREOLINK_MAX;
 
         int attslew = 0;
         int relslew = 0;
@@ -329,8 +347,8 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                         Ryg = sanitize_denormal(Ryg);
                 }
 
-                attack_coeff = attslew ? exp(-1000.f/((attack + 2.0*(slewfactor - 1)) * srate)) : attack_coeff;
-                release_coeff = relslew ? exp(-1000.f/((release + 2.0*(slewfactor - 1)) * srate)) : release_coeff;
+                attack_coeff = attslew ? exp(-1000.f/((attack + 10.0*(slewfactor - 1)) * srate)) : attack_coeff;
+                release_coeff = relslew ? exp(-1000.f/((release + 10.0*(slewfactor - 1)) * srate)) : release_coeff;
 
                 if (stereo == STEREOLINK_UNCOUPLED) {
                         Lxl = Lxg - Lyg;
