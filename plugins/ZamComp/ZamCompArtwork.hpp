@@ -20,6 +20,16 @@ namespace ZamCompArtwork
     const unsigned int ledyellowWidth    = 11;
     const unsigned int ledyellowHeight   = 11;
 
+    extern const char* toggleoffData;
+    const unsigned int toggleoffDataSize = 1056;
+    const unsigned int toggleoffWidth    = 22;
+    const unsigned int toggleoffHeight   = 12;
+
+    extern const char* toggleonData;
+    const unsigned int toggleonDataSize = 1056;
+    const unsigned int toggleonWidth    = 22;
+    const unsigned int toggleonHeight   = 12;
+
     extern const char* zamcompData;
     const unsigned int zamcompDataSize = 256800;
     const unsigned int zamcompWidth    = 800;

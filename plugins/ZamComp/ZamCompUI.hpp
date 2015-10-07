@@ -1,5 +1,5 @@
 /*
- * ZamComp mono compressor
+ * ZamComp stereo compressor
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -19,7 +19,10 @@
 #define ZAMCOMPUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
+
 #include "ImageKnob.hpp"
+#include "ImageToggle.hpp"
+
 #include "ZamCompArtwork.hpp"
 
 using DGL::Image;
@@ -30,36 +33,36 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamCompUI : public UI,
-		  public ImageKnob::Callback
+                    public ImageKnob::Callback
 {
 public:
-	ZamCompUI();
+    ZamCompUI();
 
 protected:
-	// -------------------------------------------------------------------
-	// DSP Callbacks
+    // -------------------------------------------------------------------
+    // DSP Callbacks
 
-	void parameterChanged(uint32_t index, float value) override;
-	void programLoaded(uint32_t index) override;
+    void parameterChanged(uint32_t index, float value) override;
+    void programLoaded(uint32_t index) override;
 
-	// -------------------------------------------------------------------
-	// Widget Callbacks
+    // -------------------------------------------------------------------
+    // Widget Callbacks
 
-	void imageKnobDragStarted(ImageKnob* knob) override;
-	void imageKnobDragFinished(ImageKnob* knob) override;
-	void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageKnobDragStarted(ImageKnob* knob) override;
+    void imageKnobDragFinished(ImageKnob* knob) override;
+    void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-	void onDisplay() override;
+    void onDisplay() override;
 
 private:
-	Image fImgBackground;
-	ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
-	ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup;
+    Image fImgBackground;
+    ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
+    ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup, fKnobSlew;
 
-	Image fLedRedImg;
-	float fLedRedValue;
-	Image fLedYellowImg;
-	float fLedYellowValue;
+    Image fLedRedImg;
+    float fLedRedValue;
+    Image fLedYellowImg;
+    float fLedYellowValue;
 };
 
 // -----------------------------------------------------------------------

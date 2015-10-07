@@ -27,91 +27,92 @@ START_NAMESPACE_DISTRHO
 class ZamCompPlugin : public Plugin
 {
 public:
-	enum Parameters
-	{
-		paramAttack = 0,
-		paramRelease,
-		paramKnee,
-		paramRatio,
-		paramThresh,
-		paramMakeup,
-		paramGainR,
-		paramOutputLevel,
-		paramCount
-	};
+    enum Parameters
+    {
+        paramAttack = 0,
+        paramRelease,
+        paramKnee,
+        paramRatio,
+        paramThresh,
+        paramMakeup,
+        paramSlew,
+        paramGainRed,
+        paramOutputLevel,
+        paramCount
+    };
 
-	ZamCompPlugin();
+    ZamCompPlugin();
 
 protected:
-	// -------------------------------------------------------------------
-	// Information
+    // -------------------------------------------------------------------
+    // Information
 
-	const char* getLabel() const noexcept override
-	{
-		return "ZamComp";
-	}
+    const char* getLabel() const noexcept override
+    {
+        return "ZamComp";
+    }
 
-	const char* getMaker() const noexcept override
-	{
-		return "Damien Zammit";
-	}
+    const char* getMaker() const noexcept override
+    {
+        return "Damien Zammit";
+    }
 
-	const char* getLicense() const noexcept override
-	{
-		return "GPL v2+";
-	}
+    const char* getLicense() const noexcept override
+    {
+        return "GPL v2+";
+    }
 
-	uint32_t getVersion() const noexcept override
-	{
-		return 0x1000;
-	}
+    uint32_t getVersion() const noexcept override
+    {
+        return 0x1300;
+    }
 
-	int64_t getUniqueId() const noexcept override
-	{
-		return d_cconst('Z', 'C', 'M', 'P');
-	}
+    int64_t getUniqueId() const noexcept override
+    {
+        return d_cconst('Z', 'C', 'M', 'P');
+    }
 
-	// -------------------------------------------------------------------
-	// Init
+    // -------------------------------------------------------------------
+    // Init
 
-	void initParameter(uint32_t index, Parameter& parameter) override;
-	void initProgramName(uint32_t index, String& programName) override;
+    void initParameter(uint32_t index, Parameter& parameter) override;
+    void initProgramName(uint32_t index, String& programName) override;
 
-	// -------------------------------------------------------------------
-	// Internal data
+    // -------------------------------------------------------------------
+    // Internal data
 
-	float getParameterValue(uint32_t index) const override;
-	void setParameterValue(uint32_t index, float value) override;
-	void loadProgram(uint32_t index) override;
+    float getParameterValue(uint32_t index) const override;
+    void  setParameterValue(uint32_t index, float value) override;
+    void  loadProgram(uint32_t index);
 
-	// -------------------------------------------------------------------
-	// Process
+    // -------------------------------------------------------------------
+    // Process
 
 	static inline float
 	sanitize_denormal(float v) {
-		if(!std::isnormal(v))
-			return 0.f;
-		return v;
+	        if(!std::isnormal(v))
+	                return 0.f;
+	        return v;
 	}
 
 	static inline float
 	from_dB(float gdb) {
-		return (exp(gdb/20.f*log(10.f)));
+	        return (exp(gdb/20.f*log(10.f)));
 	}
 
 	static inline float
 	to_dB(float g) {
-		return (20.f*log10(g));
+	        return (20.f*log10(g));
 	}
 
-	void activate() override;
-	void run(const float** inputs, float** outputs, uint32_t frames) override;
+    void activate() override;
+    void run(const float** inputs, float** outputs, uint32_t frames) override;
 
-	// -------------------------------------------------------------------
+    // -------------------------------------------------------------------
 
 private:
-	float attack,release,knee,ratio,thresdb,makeup,gainr,outlevel; //parameters
-	float old_yl, old_y1, old_yg;
+    float attack,release,knee,ratio,thresdb,makeup,gainred,outlevel,slewfactor; //parameters
+    float oldL_yl, oldL_y1, oldL_yg;
 };
 
 // -----------------------------------------------------------------------
