@@ -46,9 +46,9 @@ namespace ZaMultiCompArtwork
     const unsigned int togglesliderHeight   = 13;
 
     extern const char* zamulticompData;
-    const unsigned int zamulticompDataSize = 581400;
-    const unsigned int zamulticompWidth    = 646;
-    const unsigned int zamulticompHeight   = 300;
+    const unsigned int zamulticompDataSize = 714630;
+    const unsigned int zamulticompWidth    = 581;
+    const unsigned int zamulticompHeight   = 410;
 }
 
 #endif // BINARY_ZAMULTICOMPARTWORK_HPP

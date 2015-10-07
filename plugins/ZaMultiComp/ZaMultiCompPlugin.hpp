@@ -1,5 +1,5 @@
 /*
- * ZaMultiComp Plugin
+ * ZaMultiComp multiband compressor
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -15,18 +15,19 @@
  * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
-#ifndef ZAMULTICOMPPLUGIN_HPP_INCLUDED
-#define ZAMULTICOMPPLUGIN_HPP_INCLUDED
-
-#define MAX_FILT 8
-#define MAX_COMP 3
-#define ONEOVERROOT2 0.7071068f
-#define ROOT2 1.4142135f
-#define DANGER 100000.f
+#ifndef ZAMULTICOMPX2PLUGIN_HPP_INCLUDED
+#define ZAMULTICOMPX2PLUGIN_HPP_INCLUDED
 
 #include "DistrhoPlugin.hpp"
+#include <algorithm>
 
 START_NAMESPACE_DISTRHO
+
+#define MAX_FILT 2
+#define MAX_COMP 3
+#define MAX_SAMPLES 480
+#define DANGER 100000.f
+#define EPS 1e-20f
 
 // -----------------------------------------------------------------------
 
@@ -35,11 +36,21 @@ class ZaMultiCompPlugin : public Plugin
 public:
     enum Parameters
     {
-        paramAttack = 0,
-        paramRelease,
-        paramKnee,
-        paramRatio,
-        paramThresh,
+        paramAttack1 = 0,
+        paramAttack2,
+        paramAttack3,
+        paramRelease1,
+        paramRelease2,
+        paramRelease3,
+        paramKnee1,
+        paramKnee2,
+        paramKnee3,
+        paramRatio1,
+        paramRatio2,
+        paramRatio3,
+        paramThresh1,
+        paramThresh2,
+        paramThresh3,
 
         paramMakeup1,
         paramMakeup2,
@@ -62,7 +73,16 @@ public:
 
 	paramGlobalGain,
 	paramOutputLevel,
+	paramOutputLevelLow,
+	paramOutputLevelMed,
+	paramOutputLevelHigh,
         paramCount
+    };
+
+    enum States
+    {
+        stateReadMeter,
+	stateCount
     };
 
     ZaMultiCompPlugin();
@@ -88,19 +108,20 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return 0x1000;
+        return 0x1700;
     }
 
     int64_t getUniqueId() const noexcept override
     {
-        return d_cconst('Z', 'M', 'C', 'P');
+        return d_cconst('Z', 'M', 'M', 'C');
     }
 
     // -------------------------------------------------------------------
     // Init
 
-    void initParameter(uint32_t index, Parameter& parameter) override;
-    void initProgramName(uint32_t index, String& programName) override;
+    void initParameter(uint32_t index, Parameter& parameter) ;
+    void initProgramName(uint32_t index, String& programName) ;
+    void initState(uint32_t, String&, String&) override;
 
     // -------------------------------------------------------------------
     // Internal data
@@ -108,13 +129,14 @@ protected:
     float getParameterValue(uint32_t index) const override;
     void  setParameterValue(uint32_t index, float value) override;
     void  loadProgram(uint32_t index) override;
+    void  setState(const char* key, const char* value) override;
 
     // -------------------------------------------------------------------
     // Process
 
 	static inline float
 	sanitize_denormal(float v) {
-	        if(!std::isnormal(v) || !std::isfinite(v))
+	        if(!std::isnormal(v))
 	                return 0.f;
 	        return v;
 	}
@@ -129,36 +151,46 @@ protected:
 	        return (20.f*log10(g));
 	}
 
-    float run_comp(int k, float in);
-    float run_filter(int i, float in);
-    void set_lp_coeffs(float fc, float q, float sr, int i, float gain);
-    void set_hp_coeffs(float fc, float q, float sr, int i, float gain);
+    void run_comp(int k, float in, float *out);
+    void run_limit(float in, float *out);
+    void run_lr4(int i, float in, float *outlo, float *outhi);
+    void calc_lr4(float f, int i);
 
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
+	void pushsample(float samples[], float sample, int k);
+	float averageabs(float samples[]);
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup[MAX_COMP],globalgain;
-    float gainr[MAX_COMP],toggle[MAX_COMP],xover1,xover2,outlevel,listen[MAX_COMP];
+    float attack[MAX_COMP],release[MAX_COMP],knee[MAX_COMP],ratio[MAX_COMP],thresdb[MAX_COMP],makeup[MAX_COMP],globalgain;
+    float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],max,out,xover1,xover2;
     float old_yl[MAX_COMP], old_y1[MAX_COMP], old_yg[MAX_COMP];
+    float old_ll, old_l1;
+    float limit, outlevel[3];
+    int pos[3];
+    float outlevelold[3][MAX_SAMPLES];
+    bool reset;
     // Crossover filter coefficients
-    float a0[MAX_FILT];
-    float a1[MAX_FILT];
-    float a2[MAX_FILT];
-    float b1[MAX_FILT];
-    float b2[MAX_FILT];
+    float c1[MAX_FILT];
+    float c2[MAX_FILT];
+    float c3[MAX_FILT];
+    float c4[MAX_FILT];
+    float gl[MAX_FILT];
+    float gh[MAX_FILT];
 
     //Crossover filter states
-    float w1[MAX_FILT];
-    float w2[MAX_FILT];
     float z1[MAX_FILT];
     float z2[MAX_FILT];
+    float z3[MAX_FILT];
+    float z4[MAX_FILT];
+    float z5[MAX_FILT];
+    float z6[MAX_FILT];
 };
 
 // -----------------------------------------------------------------------
 
 END_NAMESPACE_DISTRHO
 
-#endif  // ZAMULTICOMP_HPP_INCLUDED
+#endif

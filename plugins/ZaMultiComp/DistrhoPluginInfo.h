@@ -1,5 +1,5 @@
 /*
- * ZaMultiComp  
+ * ZaMultiComp
  * Copyright (C) 2014 Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 
 #define DISTRHO_PLUGIN_WANT_LATENCY  0
 #define DISTRHO_PLUGIN_WANT_PROGRAMS 1
-#define DISTRHO_PLUGIN_WANT_STATE    0
+#define DISTRHO_PLUGIN_WANT_STATE    1
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
