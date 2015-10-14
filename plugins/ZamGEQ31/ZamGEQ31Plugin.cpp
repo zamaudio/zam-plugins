@@ -519,10 +519,16 @@ void ZamGEQ31Plugin::geq(int i, float srate, float g)
 {
 	int mm;
 	float w, omegaB, omegaM, glinear, alpham;
-	const int stack[29] = {	2, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1,
-				1, 1, 1, 2, 3 };
+	// 2dB tolerance
+	//const int stack[29] = {	2, 1, 1, 1, 1, 1, 1, 1,
+	//			1, 1, 1, 1, 1, 1, 1, 1,
+	//			1, 1, 1, 1, 1, 1, 1, 1,
+	//			1, 1, 1, 2, 3 };
+	
+	const int stack[29] = {	16, 14, 10, 4, 4, 4, 4, 4,
+				4, 4, 4, 4, 4, 4, 4, 4,
+				4, 4, 4, 4, 4, 4, 4, 4,
+				4, 4, 10, 14, 16 };
 
 	w = 2. * M_PI / srate;
 	omegaB = w * (omegaU[i] - omegaL[i]);

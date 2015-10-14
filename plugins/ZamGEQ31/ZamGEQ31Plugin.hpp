@@ -138,9 +138,9 @@ protected:
 
     void geq(int i, float srate, float g);
     double run_filter(int i, double in);
-        double omegaL[29], omegaU[29], k[29], v[29], a[29], cm[29][6], a0m[29][6];
+        double omegaL[29], omegaU[29], k[29], v[29], a[29], cm[29][17], a0m[29][17];
 	int m[29];
-	double w11[29][6], w12[29][6], w21[29][6], w22[29][6];
+	double w11[29][17], w12[29][17], w21[29][17], w22[29][17];
     // -------------------------------------------------------------------
 
 private:
