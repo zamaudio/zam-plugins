@@ -686,51 +686,25 @@ void ZamGEQ31Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = getSampleRate();
 	
-	int i;
+	uint32_t i, j;
 	for (i = 0; i < MAX_FILT; i++) {
 		peq(i, srate, freq[i], gain[i], 1./3.);
 	}
 
-        for (uint32_t i = 0; i < frames; i++) {
-                double tmp1, tmp2;
-                double in = inputs[0][i];
-                in = sanitize_denormal(in);
-		tmp1 = tmp2 = 0.;
+	for (i = 0; i < frames; i++) {
+		double tmp, filtered;
+		double in = inputs[0][i];
+		in = sanitize_denormal(in);
+		tmp = in;
 
-                tmp1 = run_filter(0, 0, in);
-		tmp2 = run_filter(1, 0, tmp1);
-		tmp1 = run_filter(2, 0, tmp2);
-		tmp2 = run_filter(3, 0, tmp1);
-		tmp1 = run_filter(4, 0, tmp2);
-		tmp2 = run_filter(5, 0, tmp1);
-		tmp1 = run_filter(6, 0, tmp2);
-		tmp2 = run_filter(7, 0, tmp1);
-		tmp1 = run_filter(8, 0, tmp2);
-		tmp2 = run_filter(9, 0, tmp1);
-		tmp1 = run_filter(10, 0, tmp2);
-		tmp2 = run_filter(11, 0, tmp1);
-		tmp1 = run_filter(12, 0, tmp2);
-		tmp2 = run_filter(13, 0, tmp1);
-		tmp1 = run_filter(14, 0, tmp2);
-		tmp2 = run_filter(15, 0, tmp1);
-		tmp1 = run_filter(16, 0, tmp2);
-		tmp2 = run_filter(17, 0, tmp1);
-		tmp1 = run_filter(18, 0, tmp2);
-		tmp2 = run_filter(19, 0, tmp1);
-		tmp1 = run_filter(20, 0, tmp2);
-		tmp2 = run_filter(21, 0, tmp1);
-		tmp1 = run_filter(22, 0, tmp2);
-		tmp2 = run_filter(23, 0, tmp1);
-		tmp1 = run_filter(24, 0, tmp2);
-		tmp2 = run_filter(25, 0, tmp1);
-		tmp1 = run_filter(26, 0, tmp2);
-		tmp2 = run_filter(27, 0, tmp1);
-		tmp1 = run_filter(28, 0, tmp2);
-		tmp2 = run_filter(29, 0, tmp1);
-		tmp1 = run_filter(30, 0, tmp2);
-
-                outputs[0][i] = inputs[0][i];
-                outputs[0][i] = (float) (tmp1 * from_dB(master));
+		for (j = 0; j < 31; j++) {
+			if (gain[j] != 0.f) {
+				filtered = run_filter(j, 0, tmp);
+				tmp = filtered;
+			}
+		}
+		outputs[0][i] = inputs[0][i];
+		outputs[0][i] = (float) (filtered * from_dB(master));
 	}
 }
 

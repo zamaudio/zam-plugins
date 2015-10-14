@@ -1173,88 +1173,36 @@ void ZamGEQ31X2Plugin::run(const float** inputs, float** outputs, uint32_t frame
 {
 	float srate = getSampleRate();
 	
-	int i;
+	uint32_t i, j;
 	for (i = 0; i < MAX_FILT; i++) {
 		peq(i, 0, srate, freq[i], gain[i][0], 1./3.);
 		peq(i, 1, srate, freq[i], gain[i][1], 1./3.);
 	}
 
-        for (uint32_t i = 0; i < frames; i++) {
-                double tmp1, tmp2, tmp3, tmp4;
-                double inL = inputs[0][i];
-                double inR = inputs[1][i];
-                inL = sanitize_denormal(inL);
-                inR = sanitize_denormal(inR);
-		tmp1 = tmp2 = tmp3 = tmp4 = 0.;
+	for (i = 0; i < frames; i++) {
+		double tmpl, tmpr, filteredL, filteredR;
+		double inL = inputs[0][i];
+		double inR = inputs[1][i];
+		inL = sanitize_denormal(inL);
+		inR = sanitize_denormal(inR);
+		tmpl = inL;
+		tmpr = inR;
 
-                tmp1 = run_filter(0, 0, inL);
-		tmp2 = run_filter(1, 0, tmp1);
-		tmp1 = run_filter(2, 0, tmp2);
-		tmp2 = run_filter(3, 0, tmp1);
-		tmp1 = run_filter(4, 0, tmp2);
-		tmp2 = run_filter(5, 0, tmp1);
-		tmp1 = run_filter(6, 0, tmp2);
-		tmp2 = run_filter(7, 0, tmp1);
-		tmp1 = run_filter(8, 0, tmp2);
-		tmp2 = run_filter(9, 0, tmp1);
-		tmp1 = run_filter(10, 0, tmp2);
-		tmp2 = run_filter(11, 0, tmp1);
-		tmp1 = run_filter(12, 0, tmp2);
-		tmp2 = run_filter(13, 0, tmp1);
-		tmp1 = run_filter(14, 0, tmp2);
-		tmp2 = run_filter(15, 0, tmp1);
-		tmp1 = run_filter(16, 0, tmp2);
-		tmp2 = run_filter(17, 0, tmp1);
-		tmp1 = run_filter(18, 0, tmp2);
-		tmp2 = run_filter(19, 0, tmp1);
-		tmp1 = run_filter(20, 0, tmp2);
-		tmp2 = run_filter(21, 0, tmp1);
-		tmp1 = run_filter(22, 0, tmp2);
-		tmp2 = run_filter(23, 0, tmp1);
-		tmp1 = run_filter(24, 0, tmp2);
-		tmp2 = run_filter(25, 0, tmp1);
-		tmp1 = run_filter(26, 0, tmp2);
-		tmp2 = run_filter(27, 0, tmp1);
-		tmp1 = run_filter(28, 0, tmp2);
-		tmp2 = run_filter(29, 0, tmp1);
-		tmp1 = run_filter(30, 0, tmp2);
-
-                tmp3 = run_filter(0, 1, inR);
-		tmp4 = run_filter(1, 1, tmp3);
-		tmp3 = run_filter(2, 1, tmp4);
-		tmp4 = run_filter(3, 1, tmp3);
-		tmp3 = run_filter(4, 1, tmp4);
-		tmp4 = run_filter(5, 1, tmp3);
-		tmp3 = run_filter(6, 1, tmp4);
-		tmp4 = run_filter(7, 1, tmp3);
-		tmp3 = run_filter(8, 1, tmp4);
-		tmp4 = run_filter(9, 1, tmp3);
-		tmp3 = run_filter(10, 1, tmp4);
-		tmp4 = run_filter(11, 1, tmp3);
-		tmp3 = run_filter(12, 1, tmp4);
-		tmp4 = run_filter(13, 1, tmp3);
-		tmp3 = run_filter(14, 1, tmp4);
-		tmp4 = run_filter(15, 1, tmp3);
-		tmp3 = run_filter(16, 1, tmp4);
-		tmp4 = run_filter(17, 1, tmp3);
-		tmp3 = run_filter(18, 1, tmp4);
-		tmp4 = run_filter(19, 1, tmp3);
-		tmp3 = run_filter(20, 1, tmp4);
-		tmp4 = run_filter(21, 1, tmp3);
-		tmp3 = run_filter(22, 1, tmp4);
-		tmp4 = run_filter(23, 1, tmp3);
-		tmp3 = run_filter(24, 1, tmp4);
-		tmp4 = run_filter(25, 1, tmp3);
-		tmp3 = run_filter(26, 1, tmp4);
-		tmp4 = run_filter(27, 1, tmp3);
-		tmp3 = run_filter(28, 1, tmp4);
-		tmp4 = run_filter(29, 1, tmp3);
-		tmp3 = run_filter(30, 1, tmp4);
+		for (j = 0; j < 31; j++) {
+			if (gain[j][0] != 0.f) {
+				filteredL = run_filter(j, 0, tmpl);
+				tmpl = filteredL;
+			}
+			if (gain[j][1] != 0.f) {
+				filteredR = run_filter(j, 1, tmpr);
+				tmpr = filteredR;
+			}
+		}
 
 		outputs[0][i] = inputs[0][i];
-                outputs[0][i] = (float) (tmp1 * from_dB(master));
+		outputs[0][i] = (float) (filteredL * from_dB(master));
 		outputs[1][i] = inputs[1][i];
-                outputs[1][i] = (float) (tmp3 * from_dB(master));
+		outputs[1][i] = (float) (filteredR * from_dB(master));
 	}
 }
 
