@@ -16,9 +16,9 @@ namespace ZamGEQ31Artwork
     const unsigned int slidereqHeight   = 19;
 
     extern const char* zamgeq31Data;
-    const unsigned int zamgeq31DataSize = 323190;
-    const unsigned int zamgeq31Width    = 630;
-    const unsigned int zamgeq31Height   = 171;
+    const unsigned int zamgeq31DataSize = 300900;
+    const unsigned int zamgeq31Width    = 590;
+    const unsigned int zamgeq31Height   = 170;
 }
 
 #endif // BINARY_ZAMGEQ31ARTWORK_HPP

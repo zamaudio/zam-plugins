@@ -367,28 +367,6 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain29->setCallback(this);
     fSliderGain29->setInverted(true);
 
-    masterPosStart.setX(i+29*j);
-    masterPosEnd.setX(i+29*j);
-
-    fSliderGain30 = new ImageSlider(this, sliderImage);
-    fSliderGain30->setStartPos(masterPosStart);
-    fSliderGain30->setEndPos(masterPosEnd);
-    fSliderGain30->setRange(-12.f,12.f);
-    fSliderGain30->setValue(0.f);
-    fSliderGain30->setCallback(this);
-    fSliderGain30->setInverted(true);
-
-    masterPosStart.setX(i+30*j);
-    masterPosEnd.setX(i+30*j);
-
-    fSliderGain31 = new ImageSlider(this, sliderImage);
-    fSliderGain31->setStartPos(masterPosStart);
-    fSliderGain31->setEndPos(masterPosEnd);
-    fSliderGain31->setRange(-12.f,12.f);
-    fSliderGain31->setValue(0.f);
-    fSliderGain31->setCallback(this);
-    fSliderGain31->setInverted(true);
-
     // set default values
     programLoaded(0);
 }
@@ -490,12 +468,6 @@ void ZamGEQ31UI::parameterChanged(uint32_t index, float value)
     case ZamGEQ31Plugin::paramGain29:
         fSliderGain29->setValue(value);
         break;
-    case ZamGEQ31Plugin::paramGain30:
-        fSliderGain30->setValue(value);
-        break;
-    case ZamGEQ31Plugin::paramGain31:
-        fSliderGain31->setValue(value);
-        break;
     }
 }
 
@@ -536,8 +508,6 @@ void ZamGEQ31UI::programLoaded(uint32_t index)
     fSliderGain27->setValue(0.0f);
     fSliderGain28->setValue(0.0f);
     fSliderGain29->setValue(0.0f);
-    fSliderGain30->setValue(0.0f);
-    fSliderGain31->setValue(0.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -621,10 +591,6 @@ void ZamGEQ31UI::imageSliderDragStarted(ImageSlider* slider)
         editParameter(ZamGEQ31Plugin::paramGain28, true);
     else if (slider == fSliderGain29)
         editParameter(ZamGEQ31Plugin::paramGain29, true);
-    else if (slider == fSliderGain30)
-        editParameter(ZamGEQ31Plugin::paramGain30, true);
-    else if (slider == fSliderGain31)
-        editParameter(ZamGEQ31Plugin::paramGain31, true);
 }
 
 void ZamGEQ31UI::imageSliderDragFinished(ImageSlider* slider)
@@ -687,10 +653,6 @@ void ZamGEQ31UI::imageSliderDragFinished(ImageSlider* slider)
         editParameter(ZamGEQ31Plugin::paramGain28, false);
     else if (slider == fSliderGain29)
         editParameter(ZamGEQ31Plugin::paramGain29, false);
-    else if (slider == fSliderGain30)
-        editParameter(ZamGEQ31Plugin::paramGain30, false);
-    else if (slider == fSliderGain31)
-        editParameter(ZamGEQ31Plugin::paramGain31, false);
 }
 
 void ZamGEQ31UI::imageSliderValueChanged(ImageSlider* slider, float value)
@@ -753,10 +715,6 @@ void ZamGEQ31UI::imageSliderValueChanged(ImageSlider* slider, float value)
         setParameterValue(ZamGEQ31Plugin::paramGain28, value);
     else if (slider == fSliderGain29)
         setParameterValue(ZamGEQ31Plugin::paramGain29, value);
-    else if (slider == fSliderGain30)
-        setParameterValue(ZamGEQ31Plugin::paramGain30, value);
-    else if (slider == fSliderGain31)
-        setParameterValue(ZamGEQ31Plugin::paramGain31, value);
 }
 
 void ZamGEQ31UI::onDisplay()

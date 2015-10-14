@@ -106,8 +106,6 @@ private:
     ScopedPointer<ImageSlider> fSliderGain27;
     ScopedPointer<ImageSlider> fSliderGain28;
     ScopedPointer<ImageSlider> fSliderGain29;
-    ScopedPointer<ImageSlider> fSliderGain30;
-    ScopedPointer<ImageSlider> fSliderGain31;
 };
 
 // -----------------------------------------------------------------------

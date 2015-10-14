@@ -1,5 +1,5 @@
 /*
- * ZamGEQ31 31 band graphic equaliser
+ * ZamGEQ31 1/3 octave band graphic equaliser
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain1:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "20Hz";
+        parameter.name       = "32Hz";
         parameter.symbol     = "band1";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -55,7 +55,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain2:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "25Hz";
+        parameter.name       = "40Hz";
         parameter.symbol     = "band2";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -64,7 +64,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain3:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "31.5Hz";
+        parameter.name       = "50Hz";
         parameter.symbol     = "band3";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -73,7 +73,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain4:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "40Hz";
+        parameter.name       = "63Hz";
         parameter.symbol     = "band4";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -82,7 +82,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain5:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "50Hz";
+        parameter.name       = "79Hz";
         parameter.symbol     = "band5";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -91,7 +91,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain6:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "63Hz";
+        parameter.name       = "100Hz";
         parameter.symbol     = "band6";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -100,7 +100,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain7:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "80Hz";
+        parameter.name       = "126Hz";
         parameter.symbol     = "band7";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -109,7 +109,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain8:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "100Hz";
+        parameter.name       = "158Hz";
         parameter.symbol     = "band8";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -118,7 +118,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain9:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "125Hz";
+        parameter.name       = "200Hz";
         parameter.symbol     = "band9";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -127,7 +127,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain10:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "160Hz";
+        parameter.name       = "251Hz";
         parameter.symbol     = "band10";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -136,7 +136,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain11:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "200Hz";
+        parameter.name       = "316Hz";
         parameter.symbol     = "band11";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -145,7 +145,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain12:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "250Hz";
+        parameter.name       = "398Hz";
         parameter.symbol     = "band12";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -154,7 +154,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain13:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "315Hz";
+        parameter.name       = "501Hz";
         parameter.symbol     = "band13";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -163,7 +163,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain14:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "400Hz";
+        parameter.name       = "631Hz";
         parameter.symbol     = "band14";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -172,7 +172,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain15:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "500Hz";
+        parameter.name       = "794Hz";
         parameter.symbol     = "band15";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -181,7 +181,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain16:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "630Hz";
+        parameter.name       = "999Hz";
         parameter.symbol     = "band16";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -190,7 +190,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain17:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "800Hz";
+        parameter.name       = "1257Hz";
         parameter.symbol     = "band17";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -199,7 +199,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain18:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "1000Hz";
+        parameter.name       = "1584Hz";
         parameter.symbol     = "band18";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -208,7 +208,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain19:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "1250Hz";
+        parameter.name       = "1997Hz";
         parameter.symbol     = "band19";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -217,7 +217,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain20:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "1600Hz";
+        parameter.name       = "2514Hz";
         parameter.symbol     = "band20";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -226,7 +226,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain21:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "2000Hz";
+        parameter.name       = "3165Hz";
         parameter.symbol     = "band21";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -235,7 +235,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain22:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "2500Hz";
+        parameter.name       = "3986Hz";
         parameter.symbol     = "band22";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -244,7 +244,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain23:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "3150Hz";
+        parameter.name       = "5017Hz";
         parameter.symbol     = "band23";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -253,7 +253,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain24:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "4000Hz";
+        parameter.name       = "6318Hz";
         parameter.symbol     = "band24";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -262,7 +262,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain25:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "5000Hz";
+        parameter.name       = "7963Hz";
         parameter.symbol     = "band25";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -271,7 +271,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain26:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "6300Hz";
+        parameter.name       = "10032Hz";
         parameter.symbol     = "band26";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -280,7 +280,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain27:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "8000Hz";
+        parameter.name       = "12662Hz";
         parameter.symbol     = "band27";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -289,7 +289,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain28:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "10kHz";
+        parameter.name       = "16081Hz";
         parameter.symbol     = "band28";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
@@ -298,26 +298,8 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain29:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "12.5kHz";
+        parameter.name       = "20801Hz";
         parameter.symbol     = "band29";
-        parameter.unit       = "dB";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -12.0f;
-        parameter.ranges.max = 12.0f;
-        break;
-    case paramGain30:
-        parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "16kHz";
-        parameter.symbol     = "band30";
-        parameter.unit       = "dB";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -12.0f;
-        parameter.ranges.max = 12.0f;
-        break;
-    case paramGain31:
-        parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "20kHz";
-        parameter.symbol     = "band31";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = -12.0f;
@@ -431,12 +413,6 @@ float ZamGEQ31Plugin::getParameterValue(uint32_t index) const
     case paramGain29:
         return gain[28];
         break;
-    case paramGain30:
-        return gain[29];
-        break;
-    case paramGain31:
-        return gain[30];
-        break;
     default:
         return 0.0f;
     }
@@ -536,58 +512,73 @@ void ZamGEQ31Plugin::setParameterValue(uint32_t index, float value)
     case paramGain29:
         gain[28] = value;
         break;
-    case paramGain30:
-        gain[29] = value;
-        break;
-    case paramGain31:
-        gain[30] = value;
-        break;
     }
 }
 
-void ZamGEQ31Plugin::peq(int i, float srate, float fc, float g, float)
+void ZamGEQ31Plugin::geq(int i, float srate, float g)
 {
-        float k, v0, q;
+	int mm;
+	float w, omegaB, omegaM, glinear, alpham;
+	const int stack[29] = {	2, 1, 1, 1, 1, 1, 1, 1,
+				1, 1, 1, 1, 1, 1, 1, 1,
+				1, 1, 1, 1, 1, 1, 1, 1,
+				1, 1, 1, 2, 3 };
 
-        k = tanf(M_PI * fc / srate);
-        v0 = powf(10., g / 20.); 
-        q = 4.318473;
-	//q = powf(2., bw/2.)/(powf(2., bw) - 1.); //q from octave bw
+	w = 2. * M_PI / srate;
+	omegaB = w * (omegaU[i] - omegaL[i]);
+	omegaM = 2. * atan(sqrt(tan(w*omegaU[i]/2.) * tan(w*omegaL[i]/2.)));
 
-        if (g < 0.f) {
-                // cut
-                float denom = 1. + k/(v0*q) + k*k;
-                b0[0][i] = (1. + k/q + k*k) / denom;
-                b1[0][i] = 2. * (k*k - 1.) / denom;
-                b2[0][i] = (1. - k/q + k*k) / denom;
-                a1[0][i] = b1[0][i];
-                a2[0][i] = (1. - k/(v0*q) + k*k) / denom;
-        } else {
-                // boost
-                float denom = 1. + k/q + k*k;
-                b0[0][i] = (1. + k*v0/q + k*k) / denom;
-                b1[0][i] = 2. * (k*k - 1.) / denom;
-                b2[0][i] = (1. - k*v0/q + k*k) / denom;
-                a1[0][i] = b1[0][i];
-                a2[0][i] = (1. - k/q + k*k) / denom;
-        }
+	glinear = from_dB(g);
+	m[i] = 2. * stack[i];
+	
+	k[i] = (1. / pow(glinear, (1. / (2. * m[i])))) * tan(omegaB / 2.);
+	v[i] = pow(glinear, (1. / m[i])) - 1;
+	a[i] = cos(omegaM);
+
+	for (mm = 1; mm <= m[i] / 2; mm++) {
+		alpham = (0.5 - (2. * mm - 1) / (2. * m[i])) * M_PI;
+		cm[i][mm] = cos(alpham);
+		a0m[i][mm] = 1. / (1. + 2. * k[i]*cm[i][mm] + k[i]*k[i]);
+	}
 }
 
-double ZamGEQ31Plugin::run_filter(int i, int ch, double in)
+double ZamGEQ31Plugin::run_filter(int i, double in)
 {
-        double out;
+	int j;
+        double out, a1out, a2out, v1, v2;
         in = sanitize_denormal(in);
-        out = in * b0[ch][i]    + x1[ch][i] * b1[ch][i]
-                                + x2[ch][i] * b2[ch][i]
-                                - y1[ch][i] * a1[ch][i]
-                                - y2[ch][i] * a2[ch][i] + 1e-20f;
-        out = sanitize_denormal(out);
-        x2[ch][i] = sanitize_denormal(x1[ch][i]);
-        y2[ch][i] = sanitize_denormal(y1[ch][i]);
-        x1[ch][i] = in;
-        y1[ch][i] = out;
+	a1out = 0.;
+	a2out = 0.;
+	v1 = v2 = 0.;
+	out = in;
 
-        return out;
+	// higher order
+	for (j = 1; j <= m[i] / 2; j++) {
+
+		// allpass 1
+		a1out = a[i]*(w11[i][j] + a[i]*w12[i][j]) - w12[i][j];
+
+		// allpass 2
+		a2out = a[i]*(w21[i][j] + a[i]*w22[i][j]) - w22[i][j];
+
+		// intermediate values
+		v1 = (a2out - 2. * a1out) + k[i]*(2. * (-cm[i][j]) * a2out +
+			k[i]*(2. * a1out + a2out));
+		v2 = a2out + 2. * a1out;
+
+		// 4th order output section
+		out = in + v[i] * 2. * (-cm[i][j])*(-a0m[i][j]*(k[i]*in - v1) + a2out) +
+			v[i]*(2. + v[i])*k[i]*(a0m[i][j]*(k[i]*in - v1) + v2);
+		
+		// update state
+		w12[i][j] = w11[i][j] + a[i]*w12[i][j];
+		w11[i][j] = a0m[i][j]*(k[i]*in - v1);
+		w22[i][j] = w21[i][j] + a[i]*w22[i][j];
+		w21[i][j] = a1out;
+		
+		in = out;
+	}
+	return out;
 }
 
 void ZamGEQ31Plugin::loadProgram(uint32_t index)
@@ -597,45 +588,74 @@ void ZamGEQ31Plugin::loadProgram(uint32_t index)
 
     int i;
     /* Default parameter values */
-    for (i = 0; i < MAX_FILT; i++) {
+    for (i = 0; i < 29; i++) {
     	gain[i] = 0.0f;
     }
 
-    freq[0] = 20.;
-    freq[1] = 25.;
-    freq[2] = 31.5;
-    freq[3] = 40.;
-    freq[4] = 50.;
-    freq[5] = 63.;
-    freq[6] = 80.;
-    freq[7] = 100.;
-    freq[8] = 125.;
-    freq[9] = 160.;
-    freq[10] = 200.;
-    freq[11] = 250.;
-    freq[12] = 315.;
-    freq[13] = 400.;
-    freq[14] = 500.;
-    freq[15] = 630.;
-    freq[16] = 800.;
-    freq[17] = 1000.;
-    freq[18] = 1250.;
-    freq[19] = 1600.;
-    freq[20] = 2000.;
-    freq[21] = 2500.;
-    freq[22] = 3150.;
-    freq[23] = 4000.;
-    freq[24] = 5000.;
-    freq[25] = 6300.;
-    freq[26] = 8000.;
-    freq[27] = 10000.;
-    freq[28] = 12500.;
-    freq[29] = 16000.;
-    freq[30] = 20000.;
+    omegaL[0] = 28.2;
+    omegaL[1] = 35.5;
+    omegaL[2] = 44.7;
+    omegaL[3] = 56.2;
+    omegaL[4] = 70.8;
+    omegaL[5] = 89.1;
+    omegaL[6] = 112.;
+    omegaL[7] = 141.;
+    omegaL[8] = 178.;
+    omegaL[9] = 224.;
+    omegaL[10] = 282.;
+    omegaL[11] = 355.;
+    omegaL[12] = 447.;
+    omegaL[13] = 562.;
+    omegaL[14] = 708.;
+    omegaL[15] = 891.;
+    omegaL[16] = 1120.;
+    omegaL[17] = 1410.;
+    omegaL[18] = 1780.;
+    omegaL[19] = 2240.;
+    omegaL[20] = 2820.;
+    omegaL[21] = 3550.;
+    omegaL[22] = 4470.;
+    omegaL[23] = 5620.;
+    omegaL[24] = 7080.;
+    omegaL[25] = 8910.;
+    omegaL[26] = 11200.;
+    omegaL[27] = 14100.;
+    omegaL[28] = 17800.;
+
+    omegaU[0] = 35.5;
+    omegaU[1] = 44.7;
+    omegaU[2] = 56.2;
+    omegaU[3] = 70.8;
+    omegaU[4] = 89.1;
+    omegaU[5] = 112.;
+    omegaU[6] = 141.;
+    omegaU[7] = 178.;
+    omegaU[8] = 224.;
+    omegaU[9] = 282.;
+    omegaU[10] = 355.;
+    omegaU[11] = 447.;
+    omegaU[12] = 562.;
+    omegaU[13] = 708.;
+    omegaU[14] = 891.;
+    omegaU[15] = 1120.;
+    omegaU[16] = 1410.;
+    omegaU[17] = 1780.;
+    omegaU[18] = 2240.;
+    omegaU[19] = 2820.;
+    omegaU[20] = 3550.;
+    omegaU[21] = 4470.;
+    omegaU[22] = 5620.;
+    omegaU[23] = 7080.;
+    omegaU[24] = 8910.;
+    omegaU[25] = 11200.;
+    omegaU[26] = 14100.;
+    omegaU[27] = 17800.;
+    omegaU[28] = 22400.;
+
     master = 0.f;
     float srate = getSampleRate();
-    for (int i=0; i < MAX_FILT; ++i) {
-    	peq(i, srate, freq[i], 0., 1./3.);
+    for (i = 0; i < 29; ++i) {
+        geq(i, srate, 0.);
     }
 
     /* reset filter values */
@@ -647,48 +667,25 @@ void ZamGEQ31Plugin::loadProgram(uint32_t index)
 
 void ZamGEQ31Plugin::activate()
 {
-        int i;
-	for (i = 0; i < MAX_FILT; ++i) {
-		x1[0][i] = x2[0][i] = 0.f;
-		y1[0][i] = y2[0][i] = 0.f;
-		a1[0][i] = a2[0][i] = 0.f;
-		b0[0][i] = b1[0][i] = b2[0][i] = 0.f;
+    int i, j;
+    for (i = 0; i < 29; i++) {
+        for (j = 0; j < 6; j++) {
+            w11[i][j] = 0.;
+            w12[i][j] = 0.;
+            w21[i][j] = 0.;
+            w22[i][j] = 0.;
         }
+    }
+
 }
-
-/*
-void ZamGEQ31Plugin::geq31(int i, int ch, float srate, float fc, float q)
-{
-	double t0;
-
-	t0 = 2.*M_PI*fc/srate;
-	b[ch][i] = (q - t0*0.5)/(2.*q+t0);
-	a[ch][i] = (0.5 - b[ch][i])*0.5;
-	g[ch][i] = (0.5 + b[ch][i])*cos(t0);
-}
-
-double ZamGEQ31Plugin::run_filter(int i, int ch, double in)
-{
-	double out;
-	in = sanitize_denormal(in);
-	out = 2.*(a[ch][i]*(in - x2[ch][i]) + g[ch][i]*y1[ch][i] - b[ch][i]*y2[ch][i]) + 1e-20f;
-	out = sanitize_denormal(out);
-	x2[ch][i] = sanitize_denormal(x1[ch][i]);
-	y2[ch][i] = sanitize_denormal(y1[ch][i]);
-	x1[ch][i] = in;
-	y1[ch][i] = out;
-
-	return out;
-}
-*/
 
 void ZamGEQ31Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = getSampleRate();
 	
 	uint32_t i, j;
-	for (i = 0; i < MAX_FILT; i++) {
-		peq(i, srate, freq[i], gain[i], 1./3.);
+	for (i = 0; i < 29; i++) {
+		geq(i, srate, gain[i]);
 	}
 
 	for (i = 0; i < frames; i++) {
@@ -698,9 +695,9 @@ void ZamGEQ31Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 		tmp = in;
 		filtered = tmp;
 
-		for (j = 0; j < 31; j++) {
+		for (j = 0; j < 29; j++) {
 			if (gain[j] != 0.f) {
-				filtered = run_filter(j, 0, tmp);
+				filtered = run_filter(j, tmp);
 				tmp = filtered;
 			}
 		}

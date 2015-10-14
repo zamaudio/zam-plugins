@@ -61,8 +61,6 @@ public:
         paramGain27,
         paramGain28,
         paramGain29,
-        paramGain30,
-        paramGain31,
         paramCount
     };
 
@@ -138,15 +136,15 @@ protected:
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
-    void peq(int i, float srate, float fc, float g, float bw);
-    double run_filter(int i, int ch, double in);
-        double x1[1][MAX_FILT], x2[1][MAX_FILT], y1[1][MAX_FILT], y2[1][MAX_FILT];
-        double a1[1][MAX_FILT], a2[1][MAX_FILT];
-	double b0[1][MAX_FILT], b1[1][MAX_FILT], b2[1][MAX_FILT];
+    void geq(int i, float srate, float g);
+    double run_filter(int i, double in);
+        double omegaL[29], omegaU[29], k[29], v[29], a[29], cm[29][6], a0m[29][6];
+	int m[29];
+	double w11[29][6], w12[29][6], w21[29][6], w22[29][6];
     // -------------------------------------------------------------------
 
 private:
-    float gain[MAX_FILT], freq[MAX_FILT], bw[MAX_FILT], master; //parameters
+    float gain[29], master; //parameters
 };
 
 // -----------------------------------------------------------------------
