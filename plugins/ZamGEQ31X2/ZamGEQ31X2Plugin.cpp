@@ -1187,6 +1187,8 @@ void ZamGEQ31X2Plugin::run(const float** inputs, float** outputs, uint32_t frame
 		inR = sanitize_denormal(inR);
 		tmpl = inL;
 		tmpr = inR;
+		filteredL = tmpl;
+		filteredR = tmpr;
 
 		for (j = 0; j < 31; j++) {
 			if (gain[j][0] != 0.f) {

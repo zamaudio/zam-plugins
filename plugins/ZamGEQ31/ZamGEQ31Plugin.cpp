@@ -696,6 +696,7 @@ void ZamGEQ31Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 		double in = inputs[0][i];
 		in = sanitize_denormal(in);
 		tmp = in;
+		filtered = tmp;
 
 		for (j = 0; j < 31; j++) {
 			if (gain[j] != 0.f) {
