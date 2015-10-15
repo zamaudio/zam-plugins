@@ -662,6 +662,7 @@ void ZamGEQ31Plugin::loadProgram(uint32_t index)
     float srate = getSampleRate();
     for (i = 0; i < 29; ++i) {
         geq(i, srate, 0.);
+        gainold[i] = 0.;
     }
 
     /* reset filter values */
@@ -691,7 +692,10 @@ void ZamGEQ31Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 	
 	uint32_t i, j;
 	for (i = 0; i < 29; i++) {
-		geq(i, srate, gain[i]);
+		if (gain[i] != gainold[i]) {
+			geq(i, srate, gain[i]);
+			gainold[i] = gain[i];
+		}
 	}
 
 	for (i = 0; i < frames; i++) {
