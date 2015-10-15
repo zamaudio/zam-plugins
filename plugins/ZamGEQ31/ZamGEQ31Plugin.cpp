@@ -675,7 +675,7 @@ void ZamGEQ31Plugin::activate()
 {
     int i, j;
     for (i = 0; i < 29; i++) {
-        for (j = 0; j < 6; j++) {
+        for (j = 0; j < 17; j++) {
             w11[i][j] = 0.;
             w12[i][j] = 0.;
             w21[i][j] = 0.;
