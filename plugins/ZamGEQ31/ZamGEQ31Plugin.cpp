@@ -525,10 +525,11 @@ void ZamGEQ31Plugin::geq(int i, float srate, float g)
 	//			1, 1, 1, 1, 1, 1, 1, 1,
 	//			1, 1, 1, 2, 3 };
 	
-	const int stack[29] = {	16, 14, 10, 4, 4, 4, 4, 4,
-				4, 4, 4, 4, 4, 4, 4, 4,
-				4, 4, 4, 4, 4, 4, 4, 4,
-				4, 4, 10, 14, 16 };
+	// 0.15dB tolerance
+	const int stack[29] = {	8, 8, 8, 8, 8, 8, 9, 9,
+				9, 9, 9, 9, 9, 9, 9, 9,
+				9, 9, 9, 9, 9, 9, 9, 10,
+				11, 12, 15, 20, 20 };
 
 	w = 2. * M_PI / srate;
 	omegaB = w * (omegaU[i] - omegaL[i]);
@@ -676,7 +677,7 @@ void ZamGEQ31Plugin::activate()
 {
     int i, j;
     for (i = 0; i < 29; i++) {
-        for (j = 0; j < 17; j++) {
+        for (j = 0; j < 21; j++) {
             w11[i][j] = 0.;
             w12[i][j] = 0.;
             w21[i][j] = 0.;
