@@ -18,3 +18,12 @@
 
 3.5 Bugfixes and tweaks
 	- OSX port working
+
+3.6 New plugins and bugfixes
+	- DPF as a submodule
+	- ZamGate
+	- ZamHead
+	- Finer controls on multibands
+	- Various bugfixes
+	- Key events pass through to host
+
