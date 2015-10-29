@@ -165,11 +165,15 @@ void ZaMaximX2Plugin::activate()
     int i;
     gainred = 0.0f;
     outlevel = -45.0f;
-    leftpos = rightpos = 0;
     for (i = 0; i < MAX_SAMPLES; i++) {
-    	leftsamples[i] = rightsamples[i] = 0.f;
+    	cn[0][i] = z[0][i] = emaxn[0][i] = 0.f;
+    	cn[1][i] = z[1][i] = emaxn[1][i] = 0.f;
     }
-    oldL_yl = oldL_y1 = oldR_yl = oldR_y1 = oldL_yg = oldR_yg = 0.f;
+    posz[0] = posz[1] = 0;
+    pose[0] = pose[1] = 0;
+    posc[0] = posc[1] = 0;
+    emax_old[0] = emax_old[1] = 0.f;
+    eavg_old[0] = eavg_old[1] = 0.f;
 }
 
 void ZaMaximX2Plugin::deactivate()
@@ -203,108 +207,124 @@ void ZaMaximX2Plugin::pushsample(float in[], float sample, int *pos)
 	in[*pos] = sample;
 }
 
-float ZaMaximX2Plugin::rmsdb(float in[])
+float ZaMaximX2Plugin::getoldsample(float in[], int pos)
+{
+	int p = pos - 1;
+	if (p < 0) {
+		p = MAX_SAMPLES;
+	}
+	return in[p];
+}
+
+float ZaMaximX2Plugin::avgall(float in[])
 {
 	int i;
-	float rms = 0.f;
+	float avg = 0.f;
 	for (i = 0; i < MAX_SAMPLES; i++) {
-		rms += in[i] * in[i];
+		avg += in[i];
 	}
-	rms = sqrt(rms/MAX_SAMPLES);
-	return to_dB(rms);
+	avg = avg / (float)(MAX_SAMPLES);
+	return avg;
+}
+
+float ZaMaximX2Plugin::maxsample(float in[])
+{
+	int i;
+	float max = 0.f;
+	for (i = 0; i < MAX_SAMPLES; i++) {
+		if (in[i] > max) {
+			max = in[i];
+		}
+	}
+	return max;
 }
 
 void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = getSampleRate();
-	float width = 0.01;
-        float cdb=0.f;
-        float attack_coeff = exp(-1000.f/(0.01 * srate));
-        float release_coeff = exp(-1000.f/(release * srate));
-
-	float max = 0.f;
-	float lgaininp = 0.f;
-	float rgaininp = 0.f;
-	float Lgain = 1.f;
-        float Rgain = 1.f;
-        float Lxg, Lxl, Lyg, Lyl, Ly1;
-        float Rxg, Rxl, Ryg, Ryl, Ry1;
-        float checkwidth = 0.f;
 	uint32_t i;
+	float N = (float)MAX_SAMPLES;
+	float M = (float)MAX_SAMPLES;
+	float absx[2];
+	float c[2];
+	float xmax[2];
+	float emax[2];
+	float eavg[2];
+	float g[2];
+	float att = 0.2;
+	float rel = 0.01;
+	float a = 0.;
+	float beta = 0.;
+	float aatt = 1. - exp(log(att / (1.+att)) / (N + 1.));
+	float arel = 1. - exp(log(rel / (1.+rel)) / (N + 1.));
+	float beta_rel = 0.f;
+	float beta_att = 0.f;
+	for (i = 0; i < M; i++) {
+		beta_att += powf(1. - aatt, N + 1. - i);
+		beta_rel += powf(1. - arel, N + 1. - i);
+	}
+	beta_att /= M;
+	beta_rel /= M;
 
-        for (i = 0; i < frames; i++) {
-		Lyg = Ryg = 0.f;
-                Lxg = to_dB(fabsf(inputs[0][i]));
-		Rxg = to_dB(fabsf(inputs[1][i]));
-		Lxg = sanitize_denormal(Lxg);
-                Rxg = sanitize_denormal(Rxg);
+	float maxx;
+	int n;
 
-                Lyg = Lxg - (Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
-                Ryg = Rxg - (Rxg-thresdb+width/2.f)*(Rxg-thresdb+width/2.f)/(2.f*width);
+	for (i = 0; i < frames; i++) {
+		absx[0] = fabsf(inputs[0][i]);
+		xmax[0] = maxsample(&cn[0][0]);
+		
+		absx[1] = fabsf(inputs[1][i]);
+		xmax[1] = maxsample(&cn[1][0]);
+		
+		maxx = MAX(xmax[0], xmax[1]);
 
-		checkwidth = 2.f*fabs(Lxg-thresdb);
-                if (2.f*(Lxg-thresdb) < -width) {
-                        Lyg = Lxg;
-                } else if (checkwidth <= width) {
-			Lyg = thresdb;
-                } else if (2.f*(Lxg-thresdb) > width) {
-                        Lyg = thresdb;
-                }
+		if ((maxx > emax_old[0]) ||  (maxx > emax_old[1])) {
+			a = aatt;
+			beta = beta_att;
+		} else {
+			a = arel;
+			beta = beta_rel;
+		}
+		
+		c[0] = MAX(absx[0], (absx[0]-beta*emax_old[0]) / (1. - beta));
+		emax[0] = a*xmax[0] + (1. - a)*emax_old[0];
+		eavg[0] = avgall(&emaxn[0][0]);
+		if (eavg[0] == 0.f) {
+			g[0] = 1.;
+		} else {
+			g[0] = MIN(1., from_dB(thresdb) / eavg[0]);
+		}
+		c[1] = MAX(absx[1], (absx[1]-beta*emax_old[1]) / (1. - beta));
+		emax[1] = a*xmax[1] + (1. - a)*emax_old[1];
+		eavg[1] = avgall(&emaxn[1][0]);
+		if (eavg[1] == 0.f) {
+			g[1] = 1.;
+		} else {
+			g[1] = MIN(1., from_dB(thresdb) / eavg[1]);
+		}
 
-		checkwidth = 2.f*fabs(Rxg-thresdb);
-                if (2.f*(Rxg-thresdb) < -width) {
-                        Ryg = Rxg;
-                } else if (checkwidth <= width) {
-			Ryg = thresdb;
-                } else if (2.f*(Rxg-thresdb) > width) {
-                        Ryg = thresdb;
-                }
+		gainred = MAX(-to_dB(g[0]), -to_dB(g[1]));
+		outlevel = sanitize_denormal(to_dB(maxx)) + (ceiling);
 
-                Lxl = Rxl = fmaxf(Lxg - Lyg, Rxg - Ryg);
+		outputs[0][i] = inputs[0][i];
+		outputs[1][i] = inputs[1][i];
+		outputs[0][i] = clip(normalise(z[0][posz[0]] * g[0], -to_dB(0.90)));
+		outputs[1][i] = clip(normalise(z[1][posz[1]] * g[1], -to_dB(0.90)));
 
-                oldL_y1 = sanitize_denormal(oldL_y1);
-                oldR_y1 = sanitize_denormal(oldR_y1);
-                oldL_yl = sanitize_denormal(oldL_yl);
-                oldR_yl = sanitize_denormal(oldR_yl);
-                Ly1 = fmaxf(Lxl, release_coeff * oldL_y1+(1.f-release_coeff)*Lxl);
-		Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Ly1;
-                Ly1 = sanitize_denormal(Ly1);
-                Lyl = sanitize_denormal(Lyl);
 
-                cdb = -Lyl;
-                Lgain = from_dB(cdb);
+		pushsample(&cn[0][0], sanitize_denormal(c[0]), &posc[0]);
+		pushsample(&z[0][0], sanitize_denormal(inputs[0][i]), &posz[0]);
+		pushsample(&emaxn[0][0], sanitize_denormal(emax[0]), &pose[0]);
 
-                gainred = Lyl;
+		pushsample(&cn[1][0], sanitize_denormal(c[1]), &posc[1]);
+		pushsample(&z[1][0], sanitize_denormal(inputs[1][i]), &posz[1]);
+		pushsample(&emaxn[1][0], sanitize_denormal(emax[1]), &pose[1]);
 
-                Ry1 = fmaxf(Rxl, release_coeff * oldR_y1+(1.f-release_coeff)*Rxl);
-                Ryl = attack_coeff * oldR_yl+(1.f-attack_coeff)*Ry1;
-                Ry1 = sanitize_denormal(Ry1);
-                Ryl = sanitize_denormal(Ryl);
-
-                cdb = -Ryl;
-                Rgain = from_dB(cdb);
-
-		pushsample(&leftsamples[0], from_dB(Lgain), &leftpos);
-		pushsample(&rightsamples[0], from_dB(Rgain), &rightpos);
-
-		lgaininp = normalise(inputs[0][i] * Lgain, rmsdb(&leftsamples[0]));
-		rgaininp = normalise(inputs[1][i] * Rgain, rmsdb(&rightsamples[0]));
-
-		outputs[0][i] = clip(sanitize_denormal(lgaininp));
-		outputs[1][i] = clip(sanitize_denormal(rgaininp));
-
-		max = (fabsf(lgaininp) > max) ? fabsf(lgaininp) : sanitize_denormal(max);
-		max = (fabsf(rgaininp) > max) ? fabsf(rgaininp) : sanitize_denormal(max);
-
-                oldL_yl = Lyl;
-                oldR_yl = Ryl;
-                oldL_y1 = Ly1;
-                oldR_y1 = Ry1;
-                oldL_yg = Lyg;
-                oldR_yg = Ryg;
-        }
-	outlevel = (max == 0.f) ? -45.f : to_dB(max);
-    }
+		emax_old[0] = sanitize_denormal(emax[0]);
+		eavg_old[0] = sanitize_denormal(eavg[0]);
+		emax_old[1] = sanitize_denormal(emax[1]);
+		eavg_old[1] = sanitize_denormal(eavg[1]);
+	}
+}
 
 // -----------------------------------------------------------------------
 

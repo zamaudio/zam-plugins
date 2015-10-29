@@ -20,7 +20,10 @@
 
 #include "DistrhoPlugin.hpp"
 
-#define MAX_SAMPLES 240
+#define MAX_SAMPLES 128
+#define MAX(a,b) ((a) < (b) ? (b) : (a))
+#define MIN(a,b) ((a) > (b) ? (b) : (a))
+
 
 START_NAMESPACE_DISTRHO
 
@@ -108,17 +111,22 @@ protected:
     void run(const float** inputs, float** outputs, uint32_t frames) override;
     float normalise(float in, float gainr);
     float clip(float in);
-    float rmsdb(float in[]);
+    float avgall(float in[]);
+    float maxsample(float in[]);
     void pushsample(float in[], float sample, int *pos);
+    void pushall(float in[], float sample, int *pos);
+    float getoldsample(float in[], int pos);
 
     // -------------------------------------------------------------------
 
 private:
     float release,ceiling,thresdb,gainred,outlevel;//parameters
-    float oldL_yl, oldL_y1, oldR_yl, oldR_y1, oldL_yg, oldR_yg;
-    int leftpos, rightpos;
-    float leftsamples[MAX_SAMPLES];
-    float rightsamples[MAX_SAMPLES];
+    int pose[2], posz[2], posc[2];
+    float cn[2][MAX_SAMPLES];
+    float emaxn[2][MAX_SAMPLES];
+    float z[2][MAX_SAMPLES];
+    float emax_old[2];
+    float eavg_old[2];
 };
 
 // -----------------------------------------------------------------------
