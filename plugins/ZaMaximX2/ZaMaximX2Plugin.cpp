@@ -260,9 +260,12 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	beta /= M;
 
 	float maxx;
+	float inL, inR;
 
 	for (i = 0; i < frames; i++) {
-		absx[0] = fabsf(inputs[0][i]);
+		inL = inputs[0][i];
+		inR = inputs[1][i];
+		absx[0] = fabsf(inL);
 		c[0] = MAX(absx[0], (absx[0]-beta*emaxn[0][pose[0]]) / (1. - beta));
 		pushsample(&cn[0][0], sanitize_denormal(c[0]), &posc[0]);
 		xmax[0] = maxsample(&cn[0][0]);
@@ -278,7 +281,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 			g[0] = MIN(1., from_dB(thresdb) / emax[0]);
 		}
 
-		absx[1] = fabsf(inputs[1][i]);
+		absx[1] = fabsf(inR);
 		c[1] = MAX(absx[1], (absx[1]-beta*emaxn[1][pose[1]]) / (1. - beta));
 		pushsample(&cn[1][0], sanitize_denormal(c[1]), &posc[1]);
 		xmax[1] = maxsample(&cn[1][0]);
@@ -300,15 +303,15 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		gainred = MAX(-to_dB(g[0]), -to_dB(g[1]));
 		outlevel = sanitize_denormal(to_dB(maxx)) + (ceiling - thresdb);
 
-		outputs[0][i] = inputs[0][i];
-		outputs[1][i] = inputs[1][i];
+		outputs[0][i] = inL;
+		outputs[1][i] = inR;
 		outputs[0][i] = clip(normalise(z[0][posz[0]] * g[0], 3.));
 		outputs[1][i] = clip(normalise(z[1][posz[1]] * g[1], 3.));
 
-		pushsample(&z[0][0], sanitize_denormal(inputs[0][i]), &posz[0]);
+		pushsample(&z[0][0], sanitize_denormal(inL), &posz[0]);
 		pushsample(&emaxn[0][0], sanitize_denormal(emax[0]), &pose[0]);
 
-		pushsample(&z[1][0], sanitize_denormal(inputs[1][i]), &posz[1]);
+		pushsample(&z[1][0], sanitize_denormal(inR), &posz[1]);
 		pushsample(&emaxn[1][0], sanitize_denormal(emax[1]), &pose[1]);
 
 		emax_old[0] = sanitize_denormal(emax[0]);
