@@ -8,6 +8,10 @@
 
 include ../../Makefile.mk
 
+ifeq ($(OBJS_UI),)
+HAVE_DGL = false
+endif
+
 # --------------------------------------------------------------
 # Basic setup
 
@@ -52,14 +56,12 @@ endif
 # --------------------------------------------------------------
 # Handle plugins without UI
 
-ifeq ($(TARGET_NOUI),true)
 ifneq ($(HAVE_DGL),true)
 dssi_ui =
 lv2_ui =
 DISTRHO_UI_FILES =
 DGL_LIBS =
 OBJS_UI =
-endif
 endif
 
 # --------------------------------------------------------------
