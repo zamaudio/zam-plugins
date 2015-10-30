@@ -40,7 +40,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
-        parameter.ranges.def = 10.0f;
+        parameter.ranges.def = 25.0f;
         parameter.ranges.min = 1.0f;
         parameter.ranges.max = 100.0f;
         break;
@@ -49,7 +49,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Output Ceiling";
         parameter.symbol     = "ceil";
         parameter.unit       = "dB";
-        parameter.ranges.def = -0.5f;
+        parameter.ranges.def = -3.0f;
         parameter.ranges.min = -30.0f;
         parameter.ranges.max = 0.0f;
         break;
@@ -97,8 +97,8 @@ void ZaMaximX2Plugin::loadProgram(uint32_t index)
 {
 	switch(index) {
 	case 0:
-		release = 10.0;
-		ceiling = -0.5;
+		release = 25.0;
+		ceiling = -3.0;
 		thresdb = 0.0;
 		gainred = 0.0;
 		outlevel = -45.0;
@@ -251,7 +251,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	double eavg[2];
 	double g[2];
 	double srate = getSampleRate();
-	double alpha = 1.00106224377651;
+	double alpha = 1.0001;
 	double aa = 1. - pow( (alpha - 1.f) / alpha,  1. / ( N + 1. ) );
 	double a;
 	double beta = 0.f;
@@ -308,7 +308,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		outputs[0][i] = (float)clip(normalise(z[0][posz[0]] * g[0], 0.));
 		outputs[1][i] = (float)clip(normalise(z[1][posz[1]] * g[1], 0.));
 
-		outlevel = sanitize_denormal(to_dB(MAX(fabs(eavg[0]), fabs(eavg[1])))) + (ceiling - thresdb);
+		outlevel = to_dB(MAX(fabs(eavg[0]), fabs(eavg[1]))) + (ceiling - thresdb);
 		pushsample(&z[0][0], sanitize_denormal(inL), &posz[0]);
 		pushsample(&z[1][0], sanitize_denormal(inR), &posz[1]);
 
