@@ -42,8 +42,12 @@ install: all
 		install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
 		install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 \
 			bin/"$$plugin".lv2/* ; \
+	done; \
+ifeq ($(HAVE_JACK),true)
+	for plugin in $(PLUGINS); do \
 		install -t $(DESTDIR)$(PREFIX)/$(BINDIR) bin/"$$plugin" ; \
 	done; \
+endif
 	install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa bin/*-ladspa.so
 	install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst bin/*-vst.so
 
