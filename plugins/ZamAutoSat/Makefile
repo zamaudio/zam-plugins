@@ -27,10 +27,8 @@ include ../Makefile.mk
 # --------------------------------------------------------------
 # Enable all possible plugin types
 
-ifeq ($(HAVE_DGL),true)
 ifeq ($(HAVE_JACK),true)
 TARGETS += jack
-endif
 endif
 
 ifeq ($(LINUX),true)
