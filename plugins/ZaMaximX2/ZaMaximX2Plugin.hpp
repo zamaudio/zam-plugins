@@ -20,7 +20,7 @@
 
 #include "DistrhoPlugin.hpp"
 
-#define MAX_SAMPLES 128
+#define MAX_SAMPLES 64
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
 #define MIN(a,b) ((a) > (b) ? (b) : (a))
 

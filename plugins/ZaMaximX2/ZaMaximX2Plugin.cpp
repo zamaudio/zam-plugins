@@ -305,8 +305,8 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 
 		outputs[0][i] = inL;
 		outputs[1][i] = inR;
-		outputs[0][i] = clip(normalise(z[0][posz[0]] * g[0], 5.));
-		outputs[1][i] = clip(normalise(z[1][posz[1]] * g[1], 5.));
+		outputs[0][i] = clip(normalise(z[0][posz[0]] * g[0], 0.));
+		outputs[1][i] = clip(normalise(z[1][posz[1]] * g[1], 0.));
 
 		pushsample(&z[0][0], sanitize_denormal(inL), &posz[0]);
 		pushsample(&emaxn[0][0], sanitize_denormal(emax[0]), &pose[0]);
