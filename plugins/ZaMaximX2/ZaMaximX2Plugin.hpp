@@ -109,24 +109,24 @@ protected:
     void activate() override;
     void deactivate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
-    float normalise(float in, float gainr);
-    float clip(float in);
-    float avgall(float in[]);
-    float maxsample(float in[]);
-    void pushsample(float in[], float sample, int *pos);
-    void pushall(float in[], float sample, int *pos);
-    float getoldsample(float in[], int pos);
+    double normalise(double in, double gainr);
+    double clip(double in);
+    double avgall(double in[]);
+    double maxsample(double in[]);
+    void pushsample(double in[], double sample, int *pos);
+    void pushall(double in[], double sample, int *pos);
+    double getoldsample(double in[], int pos);
 
     // -------------------------------------------------------------------
 
 private:
     float release,ceiling,thresdb,gainred,outlevel;//parameters
     int pose[2], posz[2], posc[2];
-    float cn[2][MAX_SAMPLES];
-    float emaxn[2][MAX_SAMPLES];
-    float z[2][MAX_SAMPLES];
-    float emax_old[2];
-    float eavg_old[2];
+    double cn[2][MAX_SAMPLES];
+    double emaxn[2][MAX_SAMPLES];
+    double z[2][MAX_SAMPLES];
+    double emax_old[2];
+    double eavg_old[2];
 };
 
 // -----------------------------------------------------------------------
