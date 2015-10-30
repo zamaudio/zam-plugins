@@ -278,7 +278,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		if (eavg[0] == 0.f) {
 			g[0] = 1.;
 		} else {
-			g[0] = MIN(1., from_dB(thresdb) / emax[0]);
+			g[0] = MIN(1., from_dB(thresdb) / eavg[0]);
 		}
 
 		absx[1] = fabsf(inR);
@@ -296,7 +296,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		if (eavg[1] == 0.f) {
 			g[1] = 1.;
 		} else {
-			g[1] = MIN(1., from_dB(thresdb) / emax[1]);
+			g[1] = MIN(1., from_dB(thresdb) / eavg[1]);
 		}
 
 		maxx = MAX(xmax[0], xmax[1]);
