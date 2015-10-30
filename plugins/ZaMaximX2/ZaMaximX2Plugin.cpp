@@ -252,14 +252,14 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	double g[2];
 	double srate = getSampleRate();
 	double alpha = 1.00106224377651;
-	double a = 1. - exp(log((alpha - 1.) / (alpha)) / (N + 1.));
+	double aa = 1. - pow( (alpha - 1.f) / alpha,  1. / ( N + 1. ) );
+	double a;
 	double beta = 0.f;
 	for (i = 0; i < M; i++) {
-		beta += pow(1. - a, N + 1. - i);
+		beta += pow(1. - aa, N + 1. - i);
 	}
 	beta /= M;
 
-	double maxx;
 	double inL, inR;
 
 	for (i = 0; i < frames; i++) {
@@ -272,6 +272,8 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 
 		if (xmax[0] < emaxn[0][pose[0]]) {
 			a = 1000 / (release * srate);
+		} else {
+			a = aa;
 		}
 		emax[0] = a*xmax[0] + (1. - a)*emaxn[0][pose[0]];
 		pushsample(&emaxn[0][0], sanitize_denormal(emax[0]), &pose[0]);
@@ -287,12 +289,10 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		pushsample(&cn[1][0], sanitize_denormal(c[1]), &posc[1]);
 		xmax[1] = maxsample(&cn[1][0]);
 
-		maxx = MAX(xmax[0], xmax[1]);
-
 		if (xmax[1] < emaxn[1][pose[1]]) {
 			a = 1000 / (release * srate);
 		} else {
-			a = 1. - exp(log((alpha-1.) / (alpha)) / (N + 1.));
+			a = aa;
 		}
 		emax[1] = a*xmax[1] + (1. - a)*emaxn[1][pose[1]];
 		pushsample(&emaxn[1][0], sanitize_denormal(emax[1]), &pose[1]);
