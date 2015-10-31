@@ -121,10 +121,12 @@ protected:
 
 private:
     float release,ceiling,thresdb,gainred,outlevel;//parameters
-    int posz[2];
+    int pose[2], posz[2], posc[2];
+    double cn[2][MAX_SAMPLES];
+    double emaxn[2][MAX_SAMPLES];
     double z[2][MAX_SAMPLES];
-    double smoothold[2];
-    double envold[2];
+    double emax_old[2];
+    double eavg_old[2];
 };
 
 // -----------------------------------------------------------------------

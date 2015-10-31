@@ -42,7 +42,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "ms";
         parameter.ranges.def = 25.0f;
         parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 500.0f;
+        parameter.ranges.max = 100.0f;
         break;
     case paramCeiling:
         parameter.hints      = kParameterIsAutomable;
@@ -97,8 +97,8 @@ void ZaMaximX2Plugin::loadProgram(uint32_t index)
 {
 	switch(index) {
 	case 0:
-		release = 150.0;
-		ceiling = -0.5;
+		release = 25.0;
+		ceiling = -3.0;
 		thresdb = 0.0;
 		gainred = 0.0;
 		outlevel = -45.0;
@@ -166,12 +166,14 @@ void ZaMaximX2Plugin::activate()
     gainred = 0.0f;
     outlevel = -45.0f;
     for (i = 0; i < MAX_SAMPLES; i++) {
-    	z[0][i] = 0.f;
-    	z[1][i] = 0.f;
+    	cn[0][i] = z[0][i] = emaxn[0][i] = 0.f;
+    	cn[1][i] = z[1][i] = emaxn[1][i] = 0.f;
     }
     posz[0] = posz[1] = 0;
-    smoothold[0] = smoothold[1] = 0.f;
-    envold[0] = envold[1] = 0.f;
+    pose[0] = pose[1] = 0;
+    posc[0] = posc[1] = 0;
+    emax_old[0] = emax_old[1] = 0.f;
+    eavg_old[0] = eavg_old[1] = 0.f;
 }
 
 void ZaMaximX2Plugin::deactivate()
@@ -240,64 +242,80 @@ double ZaMaximX2Plugin::maxsample(double in[])
 void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
+	double N = (float)MAX_SAMPLES;
+	double M = (float)MAX_SAMPLES;
 	double absx[2];
 	double c[2];
+	double xmax[2];
+	double emax[2];
+	double eavg[2];
+	double g[2];
 	double srate = getSampleRate();
-	double tau = exp(-1000. / (release*srate));
-	double env[2];
-	double smooth[2];
-	double targetgain = from_dB(ceiling);
+	double alpha = 1.0001;
+	double aa = 1. - pow( (alpha - 1.f) / alpha,  1. / ( N + 1. ) );
+	double a;
+	double beta = 0.f;
+	for (i = 0; i < M; i++) {
+		beta += pow(1. - aa, N + 1. - i);
+	}
+	beta /= M;
 
 	double inL, inR;
 
 	for (i = 0; i < frames; i++) {
 		inL = inputs[0][i];
 		inR = inputs[1][i];
-		
-		// input
 		absx[0] = MAX(fabs(inL), fabs(inR));
-		
-		// Envelope extractor
-		if (envold[0] > absx[0]) {
-			env[0] = tau * envold[0] + (1. - tau) * absx[0];
-		} else {
-			env[0] = absx[0];
-		}
-		if (envold[1] > absx[0]) {
-			env[1] = tau * envold[1] + (1. - tau) * absx[0];
-		} else {
-			env[1] = absx[0];
-		}
-		
-		// control gain calculator
-		c[0] = 1. / (1. / targetgain + (1. - 1. / targetgain)*env[0]);
-		c[0] *= MIN(1., env[0] / from_dB(thresdb));
-		c[1] = 1. / (1. / targetgain + (1. - 1. / targetgain)*env[1]);
-		c[1] *= MIN(1., env[1] / from_dB(thresdb));
+		c[0] = MAX(absx[0], (absx[0]-beta*eavg_old[0]) / (1. - beta));
+		pushsample(&cn[0][0], sanitize_denormal(c[0]), &posc[0]);
+		xmax[0] = maxsample(&cn[0][0]);
 
-		// smoother
-		if (c[0] > smoothold[0]) {
-			smooth[0] = smoothold[0]*tau + c[0]*(1.-tau);
+		if (xmax[0] < emaxn[0][pose[0]]) {
+			a = 1000 / (release * srate);
 		} else {
-			smooth[0] = c[0];
+			a = aa;
 		}
-		if (c[1] > smoothold[1]) {
-			smooth[1] = smoothold[1]*tau + c[1]*(1.-tau);
+		emax[0] = a*xmax[0] + (1. - a)*emaxn[0][pose[0]];
+		pushsample(&emaxn[0][0], sanitize_denormal(emax[0]), &pose[0]);
+		eavg[0] = avgall(&emaxn[0][0]);
+		if (eavg[0] == 0.f) {
+			g[0] = 1.;
 		} else {
-			smooth[1] = c[1];
+			g[0] = MIN(1., from_dB(thresdb) / eavg[0]);
 		}
 
-		outputs[0][i] = (float)clip(normalise(z[0][posz[0]] * smooth[0], 0.));
-		outputs[1][i] = (float)clip(normalise(z[1][posz[1]] * smooth[1], 0.));
+		absx[1] = absx[0];
+		c[1] = MAX(absx[1], (absx[1]-beta*eavg_old[1]) / (1. - beta));
+		pushsample(&cn[1][0], sanitize_denormal(c[1]), &posc[1]);
+		xmax[1] = maxsample(&cn[1][0]);
 
-		outlevel = to_dB(MAX(fabs(outputs[0][i]), fabs(outputs[1][i]))) + (ceiling - thresdb);
+		if (xmax[1] < emaxn[1][pose[1]]) {
+			a = 1000 / (release * srate);
+		} else {
+			a = aa;
+		}
+		emax[1] = a*xmax[1] + (1. - a)*emaxn[1][pose[1]];
+		pushsample(&emaxn[1][0], sanitize_denormal(emax[1]), &pose[1]);
+		eavg[1] = avgall(&emaxn[1][0]);
+		if (eavg[1] == 0.f) {
+			g[1] = 1.;
+		} else {
+			g[1] = MIN(1., from_dB(thresdb) / eavg[1]);
+		}
+
+		gainred = MAX(-to_dB(g[0]), -to_dB(g[1]));
+
+		outputs[0][i] = (float)clip(normalise(z[0][posz[0]] * g[0], 0.));
+		outputs[1][i] = (float)clip(normalise(z[1][posz[1]] * g[1], 0.));
+
+		outlevel = to_dB(MAX(fabs(eavg[0]), fabs(eavg[1]))) + (ceiling - thresdb);
 		pushsample(&z[0][0], sanitize_denormal(inL), &posz[0]);
 		pushsample(&z[1][0], sanitize_denormal(inR), &posz[1]);
 
-		smoothold[0] = sanitize_denormal(smooth[0]);
-		smoothold[1] = sanitize_denormal(smooth[1]);
-		envold[0] = sanitize_denormal(env[0]);
-		envold[1] = sanitize_denormal(env[1]);
+		emax_old[0] = sanitize_denormal(emax[0]);
+		eavg_old[0] = sanitize_denormal(eavg[0]);
+		emax_old[1] = sanitize_denormal(emax[1]);
+		eavg_old[1] = sanitize_denormal(eavg[1]);
 	}
 }
 
