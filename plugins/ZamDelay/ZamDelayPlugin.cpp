@@ -217,6 +217,7 @@ void ZamDelayPlugin::activate()
 	posz = 0;
 	age = 0;
 	clearfilter();
+	fbstate = 0.f;
 }
 
 
@@ -305,7 +306,6 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
 	float in;
-	float fb = 0.f;
 	float srate = getSampleRate();
 	TimePosition t = getTimePosition();
 	float bpm = 120.f;
@@ -330,11 +330,11 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	
 	for (i = 0; i < frames; i++) {
 		filtered = runfilter(getsample(in, &z[0], posz, age, delaysamples));
-		in = (1. - feedb) * inputs[0][i] + feedb * -inv * filtered;
+		in = (1. - feedb) * inputs[0][i] + feedb * fbstate;
 
-		fb = ((1. - drywet) * in) + drywet * -inv * filtered;
+		fbstate = ((1. - drywet) * in) + drywet * -inv * filtered;
 		
-		outputs[0][i] = fb * from_dB(gain);
+		outputs[0][i] = fbstate * from_dB(gain);
 		pushsample(in, &z[0], &posz, &age, delaysamples);
 	}
 }
