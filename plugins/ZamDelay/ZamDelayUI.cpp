@@ -52,6 +52,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobDelaytime->setId(ZamDelayPlugin::paramDelaytime);
     fKnobDelaytime->setRange(1.0f, 3000.0f);
     fKnobDelaytime->setStep(0.f);
+    fKnobDelaytime->setUsingLogScale(true);
     fKnobDelaytime->setDefault(160.0f);
     fKnobDelaytime->setRotationAngle(240);
     fKnobDelaytime->setCallback(this);
@@ -71,6 +72,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobLPF->setId(ZamDelayPlugin::paramLPF);
     fKnobLPF->setRange(20.0f, 20000.0f);
     fKnobLPF->setStep(1.0f);
+    fKnobLPF->setUsingLogScale(true);
     fKnobLPF->setDefault(6000.0f);
     fKnobLPF->setRotationAngle(240);
     fKnobLPF->setCallback(this);

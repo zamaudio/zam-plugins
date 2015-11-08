@@ -305,6 +305,7 @@ void ZamDelayPlugin::pushsample(float in, float dline[], int *pos, int *a, int m
 			dline[i] = 0.;
 		}
 		*a = 0;
+		fbstate = 0.;
 		oldmax = max;
 	}
 	(*pos)++;
