@@ -269,7 +269,7 @@ float ZamDelayPlugin::runfilter(float in)
 float ZamDelayPlugin::getsample(float in, float dline[], int pos, int a, int max)
 {
 	if (a < max) {
-		return in;
+		return 0.;
 	}
 	int p = pos + 1;
 	if (p >= max) {
@@ -329,11 +329,9 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	delaysamples = (int)(delaytime * srate) / 1000;
 	
 	for (i = 0; i < frames; i++) {
-		filtered = runfilter(getsample(in, &z[0], posz, age, delaysamples));
 		in = (1. - feedb) * inputs[0][i] + feedb * fbstate;
-
+		filtered = runfilter(getsample(in, &z[0], posz, age, delaysamples));
 		fbstate = ((1. - drywet) * in) + drywet * -inv * filtered;
-		
 		outputs[0][i] = fbstate * from_dB(gain);
 		pushsample(in, &z[0], &posz, &age, delaysamples);
 	}
