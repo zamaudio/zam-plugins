@@ -42,7 +42,7 @@ ZamDelayUI::ZamDelayUI()
 
     Image syncoffImage(ZamDelayArtwork::syncbpmoffData, ZamDelayArtwork::syncbpmoffWidth, ZamDelayArtwork::syncbpmoffHeight);
 
-    Image invertonImage(ZamDelayArtwork::invertonData, ZamDelayArtwork::invertonWidth, ZamDelayArtwork::invertonHeight);
+    Image invertonImage(ZamDelayArtwork::invertonData, ZamDelayArtwork::invertoffWidth, ZamDelayArtwork::invertoffHeight);
     Image invertoffImage(ZamDelayArtwork::invertoffData, ZamDelayArtwork::invertoffWidth, ZamDelayArtwork::invertoffHeight);
 
     Image triangleImage(ZamDelayArtwork::triangleData, ZamDelayArtwork::triangleWidth, ZamDelayArtwork::triangleHeight);

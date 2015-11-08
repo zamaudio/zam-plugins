@@ -1,13 +1,13 @@
 /* (Auto-generated binary data file). */
 
-#ifndef BINARY_ZAMCOMPARTWORK_HPP
-#define BINARY_ZAMCOMPARTWORK_HPP
+#ifndef BINARY_ZAMDELAYARTWORK_HPP
+#define BINARY_ZAMDELAYARTWORK_HPP
 
 namespace ZamDelayArtwork
 {
     extern const char* invertoffData;
-    const unsigned int invertoffDataSize = 4056;
-    const unsigned int invertoffWidth    = 39;
+    const unsigned int invertoffDataSize = 3952;
+    const unsigned int invertoffWidth    = 38;
     const unsigned int invertoffHeight   = 26;
 
     extern const char* invertonData;
@@ -51,5 +51,5 @@ namespace ZamDelayArtwork
     const unsigned int zamdelayHeight   = 290;
 }
 
-#endif // BINARY_ZAMCOMPARTWORK_HPP
+#endif // BINARY_ZAMDELAYARTWORK_HPP
 
