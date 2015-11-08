@@ -40,6 +40,7 @@ public:
         paramDivisor,
         paramGain,
         paramDrywet,
+        paramFeedback,
         paramCount
     };
 
@@ -118,7 +119,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float invert, delaytime, sync, lpf, divisor, gain, drywet;
+    float invert, feedb, delaytime, sync, lpf, divisor, gain, drywet;
     float z[MAX_DELAY];
     int posz, age;
     float A0, A1, A2, A3, A4, A5, B0, B1, B2, B3, B4, B5;

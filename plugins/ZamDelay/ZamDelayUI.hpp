@@ -66,7 +66,7 @@ protected:
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobDelaytime, fKnobLPF, fKnobGain, fKnobDrywet;
+    ScopedPointer<ImageKnob> fKnobDelaytime, fKnobLPF, fKnobGain, fKnobDrywet, fKnobFeedback;
     ScopedPointer<ImageToggle> fToggleInvert, fToggleBPM;
     ScopedPointer<ImageSlider> fSliderDiv;
 };

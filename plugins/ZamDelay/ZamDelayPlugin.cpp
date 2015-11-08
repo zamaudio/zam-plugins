@@ -98,6 +98,15 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
+    case paramFeedback:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Feedback";
+        parameter.symbol     = "feedb";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     }
 }
 
@@ -122,6 +131,7 @@ void ZamDelayPlugin::loadProgram(uint32_t index)
 		divisor = 3.f;
 		gain = 0.f;
 		drywet = 0.5f;
+		feedb = 0.0f;
 		break;
 	}
 
@@ -156,6 +166,9 @@ float ZamDelayPlugin::getParameterValue(uint32_t index) const
     case paramDrywet:
         return drywet;
         break;
+    case paramFeedback:
+        return feedb;
+        break;
     default:
         return 0.0f;
     }
@@ -185,6 +198,9 @@ void ZamDelayPlugin::setParameterValue(uint32_t index, float value)
         break;
     case paramDrywet:
         drywet = value;
+        break;
+    case paramFeedback:
+        feedb = value;
         break;
     }
 }
@@ -289,11 +305,13 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
 	float in;
+	float fb = 0.f;
 	float srate = getSampleRate();
 	TimePosition t = getTimePosition();
 	float bpm = 120.f;
 	int delaysamples;
 	float inv;
+	float filtered;
 	if (invert < 0.5) {
 		inv = -1.f;
 	} else {
@@ -311,10 +329,13 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	delaysamples = (int)(delaytime * srate) / 1000;
 	
 	for (i = 0; i < frames; i++) {
-		in = inputs[0][i];
-		pushsample(in, &z[0], &posz, &age, delaysamples);
+		filtered = runfilter(getsample(in, &z[0], posz, age, delaysamples));
+		in = (1. - feedb) * inputs[0][i] + feedb * -inv * filtered;
+
+		fb = ((1. - drywet) * in) + drywet * -inv * filtered;
 		
-		outputs[0][i] = (((1. - drywet) * in) + runfilter(-inv * drywet * getsample(in, &z[0], posz, age, delaysamples))) * from_dB(gain);
+		outputs[0][i] = fb * from_dB(gain);
+		pushsample(in, &z[0], &posz, &age, delaysamples);
 	}
 }
 

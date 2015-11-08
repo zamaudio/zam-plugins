@@ -84,13 +84,22 @@ ZamDelayUI::ZamDelayUI()
     fKnobGain->setCallback(this);
 
     fKnobDrywet = new ImageKnob(this, knobImage);
-    fKnobDrywet->setAbsolutePos(331.5, 201);
+    fKnobDrywet->setAbsolutePos(332, 231);
     fKnobDrywet->setId(ZamDelayPlugin::paramDrywet);
     fKnobDrywet->setRange(0.0f, 1.0f);
     fKnobDrywet->setStep(0.0f);
     fKnobDrywet->setDefault(0.5f);
     fKnobDrywet->setRotationAngle(240);
     fKnobDrywet->setCallback(this);
+
+    fKnobFeedback = new ImageKnob(this, knobImage);
+    fKnobFeedback->setAbsolutePos(332, 138);
+    fKnobFeedback->setId(ZamDelayPlugin::paramFeedback);
+    fKnobFeedback->setRange(0.0f, 1.0f);
+    fKnobFeedback->setStep(0.0f);
+    fKnobFeedback->setDefault(0.0f);
+    fKnobFeedback->setRotationAngle(240);
+    fKnobFeedback->setCallback(this);
 
     fSliderDiv = new ImageSlider(this, triangleImage);
     fSliderDiv->setStartPos(140, 165);
@@ -129,6 +138,9 @@ void ZamDelayUI::parameterChanged(uint32_t index, float value)
     case ZamDelayPlugin::paramDrywet:
         fKnobDrywet->setValue(value);
         break;
+    case ZamDelayPlugin::paramFeedback:
+        fKnobFeedback->setValue(value);
+        break;
     case ZamDelayPlugin::paramDivisor:
         fSliderDiv->setValue(value);
         break;
@@ -145,6 +157,7 @@ void ZamDelayUI::programLoaded(uint32_t index)
 		fKnobLPF->setValue(6000.0f);
 		fKnobGain->setValue(0.0f);
 		fKnobDrywet->setValue(0.5f);
+		fKnobFeedback->setValue(0.0f);
 		fSliderDiv->setValue(3.0f);
 		break;
 	}
