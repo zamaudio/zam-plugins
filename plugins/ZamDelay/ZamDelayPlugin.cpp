@@ -200,6 +200,53 @@ void ZamDelayPlugin::activate()
 	}
 	posz = 0;
 	age = 0;
+	clearfilter();
+}
+
+
+
+void ZamDelayPlugin::lpf24(float fc, float srate)
+{
+	float w0, alpha, cw, sw, q;
+	q = 0.707;
+	w0 = (2. * M_PI * fc / srate);
+	sw = sin(w0);
+	cw = cos(w0);
+	alpha = sw / (2. * q);
+
+	A0 = 1. + alpha;
+	A1 = -2. * cw;
+	A2 = 1. - alpha;
+	B0 = (1. - cw) / 2.;
+	B1 = (1. - cw);
+	B2 = B0;
+
+	A3 = 1. + alpha;
+	A4 = -2. * cw;
+	A5 = 1. - alpha;
+	B3 = (1. - cw) / 2.;
+	B4 = (1. - cw);
+	B5 = B3;
+}
+
+void ZamDelayPlugin::clearfilter(void)
+{
+	state[0] = state[1] = state[2] = state[3] = 0.f;
+}
+
+float ZamDelayPlugin::runfilter(float in)
+{
+	float out;
+	in = sanitize_denormal(in);
+
+	out = B0/A0*in + B1/A0*state[0] + B2/A0*state[1]
+			-A1/A0*state[2] - A2/A0*state[3] + 1e-12;
+
+	state[1] = state[0];
+	state[0] = in;
+	state[3] = state[2];
+	state[2] = out;
+	return out;
 }
 
 float ZamDelayPlugin::getsample(float in, float dline[], int pos, int a, int max)
@@ -220,6 +267,7 @@ void ZamDelayPlugin::pushsample(float in, float dline[], int *pos, int *a, int m
 	static int oldmax = 1;
 	int i;
 	if (max != oldmax) {
+		clearfilter();
 		for (i = 0; i < MAX(max, oldmax); i++) {
 			dline[i] = 0.;
 		}
@@ -259,14 +307,14 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		}
 	}
 	
+	lpf24(lpf, srate);
 	delaysamples = (int)(delaytime * srate) / 1000;
 	
 	for (i = 0; i < frames; i++) {
 		in = inputs[0][i];
 		pushsample(in, &z[0], &posz, &age, delaysamples);
-
-		outputs[0][i] = (((1. - drywet) * in) - inv * drywet * getsample(in, &z[0], posz, age, delaysamples)) * from_dB(gain);
-
+		
+		outputs[0][i] = (((1. - drywet) * in) + runfilter(-inv * drywet * getsample(in, &z[0], posz, age, delaysamples))) * from_dB(gain);
 	}
 }
 
