@@ -107,6 +107,15 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
+    case paramDelaytimeout:
+        parameter.hints      = kParameterIsOutput;
+        parameter.name       = "Delaytime";
+        parameter.symbol     = "delaytime";
+        parameter.unit       = "ms";
+        parameter.ranges.def = 160.0f;
+        parameter.ranges.min = 1.0f;
+        parameter.ranges.max = 3000.0f;
+        break;
     }
 }
 
@@ -132,6 +141,7 @@ void ZamDelayPlugin::loadProgram(uint32_t index)
 		gain = 0.f;
 		drywet = 0.5f;
 		feedb = 0.0f;
+		delaytimeout = 160.f;
 		break;
 	}
 
@@ -169,6 +179,9 @@ float ZamDelayPlugin::getParameterValue(uint32_t index) const
     case paramFeedback:
         return feedb;
         break;
+    case paramDelaytimeout:
+        return delaytimeout;
+        break;
     default:
         return 0.0f;
     }
@@ -202,6 +215,9 @@ void ZamDelayPlugin::setParameterValue(uint32_t index, float value)
     case paramFeedback:
         feedb = value;
         break;
+    case paramDelaytimeout:
+        delaytimeout = value;
+        break;
     }
 }
 
@@ -222,7 +238,7 @@ void ZamDelayPlugin::activate()
 
 
 
-void ZamDelayPlugin::lpf24(float fc, float srate)
+void ZamDelayPlugin::lpfRbj(float fc, float srate)
 {
 	float w0, alpha, cw, sw, q;
 	q = 0.707;
@@ -266,7 +282,7 @@ float ZamDelayPlugin::runfilter(float in)
 	return out;
 }
 
-float ZamDelayPlugin::getsample(float in, float dline[], int pos, int a, int max)
+float ZamDelayPlugin::getsample(float dline[], int pos, int a, int max)
 {
 	if (a < max) {
 		return 0.;
@@ -318,19 +334,21 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		inv = 1.f;
 	}
 
+	delaytimeout = delaytime;
 	if (t.bbt.valid) {
 		bpm = t.bbt.beatsPerMinute;
 		if (sync > 0.5f) {
-			delaytime = 1000.f * 60.f / (bpm * powf(2., divisor - 1.));
+			delaytimeout = 1000.f * 60.f / (bpm * powf(2., divisor - 1.));
+			delaytime = delaytimeout;
 		}
 	}
+	delaysamples = (int)(delaytimeout * srate) / 1000;
 	
-	lpf24(lpf, srate);
-	delaysamples = (int)(delaytime * srate) / 1000;
+	lpfRbj(lpf, srate);
 	
 	for (i = 0; i < frames; i++) {
 		in = (1. - feedb) * inputs[0][i] + feedb * fbstate;
-		filtered = runfilter(getsample(in, &z[0], posz, age, delaysamples));
+		filtered = runfilter(getsample(&z[0], posz, age, delaysamples));
 		fbstate = ((1. - drywet) * in) + drywet * -inv * filtered;
 		outputs[0][i] = fbstate * from_dB(gain);
 		pushsample(in, &z[0], &posz, &age, delaysamples);

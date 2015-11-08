@@ -144,6 +144,9 @@ void ZamDelayUI::parameterChanged(uint32_t index, float value)
     case ZamDelayPlugin::paramDivisor:
         fSliderDiv->setValue(value);
         break;
+    case ZamDelayPlugin::paramDelaytimeout:
+        fKnobDelaytime->setValue(value);
+        break;
     }
 }
 
@@ -166,7 +169,7 @@ void ZamDelayUI::programLoaded(uint32_t index)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZamDelayUI::imageToggleClicked(ImageToggle* tog, int button)
+void ZamDelayUI::imageToggleClicked(ImageToggle* tog, int)
 {
 	setParameterValue(tog->getId(), tog->getValue());
 }

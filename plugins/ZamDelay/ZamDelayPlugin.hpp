@@ -41,6 +41,7 @@ public:
         paramGain,
         paramDrywet,
         paramFeedback,
+        paramDelaytimeout,
         paramCount
     };
 
@@ -111,15 +112,15 @@ protected:
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
     void pushsample(float in, float dline[], int *pos, int *a, int max);
-    float getsample(float in, float dline[], int pos, int age, int max);
+    float getsample(float dline[], int pos, int age, int max);
     void clearfilter(void);
-    void lpf24(float fc, float srate);
+    void lpfRbj(float fc, float srate);
     float runfilter(float in);
 
     // -------------------------------------------------------------------
 
 private:
-    float invert, feedb, delaytime, sync, lpf, divisor, gain, drywet;
+    float invert, feedb, delaytime, sync, lpf, divisor, gain, drywet, delaytimeout;
     float z[MAX_DELAY];
     int posz, age;
     float A0, A1, A2, A3, A4, A5, B0, B1, B2, B3, B4, B5;
