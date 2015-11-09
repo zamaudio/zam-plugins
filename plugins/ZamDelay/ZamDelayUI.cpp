@@ -50,7 +50,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobDelaytime = new ImageKnob(this, knobImage);
     fKnobDelaytime->setAbsolutePos(190, 79);
     fKnobDelaytime->setId(ZamDelayPlugin::paramDelaytime);
-    fKnobDelaytime->setRange(1.0f, 3000.0f);
+    fKnobDelaytime->setRange(1.0f, 8000.0f);
     fKnobDelaytime->setStep(0.f);
     fKnobDelaytime->setUsingLogScale(true);
     fKnobDelaytime->setDefault(160.0f);

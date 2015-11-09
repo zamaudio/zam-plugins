@@ -20,7 +20,8 @@
 
 #include "DistrhoPlugin.hpp"
 
-#define MAX_DELAY 288000
+// 8 seconds of delay at 96kHz
+#define MAX_DELAY 768000
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
 #define MIN(a,b) ((a) > (b) ? (b) : (a))
 

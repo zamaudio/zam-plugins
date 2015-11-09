@@ -51,7 +51,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "ms";
         parameter.ranges.def = 160.0f;
         parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 3000.0f;
+        parameter.ranges.max = 8000.0f;
         break;
     case paramSync:
         parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
@@ -114,7 +114,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = "ms";
         parameter.ranges.def = 160.0f;
         parameter.ranges.min = 1.0f;
-        parameter.ranges.max = 3000.0f;
+        parameter.ranges.max = 8000.0f;
         break;
     }
 }
@@ -339,7 +339,7 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	if (t.bbt.valid) {
 		bpm = t.bbt.beatsPerMinute;
 		if (sync > 0.5f) {
-			delaytimeout = 1000.f * 60.f / (bpm * powf(2., divisor - 1.));
+			delaytimeout = (float)t.bbt.beatType * 1000.f * 60.f / (bpm * powf(2., divisor - 1.));
 			delaytime = delaytimeout;
 		}
 	}
