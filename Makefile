@@ -80,7 +80,7 @@ endif
 _dist_pre: .version FORCE
 	rm -rf dist
 	mkdir dist
-	git clone . dist/$(NAME)-$(VERSION)
+	git clone --recursive . dist/$(NAME)-$(VERSION)
 	(cd dist/$(NAME)-$(VERSION); git checkout $(VERSION))
 	$(MAKE) -C dist/$(NAME)-$(VERSION) plugins .version
 	rm -rf dist/$(NAME)-$(VERSION)/.git* \

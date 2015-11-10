@@ -28,7 +28,5 @@ Bleeding edge installation:
 Package Maintainers:
 ====================
 
-	git submodule init
-	git submodule update
 	git checkout 3.6
 	make dist
