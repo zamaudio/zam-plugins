@@ -24,6 +24,7 @@
 #define MAX_DELAY 768000
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
 #define MIN(a,b) ((a) > (b) ? (b) : (a))
+#define LIN_INTERP(f,a,b) ((a) + (f) * ((b) - (a)))
 
 START_NAMESPACE_DISTRHO
 

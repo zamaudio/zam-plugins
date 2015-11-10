@@ -359,7 +359,7 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	xfade = 0.f;
 	for (i = 0; i < frames; i++) {
 		in = inputs[0][i];
-		z[posz] = in + feedb * fbstate;
+		z[posz] = (1. - feedb) * in + feedb * fbstate;
 		out = 0.f;
 		int p = posz - tap[active]; // active line
 		if (p<0) p += MAX_DELAY;
