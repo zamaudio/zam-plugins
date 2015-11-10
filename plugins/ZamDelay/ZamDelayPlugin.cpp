@@ -299,7 +299,7 @@ float ZamDelayPlugin::runfilter(float in)
 void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
-	float in, out;
+	float in;
 	float srate = getSampleRate();
 	TimePosition t = getTimePosition();
 	float bpm = 120.f;
@@ -320,7 +320,6 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		bpm = t.bbt.beatsPerMinute;
 		if (sync > 0.5f) {
 			delaytimeout = (float)t.bbt.beatType * 1000.f * 60.f / (bpm * powf(2., divisor - 1.));
-			delaytime = delaytimeout;
 		}
 	}
 	delaysamples = (int)(delaytimeout * srate) / 1000;
@@ -343,36 +342,31 @@ void ZamDelayPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	if (sync != syncold) {
 		recalc = 1;
 	}
-	if (drywet != drywetold) {
-		recalc = 1;
-	}
 	if (delaytimeout != delaytimeoutold) {
 		recalc = 1;
 	}
 	
 	if (recalc) {
 		tap[next] = delaysamples;
-		clearfilter();
 	}
 
 	xfade = 0.f;
 	for (i = 0; i < frames; i++) {
 		in = inputs[0][i];
 		z[posz] = (1. - feedb) * in + feedb * fbstate;
-		out = 0.f;
+		fbstate = 0.f;
 		int p = posz - tap[active]; // active line
 		if (p<0) p += MAX_DELAY;
-		out += z[p];
+		fbstate += z[p];
 		
 		if (recalc) {
 			xfade += 1.0f / (float)frames;
-			out *= (1.-xfade);
+			fbstate *= (1.-xfade);
 			int p = posz - tap[next]; // next line
 			if (p<0) p += MAX_DELAY;
-			out += z[p] * xfade;
+			fbstate += z[p] * xfade;
 		}
-		fbstate = ((1. - drywet) * in) + drywet * -inv * runfilter(out);
-		outputs[0][i] = from_dB(gain) * fbstate;
+		outputs[0][i] = from_dB(gain) * (((1. - drywet) * in) + drywet * -inv * runfilter(fbstate));
 		if (++posz >= MAX_DELAY) {
 			posz = 0;
 		}
