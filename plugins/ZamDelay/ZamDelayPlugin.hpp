@@ -112,8 +112,6 @@ protected:
 
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
-    void pushsample(float in, float dline[], int *pos, int *a, int max);
-    float getsample(float dline[], int pos, int age, int max);
     void clearfilter(void);
     void lpfRbj(float fc, float srate);
     float runfilter(float in);
@@ -122,8 +120,13 @@ protected:
 
 private:
     float invert, feedb, delaytime, sync, lpf, divisor, gain, drywet, delaytimeout;
+    float invertold, feedbold, delaytimeold, syncold, lpfold, divisorold, gainold, drywetold, delaytimeoutold, delaysamplesold;
     float z[MAX_DELAY];
-    int posz, age;
+    unsigned int posz;
+    unsigned int tap[2];
+    int active;
+    int next;
+    int age;
     float A0, A1, A2, A3, A4, A5, B0, B1, B2, B3, B4, B5;
     float state[4];
     float fbstate;
