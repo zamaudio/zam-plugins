@@ -55,6 +55,11 @@ protected:
         return "Damien Zammit";
     }
 
+    const char* getHomePage() const noexcept override
+    {
+        return "http://www.zamaudio.com";
+    }
+
     const char* getLicense() const noexcept override
     {
         return "GPL v2+";
