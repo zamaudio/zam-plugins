@@ -710,6 +710,11 @@ void ZaMultiCompX2Plugin::setParameterValue(uint32_t index, float value)
     }
 }
 
+String ZaMultiCompX2Plugin::getState(const char*) const
+{
+    return String();
+}
+
 void ZaMultiCompX2Plugin::setState(const char*, const char*)
 {
     resetl = true;
