@@ -57,6 +57,11 @@ protected:
         return "ZamCompX2";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "Stereo version of ZamComp with knee slew control.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";

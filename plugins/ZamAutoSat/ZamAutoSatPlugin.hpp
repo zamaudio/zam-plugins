@@ -44,6 +44,12 @@ protected:
         return "ZamAutoSat";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "An automatic saturation plugin, has been known to provide smooth levelling to live mic channels.\n\
+You can apply this plugin generously without affecting the tone.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";

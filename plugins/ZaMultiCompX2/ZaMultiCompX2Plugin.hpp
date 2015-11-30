@@ -100,6 +100,12 @@ protected:
         return "ZaMultiCompX2";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "Flagship of zam-plugins:\n\
+Stereo version of ZaMultiComp, with individual threshold controls for each band and real-time visualisation of comp curves.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";

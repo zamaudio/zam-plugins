@@ -96,6 +96,11 @@ protected:
         return "ZaMultiComp";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "Mono multiband compressor, with 3 adjustable bands.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";

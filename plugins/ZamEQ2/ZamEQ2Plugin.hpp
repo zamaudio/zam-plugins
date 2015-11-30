@@ -57,6 +57,11 @@ protected:
         return "ZamEQ2";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "Two band parametric equaliser with high and low shelving circuits.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";

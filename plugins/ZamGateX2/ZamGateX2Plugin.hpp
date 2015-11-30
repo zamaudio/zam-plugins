@@ -52,6 +52,11 @@ protected:
 		return "ZamGateX2";
 	}
 
+	const char* getDescription() const noexcept override
+	{
+	    return "Gate plugin for ducking low gain sounds, stereo version.";
+	}
+
 	const char* getMaker() const noexcept override
 	{
 		return "Damien Zammit";

@@ -51,6 +51,11 @@ protected:
         return "ZamSFZ";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";

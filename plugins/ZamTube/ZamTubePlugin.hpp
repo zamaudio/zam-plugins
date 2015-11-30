@@ -126,6 +126,12 @@ protected:
         return "ZamTube";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "Wicked distortion effect.\n\
+Wave digital filter physical model of a triode tube amplifier stage, with modelled tone stacks from real guitar amplifiers (thanks D. Yeh et al).";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";

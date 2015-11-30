@@ -47,6 +47,11 @@ protected:
         return "ZamHeadX2";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "HRTF acoustic filtering plugin for directional sound.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";

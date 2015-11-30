@@ -52,6 +52,11 @@ protected:
         return "ZamComp";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "A powerful mono compressor strip. Adds real beef to a kick or snare drum with the right settings.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";
