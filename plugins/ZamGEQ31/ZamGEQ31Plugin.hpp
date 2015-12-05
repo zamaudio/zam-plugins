@@ -75,9 +75,19 @@ protected:
         return "ZamGEQ31";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "31 band graphic equaliser, good for eq of live spaces, removing unwanted noise from a track etc.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";
+    }
+
+    const char* getHomePage() const noexcept override
+    {
+        return "http://www.zamaudio.com";
     }
 
     const char* getLicense() const noexcept override

@@ -57,9 +57,19 @@ protected:
         return "ZamCompX2";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "Stereo version of ZamComp with knee slew control.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";
+    }
+
+    const char* getHomePage() const noexcept override
+    {
+        return "http://www.zamaudio.com";
     }
 
     const char* getLicense() const noexcept override

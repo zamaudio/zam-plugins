@@ -96,9 +96,19 @@ protected:
         return "ZaMultiComp";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "Mono multiband compressor, with 3 adjustable bands.";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";
+    }
+
+    const char* getHomePage() const noexcept override
+    {
+        return "http://www.zamaudio.com";
     }
 
     const char* getLicense() const noexcept override
@@ -127,9 +137,10 @@ protected:
     // Internal data
 
     float getParameterValue(uint32_t index) const override;
-    void  setParameterValue(uint32_t index, float value) override;
-    void  loadProgram(uint32_t index) override;
-    void  setState(const char* key, const char* value) override;
+    void setParameterValue(uint32_t index, float value) override;
+    void loadProgram(uint32_t index) override;
+    String getState(const char* key) const override;
+    void setState(const char* key, const char* value) override;
 
     // -------------------------------------------------------------------
     // Process

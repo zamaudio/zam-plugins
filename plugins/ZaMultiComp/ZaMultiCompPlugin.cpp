@@ -675,6 +675,11 @@ void ZaMultiCompPlugin::setParameterValue(uint32_t index, float value)
     }
 }
 
+String ZaMultiCompPlugin::getState(const char*) const
+{
+    return String();
+}
+
 void ZaMultiCompPlugin::setState(const char*, const char*)
 {
     reset = true;

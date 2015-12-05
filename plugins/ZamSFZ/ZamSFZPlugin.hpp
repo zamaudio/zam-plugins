@@ -51,9 +51,19 @@ protected:
         return "ZamSFZ";
     }
 
+    const char* getDescription() const noexcept override
+    {
+        return "";
+    }
+
     const char* getMaker() const noexcept override
     {
         return "Damien Zammit";
+    }
+
+    const char* getHomePage() const noexcept override
+    {
+        return "http://www.zamaudio.com";
     }
 
     const char* getLicense() const noexcept override
@@ -63,7 +73,7 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return 0x1000;
+        return d_version(3, 6, 1);
     }
 
     int64_t getUniqueId() const noexcept override
