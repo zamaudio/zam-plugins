@@ -57,12 +57,12 @@ ZamDelayUI::ZamDelayUI()
     fKnobDelaytime->setRotationAngle(240);
     fKnobDelaytime->setCallback(this);
 
-    fToggleInvert = new ImageToggle(this, invertoffImage, invertonImage);
+    fToggleInvert = new ImageSwitch(this, invertoffImage, invertonImage);
     fToggleInvert->setAbsolutePos(10, 15);
     fToggleInvert->setId(ZamDelayPlugin::paramInvert);
     fToggleInvert->setCallback(this);
 
-    fToggleBPM = new ImageToggle(this, syncoffImage, synconImage);
+    fToggleBPM = new ImageSwitch(this, syncoffImage, synconImage);
     fToggleBPM->setAbsolutePos(280, 80);
     fToggleBPM->setId(ZamDelayPlugin::paramSync);
     fToggleBPM->setCallback(this);
@@ -123,13 +123,13 @@ void ZamDelayUI::parameterChanged(uint32_t index, float value)
     switch (index)
     {
     case ZamDelayPlugin::paramInvert:
-        fToggleInvert->setValue(value);
+        fToggleInvert->setDown(value > 0.5);
         break;
     case ZamDelayPlugin::paramDelaytime:
         fKnobDelaytime->setValue(value);
         break;
     case ZamDelayPlugin::paramSync:
-        fToggleBPM->setValue(value);
+        fToggleBPM->setDown(value > 0.5);
         break;
     case ZamDelayPlugin::paramLPF:
         fKnobLPF->setValue(value);
@@ -156,9 +156,9 @@ void ZamDelayUI::programLoaded(uint32_t index)
 {
 	switch(index) {
 	case 0:
-		fToggleInvert->setValue(0.0f);
+		fToggleInvert->setDown(false);
 		fKnobDelaytime->setValue(160.0f);
-		fToggleBPM->setValue(0.0f);
+		fToggleBPM->setDown(false);
 		fKnobLPF->setValue(6000.0f);
 		fKnobGain->setValue(0.0f);
 		fKnobDrywet->setValue(0.5f);
@@ -171,9 +171,9 @@ void ZamDelayUI::programLoaded(uint32_t index)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZamDelayUI::imageToggleClicked(ImageToggle* tog, int)
+void ZamDelayUI::imageSwitchClicked(ImageSwitch* tog, bool down)
 {
-	setParameterValue(tog->getId(), tog->getValue());
+	setParameterValue(tog->getId(), down ? 1.f : 0.f);
 }
 
 void ZamDelayUI::imageSliderDragStarted(ImageSlider* s)

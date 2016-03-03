@@ -19,9 +19,7 @@
 #define ZAMGEQ31UI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
-#include "ImageKnob.hpp"
-#include "ImageSlider.hpp"
+#include "ImageWidgets.hpp"
 
 #include "ZamGEQ31Artwork.hpp"
 #include "ZamGEQ31Plugin.hpp"

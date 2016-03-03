@@ -19,9 +19,7 @@
 #define ZAMEQ2UI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
-#include "ImageKnob.hpp"
-#include "ImageSlider.hpp"
+#include "ImageWidgets.hpp"
 
 #include "ZamEQ2Artwork.hpp"
 #include "ZamEQ2Plugin.hpp"

@@ -19,9 +19,7 @@
 #define ZAMULTICOMPUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
-#include "ImageKnob.hpp"
-#include "ImageToggle.hpp"
+#include "ImageWidgets.hpp"
 
 #include "ZaMultiCompX2Artwork.hpp"
 
@@ -30,7 +28,7 @@
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageToggle;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
@@ -38,7 +36,7 @@ START_NAMESPACE_DISTRHO
 
 class ZaMultiCompX2UI : public UI,
                         public ImageKnob::Callback,
-                        public ImageToggle::Callback
+                        public ImageSwitch::Callback
 {
 public:
     ZaMultiCompX2UI();
@@ -64,7 +62,7 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void imageToggleClicked(ImageToggle* toggle, int button) override;
+    void imageSwitchClicked(ImageSwitch* toggle, bool down) override;
 
     void onDisplay() override;
 
@@ -100,9 +98,9 @@ private:
     ScopedPointer<ImageKnob> fKnobGlobalGain;
     ScopedPointer<ImageKnob> fKnobMakeup1, fKnobMakeup2, fKnobMakeup3;
     ScopedPointer<ImageKnob> fKnobXover1, fKnobXover2;
-    ScopedPointer<ImageToggle> fToggleBypass1, fToggleBypass2, fToggleBypass3;
-    ScopedPointer<ImageToggle> fToggleListen1, fToggleListen2, fToggleListen3;
-    ScopedPointer<ImageToggle> fToggleStereo;
+    ScopedPointer<ImageSwitch> fToggleBypass1, fToggleBypass2, fToggleBypass3;
+    ScopedPointer<ImageSwitch> fToggleListen1, fToggleListen2, fToggleListen3;
+    ScopedPointer<ImageSwitch> fToggleStereo;
 
     Image fLedRedImg;
     float fLedRedValue[3];

@@ -19,15 +19,13 @@
 #define ZAMCOMPUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
-#include "ImageKnob.hpp"
-#include "ImageToggle.hpp"
+#include "ImageWidgets.hpp"
 
 #include "ZamDelayArtwork.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageToggle;
+using DGL::ImageSwitch;
 using DGL::ImageSlider;
 
 START_NAMESPACE_DISTRHO
@@ -36,7 +34,7 @@ START_NAMESPACE_DISTRHO
 
 class ZamDelayUI : public UI,
                     public ImageKnob::Callback,
-                    public ImageToggle::Callback,
+                    public ImageSwitch::Callback,
                     public ImageSlider::Callback
 {
 public:
@@ -56,7 +54,7 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
-    void imageToggleClicked(ImageToggle* imageToggle, int button) override;
+    void imageSwitchClicked(ImageSwitch* tog, bool down) override;
 
     void imageSliderDragStarted(ImageSlider* s) override;
     void imageSliderDragFinished(ImageSlider* s) override;
@@ -67,7 +65,7 @@ protected:
 private:
     Image fImgBackground;
     ScopedPointer<ImageKnob> fKnobDelaytime, fKnobLPF, fKnobGain, fKnobDrywet, fKnobFeedback;
-    ScopedPointer<ImageToggle> fToggleInvert, fToggleBPM;
+    ScopedPointer<ImageSwitch> fToggleInvert, fToggleBPM;
     ScopedPointer<ImageSlider> fSliderDiv;
 };
 
@@ -75,4 +73,4 @@ private:
 
 END_NAMESPACE_DISTRHO
 
-#endif // ZAMCOMPUI_HPP_INCLUDED
+#endif

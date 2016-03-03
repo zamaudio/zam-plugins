@@ -19,8 +19,8 @@
 #define ZAMCOMPX2UI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
+#include "ImageWidgets.hpp"
 
-#include "ImageKnob.hpp"
 #include "ZamHeadX2Artwork.hpp"
 
 using DGL::Image;

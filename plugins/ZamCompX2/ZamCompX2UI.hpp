@@ -19,15 +19,13 @@
 #define ZAMCOMPX2UI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
-#include "ImageKnob.hpp"
-#include "ImageToggle.hpp"
+#include "ImageWidgets.hpp"
 
 #include "ZamCompX2Artwork.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
-using DGL::ImageToggle;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
@@ -35,7 +33,7 @@ START_NAMESPACE_DISTRHO
 
 class ZamCompX2UI : public UI,
                     public ImageKnob::Callback,
-                    public ImageToggle::Callback
+                    public ImageSwitch::Callback
 {
 public:
     ZamCompX2UI();
@@ -53,7 +51,7 @@ protected:
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
-    void imageToggleClicked(ImageToggle* toggle, int button) override;
+    void imageSwitchClicked(ImageSwitch* toggle, bool down) override;
 
     void onDisplay() override;
 
@@ -61,7 +59,7 @@ private:
     Image fImgBackground;
     ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
     ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup, fKnobSlew;
-    ScopedPointer<ImageToggle> fToggleStereo;
+    ScopedPointer<ImageSwitch> fToggleStereo;
 
     Image fLedRedImg;
     float fLedRedValue;

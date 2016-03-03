@@ -19,9 +19,7 @@
 #define ZAMAXIMX2UI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
-#include "ImageKnob.hpp"
-#include "ImageToggle.hpp"
+#include "ImageWidgets.hpp"
 
 #include "ZaMaximX2Artwork.hpp"
 

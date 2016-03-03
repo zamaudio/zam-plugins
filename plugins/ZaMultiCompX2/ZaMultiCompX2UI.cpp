@@ -213,45 +213,45 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
 
     Point<int> togglePosStart(247-230+4,108+130+5);
 
-    fToggleBypass3 = new ImageToggle(this, toggleoffImage, toggleonImage);
+    fToggleBypass3 = new ImageSwitch(this, toggleoffImage, toggleonImage);
     fToggleBypass3->setAbsolutePos(togglePosStart);
     fToggleBypass3->setCallback(this);
 
     togglePosStart.setY(158+130+5);
 
-    fToggleBypass2 = new ImageToggle(this, toggleoffImage, toggleonImage);
+    fToggleBypass2 = new ImageSwitch(this, toggleoffImage, toggleonImage);
     fToggleBypass2->setAbsolutePos(togglePosStart);
     fToggleBypass2->setCallback(this);
 
     togglePosStart.setY(209+130+5);
 
-    fToggleBypass1 = new ImageToggle(this, toggleoffImage, toggleonImage);
+    fToggleBypass1 = new ImageSwitch(this, toggleoffImage, toggleonImage);
     fToggleBypass1->setAbsolutePos(togglePosStart);
     fToggleBypass1->setCallback(this);
 
     togglePosStart.setX(278-230+4);
     togglePosStart.setY(113+130+5);
 
-    fToggleListen3 = new ImageToggle(this, toggleoffhImage, toggleonhImage);
+    fToggleListen3 = new ImageSwitch(this, toggleoffhImage, toggleonhImage);
     fToggleListen3->setAbsolutePos(togglePosStart);
     fToggleListen3->setCallback(this);
 
     togglePosStart.setY(164+130+5);
 
-    fToggleListen2 = new ImageToggle(this, toggleoffhImage, toggleonhImage);
+    fToggleListen2 = new ImageSwitch(this, toggleoffhImage, toggleonhImage);
     fToggleListen2->setAbsolutePos(togglePosStart);
     fToggleListen2->setCallback(this);
 
     togglePosStart.setY(214+130+5);
 
-    fToggleListen1 = new ImageToggle(this, toggleoffhImage, toggleonhImage);
+    fToggleListen1 = new ImageSwitch(this, toggleoffhImage, toggleonhImage);
     fToggleListen1->setAbsolutePos(togglePosStart);
     fToggleListen1->setCallback(this);
 
     togglePosStart.setX(369);
     togglePosStart.setY(181);
 
-    fToggleStereo = new ImageToggle(this, toggleoffImage, toggleonImage);
+    fToggleStereo = new ImageSwitch(this, toggleoffImage, toggleonImage);
     fToggleStereo->setAbsolutePos(togglePosStart);
     fToggleStereo->setCallback(this);
 
@@ -480,7 +480,7 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         }
         break;
     case ZaMultiCompX2Plugin::paramToggle1:
-        fToggleBypass1->setValue(value);
+        fToggleBypass1->setDown(value > 0.5);
         if (fBypass[0] != value)
         {
             fBypass[0] = value;
@@ -488,7 +488,7 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         }
         break;
     case ZaMultiCompX2Plugin::paramToggle2:
-        fToggleBypass2->setValue(value);
+        fToggleBypass2->setDown(value > 0.5);
         if (fBypass[1] != value)
         {
             fBypass[1] = value;
@@ -496,7 +496,7 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         }
         break;
     case ZaMultiCompX2Plugin::paramToggle3:
-        fToggleBypass3->setValue(value);
+        fToggleBypass3->setDown(value > 0.5);
         if (fBypass[2] != value)
         {
             fBypass[2] = value;
@@ -504,7 +504,7 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         }
         break;
     case ZaMultiCompX2Plugin::paramListen1:
-        fToggleListen1->setValue(value);
+        fToggleListen1->setDown(value > 0.5);
         if (fListen[0] != value)
         {
             fListen[0] = value;
@@ -512,7 +512,7 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         }
         break;
     case ZaMultiCompX2Plugin::paramListen2:
-        fToggleListen2->setValue(value);
+        fToggleListen2->setDown(value > 0.5);
         if (fListen[1] != value)
         {
             fListen[1] = value;
@@ -520,7 +520,7 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         }
         break;
     case ZaMultiCompX2Plugin::paramListen3:
-        fToggleListen3->setValue(value);
+        fToggleListen3->setDown(value > 0.5);
         if (fListen[2] != value)
         {
             fListen[2] = value;
@@ -528,7 +528,7 @@ void ZaMultiCompX2UI::parameterChanged(uint32_t index, float value)
         }
         break;
     case ZaMultiCompX2Plugin::paramStereoDet:
-        fToggleStereo->setValue(value);
+        fToggleStereo->setDown(value > 0.5);
         break;
     }
 }
@@ -557,13 +557,13 @@ void ZaMultiCompX2UI::programLoaded(uint32_t index)
 		fKnobMakeup3->setValue(0.0f);
 		fKnobXover1->setValue(160.0f);
 		fKnobXover2->setValue(1400.0f);
-		fToggleBypass1->setValue(0.0f);
-		fToggleBypass2->setValue(0.0f);
-		fToggleBypass3->setValue(0.0f);
-		fToggleListen1->setValue(0.0f);
-		fToggleListen2->setValue(0.0f);
-		fToggleListen3->setValue(0.0f);
-		fToggleStereo->setValue(1.0f);
+		fToggleBypass1->setDown(false);
+		fToggleBypass2->setDown(false);
+		fToggleBypass3->setDown(false);
+		fToggleListen1->setDown(false);
+		fToggleListen2->setDown(false);
+		fToggleListen3->setDown(false);
+		fToggleStereo->setDown(true);
 		fKnobGlobalGain->setValue(0.0f);
 		break;
 	case 1:
@@ -587,13 +587,13 @@ void ZaMultiCompX2UI::programLoaded(uint32_t index)
 		fKnobMakeup3->setValue(6.0f);
 		fKnobXover1->setValue(160.0f);
 		fKnobXover2->setValue(1400.0f);
-		fToggleBypass1->setValue(1.0f);
-		fToggleBypass2->setValue(1.0f);
-		fToggleBypass3->setValue(1.0f);
-		fToggleListen1->setValue(0.0f);
-		fToggleListen2->setValue(0.0f);
-		fToggleListen3->setValue(0.0f);
-		fToggleStereo->setValue(1.0f);
+		fToggleBypass1->setDown(true);
+		fToggleBypass2->setDown(true);
+		fToggleBypass3->setDown(true);
+		fToggleListen1->setDown(false);
+		fToggleListen2->setDown(false);
+		fToggleListen3->setDown(false);
+		fToggleStereo->setDown(true);
 		fKnobGlobalGain->setValue(0.0f);
 		break;
 	}
@@ -770,9 +770,9 @@ void ZaMultiCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
         setParameterValue(ZaMultiCompX2Plugin::paramXover2, value);
 }
 
-void ZaMultiCompX2UI::imageToggleClicked(ImageToggle* toggle, int)
+void ZaMultiCompX2UI::imageSwitchClicked(ImageSwitch* toggle, bool down)
 {
-    float v = toggle->getValue();
+    float v = down ? 1.f : 0.f;
     if (toggle == fToggleBypass1) {
         setParameterValue(ZaMultiCompX2Plugin::paramToggle1, v);
         fBypass[0] = v;

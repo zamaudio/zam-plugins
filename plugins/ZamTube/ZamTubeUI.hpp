@@ -19,17 +19,14 @@
 #define ZAMTUBEUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-
-#include "ImageKnob.hpp"
-#include "ImageSlider.hpp"
-#include "ImageToggle.hpp"
+#include "ImageWidgets.hpp"
 
 #include "ZamTubeArtwork.hpp"
 
 using DGL::Image;
 using DGL::ImageKnob;
 using DGL::ImageSlider;
-using DGL::ImageToggle;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
@@ -38,7 +35,7 @@ START_NAMESPACE_DISTRHO
 class ZamTubeUI : public UI,
                   public ImageKnob::Callback,
                   public ImageSlider::Callback,
-                  public ImageToggle::Callback
+                  public ImageSwitch::Callback
 {
 public:
     ZamTubeUI();
@@ -60,15 +57,15 @@ protected:
     void imageSliderDragStarted(ImageSlider* slider) override;
     void imageSliderDragFinished(ImageSlider* slider) override;
     void imageSliderValueChanged(ImageSlider* slider, float value) override;
-    
-    void imageToggleClicked(ImageToggle* toggle, int value) override;
+
+    void imageSwitchClicked(ImageSwitch* toggle, bool down) override;
 
     void onDisplay() override;
 
 private:
     Image fImgBackground;
     ScopedPointer<ImageSlider> fSliderNotch;
-    ScopedPointer<ImageToggle> fToggleInsane;
+    ScopedPointer<ImageSwitch> fToggleInsane;
     ScopedPointer<ImageKnob> fKnobTube, fKnobBass, fKnobMids, fKnobTreb, fKnobGain;
 };
 

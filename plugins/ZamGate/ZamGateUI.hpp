@@ -19,7 +19,7 @@
 #define ZAMGATEUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-#include "ImageKnob.hpp"
+#include "ImageWidgets.hpp"
 #include "ZamGateArtwork.hpp"
 
 using DGL::Image;

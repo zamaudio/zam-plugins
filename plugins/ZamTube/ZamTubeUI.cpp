@@ -102,7 +102,7 @@ ZamTubeUI::ZamTubeUI()
 
     Point<int> insaneStart(165,140);
 
-    fToggleInsane = new ImageToggle(this, insaneImageOff, insaneImageOn);
+    fToggleInsane = new ImageSwitch(this, insaneImageOff, insaneImageOn);
     fToggleInsane->setAbsolutePos(insaneStart);
     fToggleInsane->setCallback(this);
 
@@ -136,7 +136,7 @@ void ZamTubeUI::parameterChanged(uint32_t index, float value)
         fKnobGain->setValue(value);
         break;
     case ZamTubePlugin::paramInsane:
-        fToggleInsane->setValue(value);
+        fToggleInsane->setDown(value > 0.5);
         break;
     }
 }
@@ -152,7 +152,7 @@ void ZamTubeUI::programLoaded(uint32_t index)
     fKnobMids->setValue(0.5f);
     fKnobTreb->setValue(0.0f);
     fKnobGain->setValue(0.0f);
-    fToggleInsane->setValue(0.0f);
+    fToggleInsane->setDown(false);
     fSliderNotch->setValue(0.0f);
 }
 
@@ -216,9 +216,9 @@ void ZamTubeUI::imageSliderValueChanged(ImageSlider*, float value)
     setParameterValue(ZamTubePlugin::paramToneStack, value);
 }
 
-void ZamTubeUI::imageToggleClicked(ImageToggle* toggle, int)
+void ZamTubeUI::imageSwitchClicked(ImageSwitch* toggle, bool down)
 {
-    float v = toggle->getValue();
+    float v = down ? 1.f : 0.f;
     if (toggle == fToggleInsane) {
         setParameterValue(ZamTubePlugin::paramInsane, v);
     }
