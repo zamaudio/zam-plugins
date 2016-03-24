@@ -36,6 +36,9 @@ ZamCompUI::ZamCompUI()
     fLedRedImg = Image(ZamCompArtwork::ledredData, ZamCompArtwork::ledredWidth, ZamCompArtwork::ledredHeight);
     fLedYellowImg = Image(ZamCompArtwork::ledyellowData, ZamCompArtwork::ledyellowWidth, ZamCompArtwork::ledyellowHeight);
 
+    fTogOn = Image(ZamCompArtwork::toggleonData, ZamCompArtwork::toggleonWidth, ZamCompArtwork::toggleonHeight);
+    fTogOff = Image(ZamCompArtwork::toggleoffData, ZamCompArtwork::toggleoffWidth, ZamCompArtwork::toggleoffHeight);
+
     // led values
     fLedRedValue = 0.0f;
     fLedYellowValue = 0.0f;
@@ -101,6 +104,11 @@ ZamCompUI::ZamCompUI()
     fKnobSlew->setRotationAngle(240);
     fKnobSlew->setCallback(this);
 
+    fToggleSidechain = new ImageSwitch(this, fTogOff, fTogOn);
+    fToggleSidechain->setAbsolutePos(500, 61);
+    fToggleSidechain->setId(ZamCompPlugin::paramSidechain);
+    fToggleSidechain->setCallback(this);
+
     // set default values
     programLoaded(0);
 }
@@ -133,6 +141,9 @@ void ZamCompUI::parameterChanged(uint32_t index, float value)
     case ZamCompPlugin::paramSlew:
         fKnobSlew->setValue(value);
         break;
+    case ZamCompPlugin::paramSidechain:
+        fToggleSidechain->setDown(value > 0.5);
+        break;
     case ZamCompPlugin::paramGainRed:
         if (fLedRedValue != value)
         {
@@ -161,6 +172,7 @@ void ZamCompUI::programLoaded(uint32_t index)
 		fKnobThresh->setValue(0.0f);
 		fKnobMakeup->setValue(0.0f);
 		fKnobSlew->setValue(1.0f);
+		fToggleSidechain->setDown(false);
 		break;
 	case 1:
 		fKnobAttack->setValue(10.0f);
@@ -170,6 +182,7 @@ void ZamCompUI::programLoaded(uint32_t index)
 		fKnobThresh->setValue(-18.0f);
 		fKnobMakeup->setValue(6.0f);
 		fKnobSlew->setValue(20.0f);
+		fToggleSidechain->setDown(false);
 		break;
 	case 2:
 		fKnobAttack->setValue(50.0f);
@@ -179,6 +192,7 @@ void ZamCompUI::programLoaded(uint32_t index)
 		fKnobThresh->setValue(-16.0f);
 		fKnobMakeup->setValue(9.0f);
 		fKnobSlew->setValue(1.0f);
+		fToggleSidechain->setDown(false);
 		break;
 	}
 }
@@ -199,6 +213,11 @@ void ZamCompUI::imageKnobDragFinished(ImageKnob* knob)
 void ZamCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
     setParameterValue(knob->getId(), value);
+}
+
+void ZamCompUI::imageSwitchClicked(ImageSwitch* tog, bool down)
+{
+    setParameterValue(tog->getId(), down ? 1.f : 0.f);
 }
 
 void ZamCompUI::onDisplay()

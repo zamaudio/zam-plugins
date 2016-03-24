@@ -31,7 +31,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamCompUI : public UI,
-                    public ImageKnob::Callback
+                    public ImageKnob::Callback,
+                    public ImageSwitch::Callback
 {
 public:
     ZamCompUI();
@@ -49,6 +50,7 @@ protected:
     void imageKnobDragStarted(ImageKnob* knob) override;
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageSwitchClicked(ImageSwitch* tog, bool down) override;
 
     void onDisplay() override;
 
@@ -56,11 +58,14 @@ private:
     Image fImgBackground;
     ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
     ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup, fKnobSlew;
+    ScopedPointer<ImageSwitch> fToggleSidechain;
 
     Image fLedRedImg;
     float fLedRedValue;
     Image fLedYellowImg;
     float fLedYellowValue;
+    Image fTogOn;
+    Image fTogOff;
 };
 
 // -----------------------------------------------------------------------

@@ -38,6 +38,7 @@ public:
         paramSlew,
         paramGainRed,
         paramOutputLevel,
+        paramSidechain,
         paramCount
     };
 
@@ -117,11 +118,12 @@ protected:
 
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
+    void initAudioPort(bool input, uint32_t index, AudioPort& port) override;
 
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup,gainred,outlevel,slewfactor; //parameters
+    float attack,release,knee,ratio,thresdb,makeup,gainred,outlevel,slewfactor,sidechain; //parameters
     float oldL_yl, oldL_y1, oldL_yg;
 };
 

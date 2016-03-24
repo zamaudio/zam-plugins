@@ -98,6 +98,15 @@ void ZamCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 1.0f;
         parameter.ranges.max = 150.0f;
         break;
+    case paramSidechain:
+        parameter.hints      = kParameterIsAutomable;
+        parameter.name       = "Sidechain";
+        parameter.symbol     = "sidech";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     case paramGainRed:
         parameter.hints      = kParameterIsOutput;
         parameter.name       = "Gain Reduction";
@@ -119,6 +128,16 @@ void ZamCompPlugin::initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
+void ZamCompPlugin::initAudioPort(bool input, uint32_t index, AudioPort& port)
+{
+	Plugin::initAudioPort(input, index, port);
+
+	if ((index == 1) && input) {
+		port.hints |= kAudioPortIsSidechain;
+		port.name = "Sidechain Input";
+		port.symbol = "sidechain_in";
+	}
+}
 
 void ZamCompPlugin::initProgramName(uint32_t index, String& programName)
 {
@@ -148,6 +167,7 @@ void ZamCompPlugin::loadProgram(uint32_t index)
 		gainred = 0.0;
 		slewfactor = 1.0;
 		outlevel = -45.0;
+		sidechain = 0.0;
 		break;
 	case 1:
 		attack = 10.0;
@@ -159,6 +179,7 @@ void ZamCompPlugin::loadProgram(uint32_t index)
 		gainred = 0.0;
 		slewfactor = 20.0;
 		outlevel = -45.0;
+		sidechain = 0.0;
 		break;
 	case 2:
 		attack = 50.0;
@@ -170,6 +191,7 @@ void ZamCompPlugin::loadProgram(uint32_t index)
 		gainred = 0.0;
 		slewfactor = 1.0;
 		outlevel = -45.0;
+		sidechain = 0.0;
 		break;
 	}
 
@@ -203,6 +225,9 @@ float ZamCompPlugin::getParameterValue(uint32_t index) const
         break;
     case paramSlew:
         return slewfactor;
+        break;
+    case paramSidechain:
+        return sidechain;
         break;
     case paramGainRed:
         return gainred;
@@ -239,6 +264,9 @@ void ZamCompPlugin::setParameterValue(uint32_t index, float value)
         break;
     case paramSlew:
         slewfactor = value;
+        break;
+    case paramSidechain:
+        sidechain = value;
         break;
     case paramGainRed:
         gainred = value;
@@ -277,13 +305,18 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
         float Rgain = 1.f;
         float Lxg, Lxl, Lyg, Lyl, Ly1;
         float checkwidth = 0.f;
+	bool usesidechain = (sidechain < 0.5) ? false : true;
 	uint32_t i;
 
         for (i = 0; i < frames; i++) {
                 relslew = 0;
                 attslew = 0;
 		Lyg = 0.f;
-                Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
+		if (usesidechain) {
+			Lxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
+		} else {
+			Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
+		}
                 Lxg = sanitize_denormal(Lxg);
 
                 Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
