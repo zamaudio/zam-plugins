@@ -82,6 +82,15 @@ void ZamGatePlugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.min = -30.0f;
 		parameter.ranges.max = 30.0f;
 		break;
+	case paramSidechain:
+		parameter.hints = kParameterIsAutomable | kParameterIsBoolean;
+		parameter.name = "Sidechain";
+		parameter.symbol = "sidechain";
+		parameter.unit = " ";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = 0.0f;
+		parameter.ranges.max = 1.0f;
+		break;
 	case paramGainR:
 		parameter.hints = kParameterIsOutput;
 		parameter.name = "Gain Reduction";
@@ -103,6 +112,17 @@ void ZamGatePlugin::initParameter(uint32_t index, Parameter& parameter)
 	}
 }
 
+void ZamGatePlugin::initAudioPort(bool input, uint32_t index, AudioPort& port)
+{
+	Plugin::initAudioPort(input, index, port);
+
+	if ((index == 1) && input) {
+		port.hints |= kAudioPortIsSidechain;
+		port.name = "Sidechain Input";
+		port.symbol = "sidechain_in";
+	}
+}
+
 // -----------------------------------------------------------------------
 // Internal data
 
@@ -121,6 +141,9 @@ float ZamGatePlugin::getParameterValue(uint32_t index) const
 		break;
 	case paramMakeup:
 		return makeup;
+		break;
+	case paramSidechain:
+		return sidechain;
 		break;
 	case paramGainR:
 		return gainr;
@@ -149,6 +172,9 @@ void ZamGatePlugin::setParameterValue(uint32_t index, float value)
 	case paramMakeup:
 		makeup = value;
 		break;
+	case paramSidechain:
+		sidechain = value;
+		break;
 	case paramGainR:
 		gainr = value;
 		break;
@@ -165,6 +191,7 @@ void ZamGatePlugin::loadProgram(uint32_t index)
 	thresdb = -60.0;
 	gainr = 0.0;
 	makeup = 0.0;
+	sidechain = 0.0;
 	outlevel = -45.0;
 	activate();
 }
@@ -215,9 +242,14 @@ void ZamGatePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	gl = gatestatel;
 	att = 1000.f / (attack * fs);
 	rel = 1000.f / (release * fs);
+	bool usesidechain = (sidechain < 0.5) ? false : true;
 
 	for(i = 0; i < frames; i++) {
-		pushsamplel(samplesl, inputs[0][i]);
+		if (usesidechain) {
+			pushsamplel(samplesl, inputs[1][i]);
+		} else {
+			pushsamplel(samplesl, inputs[0][i]);
+		}
 		absample = averageabs(samplesl);
 		if (absample < from_dB(thresdb)) {
 			gl -= rel;

@@ -105,6 +105,11 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobSlew->setRotationAngle(240);
     fKnobSlew->setCallback(this);
 
+    fToggleSidechain = new ImageSwitch(this, fToggleOffImg, fToggleOnImg);
+    fToggleSidechain->setAbsolutePos(500, 61);
+    fToggleSidechain->setId(ZamCompX2Plugin::paramSidechain);
+    fToggleSidechain->setCallback(this);
+
     fToggleStereo = new ImageSwitch(this, fToggleOffImg, fToggleOnImg);
     fToggleStereo->setAbsolutePos(740, 61);
     fToggleStereo->setId(ZamCompX2Plugin::paramStereo);
@@ -142,6 +147,9 @@ void ZamCompX2UI::parameterChanged(uint32_t index, float value)
     case ZamCompX2Plugin::paramSlew:
         fKnobSlew->setValue(value);
         break;
+    case ZamCompX2Plugin::paramSidechain:
+        fToggleSidechain->setDown(value > 0.5);
+        break;
     case ZamCompX2Plugin::paramStereo:
         fToggleStereo->setDown(value > 0.5);
         break;
@@ -174,6 +182,7 @@ void ZamCompX2UI::programLoaded(uint32_t index)
 		fKnobMakeup->setValue(0.0f);
 		fKnobSlew->setValue(1.0f);
 		fToggleStereo->setDown(false);
+		fToggleSidechain->setDown(false);
 		break;
 	case 1:
 		fKnobAttack->setValue(10.0f);
@@ -184,6 +193,7 @@ void ZamCompX2UI::programLoaded(uint32_t index)
 		fKnobMakeup->setValue(6.0f);
 		fKnobSlew->setValue(20.0f);
 		fToggleStereo->setDown(true);
+		fToggleSidechain->setDown(false);
 		break;
 	case 2:
 		fKnobAttack->setValue(50.0f);
@@ -194,6 +204,7 @@ void ZamCompX2UI::programLoaded(uint32_t index)
 		fKnobMakeup->setValue(9.0f);
 		fKnobSlew->setValue(1.0f);
 		fToggleStereo->setDown(true);
+		fToggleSidechain->setDown(false);
 		break;
 	}
 }

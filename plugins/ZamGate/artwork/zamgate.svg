@@ -4624,9 +4624,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.90509669"
-     inkscape:cx="525.03821"
-     inkscape:cy="40.627798"
+     inkscape:zoom="1.28"
+     inkscape:cx="375.07621"
+     inkscape:cy="-19.570083"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -4637,7 +4637,7 @@
      fit-margin-bottom="0"
      inkscape:window-width="1280"
      inkscape:window-height="765"
-     inkscape:window-x="49"
+     inkscape:window-x="-79"
      inkscape:window-y="31"
      inkscape:window-maximized="0" />
   <metadata
@@ -4648,7 +4648,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -4727,7 +4727,7 @@
        sodipodi:cy="104.69824"
        sodipodi:rx="24.748737"
        sodipodi:ry="24.748737"
-       d="m 456.93331,117.17445 a 24.748737,24.748737 0 1 1 42.65704,0.15424 l -21.28313,-12.63045 z"
+       d="m 456.93331,117.17445 c -6.89042,-11.80448 -2.90679,-26.9597 8.8977,-33.850121 11.80449,-6.890421 26.9597,-2.906784 33.85012,8.897703 4.53206,7.764198 4.49731,17.375438 -0.0908,25.106658 l -21.28313,-12.63045 z"
        transform="translate(-430,903.6588)"
        sodipodi:start="2.6132357"
        sodipodi:end="6.8187738" />
@@ -4751,7 +4751,7 @@
        height="1052.3622" />
     <path
        transform="translate(-430,903.6588)"
-       d="m 456.67602,116.72286 a 24.748737,24.748737 0 1 1 43.35985,-0.17702 l -21.72865,-11.8476 z"
+       d="m 456.67602,116.72286 c -6.64101,-11.94658 -2.33999,-27.014803 9.60659,-33.655814 11.94658,-6.641011 27.0148,-2.339998 33.65581,9.606582 4.12181,7.414772 4.15859,16.424042 0.0974,23.872212 l -21.72865,-11.8476 z"
        sodipodi:ry="24.748737"
        sodipodi:rx="24.748737"
        sodipodi:cy="104.69824"
@@ -5044,7 +5044,7 @@
        sodipodi:end="6.8187738"
        sodipodi:start="2.6132357"
        transform="translate(-341,903.6588)"
-       d="m 456.93331,117.17445 a 24.748737,24.748737 0 1 1 42.65704,0.15424 l -21.28313,-12.63045 z"
+       d="m 456.93331,117.17445 c -6.89042,-11.80448 -2.90679,-26.9597 8.8977,-33.850121 11.80449,-6.890421 26.9597,-2.906784 33.85012,8.897703 4.53206,7.764198 4.49731,17.375438 -0.0908,25.106658 l -21.28313,-12.63045 z"
        sodipodi:ry="24.748737"
        sodipodi:rx="24.748737"
        sodipodi:cy="104.69824"
@@ -5080,7 +5080,7 @@
        sodipodi:cy="104.69824"
        sodipodi:rx="24.748737"
        sodipodi:ry="24.748737"
-       d="m 456.67602,116.72286 a 24.748737,24.748737 0 1 1 43.35985,-0.17702 l -21.72865,-11.8476 z"
+       d="m 456.67602,116.72286 c -6.64101,-11.94658 -2.33999,-27.014803 9.60659,-33.655814 11.94658,-6.641011 27.0148,-2.339998 33.65581,9.606582 4.12181,7.414772 4.15859,16.424042 0.0974,23.872212 l -21.72865,-11.8476 z"
        transform="translate(-341,903.6588)" />
     <path
        inkscape:tile-y0="189.50504"
@@ -6275,5 +6275,17 @@
          x="74.263794"
          id="tspan3713"
          sodipodi:role="line">500</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:FreeSans;-inkscape-font-specification:FreeSans"
+       x="404.48929"
+       y="1012.5848"
+       id="text3722"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3724"
+         x="404.48929"
+         y="1012.5848"
+         style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Allstar4;-inkscape-font-specification:Allstar4">Sidechain</tspan></text>
   </g>
 </svg>

@@ -34,6 +34,10 @@ ZamGateUI::ZamGateUI()
 	fLedRedImg = Image(ZamGateArtwork::ledredData, ZamGateArtwork::ledredWidth, ZamGateArtwork::ledredHeight);
 	fLedYellowImg = Image(ZamGateArtwork::ledyellowData, ZamGateArtwork::ledyellowWidth, ZamGateArtwork::ledyellowHeight);
 
+	// toggle images
+	fTogOn = Image(ZamGateArtwork::toggleonData, ZamGateArtwork::toggleonWidth, ZamGateArtwork::toggleonHeight);
+	fTogOff = Image(ZamGateArtwork::toggleoffData, ZamGateArtwork::toggleoffWidth, ZamGateArtwork::toggleoffHeight);
+
 	// led values
 	fLedRedValue = 0.0f;
 	fLedYellowValue = 0.0f;
@@ -74,6 +78,11 @@ ZamGateUI::ZamGateUI()
 	fKnobMakeup->setRotationAngle(240);
 	fKnobMakeup->setCallback(this);
 
+	fToggleSidechain = new ImageSwitch(this, fTogOff, fTogOn);
+	fToggleSidechain->setAbsolutePos(350, 61);
+	fToggleSidechain->setId(ZamGatePlugin::paramSidechain);
+	fToggleSidechain->setCallback(this);
+
 	// set default values
 	programLoaded(0);
 }
@@ -96,6 +105,9 @@ void ZamGateUI::parameterChanged(uint32_t index, float value)
 		break;
 	case ZamGatePlugin::paramMakeup:
 		fKnobMakeup->setValue(value);
+		break;
+	case ZamGatePlugin::paramSidechain:
+		fToggleSidechain->setDown(value > 0.5);
 		break;
 	case ZamGatePlugin::paramGainR:
 		if (fLedRedValue != value)
@@ -121,6 +133,7 @@ void ZamGateUI::programLoaded(uint32_t index)
 	fKnobRelease->setValue(100.0f);
 	fKnobThresh->setValue(-60.0f);
 	fKnobMakeup->setValue(0.0f);
+	fToggleSidechain->setDown(false);
 }
 
 // -----------------------------------------------------------------------
@@ -139,6 +152,11 @@ void ZamGateUI::imageKnobDragFinished(ImageKnob* knob)
 void ZamGateUI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
 	setParameterValue(knob->getId(), value);
+}
+
+void ZamGateUI::imageSwitchClicked(ImageSwitch* tog, bool down)
+{
+    setParameterValue(tog->getId(), down ? 1.f : 0.f);
 }
 
 void ZamGateUI::onDisplay()

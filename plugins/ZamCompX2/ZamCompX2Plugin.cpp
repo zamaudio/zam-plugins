@@ -98,8 +98,17 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 1.0f;
         parameter.ranges.max = 150.0f;
         break;
+    case paramSidechain:
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.name       = "Sidechain";
+        parameter.symbol     = "sidechain";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     case paramStereo:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "Stereo Detection";
         parameter.symbol     = "stereodet";
         parameter.unit       = " ";
@@ -128,6 +137,16 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
+void ZamCompX2Plugin::initAudioPort(bool input, uint32_t index, AudioPort& port)
+{
+	Plugin::initAudioPort(input, index, port);
+
+	if ((index == 2) && input) {
+		port.hints |= kAudioPortIsSidechain;
+		port.name = "Sidechain Input";
+		port.symbol = "sidechain_in";
+	}
+}
 
 void ZamCompX2Plugin::initProgramName(uint32_t index, String& programName)
 {
@@ -156,6 +175,7 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		makeup = 0.0;
 		gainred = 0.0;
 		slewfactor = 1.0;
+		sidechain = 0.0;
 		stereodet = 0.0;
 		outlevel = -45.0;
 		break;
@@ -168,6 +188,7 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		makeup = 6.0;
 		gainred = 0.0;
 		slewfactor = 20.0;
+		sidechain = 0.0;
 		stereodet = 1.0;
 		outlevel = -45.0;
 		break;
@@ -180,6 +201,7 @@ void ZamCompX2Plugin::loadProgram(uint32_t index)
 		makeup = 9.0;
 		gainred = 0.0;
 		slewfactor = 1.0;
+		sidechain = 0.0;
 		stereodet = 1.0;
 		outlevel = -45.0;
 		break;
@@ -215,6 +237,9 @@ float ZamCompX2Plugin::getParameterValue(uint32_t index) const
         break;
     case paramSlew:
         return slewfactor;
+        break;
+    case paramSidechain:
+        return sidechain;
         break;
     case paramStereo:
         return stereodet;
@@ -255,6 +280,9 @@ void ZamCompX2Plugin::setParameterValue(uint32_t index, float value)
     case paramSlew:
         slewfactor = value;
         break;
+    case paramSidechain:
+        sidechain = value;
+        break;
     case paramStereo:
         stereodet = value;
         break;
@@ -286,6 +314,7 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
         float attack_coeff = exp(-1000.f/(attack * srate));
         float release_coeff = exp(-1000.f/(release * srate));
 	int stereo = (stereodet < 0.5) ? STEREOLINK_AVERAGE : STEREOLINK_MAX;
+	bool usesidechain = (sidechain < 0.5) ? false : true;
 
         int attslew = 0;
         int relslew = 0;
@@ -303,8 +332,13 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 relslew = 0;
                 attslew = 0;
 		Lyg = Ryg = 0.f;
-                Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
-                Rxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
+                if (usesidechain) {
+			Lxg = (inputs[2][i]==0.f) ? -160.f : to_dB(fabs(inputs[2][i]));
+                	Rxg = Lxg;
+		} else {
+			Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
+                	Rxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
+		}
                 Lxg = sanitize_denormal(Lxg);
                 Rxg = sanitize_denormal(Rxg);
 

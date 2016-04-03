@@ -36,6 +36,7 @@ public:
 		paramRelease,
 		paramThresh,
 		paramMakeup,
+		paramSidechain,
 		paramOutputLevel,
 		paramGainR,
 		paramCount
@@ -87,6 +88,7 @@ protected:
 
 	void initParameter(uint32_t index, Parameter& parameter) override;
 	void initProgramName(uint32_t index, String& programName) override;
+	void initAudioPort(bool input, uint32_t index, AudioPort& port) override;
 
 	// -------------------------------------------------------------------
 	// Internal data
@@ -117,7 +119,7 @@ protected:
 	}
 
 	// -------------------------------------------------------------------
-	float attack,release,thresdb,makeup,gainr,outlevel; //parameters
+	float attack,release,thresdb,makeup,sidechain,gainr,outlevel; //parameters
 
 	void pushsamplel(float samples[], float sample);
 	void pushsampler(float samples[], float sample);

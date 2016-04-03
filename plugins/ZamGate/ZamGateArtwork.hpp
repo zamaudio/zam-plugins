@@ -20,6 +20,16 @@ namespace ZamGateArtwork
     const unsigned int ledyellowWidth    = 11;
     const unsigned int ledyellowHeight   = 11;
 
+    extern const char* toggleoffData;
+    const unsigned int toggleoffDataSize = 1056;
+    const unsigned int toggleoffWidth    = 22;
+    const unsigned int toggleoffHeight   = 12;
+
+    extern const char* toggleonData;
+    const unsigned int toggleonDataSize = 1056;
+    const unsigned int toggleonWidth    = 22;
+    const unsigned int toggleonHeight   = 12;
+
     extern const char* zamgateData;
     const unsigned int zamgateDataSize = 206724;
     const unsigned int zamgateWidth    = 644;

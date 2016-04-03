@@ -41,6 +41,7 @@ public:
         paramMakeup,
         paramSlew,
 	paramStereo,
+	paramSidechain,
         paramGainRed,
         paramOutputLevel,
         paramCount
@@ -92,6 +93,7 @@ protected:
 
     void initParameter(uint32_t index, Parameter& parameter) override;
     void initProgramName(uint32_t index, String& programName) override;
+    void initAudioPort(bool input, uint32_t index, AudioPort& port) override;
 
     // -------------------------------------------------------------------
     // Internal data
@@ -126,7 +128,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float attack,release,knee,ratio,thresdb,makeup,gainred,outlevel,stereodet,slewfactor; //parameters
+    float attack,release,knee,ratio,thresdb,makeup,gainred,outlevel,sidechain,stereodet,slewfactor; //parameters
     float oldL_yl, oldL_y1, oldR_yl, oldR_y1, oldL_yg, oldR_yg;
 };
 

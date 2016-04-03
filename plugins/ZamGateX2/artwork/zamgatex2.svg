@@ -16,7 +16,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="zamgate.svg"
+   sodipodi:docname="zamgatex2.svg"
    inkscape:export-filename="/home/damien/git/zam-plugins/plugins/ZamGateX2/artwork/zamgatex2.png"
    inkscape:export-xdpi="84.32"
    inkscape:export-ydpi="84.32">
@@ -4625,10 +4625,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.28"
-     inkscape:cx="376.35297"
+     inkscape:cx="377.91547"
      inkscape:cy="26.139357"
      inkscape:document-units="mm"
-     inkscape:current-layer="text3396"
+     inkscape:current-layer="text3392"
      showgrid="false"
      units="mm"
      fit-margin-top="0"
@@ -5847,6 +5847,18 @@
          d="m 834.99877,988.03584 c 0.0734,0 0.88824,1.52995 2.44442,4.58984 l 0.0472,0.0472 0.0472,0 0,-0.0472 -0.0105,-4.49542 0.0577,-0.0944 1.24319,0 0.0944,0.0944 0,6.89263 -0.0944,0.0944 -1.53694,0 c -0.28676,-0.43013 -1.10157,-1.97582 -2.44442,-4.63705 l -0.0472,0 0,4.54263 -0.0944,0.0944 -1.19598,0 -0.13639,-0.11016 -0.005,-6.9241 0.0472,-0.0472 1.58415,0"
          style="fill:#000000;font-family:Allstar4;-inkscape-font-specification:Allstar4"
          id="path3381" />
+      <text
+         xml:space="preserve"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:FreeSans;-inkscape-font-specification:FreeSans"
+         x="568.6875"
+         y="1012.2853"
+         id="text3670"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3672"
+           x="568.6875"
+           y="1012.2853"
+           style="font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Allstar4;-inkscape-font-specification:Allstar4">Sidechain</tspan></text>
     </g>
     <path
        transform="translate(-35.621193,1016.6706)"

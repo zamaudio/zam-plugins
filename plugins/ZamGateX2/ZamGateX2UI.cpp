@@ -34,6 +34,10 @@ ZamGateX2UI::ZamGateX2UI()
 	fLedRedImg = Image(ZamGateX2Artwork::ledredData, ZamGateX2Artwork::ledredWidth, ZamGateX2Artwork::ledredHeight);
 	fLedYellowImg = Image(ZamGateX2Artwork::ledyellowData, ZamGateX2Artwork::ledyellowWidth, ZamGateX2Artwork::ledyellowHeight);
 
+	// toggle images
+	fTogOn = Image(ZamGateX2Artwork::toggleonData, ZamGateX2Artwork::toggleonWidth, ZamGateX2Artwork::toggleonHeight);
+	fTogOff = Image(ZamGateX2Artwork::toggleoffData, ZamGateX2Artwork::toggleoffWidth, ZamGateX2Artwork::toggleoffHeight);
+
 	// led values
 	fLedRedValue = 0.0f;
 	fLedYellowValue = 0.0f;
@@ -74,6 +78,11 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobMakeup->setRotationAngle(240);
 	fKnobMakeup->setCallback(this);
 
+	fToggleSidechain = new ImageSwitch(this, fTogOff, fTogOn);
+	fToggleSidechain->setAbsolutePos(350, 61);
+	fToggleSidechain->setId(ZamGateX2Plugin::paramSidechain);
+	fToggleSidechain->setCallback(this);
+
 	// set default values
 	programLoaded(0);
 }
@@ -96,6 +105,9 @@ void ZamGateX2UI::parameterChanged(uint32_t index, float value)
 		break;
 	case ZamGateX2Plugin::paramMakeup:
 		fKnobMakeup->setValue(value);
+		break;
+	case ZamGateX2Plugin::paramSidechain:
+		fToggleSidechain->setDown(value > 0.5);
 		break;
 	case ZamGateX2Plugin::paramGainR:
 		if (fLedRedValue != value)
@@ -121,6 +133,7 @@ void ZamGateX2UI::programLoaded(uint32_t index)
 	fKnobRelease->setValue(100.0f);
 	fKnobThresh->setValue(-60.0f);
 	fKnobMakeup->setValue(0.0f);
+	fToggleSidechain->setDown(false);
 }
 
 // -----------------------------------------------------------------------
@@ -139,6 +152,11 @@ void ZamGateX2UI::imageKnobDragFinished(ImageKnob* knob)
 void ZamGateX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
 {
 	setParameterValue(knob->getId(), value);
+}
+
+void ZamGateX2UI::imageSwitchClicked(ImageSwitch* tog, bool down)
+{
+	setParameterValue(tog->getId(), down ? 1.f : 0.f);
 }
 
 void ZamGateX2UI::onDisplay()

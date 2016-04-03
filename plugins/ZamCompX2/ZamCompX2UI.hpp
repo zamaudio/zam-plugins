@@ -59,7 +59,7 @@ private:
     Image fImgBackground;
     ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
     ScopedPointer<ImageKnob> fKnobRatio, fKnobKnee, fKnobMakeup, fKnobSlew;
-    ScopedPointer<ImageSwitch> fToggleStereo;
+    ScopedPointer<ImageSwitch> fToggleStereo, fToggleSidechain;
 
     Image fLedRedImg;
     float fLedRedValue;
