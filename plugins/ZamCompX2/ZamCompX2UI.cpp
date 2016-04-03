@@ -52,7 +52,6 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobAttack->setAbsolutePos(24, 45);
     fKnobAttack->setId(ZamCompX2Plugin::paramAttack);
     fKnobAttack->setRange(0.1f, 200.0f);
-    fKnobAttack->setStep(0.1f);
     fKnobAttack->setUsingLogScale(true);
     fKnobAttack->setDefault(10.0f);
     fKnobAttack->setRotationAngle(240);
@@ -62,7 +61,6 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobRelease->setAbsolutePos(108, 45);
     fKnobRelease->setId(ZamCompX2Plugin::paramRelease);
     fKnobRelease->setRange(1.0f, 500.0f);
-    fKnobRelease->setStep(1.0f);
     fKnobRelease->setDefault(80.0f);
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
@@ -71,7 +69,6 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobThresh->setAbsolutePos(191.5, 45);
     fKnobThresh->setId(ZamCompX2Plugin::paramThresh);
     fKnobThresh->setRange(-60.0f, 0.0f);
-    fKnobThresh->setStep(1.0f);
     fKnobThresh->setDefault(0.0f);
     fKnobThresh->setRotationAngle(240);
     fKnobThresh->setCallback(this);
@@ -80,7 +77,6 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobRatio->setAbsolutePos(270, 45);
     fKnobRatio->setId(ZamCompX2Plugin::paramRatio);
     fKnobRatio->setRange(1.0f, 20.0f);
-    fKnobRatio->setStep(0.1f);
     fKnobRatio->setDefault(4.0f);
     fKnobRatio->setRotationAngle(240);
     fKnobRatio->setCallback(this);
@@ -89,7 +85,6 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobKnee->setAbsolutePos(348.5, 45);
     fKnobKnee->setId(ZamCompX2Plugin::paramKnee);
     fKnobKnee->setRange(0.0f, 8.0f);
-    fKnobKnee->setStep(0.1f);
     fKnobKnee->setDefault(0.0f);
     fKnobKnee->setRotationAngle(240);
     fKnobKnee->setCallback(this);
@@ -98,7 +93,6 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobMakeup->setAbsolutePos(638, 62);
     fKnobMakeup->setId(ZamCompX2Plugin::paramMakeup);
     fKnobMakeup->setRange(-30.0f, 30.0f);
-    fKnobMakeup->setStep(1.0f);
     fKnobMakeup->setDefault(0.0f);
     fKnobMakeup->setRotationAngle(240);
     fKnobMakeup->setCallback(this);

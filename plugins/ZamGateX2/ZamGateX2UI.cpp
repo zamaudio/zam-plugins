@@ -46,7 +46,6 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobAttack->setAbsolutePos(24, 45);
 	fKnobAttack->setId(ZamGateX2Plugin::paramAttack);
 	fKnobAttack->setRange(0.1f, 500.0f);
-	fKnobAttack->setStep(0.1f);
 	fKnobAttack->setDefault(50.0f);
 	fKnobAttack->setRotationAngle(240);
 	fKnobAttack->setCallback(this);
@@ -55,7 +54,6 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobRelease->setAbsolutePos(108, 45);
 	fKnobRelease->setId(ZamGateX2Plugin::paramRelease);
 	fKnobRelease->setRange(0.1f, 500.0f);
-	fKnobRelease->setStep(0.1f);
 	fKnobRelease->setDefault(100.0f);
 	fKnobRelease->setRotationAngle(240);
 	fKnobRelease->setCallback(this);
@@ -64,7 +62,6 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobThresh->setAbsolutePos(191.7, 45);
 	fKnobThresh->setId(ZamGateX2Plugin::paramThresh);
 	fKnobThresh->setRange(-60.0f, 0.0f);
-	fKnobThresh->setStep(1.0f);
 	fKnobThresh->setDefault(-60.0f);
 	fKnobThresh->setRotationAngle(240);
 	fKnobThresh->setCallback(this);
@@ -73,7 +70,6 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobMakeup->setAbsolutePos(273, 45);
 	fKnobMakeup->setId(ZamGateX2Plugin::paramMakeup);
 	fKnobMakeup->setRange(-30.0f, 30.0f);
-	fKnobMakeup->setStep(1.0f);
 	fKnobMakeup->setDefault(0.0f);
 	fKnobMakeup->setRotationAngle(240);
 	fKnobMakeup->setCallback(this);

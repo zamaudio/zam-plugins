@@ -48,7 +48,6 @@ ZaMaximX2UI::ZaMaximX2UI()
     fKnobRelease->setAbsolutePos(27, 46);
     fKnobRelease->setId(ZaMaximX2Plugin::paramRelease);
     fKnobRelease->setRange(1.0f, 100.0f);
-    fKnobRelease->setStep(1.0f);
     fKnobRelease->setDefault(25.0f);
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
@@ -57,7 +56,6 @@ ZaMaximX2UI::ZaMaximX2UI()
     fKnobThresh->setAbsolutePos(110, 46);
     fKnobThresh->setId(ZaMaximX2Plugin::paramThresh);
     fKnobThresh->setRange(-30.0f, 0.0f);
-    fKnobThresh->setStep(1.0f);
     fKnobThresh->setDefault(0.0f);
     fKnobThresh->setRotationAngle(240);
     fKnobThresh->setCallback(this);
@@ -66,7 +64,6 @@ ZaMaximX2UI::ZaMaximX2UI()
     fKnobCeiling->setAbsolutePos(192, 46);
     fKnobCeiling->setId(ZaMaximX2Plugin::paramCeiling);
     fKnobCeiling->setRange(-30.0f, 0.0f);
-    fKnobCeiling->setStep(0.1f);
     fKnobCeiling->setDefault(-3.0f);
     fKnobCeiling->setRotationAngle(240);
     fKnobCeiling->setCallback(this);

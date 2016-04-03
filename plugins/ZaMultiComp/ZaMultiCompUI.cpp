@@ -53,7 +53,6 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack1->setRange(0.1f, 200.0f);
     fKnobAttack1->setUsingLogScale(true);
     fKnobAttack1->setDefault(10.0f);
-    fKnobAttack1->setStep(0.1f);
     fKnobAttack1->setRotationAngle(240);
     fKnobAttack1->setCallback(this);
 
@@ -62,7 +61,6 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack2->setRange(0.1f, 200.0f);
     fKnobAttack2->setUsingLogScale(true);
     fKnobAttack2->setDefault(10.0f);
-    fKnobAttack2->setStep(0.1f);
     fKnobAttack2->setRotationAngle(240);
     fKnobAttack2->setCallback(this);
 
@@ -71,7 +69,6 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack3->setRange(0.1f, 200.0f);
     fKnobAttack3->setUsingLogScale(true);
     fKnobAttack3->setDefault(10.0f);
-    fKnobAttack3->setStep(0.1f);
     fKnobAttack3->setRotationAngle(240);
     fKnobAttack3->setCallback(this);
 
@@ -171,7 +168,6 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover2->setRange(1400.f, 14000.f);
     fKnobXover2->setUsingLogScale(true);
     fKnobXover2->setDefault(1400.f);
-    fKnobXover2->setStep(5.f);
     fKnobXover2->setRotationAngle(240);
     fKnobXover2->setCallback(this);
 
@@ -180,7 +176,6 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover1->setRange(20.0f, 1400.0f);
     fKnobXover1->setUsingLogScale(true);
     fKnobXover1->setDefault(160.0f);
-    fKnobXover1->setStep(1.f);
     fKnobXover1->setRotationAngle(240);
     fKnobXover1->setCallback(this);
 
