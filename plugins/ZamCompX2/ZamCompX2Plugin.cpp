@@ -427,7 +427,7 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 outputs[0][i] = lgaininp * from_dB(makeup);
                 outputs[1][i] = rgaininp * from_dB(makeup);
 
-		max = (fabsf(fmaxf(in0,in1)) > max) ? fabsf(fmaxf(in0,in1)) : sanitize_denormal(max);
+		max = (fabsf(fmaxf(outputs[0][i], outputs[1][i])) > max) ? fabsf(fmaxf(outputs[0][i], outputs[1][i])) : sanitize_denormal(max);
 
                 oldL_yl = Lyl;
                 oldR_yl = Ryl;
@@ -436,7 +436,7 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 oldL_yg = Lyg;
                 oldR_yg = Ryg;
         }
-	outlevel = (max == 0.f) ? -45.f : to_dB(max) - thresdb;
+	outlevel = (max == 0.f) ? -45.f : to_dB(max); // relative to - thresdb;
     }
 
 // -----------------------------------------------------------------------

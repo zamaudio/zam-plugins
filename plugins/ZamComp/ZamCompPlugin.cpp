@@ -361,13 +361,13 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		lgaininp = in0 * Lgain;
                 outputs[0][i] = lgaininp * from_dB(makeup);
 
-		max = (fabsf(in0) > max) ? fabsf(in0) : sanitize_denormal(max);
+		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : sanitize_denormal(max);
 
                 oldL_yl = Lyl;
                 oldL_y1 = Ly1;
                 oldL_yg = Lyg;
         }
-	outlevel = (max == 0.f) ? -45.f : to_dB(max) - thresdb;
+	outlevel = (max == 0.f) ? -45.f : to_dB(max); // relative to - thresdb;
     }
 
 // -----------------------------------------------------------------------
