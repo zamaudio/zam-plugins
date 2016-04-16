@@ -516,7 +516,7 @@ T Triode::zeroffp_insane ( T a, T b, T t )
 			sb = sb - tol;
 		}
 
-		fb = ffp ( sb );
+		fb = ffp_insane ( sb );
 
 		if ( ( 0.0 < fb && 0.0 < fc ) || ( fb <= 0.0 && fc <= 0.0 ) )
 		{
