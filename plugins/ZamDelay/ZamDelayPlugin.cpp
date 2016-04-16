@@ -72,7 +72,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20000.0f;
         break;
     case paramDivisor:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
         parameter.name       = "Divisor";
         parameter.symbol     = "div";
         parameter.unit       = " ";

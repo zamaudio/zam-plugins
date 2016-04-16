@@ -103,6 +103,7 @@ ZamDelayUI::ZamDelayUI()
     fSliderDiv->setEndPos(260, 165);
     fSliderDiv->setId(ZamDelayPlugin::paramDivisor);
     fSliderDiv->setRange(1.0f, 5.0f);
+    fSliderDiv->setStep(1.0f);
     fSliderDiv->setCallback(this);
 
     // set default values
