@@ -63,7 +63,7 @@ void ZamCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Ratio";
         parameter.symbol     = "rat";
         parameter.unit       = " ";
@@ -300,23 +300,24 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
         int relslew = 0;
 	float max = 0.f;
 	float lgaininp = 0.f;
-	float rgaininp = 0.f;
 	float Lgain = 1.f;
         float Rgain = 1.f;
         float Lxg, Lxl, Lyg, Lyl, Ly1;
         float checkwidth = 0.f;
 	bool usesidechain = (sidechain < 0.5) ? false : true;
 	uint32_t i;
+	float ingain;
+	float in0;
+	float in1;
 
         for (i = 0; i < frames; i++) {
-                relslew = 0;
+                in0 = inputs[0][i];
+                in1 = inputs[1][i];
+		ingain = usesidechain ? in1 : in0;
+		relslew = 0;
                 attslew = 0;
 		Lyg = 0.f;
-		if (usesidechain) {
-			Lxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
-		} else {
-			Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
-		}
+		Lxg = (ingain==0.f) ? -160.f : to_dB(fabs(ingain));
                 Lxg = sanitize_denormal(Lxg);
 
                 Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
@@ -357,10 +358,10 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
                 gainred = Lyl;
 
-		lgaininp = inputs[0][i] * Lgain;
+		lgaininp = in0 * Lgain;
                 outputs[0][i] = lgaininp * from_dB(makeup);
 
-		max = (fabsf(lgaininp) > max) ? fabsf(lgaininp) : sanitize_denormal(max);
+		max = (fabsf(in0) > max) ? fabsf(in0) : sanitize_denormal(max);
 
                 oldL_yl = Lyl;
                 oldL_y1 = Ly1;

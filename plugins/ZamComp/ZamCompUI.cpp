@@ -76,6 +76,7 @@ ZamCompUI::ZamCompUI()
     fKnobRatio->setAbsolutePos(270, 45);
     fKnobRatio->setId(ZamCompPlugin::paramRatio);
     fKnobRatio->setRange(1.0f, 20.0f);
+    fKnobRatio->setUsingLogScale(true);
     fKnobRatio->setDefault(4.0f);
     fKnobRatio->setRotationAngle(240);
     fKnobRatio->setCallback(this);

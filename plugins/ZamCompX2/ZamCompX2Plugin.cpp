@@ -63,7 +63,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Ratio";
         parameter.symbol     = "rat";
         parameter.unit       = " ";
@@ -327,17 +327,23 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
         float Rxg, Rxl, Ryg, Ryl, Ry1;
         float checkwidth = 0.f;
 	uint32_t i;
+	float in0;
+	float in1;
+	float ingain;
 
         for (i = 0; i < frames; i++) {
-                relslew = 0;
+                in0 = inputs[0][i];
+		in1 = inputs[1][i];
+		ingain = usesidechain ? inputs[2][i] : fmaxf(in0, in1);
+		relslew = 0;
                 attslew = 0;
 		Lyg = Ryg = 0.f;
                 if (usesidechain) {
-			Lxg = (inputs[2][i]==0.f) ? -160.f : to_dB(fabs(inputs[2][i]));
+			Lxg = (ingain==0.f) ? -160.f : to_dB(fabs(ingain));
                 	Rxg = Lxg;
 		} else {
-			Lxg = (inputs[0][i]==0.f) ? -160.f : to_dB(fabs(inputs[0][i]));
-                	Rxg = (inputs[1][i]==0.f) ? -160.f : to_dB(fabs(inputs[1][i]));
+			Lxg = (in0==0.f) ? -160.f : to_dB(fabs(in1));
+                	Rxg = (in1==0.f) ? -160.f : to_dB(fabs(in1));
 		}
                 Lxg = sanitize_denormal(Lxg);
                 Rxg = sanitize_denormal(Rxg);
@@ -416,13 +422,12 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 cdb = -Ryl;
                 Rgain = from_dB(cdb);
 
-		lgaininp = inputs[0][i] * Lgain;
-		rgaininp = inputs[1][i] * Rgain;
+		lgaininp = in0 * Lgain;
+		rgaininp = in1 * Rgain;
                 outputs[0][i] = lgaininp * from_dB(makeup);
                 outputs[1][i] = rgaininp * from_dB(makeup);
 
-		max = (fabsf(lgaininp) > max) ? fabsf(lgaininp) : sanitize_denormal(max);
-		max = (fabsf(rgaininp) > max) ? fabsf(rgaininp) : sanitize_denormal(max);
+		max = (fabsf(fmaxf(in0,in1)) > max) ? fabsf(fmaxf(in0,in1)) : sanitize_denormal(max);
 
                 oldL_yl = Lyl;
                 oldR_yl = Ryl;
