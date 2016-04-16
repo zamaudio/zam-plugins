@@ -84,8 +84,8 @@ ZamTubeUI::ZamTubeUI()
     fKnobGain->setRotationAngle(240);
     fKnobGain->setCallback(this);
 
-    Point<int> notchPosStart(289,5);
-    Point<int> notchPosEnd(289,5+280);
+    Point<int> notchPosStart(272,5);
+    Point<int> notchPosEnd(272,5+280);
 
     fSliderNotch = new ImageSlider(this, notchImage);
     fSliderNotch->setStartPos(notchPosStart);

@@ -21,9 +21,9 @@ namespace ZamTubeArtwork
     const unsigned int knobHeight   = 42;
 
     extern const char* notchData;
-    const unsigned int notchDataSize = 2016;
-    const unsigned int notchWidth    = 21;
-    const unsigned int notchHeight   = 24;
+    const unsigned int notchDataSize = 3404;
+    const unsigned int notchWidth    = 37;
+    const unsigned int notchHeight   = 23;
 
     extern const char* zamtubeData;
     const unsigned int zamtubeDataSize = 423360;
