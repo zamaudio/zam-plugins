@@ -40,7 +40,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fLedRedValue[0] = 0.0f;
     fLedRedValue[1] = 0.0f;
     fLedRedValue[2] = 0.0f;
-    fLedYellowValueL = 0.0f;
+    fLedYellowValueL = -45.0f;
 
     // knob
     Image knobImage(ZaMultiCompArtwork::knobData, ZaMultiCompArtwork::knobWidth, ZaMultiCompArtwork::knobHeight);
@@ -117,6 +117,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio1 = new ImageKnob(this, knobImage);
     fKnobRatio1->setAbsolutePos(191.5+x, 43+y);
     fKnobRatio1->setRange(1.0f, 20.0f);
+    fKnobRatio1->setUsingLogScale(true);
     fKnobRatio1->setDefault(4.0f);
     fKnobRatio1->setRotationAngle(240);
     fKnobRatio1->setCallback(this);
@@ -124,6 +125,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio2 = new ImageKnob(this, knobImage);
     fKnobRatio2->setAbsolutePos(191.5+x, 43+y-50);
     fKnobRatio2->setRange(1.0f, 20.0f);
+    fKnobRatio2->setUsingLogScale(true);
     fKnobRatio2->setDefault(4.0f);
     fKnobRatio2->setRotationAngle(240);
     fKnobRatio2->setCallback(this);
@@ -131,6 +133,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio3 = new ImageKnob(this, knobImage);
     fKnobRatio3->setAbsolutePos(191.5+x, 43+y-100);
     fKnobRatio3->setRange(1.0f, 20.0f);
+    fKnobRatio3->setUsingLogScale(true);
     fKnobRatio3->setDefault(4.0f);
     fKnobRatio3->setRotationAngle(240);
     fKnobRatio3->setCallback(this);

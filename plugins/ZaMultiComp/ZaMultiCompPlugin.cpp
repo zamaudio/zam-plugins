@@ -117,7 +117,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramRatio1:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Ratio1";
         parameter.symbol     = "rat1";
         parameter.unit       = " ";
@@ -126,7 +126,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramRatio2:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Ratio2";
         parameter.symbol     = "rat2";
         parameter.unit       = " ";
@@ -135,7 +135,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramRatio3:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Ratio3";
         parameter.symbol     = "rat3";
         parameter.unit       = " ";
