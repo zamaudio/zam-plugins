@@ -127,7 +127,7 @@ protected:
 
 	float samplesl[MAX_GATE];
 	float samplesr[MAX_GATE];
-	float gatestatel, gatestater;
+	float gatestate;
 	int posl, posr;
 };
 

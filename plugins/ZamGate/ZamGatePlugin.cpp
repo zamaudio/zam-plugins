@@ -243,12 +243,17 @@ void ZamGatePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	att = 1000.f / (attack * fs);
 	rel = 1000.f / (release * fs);
 	bool usesidechain = (sidechain < 0.5) ? false : true;
+	float in0;
+	float side;
+	float max = 0.f;
 
 	for(i = 0; i < frames; i++) {
+		in0 = inputs[0][i];
+		side = inputs[1][i];
 		if (usesidechain) {
-			pushsamplel(samplesl, inputs[1][i]);
+			pushsamplel(samplesl, side);
 		} else {
-			pushsamplel(samplesl, inputs[0][i]);
+			pushsamplel(samplesl, in0);
 		}
 		absample = averageabs(samplesl);
 		if (absample < from_dB(thresdb)) {
@@ -263,11 +268,12 @@ void ZamGatePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 		gatestatel = gl;
 
-		outputs[0][i] = gl * from_dB(makeup) * inputs[0][i];
+		outputs[0][i] = gl * from_dB(makeup) * in0;
 		gainr = (gl > 0) ? sanitize_denormal(-to_dB(gl)) : 40.0;
 		gainr = std::min(gainr, 40.f);
-		outlevel = (absample > 0) ? to_dB(absample) - thresdb : -60.0;
+		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : sanitize_denormal(max);
 	}
+	outlevel = (max == 0.f) ? -45.f : to_dB(max);
 }
 
 // -----------------------------------------------------------------------

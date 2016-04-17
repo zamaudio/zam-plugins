@@ -42,7 +42,7 @@ ZamCompX2UI::ZamCompX2UI()
 
     // led values
     fLedRedValue = 0.0f;
-    fLedYellowValue = 0.0f;
+    fLedYellowValue = -45.0f;
 
     // knob
     Image knobImage(ZamCompX2Artwork::knobData, ZamCompX2Artwork::knobWidth, ZamCompX2Artwork::knobHeight);

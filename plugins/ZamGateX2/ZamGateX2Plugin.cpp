@@ -203,8 +203,7 @@ void ZamGateX2Plugin::loadProgram(uint32_t index)
 void ZamGateX2Plugin::activate()
 {
 	int i;
-	gatestatel = 0.f;
-	gatestater = 0.f;
+	gatestate = 0.f;
 	posl = 0;
 	posr = 0;
 	for (i = 0; i < MAX_GATE; i++) {
@@ -247,53 +246,52 @@ void ZamGateX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	float absamplel, absampler, absample;
 	float att;
 	float rel;
-	float gl, gr;
+	float g;
 	float ming;
 	float fs;
+	float in0;
+	float in1;
+	float side;
+	float max;
 	fs = getSampleRate();
-	gl = gatestatel;
-	gr = gatestater;
+	g = gatestate;
 	att = 1000.f / (attack * fs);
 	rel = 1000.f / (release * fs);
 	bool usesidechain = (sidechain < 0.5) ? false : true;
+	max = 0.f;
 
 	for(i = 0; i < frames; i++) {
+		in0 = inputs[0][i];
+		in1 = inputs[1][i];
+		side = inputs[2][i];
 		if (usesidechain) {
-			pushsamplel(samplesl, inputs[2][i]);
+			pushsamplel(samplesl, side);
 			absample = averageabs(samplesl);
 		} else {
-			pushsamplel(samplesl, inputs[0][i]);
-			pushsampler(samplesr, inputs[1][i]);
+			pushsamplel(samplesl, in0);
+			pushsampler(samplesr, in1);
 			absamplel = averageabs(samplesl);
 			absampler = averageabs(samplesr);
 			absample = std::max(absamplel, absampler);
 		}
 		if (absample < from_dB(thresdb)) {
-			gr -= rel;
-			if (gr < 0.f)
-				gr = 0.f;
-			gl -= rel;
-			if (gl < 0.f)
-				gl = 0.f;
+			g -= rel;
+			if (g < 0.f)
+				g = 0.f;
 		} else {
-			gr += att;
-			if (gr > 1.f)
-				gr = 1.f;
-			gl += att;
-			if (gl > 1.f)
-				gl = 1.f;
+			g += att;
+			if (g > 1.f)
+				g = 1.f;
 		}
 
-		gatestatel = gl;
-		gatestater = gr;
+		gatestate = g;
 
-		outputs[0][i] = gl * from_dB(makeup) * inputs[0][i];
-		outputs[1][i] = gr * from_dB(makeup) * inputs[1][i];
-		ming = std::max(gr, gl);
-		gainr = (ming > 0) ? sanitize_denormal(-to_dB(ming)) : 40.0;
-		gainr = std::min(gainr, 40.f);
-		outlevel = (absample > 0) ? to_dB(absample) - thresdb : -60.0;
+		outputs[0][i] = g * from_dB(makeup) * in0;
+		outputs[1][i] = g * from_dB(makeup) * in1;
+		gainr = (g > 0) ? sanitize_denormal(-to_dB(g)) : 45.0;
+		max = (fabsf(fmaxf(outputs[0][i], outputs[1][i])) > max) ? fabsf(fmaxf(outputs[0][i], outputs[1][i])) : sanitize_denormal(max);
 	}
+	outlevel = (max == 0.f) ? -45.f : to_dB(max);
 }
 
 // -----------------------------------------------------------------------

@@ -40,7 +40,7 @@ ZamGateX2UI::ZamGateX2UI()
 
 	// led values
 	fLedRedValue = 0.0f;
-	fLedYellowValue = 0.0f;
+	fLedYellowValue = -45.0f;
 
 	// knob
 	Image knobImage(ZamGateX2Artwork::knobData, ZamGateX2Artwork::knobWidth, ZamGateX2Artwork::knobHeight);
