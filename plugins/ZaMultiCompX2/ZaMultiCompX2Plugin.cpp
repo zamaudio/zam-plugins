@@ -1139,9 +1139,9 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 
 		tmp1[0] = outputs[0][i];
 		tmp1[1] = outputs[1][i];
-		run_limit(tmp1[0], tmp1[1], &outL[3], &outR[3]);
-		outputs[0][i] = outL[3];
-		outputs[1][i] = outR[3];
+		//COMMENTED OUT TO REMOVE BAD CRACKLE! run_limit(tmp1[0], tmp1[1], &outL[3], &outR[3]);
+		outputs[0][i] = tmp1[0];//outL[3];
+		outputs[1][i] = tmp1[1];//outR[3];
 
 		if (resetl) {
 			maxL = fabsf(outputs[0][i]);

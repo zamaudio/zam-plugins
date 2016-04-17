@@ -1001,8 +1001,8 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
                 outputs[0][i] *= from_dB(globalgain);
 
 		tmp1[0] = outputs[0][i];
-		run_limit(tmp1[0], &outL[3]);
-		outputs[0][i] = outL[3];
+		//COMMENTED OUT TO REMOVE BAD CRACKLE! run_limit(tmp1[0], &outL[3]);
+		outputs[0][i] = tmp1[0];//outL[3];
 
 		if (reset) {
 			max = fabsf(outputs[0][i]);
