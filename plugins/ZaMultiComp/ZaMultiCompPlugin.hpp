@@ -182,6 +182,7 @@ private:
     float limit, outlevel[3];
     int pos[3];
     float outlevelold[3][MAX_SAMPLES];
+    float oldxover1, oldxover2;
     bool reset;
     // Crossover filter coefficients
     float c1[MAX_FILT];

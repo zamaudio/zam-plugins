@@ -715,6 +715,9 @@ void ZaMultiCompPlugin::activate()
 	pos[0] = 0;
 	pos[1] = 0;
 	pos[2] = 0;
+
+	oldxover1 = 0.f;
+	oldxover2 = 0.f;
 }
 
 // LR4 filters adapted from zita-lrx
@@ -789,66 +792,13 @@ void ZaMultiCompPlugin::run_lr4(int i, float in, float *outlo, float *outhi)
     z6[i] = zz6;
 }
 
-void ZaMultiCompPlugin::run_limit(float in, float *out)
-{
-	float srate = getSampleRate();
-        float width=0.01;
-	float threshdb = -0.5;
-        float attack_coeff = exp(-1000.f/(0.001 * srate));
-        float release_coeff = exp(-1000.f/(50.0 * srate));
-
-        float cdb=0.f;
-        float Lgain = 1.f;
-        float Lxg, Lyg;
-        float Lxl, Lyl, Ly1;
-
-        Lyg = 0.f;
-	in = sanitize_denormal(in);
-        Lxg = (in==0.f) ? -160.f : to_dB(fabs(in));
-        Lxg = sanitize_denormal(Lxg);
-
-        Lyg = Lxg + (1.f/100.0-1.f)*(Lxg-threshdb+width/2.f)*(Lxg-threshdb+width/2.f)/(2.f*width);
-        Lyg = sanitize_denormal(Lyg);
-
-        if (2.f*(Lxg-threshdb) < -width) {
-                Lyg = Lxg;
-        } else {
-                Lyg = threshdb + (Lxg-threshdb)/100.0;
-                Lyg = sanitize_denormal(Lyg);
-        }
-
-        Lxl = Lxg - Lyg;
-
-        old_l1 = sanitize_denormal(old_l1);
-        old_ll = sanitize_denormal(old_ll);
-
-        Ly1 = fmaxf(Lxl, release_coeff * old_l1+(1.f-release_coeff)*Lxl);
-        Lyl = attack_coeff * old_ll+(1.f-attack_coeff)*Ly1;
-        Ly1 = sanitize_denormal(Ly1);
-        Lyl = sanitize_denormal(Lyl);
-
-        cdb = -Lyl;
-        Lgain = from_dB(cdb);
-
-	*out = in;
-	*out *= Lgain;
-
-	limit = Lyl;
-
-        old_ll = Lyl;
-        old_l1 = Ly1;
-}
-
 void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
 {
 	float srate = getSampleRate();
         float width = (6.f * knee[k]) + 0.01;
-        float slewwidth = 1.8f;
         float attack_coeff = exp(-1000.f/(attack[k] * srate));
         float release_coeff = exp(-1000.f/(release[k] * srate));
 
-	int attslew = 0;
-	int relslew = 0;
 	float checkwidth = 0.f;
         float cdb=0.f;
         float Lgain = 1.f;
@@ -865,22 +815,11 @@ void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
 		Lyg = Lxg;
 	} else if (checkwidth <= width) {
 		Lyg = Lxg + (1.f/ratio[k]-1.f)*(Lxg-thresdb[k]+width/2.f)*(Lxg-thresdb[k]+width/2.f)/(2.f*width);
-		//Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio;
 		Lyg = sanitize_denormal(Lyg);
-		if (checkwidth <= slewwidth) {
-			if (Lyg >= old_yg[k]) {
-				attslew = 1;
-			} else {
-				relslew = 1;
-			}
-		}
 	} else if (2.f*(Lxg-thresdb[k]) > width) {
 		Lyg = thresdb[k] + (Lxg-thresdb[k])/ratio[k];
 		Lyg = sanitize_denormal(Lyg);
 	}
-
-	//attack_coeff = attslew ? exp(-1000.f/((attack + 2.0*(slewfactor - 1)) * srate)) : attack_coeff;
-	//release_coeff = relslew ? exp(-1000.f/((release + 2.0*(slewfactor - 1)) * srate)) : release_coeff;
 
         Lxl = Lxg - Lyg;
 
@@ -897,8 +836,7 @@ void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
 
 	gainr[k] = Lyl;
 
-	*out = in;
-	*out *= Lgain;
+	*out = in * Lgain;
 
         old_yl[k] = Lyl;
         old_y1[k] = Ly1;
@@ -938,8 +876,22 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
         int listen2 = (listen[1] > 0.5f) ? 1 : 0;
         int listen3 = (listen[2] > 0.5f) ? 1 : 0;
 
-        calc_lr4(xover1/srate, 0);
-        calc_lr4(xover1/srate, 1);
+        if (oldxover1 != xover1) {
+		// clear filter state
+		z1[0] = z2[0] = z3[0] = 0.f;
+		z4[0] = z5[0] = z6[0] = 0.f;
+		// recalculate coeffs
+		calc_lr4(xover1/srate, 0);
+		oldxover1 = xover1;
+	}
+        if (oldxover2 != xover2) {
+		// clear filter state
+		z1[1] = z2[1] = z3[1] = 0.f;
+		z4[1] = z5[1] = z6[1] = 0.f;
+		// recalculate coeffs
+		calc_lr4(xover2/srate, 1);
+		oldxover2 = xover2;
+	}
 
         for (uint32_t i = 0; i < frames; ++i) {
                 float tmp1[2], tmp2[2], tmp3[2];
@@ -1000,10 +952,6 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
                 outputs[0][i] = sanitize_denormal(outputs[0][i]);
                 outputs[0][i] *= from_dB(globalgain);
 
-		tmp1[0] = outputs[0][i];
-		//COMMENTED OUT TO REMOVE BAD CRACKLE! run_limit(tmp1[0], &outL[3]);
-		outputs[0][i] = tmp1[0];//outL[3];
-
 		if (reset) {
 			max = fabsf(outputs[0][i]);
 			reset = false;
@@ -1011,7 +959,7 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
 			maxx = (fabsf(outputs[0][i]) > maxx) ? fabsf(outputs[0][i]) : sanitize_denormal(maxx);
 		}
         }
-	out = (maxx <= 0.f) ? -160.f : to_dB(maxx+limit);
+	out = (maxx <= 0.f) ? -160.f : to_dB(maxx);
 }
 
 // -----------------------------------------------------------------------

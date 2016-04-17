@@ -184,9 +184,10 @@ private:
     float gainr[MAX_COMP],toggle[MAX_COMP],listen[MAX_COMP],maxL,maxR,outl,outr,xover1,xover2;
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP], old_yg[2][MAX_COMP];
     float old_ll[2], old_l1[2];
-    float limit, outlevel[3];
+    float outlevel[3];
     int pos[3];
     float outlevelold[3][MAX_SAMPLES];
+    float oldxover1, oldxover2;
     bool resetl;
     bool resetr;
     // Crossover filter coefficients
