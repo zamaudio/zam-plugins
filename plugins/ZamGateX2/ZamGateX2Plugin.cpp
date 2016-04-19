@@ -82,6 +82,15 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.min = -30.0f;
 		parameter.ranges.max = 30.0f;
 		break;
+	case paramGateclose:
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Max gate close";
+		parameter.symbol = "close";
+		parameter.unit = "dB";
+		parameter.ranges.def = -50.0f;
+		parameter.ranges.min = -50.0f;
+		parameter.ranges.max = 0.0f;
+		break;
 	case paramSidechain:
 		parameter.hints = kParameterIsAutomable | kParameterIsBoolean;
 		parameter.name = "Sidechain";
@@ -142,6 +151,9 @@ float ZamGateX2Plugin::getParameterValue(uint32_t index) const
 	case paramMakeup:
 		return makeup;
 		break;
+	case paramGateclose:
+		return gateclose;
+		break;
 	case paramSidechain:
 		return sidechain;
 		break;
@@ -172,6 +184,9 @@ void ZamGateX2Plugin::setParameterValue(uint32_t index, float value)
 	case paramMakeup:
 		makeup = value;
 		break;
+	case paramGateclose:
+		gateclose = value;
+		break;
 	case paramSidechain:
 		sidechain = value;
 		break;
@@ -192,6 +207,7 @@ void ZamGateX2Plugin::loadProgram(uint32_t index)
 	gainr = 0.0;
 	makeup = 0.0;
 	outlevel = -45.0;
+	gateclose = -50.0;
 	sidechain = 0.0;
 
 	activate();
@@ -258,6 +274,7 @@ void ZamGateX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	att = 1000.f / (attack * fs);
 	rel = 1000.f / (release * fs);
 	bool usesidechain = (sidechain < 0.5) ? false : true;
+	float mingate = (gateclose == -50.f) ? 0.f : from_dB(gateclose);
 	max = 0.f;
 
 	for(i = 0; i < frames; i++) {
@@ -276,8 +293,8 @@ void ZamGateX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		}
 		if (absample < from_dB(thresdb)) {
 			g -= rel;
-			if (g < 0.f)
-				g = 0.f;
+			if (g < mingate)
+				g = mingate;
 		} else {
 			g += att;
 			if (g > 1.f)

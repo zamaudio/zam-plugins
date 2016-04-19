@@ -91,6 +91,15 @@ void ZamGatePlugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.min = 0.0f;
 		parameter.ranges.max = 1.0f;
 		break;
+	case paramGateclose:
+		parameter.hints = kParameterIsAutomable;
+		parameter.name = "Max gate close";
+		parameter.symbol = "close";
+		parameter.unit = "dB";
+		parameter.ranges.def = -50.0f;
+		parameter.ranges.min = -50.0f;
+		parameter.ranges.max = 0.0f;
+		break;
 	case paramGainR:
 		parameter.hints = kParameterIsOutput;
 		parameter.name = "Gain Reduction";
@@ -145,6 +154,9 @@ float ZamGatePlugin::getParameterValue(uint32_t index) const
 	case paramSidechain:
 		return sidechain;
 		break;
+	case paramGateclose:
+		return gateclose;
+		break;
 	case paramGainR:
 		return gainr;
 		break;
@@ -175,6 +187,9 @@ void ZamGatePlugin::setParameterValue(uint32_t index, float value)
 	case paramSidechain:
 		sidechain = value;
 		break;
+	case paramGateclose:
+		gateclose = value;
+		break;
 	case paramGainR:
 		gainr = value;
 		break;
@@ -192,6 +207,7 @@ void ZamGatePlugin::loadProgram(uint32_t index)
 	gainr = 0.0;
 	makeup = 0.0;
 	sidechain = 0.0;
+	gateclose = -50.f;
 	outlevel = -45.0;
 	activate();
 }
@@ -246,6 +262,7 @@ void ZamGatePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float in0;
 	float side;
 	float max = 0.f;
+	float mingate = (gateclose == -50.f) ? 0.f : from_dB(gateclose);
 
 	for(i = 0; i < frames; i++) {
 		in0 = inputs[0][i];
@@ -258,8 +275,8 @@ void ZamGatePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		absample = averageabs(samplesl);
 		if (absample < from_dB(thresdb)) {
 			gl -= rel;
-			if (gl < 0.f)
-				gl = 0.f;
+			if (gl < mingate)
+				gl = mingate;
 		} else {
 			gl += att;
 			if (gl > 1.f)

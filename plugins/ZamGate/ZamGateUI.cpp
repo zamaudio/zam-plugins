@@ -78,6 +78,14 @@ ZamGateUI::ZamGateUI()
 	fKnobMakeup->setRotationAngle(240);
 	fKnobMakeup->setCallback(this);
 
+	fKnobGateclose = new ImageKnob(this, knobImage);
+	fKnobGateclose->setAbsolutePos(480, 62);
+	fKnobGateclose->setId(ZamGatePlugin::paramGateclose);
+	fKnobGateclose->setRange(-50.0f, 0.0f);
+	fKnobGateclose->setDefault(-50.0f);
+	fKnobGateclose->setRotationAngle(240);
+	fKnobGateclose->setCallback(this);
+
 	fToggleSidechain = new ImageSwitch(this, fTogOff, fTogOn);
 	fToggleSidechain->setAbsolutePos(350, 61);
 	fToggleSidechain->setId(ZamGatePlugin::paramSidechain);
@@ -106,6 +114,9 @@ void ZamGateUI::parameterChanged(uint32_t index, float value)
 	case ZamGatePlugin::paramMakeup:
 		fKnobMakeup->setValue(value);
 		break;
+	case ZamGatePlugin::paramGateclose:
+		fKnobGateclose->setValue(value);
+		break;
 	case ZamGatePlugin::paramSidechain:
 		fToggleSidechain->setDown(value > 0.5);
 		break;
@@ -133,6 +144,7 @@ void ZamGateUI::programLoaded(uint32_t index)
 	fKnobRelease->setValue(100.0f);
 	fKnobThresh->setValue(-60.0f);
 	fKnobMakeup->setValue(0.0f);
+	fKnobGateclose->setValue(-50.0f);
 	fToggleSidechain->setDown(false);
 }
 

@@ -37,6 +37,7 @@ public:
 		paramThresh,
 		paramMakeup,
 		paramSidechain,
+		paramGateclose,
 		paramOutputLevel,
 		paramGainR,
 		paramCount
@@ -75,7 +76,7 @@ protected:
 
 	uint32_t getVersion() const noexcept override
 	{
-		return d_version(3, 6, 1);
+		return d_version(3, 6, 2);
 	}
 
 	int64_t getUniqueId() const noexcept override
@@ -119,7 +120,7 @@ protected:
 	}
 
 	// -------------------------------------------------------------------
-	float attack,release,thresdb,makeup,sidechain,gainr,outlevel; //parameters
+	float attack,release,thresdb,makeup,gateclose,sidechain,gainr,outlevel; //parameters
 
 	void pushsamplel(float samples[], float sample);
 	void pushsampler(float samples[], float sample);

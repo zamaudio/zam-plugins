@@ -56,7 +56,7 @@ protected:
 private:
 	Image fImgBackground;
 	ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
-	ScopedPointer<ImageKnob> fKnobMakeup;
+	ScopedPointer<ImageKnob> fKnobMakeup, fKnobGateclose;
 	ScopedPointer<ImageSwitch> fToggleSidechain;
 
 	Image fLedRedImg;
