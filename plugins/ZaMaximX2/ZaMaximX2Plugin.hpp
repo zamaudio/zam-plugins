@@ -20,8 +20,8 @@
 
 #include "DistrhoPlugin.hpp"
 
-#define MAX_DELAY 24
-#define MAX_AVG 12
+#define MAX_DELAY 480
+#define MAX_AVG 120
 
 START_NAMESPACE_DISTRHO
 

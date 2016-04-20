@@ -262,7 +262,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		target = xmax[0];
 
 		if (target > emax_old[0]) {
-			a = aatt;
+			a = 1000 / (aatt * srate);
 		} else {
 			a = 1000 / (release * srate);
 		}
