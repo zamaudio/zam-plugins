@@ -709,21 +709,6 @@ void ZaMultiCompX2Plugin::setParameterValue(uint32_t index, float value)
     }
 }
 
-String ZaMultiCompX2Plugin::getState(const char*) const
-{
-    return String();
-}
-
-void ZaMultiCompX2Plugin::setState(const char*, const char*)
-{
-    resetl = true;
-    resetr = true;
-}
-
-void ZaMultiCompX2Plugin::initState(unsigned int, String&, String&)
-{
-}
-
 // -----------------------------------------------------------------------
 // Process
 
@@ -943,8 +928,8 @@ float ZaMultiCompX2Plugin::averageabs(float samples[])
 void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = getSampleRate();
-	float maxxL = maxL;
-	float maxxR = maxR;
+	float maxxL = 0.;
+	float maxxR = 0.;
 	uint32_t i;
 
         int tog1 = (toggle[0] > 0.5f) ? 1 : 0;
@@ -1051,21 +1036,11 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 outputs[0][i] *= from_dB(globalgain);
                 outputs[1][i] *= from_dB(globalgain);
 
-		if (resetl) {
-			maxL = fabsf(outputs[0][i]);
-			resetl = false;
-		} else {
-			maxxL = (fabsf(outputs[0][i]) > maxxL) ? fabsf(outputs[0][i]) : sanitize_denormal(maxxL);
-		}
-		if (resetr) {
-			maxR = fabsf(outputs[1][i]);
-			resetr = false;
-		} else {
-			maxxR = (fabsf(outputs[1][i]) > maxxR) ? fabsf(outputs[1][i]) : sanitize_denormal(maxxR);
-		}
+		maxxL = (fabsf(outputs[0][i]) > maxxL) ? fabsf(outputs[0][i]) : sanitize_denormal(maxxL);
+		maxxR = (fabsf(outputs[1][i]) > maxxR) ? fabsf(outputs[1][i]) : sanitize_denormal(maxxR);
         }
-	outl = (maxxL <= 0.f) ? -160.f : to_dB(maxxL);
-	outr = (maxxR <= 0.f) ? -160.f : to_dB(maxxR);
+	outl = (maxxL == 0.f) ? -160.f : to_dB(maxxL);
+	outr = (maxxR == 0.f) ? -160.f : to_dB(maxxR);
 }
 
 // -----------------------------------------------------------------------

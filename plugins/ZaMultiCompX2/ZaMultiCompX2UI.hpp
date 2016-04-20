@@ -53,7 +53,6 @@ protected:
 
     void parameterChanged(uint32_t index, float value) override;
     void programLoaded(uint32_t index) override;
-    void stateChanged(const char*, const char*) override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks

@@ -136,7 +136,6 @@ Stereo version of ZaMultiComp, with individual threshold controls for each band 
 
     void initParameter(uint32_t index, Parameter& parameter) ;
     void initProgramName(uint32_t index, String& programName) ;
-    void initState(uint32_t, String&, String&) override;
 
     // -------------------------------------------------------------------
     // Internal data
@@ -144,8 +143,6 @@ Stereo version of ZaMultiComp, with individual threshold controls for each band 
     float getParameterValue(uint32_t index) const override;
     void setParameterValue(uint32_t index, float value) override;
     void loadProgram(uint32_t index) override;
-    String getState(const char* key) const override;
-    void setState(const char* key, const char* value) override;
 
     // -------------------------------------------------------------------
     // Process
