@@ -163,6 +163,9 @@ void ZaMaximX2Plugin::setParameterValue(uint32_t index, float value)
 void ZaMaximX2Plugin::activate()
 {
     int i;
+
+    setLatency(MAX_DELAY);
+
     gainred = 0.0f;
     outlevel = -45.0f;
     for (i = 0; i < MAX_DELAY; i++) {
