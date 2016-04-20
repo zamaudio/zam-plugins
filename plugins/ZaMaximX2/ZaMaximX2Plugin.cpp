@@ -36,7 +36,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramRelease:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
@@ -49,7 +49,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Output Ceiling";
         parameter.symbol     = "ceil";
         parameter.unit       = "dB";
-        parameter.ranges.def = -3.0f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = -30.0f;
         parameter.ranges.max = 0.0f;
         break;
@@ -98,7 +98,7 @@ void ZaMaximX2Plugin::loadProgram(uint32_t index)
 	switch(index) {
 	case 0:
 		release = 25.0;
-		ceiling = -3.0;
+		ceiling = 0.0;
 		thresdb = 0.0;
 		gainred = 0.0;
 		outlevel = -45.0;
