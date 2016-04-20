@@ -165,15 +165,19 @@ void ZaMaximX2Plugin::activate()
     int i;
     gainred = 0.0f;
     outlevel = -45.0f;
-    for (i = 0; i < MAX_SAMPLES; i++) {
-    	cn[0][i] = z[0][i] = emaxn[0][i] = 0.f;
-    	cn[1][i] = z[1][i] = emaxn[1][i] = 0.f;
+    for (i = 0; i < MAX_DELAY; i++) {
+        cn[0][i] = z[0][i] = 0.f;
+        cn[1][i] = z[1][i] = 0.f;
+    }
+    for (i = 0; i < MAX_AVG; i++) {
+        emaxn[1][i] = 0.f;
+        emaxn[0][i] = 0.f;
     }
     posz[0] = posz[1] = 0;
     pose[0] = pose[1] = 0;
     posc[0] = posc[1] = 0;
     emax_old[0] = emax_old[1] = 0.f;
-    eavg_old[0] = eavg_old[1] = 0.f;
+    e_old[0] = e_old[1] = 0.f;
 }
 
 void ZaMaximX2Plugin::deactivate()
@@ -181,49 +185,31 @@ void ZaMaximX2Plugin::deactivate()
 	activate();
 }
 
-double ZaMaximX2Plugin::normalise(double in, double gainr)
+double ZaMaximX2Plugin::normalise(double in)
 {
 	if (ceiling < thresdb) {
 		return in;
 	}
-	return from_dB(-(thresdb - ceiling + gainr)) * in;
+	return from_dB(-thresdb + ceiling) * in;
 }
 
-double ZaMaximX2Plugin::clip(double in)
-{
-	if (in < -1.f)
-		in = -1.f;
-	if (in > 1.f)
-		in = 1.f;
-	return in;
-}
-
-void ZaMaximX2Plugin::pushsample(double in[], double sample, int *pos)
+void ZaMaximX2Plugin::pushsample(double in[], double sample, int *pos, int maxsamples)
 {
 	(*pos)++;
-	if (*pos >= MAX_SAMPLES) {
+	if (*pos >= maxsamples) {
 		*pos = 0;
 	}
 	in[*pos] = sample;
-}
-
-double ZaMaximX2Plugin::getoldsample(double in[], int pos)
-{
-	int p = pos - 1;
-	if (p < 0) {
-		p = MAX_SAMPLES;
-	}
-	return in[p];
 }
 
 double ZaMaximX2Plugin::avgall(double in[])
 {
 	int i;
 	double avg = 0.f;
-	for (i = 0; i < MAX_SAMPLES; i++) {
+	for (i = 0; i < MAX_AVG; i++) {
 		avg += in[i];
 	}
-	avg = avg / (double)(MAX_SAMPLES);
+	avg = avg / (double)(MAX_AVG);
 	return avg;
 }
 
@@ -231,7 +217,7 @@ double ZaMaximX2Plugin::maxsample(double in[])
 {
 	int i;
 	double max = 0.f;
-	for (i = 0; i < MAX_SAMPLES; i++) {
+	for (i = 0; i < MAX_DELAY; i++) {
 		if (fabs(in[i]) > fabs(max)) {
 			max = in[i];
 		}
@@ -242,81 +228,77 @@ double ZaMaximX2Plugin::maxsample(double in[])
 void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
-	double N = (float)MAX_SAMPLES;
-	double M = (float)MAX_SAMPLES;
+	double N = (double)MAX_DELAY;
+	double navg = (double)MAX_AVG;
 	double absx[2];
 	double c[2];
 	double xmax[2];
 	double emax[2];
-	double eavg[2];
+	double avge[2];
 	double g[2];
 	double srate = getSampleRate();
 	double alpha = 1.0001;
-	double aa = 1. - pow( (alpha - 1.f) / alpha,  1. / ( N + 1. ) );
+	double aatt = 1. - pow( (alpha - 1.) / alpha,  1. / ( N + 1. ) );
 	double a;
-	double beta = 0.f;
-	for (i = 0; i < M; i++) {
-		beta += pow(1. - aa, N + 1. - i);
+	double beta;
+	double e;
+	double target;
+	double max;
+	double maxx = 0;
+	beta = 0.;
+	for (i = 0; i < navg; i++) {
+		beta += pow(1. - aatt, N + 1. - i);
 	}
-	beta /= M;
+	beta /= navg;
 
 	double inL, inR;
 
 	for (i = 0; i < frames; i++) {
 		inL = inputs[0][i];
 		inR = inputs[1][i];
-		absx[0] = MAX(fabs(inL), fabs(inR));
-		c[0] = MAX(absx[0], (absx[0]-beta*eavg_old[0]) / (1. - beta));
-		pushsample(&cn[0][0], sanitize_denormal(c[0]), &posc[0]);
+		absx[0] = fmaxf(fabsf(inL), fabsf(inR));
+		c[0] = fmaxf(absx[0], (absx[0]-beta*e_old[0]) / (1. - beta));
 		xmax[0] = maxsample(&cn[0][0]);
+		target = xmax[0];
 
-		if (xmax[0] < emaxn[0][pose[0]]) {
-			a = 1000 / (release * srate);
+		if (target > emax_old[0]) {
+			a = aatt;
 		} else {
-			a = aa;
+			a = 1000 / (release * srate);
 		}
-		emax[0] = a*xmax[0] + (1. - a)*emaxn[0][pose[0]];
-		pushsample(&emaxn[0][0], sanitize_denormal(emax[0]), &pose[0]);
-		eavg[0] = avgall(&emaxn[0][0]);
-		if (eavg[0] == 0.f) {
+		emax[0] = (a*target + (1. - a)*emax_old[0]);
+//push
+		e = avgall(&emaxn[0][0]);
+		avge[0] = e;
+		avge[0] += emaxn[0][(pose[0]+1+MAX_AVG) % MAX_AVG]/(navg+1.);
+		e = avge[0];
+
+		if (e == 0.f) {
 			g[0] = 1.;
 		} else {
-			g[0] = MIN(1., from_dB(thresdb) / eavg[0]);
+			g[0] = sanitize_denormal(fminf(1., from_dB(thresdb) / e));
 		}
 
-		absx[1] = absx[0];
-		c[1] = MAX(absx[1], (absx[1]-beta*eavg_old[1]) / (1. - beta));
-		pushsample(&cn[1][0], sanitize_denormal(c[1]), &posc[1]);
-		xmax[1] = maxsample(&cn[1][0]);
+		gainred = -to_dB(g[0]);
 
-		if (xmax[1] < emaxn[1][pose[1]]) {
-			a = 1000 / (release * srate);
-		} else {
-			a = aa;
-		}
-		emax[1] = a*xmax[1] + (1. - a)*emaxn[1][pose[1]];
-		pushsample(&emaxn[1][0], sanitize_denormal(emax[1]), &pose[1]);
-		eavg[1] = avgall(&emaxn[1][0]);
-		if (eavg[1] == 0.f) {
-			g[1] = 1.;
-		} else {
-			g[1] = MIN(1., from_dB(thresdb) / eavg[1]);
-		}
+		outputs[0][i] = z[0][(posz[0]+1+MAX_DELAY) % MAX_DELAY] * g[0] * from_dB(ceiling - thresdb);
+		outputs[1][i] = z[1][(posz[1]+1+MAX_DELAY) % MAX_DELAY] * g[0] * from_dB(ceiling - thresdb);
 
-		gainred = MAX(-to_dB(g[0]), -to_dB(g[1]));
+		max = fmaxf(fabsf(outputs[0][i]), fabsf(outputs[1][i]));
 
-		outputs[0][i] = (float)clip(normalise(z[0][posz[0]] * g[0], 0.));
-		outputs[1][i] = (float)clip(normalise(z[1][posz[1]] * g[1], 0.));
-
-		outlevel = to_dB(MAX(fabs(eavg[0]), fabs(eavg[1]))) + (ceiling - thresdb);
-		pushsample(&z[0][0], sanitize_denormal(inL), &posz[0]);
-		pushsample(&z[1][0], sanitize_denormal(inR), &posz[1]);
+		if (maxx < max)
+			maxx = max;
+		
+		pushsample(&emaxn[0][0], sanitize_denormal(emax[0]), &pose[0], MAX_AVG);
+		pushsample(&cn[0][0], sanitize_denormal(c[0]), &posc[0], MAX_DELAY);
+		pushsample(&z[0][0], sanitize_denormal(inL), &posz[0], MAX_DELAY);
+		pushsample(&z[1][0], sanitize_denormal(inR), &posz[1], MAX_DELAY);
 
 		emax_old[0] = sanitize_denormal(emax[0]);
-		eavg_old[0] = sanitize_denormal(eavg[0]);
-		emax_old[1] = sanitize_denormal(emax[1]);
-		eavg_old[1] = sanitize_denormal(eavg[1]);
+		e_old[0] = sanitize_denormal(e);
 	}
+	outlevel = (maxx == 0.f) ? -160. : to_dB(maxx);
+	if (outlevel > 0.) printf("g=%f out=%f\n", gainred, outlevel);
 }
 
 // -----------------------------------------------------------------------
