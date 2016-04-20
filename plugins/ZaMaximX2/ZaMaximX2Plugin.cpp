@@ -298,7 +298,7 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 		e_old[0] = sanitize_denormal(e);
 	}
 	outlevel = (maxx == 0.f) ? -160. : to_dB(maxx);
-	if (outlevel > 0.) printf("g=%f out=%f\n", gainred, outlevel);
+//	if (outlevel > 0.) printf("g=%f out=%f\n", gainred, outlevel);
 }
 
 // -----------------------------------------------------------------------
