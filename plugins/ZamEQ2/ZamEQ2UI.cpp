@@ -324,83 +324,86 @@ void ZamEQ2UI::imageSliderValueChanged(ImageSlider* slider, float value)
         setParameterValue(ZamEQ2Plugin::paramMaster, value);
 }
 
-void ZamEQ2UI::lowshelf(int i, int ch, float srate, float fc, float g)
-{
-	float k, v0;
+void ZamEQ2UI::peq(double G0, double G, double GB, double w0, double Dw,
+        double *a0, double *a1, double *a2, double *b0, double *b1, double *b2, double *gn) {
 
-	k = tanf(M_PI * fc / srate);
-	v0 = powf(10., g / 20.);
+        double F,G00,F00,num,den,G1,G01,G11,F01,F11,W2,Dww,C,D,B,A;
+        F = fabs(G*G - GB*GB);
+        G00 = fabs(G*G - G0*G0);
+        F00 = fabs(GB*GB - G0*G0);
+        num = G0*G0 * (w0*w0 - M_PI*M_PI)*(w0*w0 - M_PI*M_PI)
+                + G*G * F00 * M_PI*M_PI * Dw*Dw / F;
+        den = (w0*w0 - M_PI*M_PI)*(w0*w0 - M_PI*M_PI)
+                + F00 * M_PI*M_PI * Dw*Dw / F;
+        G1 = sqrt(num/den);
+        G01 = fabs(G*G - G0*G1);
+        G11 = fabs(G*G - G1*G1);
+        F01 = fabs(GB*GB - G0*G1);
+        F11 = fabs(GB*GB - G1*G1);
+        W2 = sqrt(G11 / G00) * tan(w0/2.f)*tan(w0/2.f);
+        Dww = (1.f + sqrt(F00 / F11) * W2) * tan(Dw/2.f);
+        C = F11 * Dww*Dww - 2.f * W2 * (F01 - sqrt(F00 * F11));
+        D = 2.f * W2 * (G01 - sqrt(G00 * G11));
+        A = sqrt((C + D) / F);
+        B = sqrt((G*G * C + GB*GB * D) / F);
+        *gn = G1;
+        *b0 = (G1 + G0*W2 + B) / (1.f + W2 + A);
+        *b1 = -2.f*(G1 - G0*W2) / (1.f + W2 + A);
+        *b2 = (G1 - B + G0*W2) / (1.f + W2 + A);
+        *a0 = 1.f;
+        *a1 = -2.f*(1.f - W2) / (1.f + W2 + A);
+        *a2 = (1 + W2 - A) / (1.f + W2 + A);
 
-	if (g < 0.f) {
-		// LF cut
-		float denom = v0 + sqrt(2. * v0)*k + k*k;
-		b0[ch][i] = v0 * (1. + sqrt(2.)*k + k*k) / denom;
-		b1[ch][i] = 2. * v0*(k*k - 1.) / denom;
-		b2[ch][i] = v0 * (1. - sqrt(2.)*k + k*k) / denom;
-		a1[ch][i] = 2. * (k*k - v0) / denom;
-		a2[ch][i] = (v0 - sqrt(2. * v0)*k + k*k) / denom;
-	} else {
-		// LF boost
-		float denom = 1. + sqrt(2.)*k + k*k;
-		b0[ch][i] = (1. + sqrt(2. * v0)*k + v0*k*k) / denom;
-		b1[ch][i] = 2. * (v0*k*k - 1.) / denom;
-		b2[ch][i] = (1. - sqrt(2. * v0)*k + v0*k*k) / denom;
-		a1[ch][i] = 2. * (k*k - 1.) / denom;
-		a2[ch][i] = (1. - sqrt(2.)*k + k*k) / denom;
-	}
+        *b1 = sanitize_denormal(*b1);
+        *b2 = sanitize_denormal(*b2);
+        *a0 = sanitize_denormal(*a0);
+        *a1 = sanitize_denormal(*a1);
+        *a2 = sanitize_denormal(*a2);
+        *gn = sanitize_denormal(*gn);
+        if (!std::isnormal(*b0)) { *b0 = 1.f; }
+ }
+
+void ZamEQ2UI::lowshelfeq(double, double G, double, double w0, double, double q, double B[], double A[]) {
+        double alpha,b0,b1,b2,a0,a1,a2;
+        G = powf(10.f,G/20.f);
+        double AA  = sqrt(G);
+
+        alpha = sin(w0)/2.f * sqrt( (AA + 1.f/AA)*(1.f/q - 1.f) + 2.f );
+        b0 =    AA*( (AA+1.f) - (AA-1.f)*cos(w0) + 2.f*sqrt(AA)*alpha );
+        b1 =  2.f*AA*( (AA-1.f) - (AA+1.f)*cos(w0)                   );
+        b2 =    AA*( (AA+1.f) - (AA-1.f)*cos(w0) - 2.f*sqrt(AA)*alpha );
+        a0 =        (AA+1.f) + (AA-1.f)*cos(w0) + 2.f*sqrt(AA)*alpha;
+        a1 =   -2.f*( (AA-1.f) + (AA+1.f)*cos(w0)                   );
+        a2 =        (AA+1.f) + (AA-1.f)*cos(w0) - 2.f*sqrt(AA)*alpha; 
+
+        B[0] = b0/a0;
+        B[1] = b1/a0;
+        B[2] = b2/a0; 
+        A[0] = 1.f; 
+        A[1] = a1/a0;
+        A[2] = a2/a0;
 }
 
-void ZamEQ2UI::highshelf(int i, int ch, float srate, float fc, float g)
+void ZamEQ2UI::highshelfeq(double, double G, double, double w0, double, double q, double B[], double A[])
 {
-	float k, v0;
+        double alpha,b0,b1,b2,a0,a1,a2;
+        G = powf(10.f,G/20.f);
+        double AA  = sqrt(G);
 
-	k = tanf(M_PI * fc / srate);
-	v0 = powf(10., g / 20.);
+        alpha = sin(w0)/2.f * sqrt( (AA + 1.f/AA)*(1.f/q - 1.f) + 2.f );
+        b0 =    AA*( (AA+1.f) + (AA-1.f)*cos(w0) + 2.f*sqrt(AA)*alpha );
+        b1 =  -2.f*AA*( (AA-1.f) + (AA+1.f)*cos(w0)                   );
+        b2 =    AA*( (AA+1.f) + (AA-1.f)*cos(w0) - 2.f*sqrt(AA)*alpha );
+        a0 =        (AA+1.f) - (AA-1.f)*cos(w0) + 2.f*sqrt(AA)*alpha;
+        a1 =   2.f*( (AA-1.f) - (AA+1.f)*cos(w0)                   ); 
+        a2 =        (AA+1.f) - (AA-1.f)*cos(w0) - 2.f*sqrt(AA)*alpha; 
 
-	if (g < 0.f) {
-		// HF cut
-		float denom = 1. + sqrt(2. * v0)*k + v0*k*k;
-		b0[ch][i] = v0*(1. + sqrt(2.)*k + k*k) / denom;
-		b1[ch][i] = 2. * v0*(k*k - 1.) / denom;
-		b2[ch][i] = v0*(1. - sqrt(2.)*k + k*k) / denom;
-		a1[ch][i] = 2. * (v0*k*k - 1.) / denom;
-		a2[ch][i] = (1. - sqrt(2. * v0)*k + v0*k*k) / denom;
-	} else {
-		// HF boost
-		float denom = 1. + sqrt(2.)*k + k*k;
-		b0[ch][i] = (v0 + sqrt(2. * v0)*k + k*k) / denom;
-		b1[ch][i] = 2. * (k*k - v0) / denom;
-		b2[ch][i] = (v0 - sqrt(2. * v0)*k + k*k) / denom;
-		a1[ch][i] = 2. * (k*k - 1.) / denom;
-		a2[ch][i] = (1. - sqrt(2.)*k + k*k) / denom;
-	}
-}
-
-void ZamEQ2UI::peq(int i, int ch, float srate, float fc, float g, float bw)
-{
-	float k, v0, q;
-
-	k = tanf(M_PI * fc / srate);
-	v0 = powf(10., g / 20.);
-	q = powf(2., 1./bw)/(powf(2., bw) - 1.); //q from octave bw
-
-	if (g < 0.f) {
-		// cut
-		float denom = 1. + k/(v0*q) + k*k;
-		b0[ch][i] = (1. + k/q + k*k) / denom;
-		b1[ch][i] = 2. * (k*k - 1.) / denom;
-		b2[ch][i] = (1. - k/q + k*k) / denom;
-		a1[ch][i] = b1[ch][i];
-		a2[ch][i] = (1. - k/(v0*q) + k*k) / denom;
-	} else {
-		// boost
-		float denom = 1. + k/q + k*k;
-		b0[ch][i] = (1. + k*v0/q + k*k) / denom;
-		b1[ch][i] = 2. * (k*k - 1.) / denom;
-		b2[ch][i] = (1. - k*v0/q + k*k) / denom;
-		a1[ch][i] = b1[ch][i];
-		a2[ch][i] = (1. - k/q + k*k) / denom;
-	}
+        B[0] = b0/a0;
+        B[1] = b1/a0;
+        B[2] = b2/a0;
+        A[0] = 1.f; 
+        A[1] = a1/a0;
+        A[2] = a2/a0;
 }
 
 void ZamEQ2UI::calceqcurve(float x[], float y[])
@@ -411,19 +414,35 @@ void ZamEQ2UI::calceqcurve(float x[], float y[])
         float c2 = log10(1.+SR);
         float c1 = (1.+p1/SR)/(EQPOINTS*(p2/SR)*(p2/SR));
 
-	double bw1 = fKnobQ1->getValue();
-	double boost1 = fKnobGain1->getValue();
-	double freq1 = fKnobFreq1->getValue();
+        double dcgain = 1.f;
 
-	double bw2 = fKnobQ2->getValue();
-	double boost2 = fKnobGain2->getValue();
-	double freq2 = fKnobFreq2->getValue();
+	double q1 = fKnobQ1->getValue();
+        double qq1 = pow(2.0, 1.0/q1)/(pow(2.0, q1) - 1.0); //q from octave bw
+	double boost1 = from_dB(fKnobGain1->getValue());
+	double fc1 = fKnobFreq1->getValue() / SR;
+        double w01 = fc1*2.f*M_PI;
+        double bwgain1 = (sqrt(boost1));
+        double bw1 = fc1 / qq1;
 
-	double boostl = fKnobGainL->getValue();
+	double q2 = fKnobQ2->getValue();
+        double qq2 = pow(2.0, 1.0/q2)/(pow(2.0, q2) - 1.0); //q from octave bw
+	double boost2 = from_dB(fKnobGain2->getValue());
+	double fc2 = fKnobFreq2->getValue() / SR;
+        double w02 = fc2*2.f*M_PI;
+        double bwgain2 = (sqrt(boost2));
+        double bw2 = fc2 / qq2;
+
+	double boostl = (fKnobGainL->getValue());
 	double freql = fKnobFreqL->getValue();
+        double All = sqrt(from_dB(boostl));
+        double bwl = 2.f*M_PI*freql/ SR;
+        double bwgaindbl = (All);
 
-	double boosth = fKnobGainH->getValue();
+	double boosth = (fKnobGainH->getValue());
 	double freqh = fKnobFreqH->getValue();
+        double Ahh = sqrt(from_dB(boosth));
+        double bwh = 2.f*M_PI*freqh/ SR;
+        double bwgaindbh = (Ahh);
 
         for (uint32_t i = 0; i < EQPOINTS; ++i) {
                 x[i] = 1.5*log10(1.+i+c1)/c2;
@@ -434,18 +453,20 @@ void ZamEQ2UI::calceqcurve(float x[], float y[])
                 std::complex<double> exp2iw = std::polar(1.0, 2.0*theta);
                 double freqH; //phaseH;
 
-                lowshelf(0, 0, SR, freql, boostl);
-                peq(1, 0, SR, freq1, boost1, bw1);
-                peq(2, 0, SR, freq2, boost2, bw2);
-                highshelf(3, 0, SR, freqh, boosth);
+		peq(dcgain,boost1,bwgain1,w01,bw1,&a0x,&a1x,&a2x,&b0x,&b1x,&b2x,&gainx);
+		peq(dcgain,boost2,bwgain2,w02,bw2,&a0y,&a1y,&a2y,&b0y,&b1y,&b2y,&gainy);
+		lowshelfeq(0.f,boostl,bwgaindbl,2.f*M_PI*freql/SR,bwl,0.707f,Bl,Al);
+		highshelfeq(0.f,boosth,bwgaindbh,2.f*M_PI*freqh/SR,bwh,0.707f,Bh,Ah);
 
-                H = (1. + a1[0][0]*expiw + a2[0][0]*exp2iw)/(b0[0][0] + b1[0][0]*expiw + b2[0][0]*exp2iw);
-                H += (1. + a1[0][1]*expiw + a2[0][1]*exp2iw)/(b0[0][1] + b1[0][1]*expiw + b2[0][1]*exp2iw);
-                H += (1. + a1[0][2]*expiw + a2[0][2]*exp2iw)/(b0[0][2] + b1[0][2]*expiw + b2[0][2]*exp2iw);
-                H += (1. + a1[0][3]*expiw + a2[0][3]*exp2iw)/(b0[0][3] + b1[0][3]*expiw + b2[0][3]*exp2iw);
+                H = (1. + Al[1]*expiw + Al[2]*exp2iw)/(Bl[0] + Bl[1]*expiw + Bl[2]*exp2iw);
+                H += (1. + a1x*expiw + a2x*exp2iw)/(b0x + b1x*expiw + b2x*exp2iw);
+                H += (1. + a1y*expiw + a2y*exp2iw)/(b0y + b1y*expiw + b2y*exp2iw);
+                H += (1. + Ah[1]*expiw + Ah[2]*exp2iw)/(Bh[0] + Bh[1]*expiw + Bh[2]*exp2iw);
 
-                freqH = std::abs(H);
-                y[i] = (to_dB(freqH/4.)/5.)-(fSliderMaster->getValue())/24.f+0.5;
+                freqH = to_dB(std::abs(H) / 4.);
+		if (freqH < -100.) freqH = -100.;
+		if (freqH > 100.) freqH = 100.;
+                y[i] = (freqH / 5.)-(fSliderMaster->getValue())/24.f+0.5;
 		x[i] = fCanvasArea.getX() + x[i]*fCanvasArea.getWidth();
 		y[i] = fCanvasArea.getY() + y[i]*fCanvasArea.getHeight();
         }

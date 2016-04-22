@@ -324,140 +324,195 @@ void ZamEQ2Plugin::setParameterValue(uint32_t index, float value)
 
 void ZamEQ2Plugin::activate()
 {
+        x1=x2=y1=y2=0.f;
+        x1a=x2a=y1a=y2a=0.f;
+        a0x=a1x=a2x=b0x=b1x=b2x=gainx=0.f;
+        a0y=a1y=a2y=b0y=b1y=b2y=gainy=0.f;
+        zln1=zln2=zld1=zld2=0.f;
+        zhn1=zhn2=zhd1=zhd2=0.f;
+
         int i;
-	for (i = 0; i < MAX_FILT; ++i) {
-		x1[0][i] = x2[0][i] = 0.f;
-		y1[0][i] = y2[0][i] = 0.f;
-		b0[0][i] = b1[0][i] = b2[0][i] = 0.f;
-		a1[0][i] = a2[0][i] = 0.f;
+	for (i = 0; i < 3; ++i) {
+                Bl[i] = Al[i] = Bh[i] = Ah[i] = 0.f;
+                Bl[i] = Al[i] = Bh[i] = Ah[i] = 0.f;
+                Bl[i] = Al[i] = Bh[i] = Ah[i] = 0.f;
         }
 }
 
-void ZamEQ2Plugin::lowshelf(int i, int ch, float srate, float fc, float g)
-{
-	float k, v0;
+void ZamEQ2Plugin::peq(double G0, double G, double GB, double w0, double Dw,
+        double *a0, double *a1, double *a2, double *b0, double *b1, double *b2, double *gn) {
 
-	k = tanf(M_PI * fc / srate);
-	v0 = powf(10., g / 20.);
+        double F,G00,F00,num,den,G1,G01,G11,F01,F11,W2,Dww,C,D,B,A;
+        F = fabs(G*G - GB*GB);
+        G00 = fabs(G*G - G0*G0);
+        F00 = fabs(GB*GB - G0*G0);
+        num = G0*G0 * (w0*w0 - M_PI*M_PI)*(w0*w0 - M_PI*M_PI)
+                + G*G * F00 * M_PI*M_PI * Dw*Dw / F;
+        den = (w0*w0 - M_PI*M_PI)*(w0*w0 - M_PI*M_PI)
+                + F00 * M_PI*M_PI * Dw*Dw / F;
+        G1 = sqrt(num/den);
+        G01 = fabs(G*G - G0*G1);
+        G11 = fabs(G*G - G1*G1);
+        F01 = fabs(GB*GB - G0*G1);
+        F11 = fabs(GB*GB - G1*G1);
+        W2 = sqrt(G11 / G00) * tan(w0/2.f)*tan(w0/2.f);
+        Dww = (1.f + sqrt(F00 / F11) * W2) * tan(Dw/2.f);
+        C = F11 * Dww*Dww - 2.f * W2 * (F01 - sqrt(F00 * F11));
+        D = 2.f * W2 * (G01 - sqrt(G00 * G11));
+        A = sqrt((C + D) / F);
+        B = sqrt((G*G * C + GB*GB * D) / F);
+        *gn = G1;
+        *b0 = (G1 + G0*W2 + B) / (1.f + W2 + A);
+        *b1 = -2.f*(G1 - G0*W2) / (1.f + W2 + A);
+        *b2 = (G1 - B + G0*W2) / (1.f + W2 + A);
+        *a0 = 1.f;
+        *a1 = -2.f*(1.f - W2) / (1.f + W2 + A);
+        *a2 = (1 + W2 - A) / (1.f + W2 + A);
 
-	if (g < 0.f) {
-		// LF cut
-		float denom = v0 + sqrt(2. * v0)*k + k*k;
-		b0[ch][i] = v0 * (1. + sqrt(2.)*k + k*k) / denom;
-		b1[ch][i] = 2. * v0*(k*k - 1.) / denom;
-		b2[ch][i] = v0 * (1. - sqrt(2.)*k + k*k) / denom;
-		a1[ch][i] = 2. * (k*k - v0) / denom;
-		a2[ch][i] = (v0 - sqrt(2. * v0)*k + k*k) / denom;
-	} else {
-		// LF boost
-		float denom = 1. + sqrt(2.)*k + k*k;
-		b0[ch][i] = (1. + sqrt(2. * v0)*k + v0*k*k) / denom;
-		b1[ch][i] = 2. * (v0*k*k - 1.) / denom;
-		b2[ch][i] = (1. - sqrt(2. * v0)*k + v0*k*k) / denom;
-		a1[ch][i] = 2. * (k*k - 1.) / denom;
-		a2[ch][i] = (1. - sqrt(2.)*k + k*k) / denom;
-	}
+        *b1 = sanitize_denormal(*b1);
+        *b2 = sanitize_denormal(*b2);
+        *a0 = sanitize_denormal(*a0);
+        *a1 = sanitize_denormal(*a1);
+        *a2 = sanitize_denormal(*a2);
+        *gn = sanitize_denormal(*gn);
+        if (!std::isnormal(*b0)) { *b0 = 1.f; }
+ }
+
+void ZamEQ2Plugin::lowshelfeq(double, double G, double, double w0, double, double q, double B[], double A[]) {
+        double alpha,b0,b1,b2,a0,a1,a2;
+        G = powf(10.f,G/20.f);
+        double AA  = sqrt(G);
+
+        alpha = sin(w0)/2.f * sqrt( (AA + 1.f/AA)*(1.f/q - 1.f) + 2.f );
+        b0 =    AA*( (AA+1.f) - (AA-1.f)*cos(w0) + 2.f*sqrt(AA)*alpha );
+        b1 =  2.f*AA*( (AA-1.f) - (AA+1.f)*cos(w0)                   );
+        b2 =    AA*( (AA+1.f) - (AA-1.f)*cos(w0) - 2.f*sqrt(AA)*alpha );
+        a0 =        (AA+1.f) + (AA-1.f)*cos(w0) + 2.f*sqrt(AA)*alpha;
+        a1 =   -2.f*( (AA-1.f) + (AA+1.f)*cos(w0)                   );
+        a2 =        (AA+1.f) + (AA-1.f)*cos(w0) - 2.f*sqrt(AA)*alpha; 
+
+        B[0] = b0/a0;
+        B[1] = b1/a0;
+        B[2] = b2/a0; 
+        A[0] = 1.f; 
+        A[1] = a1/a0;
+        A[2] = a2/a0;
 }
 
-void ZamEQ2Plugin::highshelf(int i, int ch, float srate, float fc, float g)
+void ZamEQ2Plugin::highshelfeq(double, double G, double, double w0, double, double q, double B[], double A[])
 {
-	float k, v0;
+        double alpha,b0,b1,b2,a0,a1,a2;
+        G = powf(10.f,G/20.f);
+        double AA  = sqrt(G);
 
-	k = tanf(M_PI * fc / srate);
-	v0 = powf(10., g / 20.);
+        alpha = sin(w0)/2.f * sqrt( (AA + 1.f/AA)*(1.f/q - 1.f) + 2.f );
+        b0 =    AA*( (AA+1.f) + (AA-1.f)*cos(w0) + 2.f*sqrt(AA)*alpha );
+        b1 =  -2.f*AA*( (AA-1.f) + (AA+1.f)*cos(w0)                   );
+        b2 =    AA*( (AA+1.f) + (AA-1.f)*cos(w0) - 2.f*sqrt(AA)*alpha );
+        a0 =        (AA+1.f) - (AA-1.f)*cos(w0) + 2.f*sqrt(AA)*alpha;
+        a1 =   2.f*( (AA-1.f) - (AA+1.f)*cos(w0)                   ); 
+        a2 =        (AA+1.f) - (AA-1.f)*cos(w0) - 2.f*sqrt(AA)*alpha; 
 
-	if (g < 0.f) {
-		// HF cut
-		float denom = 1. + sqrt(2. * v0)*k + v0*k*k;
-		b0[ch][i] = v0*(1. + sqrt(2.)*k + k*k) / denom;
-		b1[ch][i] = 2. * v0*(k*k - 1.) / denom;
-		b2[ch][i] = v0*(1. - sqrt(2.)*k + k*k) / denom;
-		a1[ch][i] = 2. * (v0*k*k - 1.) / denom;
-		a2[ch][i] = (1. - sqrt(2. * v0)*k + v0*k*k) / denom;
-	} else {
-		// HF boost
-		float denom = 1. + sqrt(2.)*k + k*k;
-		b0[ch][i] = (v0 + sqrt(2. * v0)*k + k*k) / denom;
-		b1[ch][i] = 2. * (k*k - v0) / denom;
-		b2[ch][i] = (v0 - sqrt(2. * v0)*k + k*k) / denom;
-		a1[ch][i] = 2. * (k*k - 1.) / denom;
-		a2[ch][i] = (1. - sqrt(2.)*k + k*k) / denom;
-	}
-}
-
-void ZamEQ2Plugin::peq(int i, int ch, float srate, float fc, float g, float bw)
-{
-	float k, v0, q;
-
-	k = tanf(M_PI * fc / srate);
-	v0 = powf(10., g / 20.);
-	q = powf(2., 1./bw)/(powf(2., bw) - 1.); //q from octave bw
-
-	if (g < 0.f) {
-		// cut
-		float denom = 1. + k/(v0*q) + k*k;
-		b0[ch][i] = (1. + k/q + k*k) / denom;
-		b1[ch][i] = 2. * (k*k - 1.) / denom;
-		b2[ch][i] = (1. - k/q + k*k) / denom;
-		a1[ch][i] = b1[ch][i];
-		a2[ch][i] = (1. - k/(v0*q) + k*k) / denom;
-	} else {
-		// boost
-		float denom = 1. + k/q + k*k;
-		b0[ch][i] = (1. + k*v0/q + k*k) / denom;
-		b1[ch][i] = 2. * (k*k - 1.) / denom;
-		b2[ch][i] = (1. - k*v0/q + k*k) / denom;
-		a1[ch][i] = b1[ch][i];
-		a2[ch][i] = (1. - k/q + k*k) / denom;
-	}
-}
-
-float ZamEQ2Plugin::run_filter(int i, int ch, double in)
-{
-	double out;
-	in = sanitize_denormal(in);
-	out = in * b0[ch][i] 	+ x1[ch][i] * b1[ch][i]
-				+ x2[ch][i] * b2[ch][i]
-				- y1[ch][i] * a1[ch][i]
-				- y2[ch][i] * a2[ch][i] + 1e-20f;
-	out = sanitize_denormal(out);
-	x2[ch][i] = sanitize_denormal(x1[ch][i]);
-	y2[ch][i] = sanitize_denormal(y1[ch][i]);
-	x1[ch][i] = in;
-	y1[ch][i] = out;
-
-	return (float) out;
+        B[0] = b0/a0;
+        B[1] = b1/a0;
+        B[2] = b2/a0;
+        A[0] = 1.f; 
+        A[1] = a1/a0;
+        A[2] = a2/a0;
 }
 
 void ZamEQ2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	float srate = getSampleRate();
+        double dcgain = 1.f;
 
-	lowshelf(0, 0, srate, freql, gainl);
-        peq(1, 0, srate, freq1, gain1, q1);
-        peq(2, 0, srate, freq2, gain2, q2);
-        highshelf(3, 0, srate, freqh, gainh);
+        double qq1 = pow(2.0, 1.0/q1)/(pow(2.0, q1) - 1.0); //q from octave bw
+        double boost1 = from_dB(gain1);
+        double fc1 = freq1 / srate;
+        double w01 = fc1*2.f*M_PI;
+        double bwgain1 = sqrt(boost1);
+        double bw1 = fc1 / qq1;
+
+        double qq2 = pow(2.0, 1.0/q2)/(pow(2.0, q2) - 1.0); //q from octave bw
+        double boost2 = from_dB(gain2);
+        double fc2 = freq2 / srate;
+        double w02 = fc2*2.f*M_PI;
+        double bwgain2 = sqrt(boost2);
+        double bw2 = fc2 / qq2;
+
+        double boostl = from_dB(gainl);
+        double All = sqrt(boostl);
+        double bwl = 2.f*M_PI*freql/ srate;
+        double bwgaindbl = to_dB(All);
+
+        double boosth = from_dB(gainh);
+        double Ahh = sqrt(boosth);
+        double bwh = 2.f*M_PI*freqh/ srate;
+        double bwgaindbh = to_dB(Ahh);
+
+        peq(dcgain,boost1,bwgain1,w01,bw1,&a0x,&a1x,&a2x,&b0x,&b1x,&b2x,&gainx);
+        peq(dcgain,boost2,bwgain2,w02,bw2,&a0y,&a1y,&a2y,&b0y,&b1y,&b2y,&gainy);
+        lowshelfeq(0.f,gainl,bwgaindbl,2.f*M_PI*freql/srate,bwl,0.707f,Bl,Al);
+        highshelfeq(0.f,gainh,bwgaindbh,2.f*M_PI*freqh/srate,bwh,0.707f,Bh,Ah);
 
         for (uint32_t i = 0; i < frames; i++) {
                 double tmp,tmpl, tmph;
                 double in = inputs[0][i];
+                x1 = sanitize_denormal(x1);
+                x2 = sanitize_denormal(x2);
+                y1 = sanitize_denormal(y1);
+                y2 = sanitize_denormal(y2);
+                x1a = sanitize_denormal(x1a);
+                x2a = sanitize_denormal(x2a);
+                y1a = sanitize_denormal(y1a);
+                y2a = sanitize_denormal(y2a);
+                zln1 = sanitize_denormal(zln1);
+                zln2 = sanitize_denormal(zln2);
+                zld1 = sanitize_denormal(zld1);
+                zld2 = sanitize_denormal(zld2);
+                zhn1 = sanitize_denormal(zhn1);
+                zhn2 = sanitize_denormal(zhn2);
+                zhd1 = sanitize_denormal(zhd1);
+                zhd2 = sanitize_denormal(zhd2);
                 in = sanitize_denormal(in);
 
                 //lowshelf
-                tmpl = (gainl == 0.f) ? in : run_filter(0, 0, in);
+                tmpl = in * Bl[0] +
+                        zln1 * Bl[1] +
+                        zln2 * Bl[2] -
+                        zld1 * Al[1] -
+                        zld2 * Al[2];
+                zln2 = zln1;
+                zld2 = zld1;
+                zln1 = in;
+                zld1 = tmpl;
 
                 //highshelf
-                tmph = (gainh == 0.f) ? tmpl : run_filter(3, 0, tmpl);
+                tmph = tmpl * Bh[0] +
+                        zhn1 * Bh[1] +
+                        zhn2 * Bh[2] -
+                        zhd1 * Ah[1] -
+                        zhd2 * Ah[2];
+                zhn2 = zhn1;
+                zhd2 = zhd1;
+                zhn1 = tmpl; 
+                zhd1 = tmph; 
 
                 //parametric1
-                tmp = (gain1 == 0.f) ? tmph : run_filter(1, 0, tmph);
+                tmp = tmph * b0x + x1 * b1x + x2 * b2x - y1 * a1x - y2 * a2x;
+                x2 = x1;
+                y2 = y1;
+                x1 = tmph;
+                y1 = tmp;
 
-		//parametric2
-		tmpl = (gain2 == 0.f) ? tmp : run_filter(2, 0, tmp);
+                //parametric2
+                outputs[0][i] = tmp * b0y + x1a * b1y + x2a * b2y - y1a * a1y - y2a * a2y;
+                x2a = x1a;
+                y2a = y1a;
+                x1a = tmp;
+                y1a = outputs[0][i];
 
-                outputs[0][i] = inputs[0][i];
-                outputs[0][i] = (float) tmpl;
-		outputs[0][i] *= from_dB(master);
+                outputs[0][i] *= from_dB(master);
 	}
 }
 

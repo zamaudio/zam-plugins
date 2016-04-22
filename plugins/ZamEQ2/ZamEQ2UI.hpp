@@ -88,9 +88,13 @@ protected:
         }
 
 	void calceqcurve(float x[], float y[]);
-	void peq(int i, int ch, float srate, float fc, float g, float bw);
-	void lowshelf(int i, int ch, float srate, float fc, float g);
-	void highshelf(int i, int ch, float srate, float fc, float g);
+    void peq(double G0, double G, double GB, double w0, double Dw,
+		double *a0, double *a1, double *a2,
+		double *b0, double *b1, double *b2, double *gn);
+    void lowshelfeq(double G0, double G, double GB,
+    		double w0, double Dw, double q, double B[], double A[]);
+    void highshelfeq(double G0, double G, double GB,
+    		double w0, double Dw, double q, double B[], double A[]);
 
     // -------------------------------------------------------------------
     // DSP Callbacks
@@ -122,7 +126,12 @@ private:
     float eqx[EQPOINTS];
     float eqy[EQPOINTS];
     DGL::Rectangle<int> fCanvasArea;
-    double a1[1][MAX_FILT], a2[1][MAX_FILT], b0[1][MAX_FILT], b1[1][MAX_FILT], b2[1][MAX_FILT];
+        double a0x,a1x,a2x,b0x,b1x,b2x,gainx;
+        double a0y,a1y,a2y,b0y,b1y,b2y,gainy;
+        double Bl[3];
+        double Al[3];
+        double Bh[3];
+        double Ah[3];
 };
 
 // -----------------------------------------------------------------------
