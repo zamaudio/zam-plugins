@@ -41,6 +41,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGain1 = new ImageKnob(this, knobImage);
     fKnobGain1->setAbsolutePos(91, 172);
     fKnobGain1->setRange(-50.f, 20.0f);
+    fKnobGain1->setScrollStep(1.0f);
     fKnobGain1->setRotationAngle(240);
     fKnobGain1->setDefault(0.0f);
     fKnobGain1->setCallback(this);
@@ -48,6 +49,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobQ1 = new ImageKnob(this, knobImage);
     fKnobQ1->setAbsolutePos(91, 122);
     fKnobQ1->setRange(0.1f, 6.0f);
+    fKnobQ1->setScrollStep(0.1f);
     fKnobQ1->setRotationAngle(240);
     fKnobQ1->setDefault(1.0f);
     fKnobQ1->setCallback(this);
@@ -56,6 +58,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobFreq1->setAbsolutePos(23, 144);
     fKnobFreq1->setUsingLogScale(true);
     fKnobFreq1->setRange(20.f, 14000.0f);
+    fKnobFreq1->setScrollStep(10.f);
     fKnobFreq1->setRotationAngle(240);
     fKnobFreq1->setDefault(500.0f);
     fKnobFreq1->setCallback(this);
@@ -63,6 +66,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGain2 = new ImageKnob(this, knobImage);
     fKnobGain2->setAbsolutePos(567, 172);
     fKnobGain2->setRange(-50.f, 20.0f);
+    fKnobGain2->setScrollStep(1.f);
     fKnobGain2->setRotationAngle(240);
     fKnobGain2->setDefault(0.0f);
     fKnobGain2->setCallback(this);
@@ -70,6 +74,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobQ2 = new ImageKnob(this, knobImage);
     fKnobQ2->setAbsolutePos(567, 122);
     fKnobQ2->setRange(0.1f, 6.0f);
+    fKnobQ2->setScrollStep(0.1f);
     fKnobQ2->setRotationAngle(240);
     fKnobQ2->setDefault(1.0f);
     fKnobQ2->setCallback(this);
@@ -78,6 +83,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobFreq2->setAbsolutePos(499, 144);
     fKnobFreq2->setUsingLogScale(true);
     fKnobFreq2->setRange(20.f, 14000.0f);
+    fKnobFreq2->setScrollStep(10.f);
     fKnobFreq2->setRotationAngle(240);
     fKnobFreq2->setDefault(3000.0f);
     fKnobFreq2->setCallback(this);
@@ -85,6 +91,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGainL = new ImageKnob(this, knobImage);
     fKnobGainL->setAbsolutePos(91, 52);
     fKnobGainL->setRange(-50.f, 20.0f);
+    fKnobGainL->setScrollStep(1.f);
     fKnobGainL->setRotationAngle(240);
     fKnobGainL->setDefault(0.0f);
     fKnobGainL->setCallback(this);
@@ -93,6 +100,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobFreqL->setAbsolutePos(23, 23);
     fKnobFreqL->setUsingLogScale(true);
     fKnobFreqL->setRange(20.f, 14000.0f);
+    fKnobFreqL->setScrollStep(10.f);
     fKnobFreqL->setRotationAngle(240);
     fKnobFreqL->setDefault(250.0f);
     fKnobFreqL->setCallback(this);
@@ -100,6 +108,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGainH = new ImageKnob(this, knobImage);
     fKnobGainH->setAbsolutePos(567, 53);
     fKnobGainH->setRange(-50.f, 20.0f);
+    fKnobGainH->setScrollStep(1.f);
     fKnobGainH->setRotationAngle(240);
     fKnobGainH->setDefault(0.0f);
     fKnobGainH->setCallback(this);
@@ -108,6 +117,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobFreqH->setAbsolutePos(499, 24);
     fKnobFreqH->setUsingLogScale(true);
     fKnobFreqH->setRange(20.f, 14000.0f);
+    fKnobFreqH->setScrollStep(10.f);
     fKnobFreqH->setRotationAngle(240);
     fKnobFreqH->setDefault(8000.0f);
     fKnobFreqH->setCallback(this);

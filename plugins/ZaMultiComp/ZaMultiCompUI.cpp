@@ -11,8 +11,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
- * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
 #include "ZaMultiCompPlugin.hpp"
@@ -51,6 +49,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack1 = new ImageKnob(this, knobImage);
     fKnobAttack1->setAbsolutePos(26+x, 43+y);
     fKnobAttack1->setRange(0.1f, 200.0f);
+    fKnobAttack1->setScrollStep(1.0f);
     fKnobAttack1->setUsingLogScale(true);
     fKnobAttack1->setDefault(10.0f);
     fKnobAttack1->setRotationAngle(240);
@@ -59,6 +58,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack2 = new ImageKnob(this, knobImage);
     fKnobAttack2->setAbsolutePos(26+x, 43+y-50);
     fKnobAttack2->setRange(0.1f, 200.0f);
+    fKnobAttack2->setScrollStep(1.0f);
     fKnobAttack2->setUsingLogScale(true);
     fKnobAttack2->setDefault(10.0f);
     fKnobAttack2->setRotationAngle(240);
@@ -67,6 +67,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack3 = new ImageKnob(this, knobImage);
     fKnobAttack3->setAbsolutePos(26+x, 43+y-100);
     fKnobAttack3->setRange(0.1f, 200.0f);
+    fKnobAttack3->setScrollStep(1.0f);
     fKnobAttack3->setUsingLogScale(true);
     fKnobAttack3->setDefault(10.0f);
     fKnobAttack3->setRotationAngle(240);
@@ -75,6 +76,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease1 = new ImageKnob(this, knobImage);
     fKnobRelease1->setAbsolutePos(108+x, 43+y);
     fKnobRelease1->setRange(1.0f, 500.0f);
+    fKnobRelease1->setScrollStep(1.0f);
     fKnobRelease1->setDefault(80.0f);
     fKnobRelease1->setRotationAngle(240);
     fKnobRelease1->setCallback(this);
@@ -82,6 +84,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease2 = new ImageKnob(this, knobImage);
     fKnobRelease2->setAbsolutePos(108+x, 43+y-50);
     fKnobRelease2->setRange(1.0f, 500.0f);
+    fKnobRelease2->setScrollStep(1.0f);
     fKnobRelease2->setDefault(80.0f);
     fKnobRelease2->setRotationAngle(240);
     fKnobRelease2->setCallback(this);
@@ -89,6 +92,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease3 = new ImageKnob(this, knobImage);
     fKnobRelease3->setAbsolutePos(108+x, 43+y-100);
     fKnobRelease3->setRange(1.0f, 500.0f);
+    fKnobRelease3->setScrollStep(1.0f);
     fKnobRelease3->setDefault(80.0f);
     fKnobRelease3->setRotationAngle(240);
     fKnobRelease3->setCallback(this);
@@ -96,6 +100,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh3 = new ImageKnob(this, knobImage);
     fKnobThresh3->setAbsolutePos(94.5+31, 99+134);
     fKnobThresh3->setRange(-60.0f, 0.0f);
+    fKnobThresh3->setScrollStep(1.0f);
     fKnobThresh3->setDefault(-16.0f);
     fKnobThresh3->setRotationAngle(240);
     fKnobThresh3->setCallback(this);
@@ -103,6 +108,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh2 = new ImageKnob(this, knobImage);
     fKnobThresh2->setAbsolutePos(94.5+31, 150+134);
     fKnobThresh2->setRange(-60.0f, 0.0f);
+    fKnobThresh2->setScrollStep(1.0f);
     fKnobThresh2->setDefault(-18.0f);
     fKnobThresh2->setRotationAngle(240);
     fKnobThresh2->setCallback(this);
@@ -110,6 +116,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh1 = new ImageKnob(this, knobImage);
     fKnobThresh1->setAbsolutePos(94.5+31, 201+134);
     fKnobThresh1->setRange(-60.0f, 0.0f);
+    fKnobThresh1->setScrollStep(1.0f);
     fKnobThresh1->setDefault(-20.0f);
     fKnobThresh1->setRotationAngle(240);
     fKnobThresh1->setCallback(this);
@@ -117,6 +124,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio1 = new ImageKnob(this, knobImage);
     fKnobRatio1->setAbsolutePos(191.5+x, 43+y);
     fKnobRatio1->setRange(1.0f, 20.0f);
+    fKnobRatio1->setScrollStep(1.0f);
     fKnobRatio1->setUsingLogScale(true);
     fKnobRatio1->setDefault(4.0f);
     fKnobRatio1->setRotationAngle(240);
@@ -125,6 +133,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio2 = new ImageKnob(this, knobImage);
     fKnobRatio2->setAbsolutePos(191.5+x, 43+y-50);
     fKnobRatio2->setRange(1.0f, 20.0f);
+    fKnobRatio2->setScrollStep(1.0f);
     fKnobRatio2->setUsingLogScale(true);
     fKnobRatio2->setDefault(4.0f);
     fKnobRatio2->setRotationAngle(240);
@@ -133,6 +142,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio3 = new ImageKnob(this, knobImage);
     fKnobRatio3->setAbsolutePos(191.5+x, 43+y-100);
     fKnobRatio3->setRange(1.0f, 20.0f);
+    fKnobRatio3->setScrollStep(1.0f);
     fKnobRatio3->setUsingLogScale(true);
     fKnobRatio3->setDefault(4.0f);
     fKnobRatio3->setRotationAngle(240);
@@ -141,6 +151,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee1 = new ImageKnob(this, knobImage);
     fKnobKnee1->setAbsolutePos(273+x, 43+y);
     fKnobKnee1->setRange(0.0f, 8.0f);
+    fKnobKnee1->setScrollStep(1.f);
     fKnobKnee1->setDefault(0.0f);
     fKnobKnee1->setRotationAngle(240);
     fKnobKnee1->setCallback(this);
@@ -148,6 +159,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee2 = new ImageKnob(this, knobImage);
     fKnobKnee2->setAbsolutePos(273+x, 43+y-50);
     fKnobKnee2->setRange(0.0f, 8.0f);
+    fKnobKnee2->setScrollStep(1.f);
     fKnobKnee2->setDefault(0.0f);
     fKnobKnee2->setRotationAngle(240);
     fKnobKnee2->setCallback(this);
@@ -155,6 +167,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee3 = new ImageKnob(this, knobImage);
     fKnobKnee3->setAbsolutePos(273+x, 43+y-100);
     fKnobKnee3->setRange(0.0f, 8.0f);
+    fKnobKnee3->setScrollStep(1.f);
     fKnobKnee3->setDefault(0.0f);
     fKnobKnee3->setRotationAngle(240);
     fKnobKnee3->setCallback(this);
@@ -162,6 +175,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobGlobalGain = new ImageKnob(this, knobImage);
     fKnobGlobalGain->setAbsolutePos(427-170, 41);
     fKnobGlobalGain->setRange(-30.0f, 30.0f);
+    fKnobGlobalGain->setScrollStep(1.f);
     fKnobGlobalGain->setDefault(0.0f);
     fKnobGlobalGain->setRotationAngle(240);
     fKnobGlobalGain->setCallback(this);
@@ -169,6 +183,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover2 = new ImageKnob(this, knobImage);
     fKnobXover2->setAbsolutePos(22+333, 121-80);
     fKnobXover2->setRange(1400.f, 14000.f);
+    fKnobXover2->setScrollStep(10.f);
     fKnobXover2->setUsingLogScale(true);
     fKnobXover2->setDefault(1400.f);
     fKnobXover2->setRotationAngle(240);
@@ -177,6 +192,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover1 = new ImageKnob(this, knobImage);
     fKnobXover1->setAbsolutePos(22+333, 175.5-80);
     fKnobXover1->setRange(20.0f, 1400.0f);
+    fKnobXover1->setScrollStep(10.f);
     fKnobXover1->setUsingLogScale(true);
     fKnobXover1->setDefault(160.0f);
     fKnobXover1->setRotationAngle(240);
@@ -185,6 +201,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup3 = new ImageKnob(this, knobImage);
     fKnobMakeup3->setAbsolutePos(167.75+30, 99.5+134);
     fKnobMakeup3->setRange(0.0f, 30.0f);
+    fKnobMakeup3->setScrollStep(1.f);
     fKnobMakeup3->setDefault(0.0f);
     fKnobMakeup3->setRotationAngle(240);
     fKnobMakeup3->setCallback(this);
@@ -192,6 +209,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup2 = new ImageKnob(this, knobImage);
     fKnobMakeup2->setAbsolutePos(167.75+30, 150.25+134);
     fKnobMakeup2->setRange(0.0f, 30.0f);
+    fKnobMakeup2->setScrollStep(1.f);
     fKnobMakeup2->setDefault(0.0f);
     fKnobMakeup2->setRotationAngle(240);
     fKnobMakeup2->setCallback(this);
@@ -199,6 +217,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup1 = new ImageKnob(this, knobImage);
     fKnobMakeup1->setAbsolutePos(167.75+30, 201.4+134);
     fKnobMakeup1->setRange(0.0f, 30.0f);
+    fKnobMakeup1->setScrollStep(1.f);
     fKnobMakeup1->setDefault(0.0f);
     fKnobMakeup1->setRotationAngle(240);
     fKnobMakeup1->setCallback(this);

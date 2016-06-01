@@ -40,6 +40,7 @@ ZamHeadX2UI::ZamHeadX2UI()
     fKnobAzimuth->setAbsolutePos(229, 33);
     fKnobAzimuth->setId(ZamHeadX2Plugin::paramAzimuth);
     fKnobAzimuth->setRange(-120.f, 120.0f);
+    fKnobAzimuth->setScrollStep(10.0f);
     fKnobAzimuth->setDefault(0.0f);
     fKnobAzimuth->setRotationAngle(240);
     fKnobAzimuth->setCallback(this);
@@ -48,6 +49,7 @@ ZamHeadX2UI::ZamHeadX2UI()
     fKnobElevation->setAbsolutePos(62, 78);
     fKnobElevation->setId(ZamHeadX2Plugin::paramElevation);
     fKnobElevation->setRange(-30.0f, 90.0f);
+    fKnobElevation->setScrollStep(10.0f);
     fKnobElevation->setDefault(0.0f);
     fKnobElevation->setRotationAngle(120);
     fKnobElevation->setCallback(this);
@@ -56,6 +58,7 @@ ZamHeadX2UI::ZamHeadX2UI()
     fKnobWidth->setAbsolutePos(45, 170);
     fKnobWidth->setId(ZamHeadX2Plugin::paramWidth);
     fKnobWidth->setRange(0.0f, 2.5f);
+    fKnobWidth->setScrollStep(0.1f);
     fKnobWidth->setDefault(1.0f);
     fKnobWidth->setRotationAngle(300);
     fKnobWidth->setCallback(this);
