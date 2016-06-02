@@ -51,6 +51,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobDelaytime->setAbsolutePos(190, 79);
     fKnobDelaytime->setId(ZamDelayPlugin::paramDelaytime);
     fKnobDelaytime->setRange(1.0f, 8000.0f);
+    fKnobDelaytime->setLabel(true);
     fKnobDelaytime->setScrollStep(10.0f);
     fKnobDelaytime->setUsingLogScale(true);
     fKnobDelaytime->setDefault(160.0f);
@@ -71,6 +72,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobLPF->setAbsolutePos(67.5, 79);
     fKnobLPF->setId(ZamDelayPlugin::paramLPF);
     fKnobLPF->setRange(20.0f, 20000.0f);
+    fKnobLPF->setLabel(true);
     fKnobLPF->setScrollStep(10.0f);
     fKnobLPF->setUsingLogScale(true);
     fKnobLPF->setDefault(6000.0f);
@@ -81,6 +83,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobGain->setAbsolutePos(66, 201);
     fKnobGain->setId(ZamDelayPlugin::paramGain);
     fKnobGain->setRange(-60.0f, 0.0f);
+    fKnobGain->setLabel(true);
     fKnobGain->setScrollStep(1.0f);
     fKnobGain->setRotationAngle(240);
     fKnobGain->setCallback(this);
@@ -89,6 +92,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobDrywet->setAbsolutePos(332, 231);
     fKnobDrywet->setId(ZamDelayPlugin::paramDrywet);
     fKnobDrywet->setRange(0.0f, 1.0f);
+    fKnobDrywet->setLabel(true);
     fKnobDrywet->setScrollStep(0.1f);
     fKnobDrywet->setDefault(0.5f);
     fKnobDrywet->setRotationAngle(240);
@@ -98,6 +102,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobFeedback->setAbsolutePos(332, 138);
     fKnobFeedback->setId(ZamDelayPlugin::paramFeedback);
     fKnobFeedback->setRange(0.0f, 1.0f);
+    fKnobFeedback->setLabel(true);
     fKnobFeedback->setScrollStep(0.1f);
     fKnobFeedback->setDefault(0.0f);
     fKnobFeedback->setRotationAngle(240);

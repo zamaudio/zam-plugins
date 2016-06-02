@@ -11,8 +11,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
- * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
 #include "ZamGEQ31UI.hpp"
@@ -41,6 +39,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fKnobMaster = new ImageKnob(this, knobImage);
     fKnobMaster->setAbsolutePos(103, 122);
     fKnobMaster->setRange(-20.f, 20.f);
+    fKnobMaster->setLabel(true);
     fKnobMaster->setScrollStep(1.0f);
     fKnobMaster->setRotationAngle(240);
     fKnobMaster->setDefault(0.0f);

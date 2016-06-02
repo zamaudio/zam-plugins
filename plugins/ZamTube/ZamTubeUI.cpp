@@ -11,8 +11,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
- * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
 #include "ZamTubePlugin.hpp"
@@ -52,6 +50,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobTube = new ImageKnob(this, knobImage);
     fKnobTube->setAbsolutePos(177, 76);
     fKnobTube->setRange(0.f, 30.0f);
+    fKnobTube->setLabel(true);
     fKnobTube->setScrollStep(1.0f);
     fKnobTube->setDefault(0.0f);
     fKnobTube->setRotationAngle(240);
@@ -60,6 +59,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobBass = new ImageKnob(this, knobImage);
     fKnobBass->setAbsolutePos(63, 140.5);
     fKnobBass->setRange(0.f, 1.0f);
+    fKnobBass->setLabel(true);
     fKnobBass->setScrollStep(0.1f);
     fKnobBass->setDefault(0.5f);
     fKnobBass->setRotationAngle(240);
@@ -68,6 +68,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobMids = new ImageKnob(this, knobImage);
     fKnobMids->setAbsolutePos(63, 87);
     fKnobMids->setRange(0.f, 1.0f);
+    fKnobMids->setLabel(true);
     fKnobMids->setScrollStep(0.1f);
     fKnobMids->setDefault(0.5f);
     fKnobMids->setRotationAngle(240);
@@ -76,6 +77,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobTreb = new ImageKnob(this, knobImage);
     fKnobTreb->setAbsolutePos(63, 33);
     fKnobTreb->setRange(0.f, 1.0f);
+    fKnobTreb->setLabel(true);
     fKnobTreb->setScrollStep(0.1f);
     fKnobTreb->setDefault(0.0f);
     fKnobTreb->setRotationAngle(240);
@@ -84,6 +86,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobGain = new ImageKnob(this, knobImage);
     fKnobGain->setAbsolutePos(63, 231);
     fKnobGain->setRange(-30.f, 30.0f);
+    fKnobGain->setLabel(true);
     fKnobGain->setScrollStep(1.f);
     fKnobGain->setDefault(0.0f);
     fKnobGain->setRotationAngle(240);

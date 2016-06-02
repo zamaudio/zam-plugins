@@ -48,6 +48,7 @@ ZamGateUI::ZamGateUI()
 	fKnobAttack->setAbsolutePos(24, 45);
 	fKnobAttack->setId(ZamGatePlugin::paramAttack);
 	fKnobAttack->setRange(0.1f, 500.0f);
+	fKnobAttack->setLabel(true);
 	fKnobAttack->setScrollStep(1.0f);
 	fKnobAttack->setDefault(50.0f);
 	fKnobAttack->setRotationAngle(240);
@@ -57,6 +58,7 @@ ZamGateUI::ZamGateUI()
 	fKnobRelease->setAbsolutePos(108, 45);
 	fKnobRelease->setId(ZamGatePlugin::paramRelease);
 	fKnobRelease->setRange(0.1f, 500.0f);
+	fKnobRelease->setLabel(true);
 	fKnobRelease->setScrollStep(1.0f);
 	fKnobRelease->setDefault(100.0f);
 	fKnobRelease->setRotationAngle(240);
@@ -66,6 +68,7 @@ ZamGateUI::ZamGateUI()
 	fKnobThresh->setAbsolutePos(191.7, 45);
 	fKnobThresh->setId(ZamGatePlugin::paramThresh);
 	fKnobThresh->setRange(-60.0f, 0.0f);
+	fKnobThresh->setLabel(true);
 	fKnobThresh->setScrollStep(1.0f);
 	fKnobThresh->setDefault(-60.0f);
 	fKnobThresh->setRotationAngle(240);
@@ -75,6 +78,7 @@ ZamGateUI::ZamGateUI()
 	fKnobMakeup->setAbsolutePos(273, 45);
 	fKnobMakeup->setId(ZamGatePlugin::paramMakeup);
 	fKnobMakeup->setRange(-30.0f, 30.0f);
+	fKnobMakeup->setLabel(true);
 	fKnobMakeup->setScrollStep(1.0f);
 	fKnobMakeup->setDefault(0.0f);
 	fKnobMakeup->setRotationAngle(240);
@@ -84,6 +88,7 @@ ZamGateUI::ZamGateUI()
 	fKnobGateclose->setAbsolutePos(480, 62);
 	fKnobGateclose->setId(ZamGatePlugin::paramGateclose);
 	fKnobGateclose->setRange(-50.0f, 0.0f);
+	fKnobGateclose->setLabel(true);
 	fKnobGateclose->setScrollStep(1.0f);
 	fKnobGateclose->setDefault(-50.0f);
 	fKnobGateclose->setRotationAngle(240);

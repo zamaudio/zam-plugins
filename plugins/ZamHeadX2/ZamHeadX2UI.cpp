@@ -11,8 +11,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
- * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
 #include "ZamHeadX2Plugin.hpp"
@@ -40,6 +38,7 @@ ZamHeadX2UI::ZamHeadX2UI()
     fKnobAzimuth->setAbsolutePos(229, 33);
     fKnobAzimuth->setId(ZamHeadX2Plugin::paramAzimuth);
     fKnobAzimuth->setRange(-120.f, 120.0f);
+    fKnobAzimuth->setLabel(true);
     fKnobAzimuth->setScrollStep(10.0f);
     fKnobAzimuth->setDefault(0.0f);
     fKnobAzimuth->setRotationAngle(240);
@@ -49,6 +48,7 @@ ZamHeadX2UI::ZamHeadX2UI()
     fKnobElevation->setAbsolutePos(62, 78);
     fKnobElevation->setId(ZamHeadX2Plugin::paramElevation);
     fKnobElevation->setRange(-30.0f, 90.0f);
+    fKnobElevation->setLabel(true);
     fKnobElevation->setScrollStep(10.0f);
     fKnobElevation->setDefault(0.0f);
     fKnobElevation->setRotationAngle(120);
@@ -58,6 +58,7 @@ ZamHeadX2UI::ZamHeadX2UI()
     fKnobWidth->setAbsolutePos(45, 170);
     fKnobWidth->setId(ZamHeadX2Plugin::paramWidth);
     fKnobWidth->setRange(0.0f, 2.5f);
+    fKnobWidth->setLabel(true);
     fKnobWidth->setScrollStep(0.1f);
     fKnobWidth->setDefault(1.0f);
     fKnobWidth->setRotationAngle(300);
