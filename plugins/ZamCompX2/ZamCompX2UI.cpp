@@ -48,7 +48,7 @@ ZamCompX2UI::ZamCompX2UI()
     Image knobImage(ZamCompX2Artwork::knobData, ZamCompX2Artwork::knobWidth, ZamCompX2Artwork::knobHeight);
 
     // knob
-    fKnobAttack = new ImageKnob(this, knobImage);
+    fKnobAttack = new ZamKnob(this, knobImage);
     fKnobAttack->setAbsolutePos(24, 45);
     fKnobAttack->setId(ZamCompX2Plugin::paramAttack);
     fKnobAttack->setRange(0.1f, 200.0f);
@@ -59,7 +59,7 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobAttack->setRotationAngle(240);
     fKnobAttack->setCallback(this);
 
-    fKnobRelease = new ImageKnob(this, knobImage);
+    fKnobRelease = new ZamKnob(this, knobImage);
     fKnobRelease->setAbsolutePos(108, 45);
     fKnobRelease->setId(ZamCompX2Plugin::paramRelease);
     fKnobRelease->setRange(1.0f, 500.0f);
@@ -69,7 +69,7 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
 
-    fKnobThresh = new ImageKnob(this, knobImage);
+    fKnobThresh = new ZamKnob(this, knobImage);
     fKnobThresh->setAbsolutePos(191.5, 45);
     fKnobThresh->setId(ZamCompX2Plugin::paramThresh);
     fKnobThresh->setRange(-60.0f, 0.0f);
@@ -79,7 +79,7 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobThresh->setRotationAngle(240);
     fKnobThresh->setCallback(this);
 
-    fKnobRatio = new ImageKnob(this, knobImage);
+    fKnobRatio = new ZamKnob(this, knobImage);
     fKnobRatio->setAbsolutePos(270, 45);
     fKnobRatio->setId(ZamCompX2Plugin::paramRatio);
     fKnobRatio->setRange(1.0f, 20.0f);
@@ -90,7 +90,7 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobRatio->setRotationAngle(240);
     fKnobRatio->setCallback(this);
 
-    fKnobKnee = new ImageKnob(this, knobImage);
+    fKnobKnee = new ZamKnob(this, knobImage);
     fKnobKnee->setAbsolutePos(348.5, 45);
     fKnobKnee->setId(ZamCompX2Plugin::paramKnee);
     fKnobKnee->setRange(0.0f, 8.0f);
@@ -100,7 +100,7 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobKnee->setRotationAngle(240);
     fKnobKnee->setCallback(this);
 
-    fKnobMakeup = new ImageKnob(this, knobImage);
+    fKnobMakeup = new ZamKnob(this, knobImage);
     fKnobMakeup->setAbsolutePos(638, 62);
     fKnobMakeup->setId(ZamCompX2Plugin::paramMakeup);
     fKnobMakeup->setRange(-30.0f, 30.0f);
@@ -110,7 +110,7 @@ ZamCompX2UI::ZamCompX2UI()
     fKnobMakeup->setRotationAngle(240);
     fKnobMakeup->setCallback(this);
 
-    fKnobSlew = new ImageKnob(this, knobImage);
+    fKnobSlew = new ZamKnob(this, knobImage);
     fKnobSlew->setAbsolutePos(427.3, 45);
     fKnobSlew->setId(ZamCompX2Plugin::paramSlew);
     fKnobSlew->setRange(1.0f, 150.0f);
@@ -227,17 +227,17 @@ void ZamCompX2UI::programLoaded(uint32_t index)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZamCompX2UI::imageKnobDragStarted(ImageKnob* knob)
+void ZamCompX2UI::imageKnobDragStarted(ZamKnob* knob)
 {
     editParameter(knob->getId(), true);
 }
 
-void ZamCompX2UI::imageKnobDragFinished(ImageKnob* knob)
+void ZamCompX2UI::imageKnobDragFinished(ZamKnob* knob)
 {
     editParameter(knob->getId(), false);
 }
 
-void ZamCompX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZamCompX2UI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     setParameterValue(knob->getId(), value);
 }

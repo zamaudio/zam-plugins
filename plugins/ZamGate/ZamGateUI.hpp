@@ -20,10 +20,12 @@
 
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
+#include "../../widgets/ZamWidgets.hpp"
+
 #include "ZamGateArtwork.hpp"
 
 using DGL::Image;
-using DGL::ImageKnob;
+using DGL::ZamKnob;
 using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
@@ -31,7 +33,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamGateUI : public UI,
-	  public ImageKnob::Callback,
+	  public ZamKnob::Callback,
 	  public ImageSwitch::Callback
 {
 public:
@@ -46,17 +48,17 @@ protected:
 
 	// -------------------------------------------------------------------
 
-	void imageKnobDragStarted(ImageKnob* knob) override;
-	void imageKnobDragFinished(ImageKnob* knob) override;
-	void imageKnobValueChanged(ImageKnob* knob, float value) override;
+	void imageKnobDragStarted(ZamKnob* knob) override;
+	void imageKnobDragFinished(ZamKnob* knob) override;
+	void imageKnobValueChanged(ZamKnob* knob, float value) override;
 	void imageSwitchClicked(ImageSwitch* tog, bool down) override;
 
 	void onDisplay() override;
 
 private:
 	Image fImgBackground;
-	ScopedPointer<ImageKnob> fKnobAttack, fKnobRelease, fKnobThresh;
-	ScopedPointer<ImageKnob> fKnobMakeup, fKnobGateclose;
+	ScopedPointer<ZamKnob> fKnobAttack, fKnobRelease, fKnobThresh;
+	ScopedPointer<ZamKnob> fKnobMakeup, fKnobGateclose;
 	ScopedPointer<ImageSwitch> fToggleSidechain;
 
 	Image fLedRedImg;

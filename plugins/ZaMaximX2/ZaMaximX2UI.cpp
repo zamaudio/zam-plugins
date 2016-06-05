@@ -44,7 +44,7 @@ ZaMaximX2UI::ZaMaximX2UI()
     Image knobImage(ZaMaximX2Artwork::knobData, ZaMaximX2Artwork::knobWidth, ZaMaximX2Artwork::knobHeight);
 
     // knob
-    fKnobRelease = new ImageKnob(this, knobImage);
+    fKnobRelease = new ZamKnob(this, knobImage);
     fKnobRelease->setAbsolutePos(27, 46);
     fKnobRelease->setId(ZaMaximX2Plugin::paramRelease);
     fKnobRelease->setRange(1.0f, 100.0f);
@@ -55,7 +55,7 @@ ZaMaximX2UI::ZaMaximX2UI()
     fKnobRelease->setRotationAngle(240);
     fKnobRelease->setCallback(this);
 
-    fKnobThresh = new ImageKnob(this, knobImage);
+    fKnobThresh = new ZamKnob(this, knobImage);
     fKnobThresh->setAbsolutePos(110, 46);
     fKnobThresh->setId(ZaMaximX2Plugin::paramThresh);
     fKnobThresh->setRange(-30.0f, 0.0f);
@@ -65,7 +65,7 @@ ZaMaximX2UI::ZaMaximX2UI()
     fKnobThresh->setRotationAngle(240);
     fKnobThresh->setCallback(this);
 
-    fKnobCeiling = new ImageKnob(this, knobImage);
+    fKnobCeiling = new ZamKnob(this, knobImage);
     fKnobCeiling->setAbsolutePos(192, 46);
     fKnobCeiling->setId(ZaMaximX2Plugin::paramCeiling);
     fKnobCeiling->setRange(-30.0f, 0.0f);
@@ -126,17 +126,17 @@ void ZaMaximX2UI::programLoaded(uint32_t index)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZaMaximX2UI::imageKnobDragStarted(ImageKnob* knob)
+void ZaMaximX2UI::imageKnobDragStarted(ZamKnob* knob)
 {
     editParameter(knob->getId(), true);
 }
 
-void ZaMaximX2UI::imageKnobDragFinished(ImageKnob* knob)
+void ZaMaximX2UI::imageKnobDragFinished(ZamKnob* knob)
 {
     editParameter(knob->getId(), false);
 }
 
-void ZaMaximX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZaMaximX2UI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     setParameterValue(knob->getId(), value);
 }

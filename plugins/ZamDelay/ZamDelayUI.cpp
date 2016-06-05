@@ -47,7 +47,7 @@ ZamDelayUI::ZamDelayUI()
 
     Image triangleImage(ZamDelayArtwork::triangleData, ZamDelayArtwork::triangleWidth, ZamDelayArtwork::triangleHeight);
     // knob
-    fKnobDelaytime = new ImageKnob(this, knobImage);
+    fKnobDelaytime = new ZamKnob(this, knobImage);
     fKnobDelaytime->setAbsolutePos(190, 79);
     fKnobDelaytime->setId(ZamDelayPlugin::paramDelaytime);
     fKnobDelaytime->setRange(1.0f, 8000.0f);
@@ -68,7 +68,7 @@ ZamDelayUI::ZamDelayUI()
     fToggleBPM->setId(ZamDelayPlugin::paramSync);
     fToggleBPM->setCallback(this);
 
-    fKnobLPF = new ImageKnob(this, knobImage);
+    fKnobLPF = new ZamKnob(this, knobImage);
     fKnobLPF->setAbsolutePos(67.5, 79);
     fKnobLPF->setId(ZamDelayPlugin::paramLPF);
     fKnobLPF->setRange(20.0f, 20000.0f);
@@ -79,7 +79,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobLPF->setRotationAngle(240);
     fKnobLPF->setCallback(this);
 
-    fKnobGain = new ImageKnob(this, knobImage);
+    fKnobGain = new ZamKnob(this, knobImage);
     fKnobGain->setAbsolutePos(66, 201);
     fKnobGain->setId(ZamDelayPlugin::paramGain);
     fKnobGain->setRange(-60.0f, 0.0f);
@@ -88,7 +88,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobGain->setRotationAngle(240);
     fKnobGain->setCallback(this);
 
-    fKnobDrywet = new ImageKnob(this, knobImage);
+    fKnobDrywet = new ZamKnob(this, knobImage);
     fKnobDrywet->setAbsolutePos(332, 231);
     fKnobDrywet->setId(ZamDelayPlugin::paramDrywet);
     fKnobDrywet->setRange(0.0f, 1.0f);
@@ -98,7 +98,7 @@ ZamDelayUI::ZamDelayUI()
     fKnobDrywet->setRotationAngle(240);
     fKnobDrywet->setCallback(this);
 
-    fKnobFeedback = new ImageKnob(this, knobImage);
+    fKnobFeedback = new ZamKnob(this, knobImage);
     fKnobFeedback->setAbsolutePos(332, 138);
     fKnobFeedback->setId(ZamDelayPlugin::paramFeedback);
     fKnobFeedback->setRange(0.0f, 1.0f);
@@ -196,17 +196,17 @@ void ZamDelayUI::imageSliderValueChanged(ImageSlider* s, float value)
     setParameterValue(s->getId(), value);
 }
 
-void ZamDelayUI::imageKnobDragStarted(ImageKnob* knob)
+void ZamDelayUI::imageKnobDragStarted(ZamKnob* knob)
 {
     editParameter(knob->getId(), true);
 }
 
-void ZamDelayUI::imageKnobDragFinished(ImageKnob* knob)
+void ZamDelayUI::imageKnobDragFinished(ZamKnob* knob)
 {
     editParameter(knob->getId(), false);
 }
 
-void ZamDelayUI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZamDelayUI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     setParameterValue(knob->getId(), value);
 }

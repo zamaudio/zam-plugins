@@ -20,18 +20,19 @@
 
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
+#include "../../widgets/ZamWidgets.hpp"
 
 #include "ZaMaximX2Artwork.hpp"
 
 using DGL::Image;
-using DGL::ImageKnob;
+using DGL::ZamKnob;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZaMaximX2UI : public UI,
-                    public ImageKnob::Callback
+                    public ZamKnob::Callback
 {
 public:
     ZaMaximX2UI();
@@ -46,16 +47,16 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageKnobDragStarted(ZamKnob* knob) override;
+    void imageKnobDragFinished(ZamKnob* knob) override;
+    void imageKnobValueChanged(ZamKnob* knob, float value) override;
 
     void onDisplay() override;
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobRelease, fKnobThresh;
-    ScopedPointer<ImageKnob> fKnobCeiling;
+    ScopedPointer<ZamKnob> fKnobRelease, fKnobThresh;
+    ScopedPointer<ZamKnob> fKnobCeiling;
 
     Image fLedRedImg;
     float fLedRedValue;

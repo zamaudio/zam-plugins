@@ -20,6 +20,7 @@
 
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
+#include "../../widgets/ZamWidgets.hpp"
 
 #include "ZaMultiCompArtwork.hpp"
 
@@ -27,7 +28,7 @@
 #define MAX_COMP 3
 
 using DGL::Image;
-using DGL::ImageKnob;
+using DGL::ZamKnob;
 using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
@@ -35,7 +36,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZaMultiCompUI : public UI,
-                        public ImageKnob::Callback,
+                        public ZamKnob::Callback,
                         public ImageSwitch::Callback
 {
 public:
@@ -58,9 +59,9 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageKnobDragStarted(ZamKnob* knob) override;
+    void imageKnobDragFinished(ZamKnob* knob) override;
+    void imageKnobValueChanged(ZamKnob* knob, float value) override;
 
     void imageSwitchClicked(ImageSwitch* toggle, bool down) override;
 
@@ -86,18 +87,18 @@ sanitize_denormal(double value) {
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobAttack1, fKnobAttack2, fKnobAttack3; 
-    ScopedPointer<ImageKnob> fKnobRelease1, fKnobRelease2, fKnobRelease3;
-    ScopedPointer<ImageKnob> fKnobThresh1, fKnobThresh2, fKnobThresh3;
-    ScopedPointer<ImageKnob> fKnobRatio1;
-    ScopedPointer<ImageKnob> fKnobRatio2;
-    ScopedPointer<ImageKnob> fKnobRatio3;
-    ScopedPointer<ImageKnob> fKnobKnee1;
-    ScopedPointer<ImageKnob> fKnobKnee2;
-    ScopedPointer<ImageKnob> fKnobKnee3;
-    ScopedPointer<ImageKnob> fKnobGlobalGain;
-    ScopedPointer<ImageKnob> fKnobMakeup1, fKnobMakeup2, fKnobMakeup3;
-    ScopedPointer<ImageKnob> fKnobXover1, fKnobXover2;
+    ScopedPointer<ZamKnob> fKnobAttack1, fKnobAttack2, fKnobAttack3; 
+    ScopedPointer<ZamKnob> fKnobRelease1, fKnobRelease2, fKnobRelease3;
+    ScopedPointer<ZamKnob> fKnobThresh1, fKnobThresh2, fKnobThresh3;
+    ScopedPointer<ZamKnob> fKnobRatio1;
+    ScopedPointer<ZamKnob> fKnobRatio2;
+    ScopedPointer<ZamKnob> fKnobRatio3;
+    ScopedPointer<ZamKnob> fKnobKnee1;
+    ScopedPointer<ZamKnob> fKnobKnee2;
+    ScopedPointer<ZamKnob> fKnobKnee3;
+    ScopedPointer<ZamKnob> fKnobGlobalGain;
+    ScopedPointer<ZamKnob> fKnobMakeup1, fKnobMakeup2, fKnobMakeup3;
+    ScopedPointer<ZamKnob> fKnobXover1, fKnobXover2;
     ScopedPointer<ImageSwitch> fToggleBypass1, fToggleBypass2, fToggleBypass3;
     ScopedPointer<ImageSwitch> fToggleListen1, fToggleListen2, fToggleListen3;
 

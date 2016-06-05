@@ -38,7 +38,7 @@ ZamEQ2UI::ZamEQ2UI()
     Image knobImage(ZamEQ2Artwork::knobData, ZamEQ2Artwork::knobWidth, ZamEQ2Artwork::knobHeight);
 
     // knob
-    fKnobGain1 = new ImageKnob(this, knobImage);
+    fKnobGain1 = new ZamKnob(this, knobImage);
     fKnobGain1->setAbsolutePos(91, 172);
     fKnobGain1->setRange(-50.f, 20.0f);
     fKnobGain1->setLabel(true);
@@ -47,7 +47,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGain1->setDefault(0.0f);
     fKnobGain1->setCallback(this);
 
-    fKnobQ1 = new ImageKnob(this, knobImage);
+    fKnobQ1 = new ZamKnob(this, knobImage);
     fKnobQ1->setAbsolutePos(91, 122);
     fKnobQ1->setRange(0.1f, 6.0f);
     fKnobQ1->setLabel(true);
@@ -56,7 +56,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobQ1->setDefault(1.0f);
     fKnobQ1->setCallback(this);
 
-    fKnobFreq1 = new ImageKnob(this, knobImage);
+    fKnobFreq1 = new ZamKnob(this, knobImage);
     fKnobFreq1->setAbsolutePos(23, 144);
     fKnobFreq1->setUsingLogScale(true);
     fKnobFreq1->setRange(20.f, 14000.0f);
@@ -66,7 +66,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobFreq1->setDefault(500.0f);
     fKnobFreq1->setCallback(this);
 
-    fKnobGain2 = new ImageKnob(this, knobImage);
+    fKnobGain2 = new ZamKnob(this, knobImage);
     fKnobGain2->setAbsolutePos(567, 172);
     fKnobGain2->setRange(-50.f, 20.0f);
     fKnobGain2->setLabel(true);
@@ -75,7 +75,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGain2->setDefault(0.0f);
     fKnobGain2->setCallback(this);
 
-    fKnobQ2 = new ImageKnob(this, knobImage);
+    fKnobQ2 = new ZamKnob(this, knobImage);
     fKnobQ2->setAbsolutePos(567, 122);
     fKnobQ2->setRange(0.1f, 6.0f);
     fKnobQ2->setLabel(true);
@@ -84,7 +84,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobQ2->setDefault(1.0f);
     fKnobQ2->setCallback(this);
 
-    fKnobFreq2 = new ImageKnob(this, knobImage);
+    fKnobFreq2 = new ZamKnob(this, knobImage);
     fKnobFreq2->setAbsolutePos(499, 144);
     fKnobFreq2->setUsingLogScale(true);
     fKnobFreq2->setRange(20.f, 14000.0f);
@@ -94,7 +94,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobFreq2->setDefault(3000.0f);
     fKnobFreq2->setCallback(this);
 
-    fKnobGainL = new ImageKnob(this, knobImage);
+    fKnobGainL = new ZamKnob(this, knobImage);
     fKnobGainL->setAbsolutePos(91, 52);
     fKnobGainL->setRange(-50.f, 20.0f);
     fKnobGainL->setLabel(true);
@@ -103,7 +103,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGainL->setDefault(0.0f);
     fKnobGainL->setCallback(this);
 
-    fKnobFreqL = new ImageKnob(this, knobImage);
+    fKnobFreqL = new ZamKnob(this, knobImage);
     fKnobFreqL->setAbsolutePos(23, 23);
     fKnobFreqL->setUsingLogScale(true);
     fKnobFreqL->setRange(20.f, 14000.0f);
@@ -113,7 +113,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobFreqL->setDefault(250.0f);
     fKnobFreqL->setCallback(this);
 
-    fKnobGainH = new ImageKnob(this, knobImage);
+    fKnobGainH = new ZamKnob(this, knobImage);
     fKnobGainH->setAbsolutePos(567, 53);
     fKnobGainH->setRange(-50.f, 20.0f);
     fKnobGainH->setLabel(true);
@@ -122,7 +122,7 @@ ZamEQ2UI::ZamEQ2UI()
     fKnobGainH->setDefault(0.0f);
     fKnobGainH->setCallback(this);
 
-    fKnobFreqH = new ImageKnob(this, knobImage);
+    fKnobFreqH = new ZamKnob(this, knobImage);
     fKnobFreqH->setAbsolutePos(499, 24);
     fKnobFreqH->setUsingLogScale(true);
     fKnobFreqH->setRange(20.f, 14000.0f);
@@ -254,7 +254,7 @@ void ZamEQ2UI::programLoaded(uint32_t index)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZamEQ2UI::imageKnobDragStarted(ImageKnob* knob)
+void ZamEQ2UI::imageKnobDragStarted(ZamKnob* knob)
 {
     if (knob == fKnobGain1)
         editParameter(ZamEQ2Plugin::paramGain1, true);
@@ -278,7 +278,7 @@ void ZamEQ2UI::imageKnobDragStarted(ImageKnob* knob)
         editParameter(ZamEQ2Plugin::paramFreqH, true);
 }
 
-void ZamEQ2UI::imageKnobDragFinished(ImageKnob* knob)
+void ZamEQ2UI::imageKnobDragFinished(ZamKnob* knob)
 {
     if (knob == fKnobGain1)
         editParameter(ZamEQ2Plugin::paramGain1, false);
@@ -302,7 +302,7 @@ void ZamEQ2UI::imageKnobDragFinished(ImageKnob* knob)
         editParameter(ZamEQ2Plugin::paramFreqH, false);
 }
 
-void ZamEQ2UI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZamEQ2UI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     if (knob == fKnobGain1)
         setParameterValue(ZamEQ2Plugin::paramGain1, value);

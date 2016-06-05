@@ -44,7 +44,7 @@ ZamGateX2UI::ZamGateX2UI()
 	Image knobImage(ZamGateX2Artwork::knobData, ZamGateX2Artwork::knobWidth, ZamGateX2Artwork::knobHeight);
 
 	// knob
-	fKnobAttack = new ImageKnob(this, knobImage);
+	fKnobAttack = new ZamKnob(this, knobImage);
 	fKnobAttack->setAbsolutePos(24, 45);
 	fKnobAttack->setId(ZamGateX2Plugin::paramAttack);
 	fKnobAttack->setRange(0.1f, 500.0f);
@@ -54,7 +54,7 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobAttack->setRotationAngle(240);
 	fKnobAttack->setCallback(this);
 
-	fKnobRelease = new ImageKnob(this, knobImage);
+	fKnobRelease = new ZamKnob(this, knobImage);
 	fKnobRelease->setAbsolutePos(108, 45);
 	fKnobRelease->setId(ZamGateX2Plugin::paramRelease);
 	fKnobRelease->setRange(0.1f, 500.0f);
@@ -64,7 +64,7 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobRelease->setRotationAngle(240);
 	fKnobRelease->setCallback(this);
 
-	fKnobThresh = new ImageKnob(this, knobImage);
+	fKnobThresh = new ZamKnob(this, knobImage);
 	fKnobThresh->setAbsolutePos(191.7, 45);
 	fKnobThresh->setId(ZamGateX2Plugin::paramThresh);
 	fKnobThresh->setRange(-60.0f, 0.0f);
@@ -74,7 +74,7 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobThresh->setRotationAngle(240);
 	fKnobThresh->setCallback(this);
 
-	fKnobMakeup = new ImageKnob(this, knobImage);
+	fKnobMakeup = new ZamKnob(this, knobImage);
 	fKnobMakeup->setAbsolutePos(273, 45);
 	fKnobMakeup->setId(ZamGateX2Plugin::paramMakeup);
 	fKnobMakeup->setRange(-30.0f, 30.0f);
@@ -84,7 +84,7 @@ ZamGateX2UI::ZamGateX2UI()
 	fKnobMakeup->setRotationAngle(240);
 	fKnobMakeup->setCallback(this);
 
-	fKnobGateclose = new ImageKnob(this, knobImage);
+	fKnobGateclose = new ZamKnob(this, knobImage);
 	fKnobGateclose->setAbsolutePos(480, 61);
 	fKnobGateclose->setId(ZamGateX2Plugin::paramGateclose);
 	fKnobGateclose->setRange(-50.0f, 0.0f);
@@ -159,17 +159,17 @@ void ZamGateX2UI::programLoaded(uint32_t index)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZamGateX2UI::imageKnobDragStarted(ImageKnob* knob)
+void ZamGateX2UI::imageKnobDragStarted(ZamKnob* knob)
 {
 	editParameter(knob->getId(), true);
 }
 
-void ZamGateX2UI::imageKnobDragFinished(ImageKnob* knob)
+void ZamGateX2UI::imageKnobDragFinished(ZamKnob* knob)
 {
 	editParameter(knob->getId(), false);
 }
 
-void ZamGateX2UI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZamGateX2UI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
 	setParameterValue(knob->getId(), value);
 }

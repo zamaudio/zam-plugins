@@ -36,7 +36,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     Image knobImage(ZamGEQ31Artwork::knobData, ZamGEQ31Artwork::knobWidth, ZamGEQ31Artwork::knobHeight);
 
     // master knob
-    fKnobMaster = new ImageKnob(this, knobImage);
+    fKnobMaster = new ZamKnob(this, knobImage);
     fKnobMaster->setAbsolutePos(103, 122);
     fKnobMaster->setRange(-20.f, 20.f);
     fKnobMaster->setLabel(true);
@@ -513,19 +513,19 @@ void ZamGEQ31UI::programLoaded(uint32_t index)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZamGEQ31UI::imageKnobDragStarted(ImageKnob* knob)
+void ZamGEQ31UI::imageKnobDragStarted(ZamKnob* knob)
 {
     if (knob == fKnobMaster)
         editParameter(ZamGEQ31Plugin::paramMaster, true);
 }
 
-void ZamGEQ31UI::imageKnobDragFinished(ImageKnob* knob)
+void ZamGEQ31UI::imageKnobDragFinished(ZamKnob* knob)
 {
     if (knob == fKnobMaster)
         editParameter(ZamGEQ31Plugin::paramMaster, false);
 }
 
-void ZamGEQ31UI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZamGEQ31UI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     if (knob == fKnobMaster)
         setParameterValue(ZamGEQ31Plugin::paramMaster, value);

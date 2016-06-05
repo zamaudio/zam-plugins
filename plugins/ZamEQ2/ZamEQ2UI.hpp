@@ -20,6 +20,7 @@
 
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
+#include "../../widgets/ZamWidgets.hpp"
 
 #include "ZamEQ2Artwork.hpp"
 #include "ZamEQ2Plugin.hpp"
@@ -28,7 +29,7 @@
 #include <complex>
 
 using DGL::Image;
-using DGL::ImageKnob;
+using DGL::ZamKnob;
 using DGL::ImageSlider;
 
 START_NAMESPACE_DISTRHO
@@ -36,7 +37,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamEQ2UI : public UI,
-                 public ImageKnob::Callback,
+                 public ZamKnob::Callback,
                  public ImageSlider::Callback
 {
 public:
@@ -105,9 +106,9 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageKnobDragStarted(ZamKnob* knob) override;
+    void imageKnobDragFinished(ZamKnob* knob) override;
+    void imageKnobValueChanged(ZamKnob* knob, float value) override;
 
     void imageSliderDragStarted(ImageSlider* slider) override;
     void imageSliderDragFinished(ImageSlider* slider) override;
@@ -117,11 +118,11 @@ protected:
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobGain1;
-    ScopedPointer<ImageKnob> fKnobQ1, fKnobFreq1, fKnobGain2;
-    ScopedPointer<ImageKnob> fKnobQ2, fKnobFreq2;
-    ScopedPointer<ImageKnob> fKnobGainL, fKnobFreqL;
-    ScopedPointer<ImageKnob> fKnobGainH, fKnobFreqH;
+    ScopedPointer<ZamKnob> fKnobGain1;
+    ScopedPointer<ZamKnob> fKnobQ1, fKnobFreq1, fKnobGain2;
+    ScopedPointer<ZamKnob> fKnobQ2, fKnobFreq2;
+    ScopedPointer<ZamKnob> fKnobGainL, fKnobFreqL;
+    ScopedPointer<ZamKnob> fKnobGainH, fKnobFreqH;
     ScopedPointer<ImageSlider> fSliderMaster;
     float eqx[EQPOINTS];
     float eqy[EQPOINTS];

@@ -20,12 +20,13 @@
 
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
+#include "../../widgets/ZamWidgets.hpp"
 
 #include "ZamGEQ31Artwork.hpp"
 #include "ZamGEQ31Plugin.hpp"
 
 using DGL::Image;
-using DGL::ImageKnob;
+using DGL::ZamKnob;
 using DGL::ImageSlider;
 
 START_NAMESPACE_DISTRHO
@@ -33,7 +34,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamGEQ31UI : public UI,
-                 public ImageKnob::Callback,
+                 public ZamKnob::Callback,
                  public ImageSlider::Callback
 {
 public:
@@ -61,9 +62,9 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageKnobDragStarted(ZamKnob* knob) override;
+    void imageKnobDragFinished(ZamKnob* knob) override;
+    void imageKnobValueChanged(ZamKnob* knob, float value) override;
 
     void imageSliderDragStarted(ImageSlider* slider) override;
     void imageSliderDragFinished(ImageSlider* slider) override;
@@ -73,8 +74,8 @@ protected:
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobMaster;
-    ScopedPointer<ImageKnob> fKnobQ;
+    ScopedPointer<ZamKnob> fKnobMaster;
+    ScopedPointer<ZamKnob> fKnobQ;
     ScopedPointer<ImageSlider> fSliderGain1;
     ScopedPointer<ImageSlider> fSliderGain2;
     ScopedPointer<ImageSlider> fSliderGain3;

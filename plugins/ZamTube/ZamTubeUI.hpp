@@ -20,11 +20,12 @@
 
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
+#include "../../widgets/ZamWidgets.hpp"
 
 #include "ZamTubeArtwork.hpp"
 
 using DGL::Image;
-using DGL::ImageKnob;
+using DGL::ZamKnob;
 using DGL::ImageSlider;
 using DGL::ImageSwitch;
 
@@ -33,7 +34,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamTubeUI : public UI,
-                  public ImageKnob::Callback,
+                  public ZamKnob::Callback,
                   public ImageSlider::Callback,
                   public ImageSwitch::Callback
 {
@@ -50,9 +51,9 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageKnobDragStarted(ZamKnob* knob) override;
+    void imageKnobDragFinished(ZamKnob* knob) override;
+    void imageKnobValueChanged(ZamKnob* knob, float value) override;
 
     void imageSliderDragStarted(ImageSlider* slider) override;
     void imageSliderDragFinished(ImageSlider* slider) override;
@@ -66,7 +67,7 @@ private:
     Image fImgBackground;
     ScopedPointer<ImageSlider> fSliderNotch;
     ScopedPointer<ImageSwitch> fToggleInsane;
-    ScopedPointer<ImageKnob> fKnobTube, fKnobBass, fKnobMids, fKnobTreb, fKnobGain;
+    ScopedPointer<ZamKnob> fKnobTube, fKnobBass, fKnobMids, fKnobTreb, fKnobGain;
 };
 
 // -----------------------------------------------------------------------

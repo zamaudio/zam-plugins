@@ -47,7 +47,7 @@ ZamTubeUI::ZamTubeUI()
 
 
     // knobs
-    fKnobTube = new ImageKnob(this, knobImage);
+    fKnobTube = new ZamKnob(this, knobImage);
     fKnobTube->setAbsolutePos(177, 76);
     fKnobTube->setRange(0.f, 30.0f);
     fKnobTube->setLabel(true);
@@ -56,7 +56,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobTube->setRotationAngle(240);
     fKnobTube->setCallback(this);
 
-    fKnobBass = new ImageKnob(this, knobImage);
+    fKnobBass = new ZamKnob(this, knobImage);
     fKnobBass->setAbsolutePos(63, 140.5);
     fKnobBass->setRange(0.f, 1.0f);
     fKnobBass->setLabel(true);
@@ -65,7 +65,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobBass->setRotationAngle(240);
     fKnobBass->setCallback(this);
 
-    fKnobMids = new ImageKnob(this, knobImage);
+    fKnobMids = new ZamKnob(this, knobImage);
     fKnobMids->setAbsolutePos(63, 87);
     fKnobMids->setRange(0.f, 1.0f);
     fKnobMids->setLabel(true);
@@ -74,7 +74,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobMids->setRotationAngle(240);
     fKnobMids->setCallback(this);
 
-    fKnobTreb = new ImageKnob(this, knobImage);
+    fKnobTreb = new ZamKnob(this, knobImage);
     fKnobTreb->setAbsolutePos(63, 33);
     fKnobTreb->setRange(0.f, 1.0f);
     fKnobTreb->setLabel(true);
@@ -83,7 +83,7 @@ ZamTubeUI::ZamTubeUI()
     fKnobTreb->setRotationAngle(240);
     fKnobTreb->setCallback(this);
 
-    fKnobGain = new ImageKnob(this, knobImage);
+    fKnobGain = new ZamKnob(this, knobImage);
     fKnobGain->setAbsolutePos(63, 231);
     fKnobGain->setRange(-30.f, 30.0f);
     fKnobGain->setLabel(true);
@@ -162,7 +162,7 @@ void ZamTubeUI::programLoaded(uint32_t index)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZamTubeUI::imageKnobDragStarted(ImageKnob* knob)
+void ZamTubeUI::imageKnobDragStarted(ZamKnob* knob)
 {
     if (knob == fKnobTube)
         editParameter(ZamTubePlugin::paramTubedrive, true);
@@ -176,7 +176,7 @@ void ZamTubeUI::imageKnobDragStarted(ImageKnob* knob)
         editParameter(ZamTubePlugin::paramGain, true);
 }
 
-void ZamTubeUI::imageKnobDragFinished(ImageKnob* knob)
+void ZamTubeUI::imageKnobDragFinished(ZamKnob* knob)
 {
     if (knob == fKnobTube)
         editParameter(ZamTubePlugin::paramTubedrive, false);
@@ -190,7 +190,7 @@ void ZamTubeUI::imageKnobDragFinished(ImageKnob* knob)
         editParameter(ZamTubePlugin::paramGain, false);
 }
 
-void ZamTubeUI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZamTubeUI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     if (knob == fKnobTube)
         setParameterValue(ZamTubePlugin::paramTubedrive, value);

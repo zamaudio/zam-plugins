@@ -46,7 +46,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     int x = 250;
     int y = 291;
     // knob
-    fKnobAttack1 = new ImageKnob(this, knobImage);
+    fKnobAttack1 = new ZamKnob(this, knobImage);
     fKnobAttack1->setAbsolutePos(26+x, 43+y);
     fKnobAttack1->setRange(0.1f, 200.0f);
     fKnobAttack1->setLabel(true);
@@ -56,7 +56,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack1->setRotationAngle(240);
     fKnobAttack1->setCallback(this);
 
-    fKnobAttack2 = new ImageKnob(this, knobImage);
+    fKnobAttack2 = new ZamKnob(this, knobImage);
     fKnobAttack2->setAbsolutePos(26+x, 43+y-50);
     fKnobAttack2->setRange(0.1f, 200.0f);
     fKnobAttack2->setLabel(true);
@@ -66,7 +66,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack2->setRotationAngle(240);
     fKnobAttack2->setCallback(this);
 
-    fKnobAttack3 = new ImageKnob(this, knobImage);
+    fKnobAttack3 = new ZamKnob(this, knobImage);
     fKnobAttack3->setAbsolutePos(26+x, 43+y-100);
     fKnobAttack3->setRange(0.1f, 200.0f);
     fKnobAttack3->setLabel(true);
@@ -76,7 +76,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobAttack3->setRotationAngle(240);
     fKnobAttack3->setCallback(this);
 
-    fKnobRelease1 = new ImageKnob(this, knobImage);
+    fKnobRelease1 = new ZamKnob(this, knobImage);
     fKnobRelease1->setAbsolutePos(108+x, 43+y);
     fKnobRelease1->setRange(1.0f, 500.0f);
     fKnobRelease1->setLabel(true);
@@ -85,7 +85,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease1->setRotationAngle(240);
     fKnobRelease1->setCallback(this);
 
-    fKnobRelease2 = new ImageKnob(this, knobImage);
+    fKnobRelease2 = new ZamKnob(this, knobImage);
     fKnobRelease2->setAbsolutePos(108+x, 43+y-50);
     fKnobRelease2->setRange(1.0f, 500.0f);
     fKnobRelease2->setLabel(true);
@@ -94,7 +94,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease2->setRotationAngle(240);
     fKnobRelease2->setCallback(this);
 
-    fKnobRelease3 = new ImageKnob(this, knobImage);
+    fKnobRelease3 = new ZamKnob(this, knobImage);
     fKnobRelease3->setAbsolutePos(108+x, 43+y-100);
     fKnobRelease3->setRange(1.0f, 500.0f);
     fKnobRelease3->setLabel(true);
@@ -103,7 +103,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRelease3->setRotationAngle(240);
     fKnobRelease3->setCallback(this);
 
-    fKnobThresh3 = new ImageKnob(this, knobImage);
+    fKnobThresh3 = new ZamKnob(this, knobImage);
     fKnobThresh3->setAbsolutePos(94.5+31, 99+134);
     fKnobThresh3->setRange(-60.0f, 0.0f);
     fKnobThresh3->setLabel(true);
@@ -112,7 +112,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh3->setRotationAngle(240);
     fKnobThresh3->setCallback(this);
 
-    fKnobThresh2 = new ImageKnob(this, knobImage);
+    fKnobThresh2 = new ZamKnob(this, knobImage);
     fKnobThresh2->setAbsolutePos(94.5+31, 150+134);
     fKnobThresh2->setRange(-60.0f, 0.0f);
     fKnobThresh2->setLabel(true);
@@ -121,7 +121,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh2->setRotationAngle(240);
     fKnobThresh2->setCallback(this);
 
-    fKnobThresh1 = new ImageKnob(this, knobImage);
+    fKnobThresh1 = new ZamKnob(this, knobImage);
     fKnobThresh1->setAbsolutePos(94.5+31, 201+134);
     fKnobThresh1->setRange(-60.0f, 0.0f);
     fKnobThresh1->setLabel(true);
@@ -130,7 +130,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobThresh1->setRotationAngle(240);
     fKnobThresh1->setCallback(this);
 
-    fKnobRatio1 = new ImageKnob(this, knobImage);
+    fKnobRatio1 = new ZamKnob(this, knobImage);
     fKnobRatio1->setAbsolutePos(191.5+x, 43+y);
     fKnobRatio1->setRange(1.0f, 20.0f);
     fKnobRatio1->setLabel(true);
@@ -140,7 +140,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio1->setRotationAngle(240);
     fKnobRatio1->setCallback(this);
 
-    fKnobRatio2 = new ImageKnob(this, knobImage);
+    fKnobRatio2 = new ZamKnob(this, knobImage);
     fKnobRatio2->setAbsolutePos(191.5+x, 43+y-50);
     fKnobRatio2->setRange(1.0f, 20.0f);
     fKnobRatio2->setLabel(true);
@@ -150,7 +150,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio2->setRotationAngle(240);
     fKnobRatio2->setCallback(this);
 
-    fKnobRatio3 = new ImageKnob(this, knobImage);
+    fKnobRatio3 = new ZamKnob(this, knobImage);
     fKnobRatio3->setAbsolutePos(191.5+x, 43+y-100);
     fKnobRatio3->setRange(1.0f, 20.0f);
     fKnobRatio3->setLabel(true);
@@ -160,7 +160,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobRatio3->setRotationAngle(240);
     fKnobRatio3->setCallback(this);
 
-    fKnobKnee1 = new ImageKnob(this, knobImage);
+    fKnobKnee1 = new ZamKnob(this, knobImage);
     fKnobKnee1->setAbsolutePos(273+x, 43+y);
     fKnobKnee1->setRange(0.0f, 8.0f);
     fKnobKnee1->setLabel(true);
@@ -169,7 +169,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee1->setRotationAngle(240);
     fKnobKnee1->setCallback(this);
 
-    fKnobKnee2 = new ImageKnob(this, knobImage);
+    fKnobKnee2 = new ZamKnob(this, knobImage);
     fKnobKnee2->setAbsolutePos(273+x, 43+y-50);
     fKnobKnee2->setRange(0.0f, 8.0f);
     fKnobKnee2->setLabel(true);
@@ -178,7 +178,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee2->setRotationAngle(240);
     fKnobKnee2->setCallback(this);
 
-    fKnobKnee3 = new ImageKnob(this, knobImage);
+    fKnobKnee3 = new ZamKnob(this, knobImage);
     fKnobKnee3->setAbsolutePos(273+x, 43+y-100);
     fKnobKnee3->setRange(0.0f, 8.0f);
     fKnobKnee3->setLabel(true);
@@ -187,7 +187,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobKnee3->setRotationAngle(240);
     fKnobKnee3->setCallback(this);
 
-    fKnobGlobalGain = new ImageKnob(this, knobImage);
+    fKnobGlobalGain = new ZamKnob(this, knobImage);
     fKnobGlobalGain->setAbsolutePos(427-170, 41);
     fKnobGlobalGain->setRange(-30.0f, 30.0f);
     fKnobGlobalGain->setLabel(true);
@@ -196,7 +196,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobGlobalGain->setRotationAngle(240);
     fKnobGlobalGain->setCallback(this);
 
-    fKnobXover2 = new ImageKnob(this, knobImage);
+    fKnobXover2 = new ZamKnob(this, knobImage);
     fKnobXover2->setAbsolutePos(22+333, 121-80);
     fKnobXover2->setRange(1400.f, 14000.f);
     fKnobXover2->setLabel(true);
@@ -206,7 +206,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover2->setRotationAngle(240);
     fKnobXover2->setCallback(this);
 
-    fKnobXover1 = new ImageKnob(this, knobImage);
+    fKnobXover1 = new ZamKnob(this, knobImage);
     fKnobXover1->setAbsolutePos(22+333, 175.5-80);
     fKnobXover1->setRange(20.0f, 1400.0f);
     fKnobXover1->setLabel(true);
@@ -216,7 +216,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobXover1->setRotationAngle(240);
     fKnobXover1->setCallback(this);
 
-    fKnobMakeup3 = new ImageKnob(this, knobImage);
+    fKnobMakeup3 = new ZamKnob(this, knobImage);
     fKnobMakeup3->setAbsolutePos(167.75+30, 99.5+134);
     fKnobMakeup3->setRange(0.0f, 30.0f);
     fKnobMakeup3->setLabel(true);
@@ -225,7 +225,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup3->setRotationAngle(240);
     fKnobMakeup3->setCallback(this);
 
-    fKnobMakeup2 = new ImageKnob(this, knobImage);
+    fKnobMakeup2 = new ZamKnob(this, knobImage);
     fKnobMakeup2->setAbsolutePos(167.75+30, 150.25+134);
     fKnobMakeup2->setRange(0.0f, 30.0f);
     fKnobMakeup2->setLabel(true);
@@ -234,7 +234,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     fKnobMakeup2->setRotationAngle(240);
     fKnobMakeup2->setCallback(this);
 
-    fKnobMakeup1 = new ImageKnob(this, knobImage);
+    fKnobMakeup1 = new ZamKnob(this, knobImage);
     fKnobMakeup1->setAbsolutePos(167.75+30, 201.4+134);
     fKnobMakeup1->setRange(0.0f, 30.0f);
     fKnobMakeup1->setLabel(true);
@@ -627,7 +627,7 @@ void ZaMultiCompUI::stateChanged(const char*, const char*)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZaMultiCompUI::imageKnobDragStarted(ImageKnob* knob)
+void ZaMultiCompUI::imageKnobDragStarted(ZamKnob* knob)
 {
     if (knob == fKnobAttack1)
         editParameter(ZaMultiCompPlugin::paramAttack1, true);
@@ -673,7 +673,7 @@ void ZaMultiCompUI::imageKnobDragStarted(ImageKnob* knob)
         editParameter(ZaMultiCompPlugin::paramXover2, true);
 }
 
-void ZaMultiCompUI::imageKnobDragFinished(ImageKnob* knob)
+void ZaMultiCompUI::imageKnobDragFinished(ZamKnob* knob)
 {
     if (knob == fKnobAttack1)
         editParameter(ZaMultiCompPlugin::paramAttack1, false);
@@ -719,7 +719,7 @@ void ZaMultiCompUI::imageKnobDragFinished(ImageKnob* knob)
         editParameter(ZaMultiCompPlugin::paramXover2, false);
 }
 
-void ZaMultiCompUI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZaMultiCompUI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     if (knob == fKnobAttack1)
         setParameterValue(ZaMultiCompPlugin::paramAttack1, value);

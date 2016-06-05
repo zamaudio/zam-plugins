@@ -20,11 +20,12 @@
 
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
+#include "../../widgets/ZamWidgets.hpp"
 
 #include "ZamDelayArtwork.hpp"
 
 using DGL::Image;
-using DGL::ImageKnob;
+using DGL::ZamKnob;
 using DGL::ImageSwitch;
 using DGL::ImageSlider;
 
@@ -33,7 +34,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamDelayUI : public UI,
-                    public ImageKnob::Callback,
+                    public ZamKnob::Callback,
                     public ImageSwitch::Callback,
                     public ImageSlider::Callback
 {
@@ -50,9 +51,9 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageKnobDragStarted(ZamKnob* knob) override;
+    void imageKnobDragFinished(ZamKnob* knob) override;
+    void imageKnobValueChanged(ZamKnob* knob, float value) override;
 
     void imageSwitchClicked(ImageSwitch* tog, bool down) override;
 
@@ -64,7 +65,7 @@ protected:
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobDelaytime, fKnobLPF, fKnobGain, fKnobDrywet, fKnobFeedback;
+    ScopedPointer<ZamKnob> fKnobDelaytime, fKnobLPF, fKnobGain, fKnobDrywet, fKnobFeedback;
     ScopedPointer<ImageSwitch> fToggleInvert, fToggleBPM;
     ScopedPointer<ImageSlider> fSliderDiv;
 };
