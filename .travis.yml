@@ -10,12 +10,10 @@ sudo: required
 dist: trusty
 
 before_install:
-  - sudo add-apt-repository ppa:flosoft/cross-apple -y
   - sudo add-apt-repository ppa:kxstudio-team/builds -y
   - sudo apt-get update -q -y
-  - sudo apt-get install apple-uni-sdk-10.5 -y
-  - sudo apt-get install pkg=4.2.1~5646-1kxstudio2 apple-x86-gcc -y
-  - sudo apt-get install pkg=758.159-0kxstudio2 apple-x86-odcctools -y
+  - sudo apt-get install apple-x86-gcc -y
+  - sudo apt-get install apple-x86-odcctools -y
   - sudo apt-get install apple-x86-setup -y
   - sudo apt-get install apple-macports-liblo -y
   - sudo apt-get install apple-macports-fftw-3 -y
@@ -37,13 +35,15 @@ before_install:
   - sudo apt-get install wine -y
   - sudo apt-get install libjack-dev -y
   - sudo apt-get install ladspa-sdk -y
+  - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
+  - sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
 
 cache:
   - apt
 
 script:
-  - git clone --depth 1 https://github.com/zamaudio/zam-plugins
   - cd zam-plugins
+  - rm -fr dpf
   - git clone https://github.com/zamaudio/DPF dpf
   - cd dpf
   - git checkout build-osxwin
