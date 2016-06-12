@@ -14,7 +14,9 @@ CXX ?= g++
 ifneq ($(HAIKU),true)
 ifneq ($(MACOS),true)
 ifneq ($(WIN32),true)
+ifneq ($(WIN64),true)
 LINUX=true
+endif
 endif
 endif
 endif
@@ -56,8 +58,14 @@ BASE_OPTS  = -O2 -ffast-math -fdata-sections -ffunction-sections
 endif
 
 ifneq ($(WIN32),true)
+ifneq ($(WIN64),true)
 # not needed for Windows
 BASE_FLAGS += -fPIC -DPIC
+endif
+endif
+
+ifeq ($(WIN32),true)
+BASE_OPTS += -m32
 endif
 
 ifeq ($(DEBUG),true)
@@ -95,6 +103,10 @@ ifeq ($(WIN32),true)
 HAVE_DGL = true
 endif
 
+ifeq ($(WIN64),true)
+HAVE_DGL = true
+endif
+
 # --------------------------------------------------------------
 # Set libs stuff
 
@@ -113,12 +125,20 @@ ifeq ($(WIN32),true)
 DGL_LIBS  = -lopengl32 -lgdi32
 endif
 
+ifeq ($(WIN64),true)
+DGL_LIBS  = -lopengl32 -lgdi32
+endif
+
 endif # HAVE_DGL
 
 # --------------------------------------------------------------
 # Set app extension
 
 ifeq ($(WIN32),true)
+APP_EXT = .exe
+endif
+
+ifeq ($(WIN64),true)
 APP_EXT = .exe
 endif
 
@@ -132,6 +152,10 @@ LIB_EXT = .dylib
 endif
 
 ifeq ($(WIN32),true)
+LIB_EXT = .dll
+endif
+
+ifeq ($(WIN64),true)
 LIB_EXT = .dll
 endif
 
