@@ -1,4 +1,4 @@
-zam-plugins
+zam-plugins ![travis](https://travis-ci.org/zamaudio/zam-plugins.svg?branch=master)
 ===========
 
 Collection of LV2/LADSPA/VST/JACK audio plugins for high quality processing

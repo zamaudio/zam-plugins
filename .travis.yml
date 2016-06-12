@@ -22,16 +22,21 @@ before_install:
   - sudo apt-get install apple-macports-libsndfile -y
   - sudo apt-get install mingw-x-gcc -y
   - sudo apt-get install mingw-x-binutils -y
+  - sudo apt-get install mingw-x-pkgconfig -y
   - sudo apt-get install mingw-x-liblo -y
   - sudo apt-get install mingw-x-fftw3 -y
   - sudo apt-get install mingw-x-libsndfile -y
   - sudo apt-get install g++-4.9 -y
   - sudo apt-get install binutils -y
+  - sudo apt-get install pkg-config -y
+  - sudo apt-get install libx11-dev -y
   - sudo apt-get install libgl-dev -y
   - sudo apt-get install liblo-dev -y
   - sudo apt-get install fftw3-dev -y
   - sudo apt-get install libsndfile-dev -y
   - sudo apt-get install wine -y
+  - sudo apt-get install libjack-dev -y
+  - sudo apt-get install ladspa-sdk -y
 
 cache:
   - apt
