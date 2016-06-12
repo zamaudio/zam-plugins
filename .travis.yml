@@ -1,0 +1,101 @@
+# travis.yml for zam-plugins
+
+os:
+  - linux
+
+language: c++
+
+sudo: required
+
+dist: trusty
+
+before_install:
+  - sudo add-apt-repository ppa:flosoft/cross-apple -y
+  - sudo add-apt-repository ppa:kxstudio-team/builds -y
+  - sudo apt-get update -q -y
+  - sudo apt-get install apple-uni-sdk-10.5 -y
+  - sudo apt-get install pkg=4.2.1~5646-1kxstudio2 apple-x86-gcc -y
+  - sudo apt-get install pkg=758.159-0kxstudio2 apple-x86-odcctools -y
+  - sudo apt-get install apple-x86-setup -y
+  - sudo apt-get install apple-macports-liblo -y
+  - sudo apt-get install apple-macports-fftw-3 -y
+  - sudo apt-get install apple-macports-libsndfile -y
+  - sudo apt-get install mingw-x-gcc -y
+  - sudo apt-get install mingw-x-binutils -y
+  - sudo apt-get install mingw-x-liblo -y
+  - sudo apt-get install mingw-x-fftw3 -y
+  - sudo apt-get install mingw-x-libsndfile -y
+  - sudo apt-get install g++-4.9 -y
+  - sudo apt-get install binutils -y
+  - sudo apt-get install libgl-dev -y
+  - sudo apt-get install liblo-dev -y
+  - sudo apt-get install fftw3-dev -y
+  - sudo apt-get install libsndfile-dev -y
+  - sudo apt-get install wine -y
+
+cache:
+  - apt
+
+script:
+  - git clone --depth 1 https://github.com/zamaudio/zam-plugins
+  - cd zam-plugins
+  - git clone https://github.com/zamaudio/DPF dpf
+  - cd dpf
+  - git checkout build-osxwin
+  - cd ..
+  - export CC=gcc
+  - export CXX=g++-4.9
+  - export AR=ar
+  - make LINUX=true -j2
+  - mv bin linux
+  - mkdir bin
+  - export CC=i686-apple-darwin10-gcc
+  - export CXX=i686-apple-darwin10-g++
+  - export AR=i686-apple-darwin10-ar
+  - make clean
+  - make MACOS=true MACOS_OLD=true -j2
+  - mv bin osx
+  - mkdir bin
+  - export CC=x86_64-w64-mingw32-gcc
+  - export CXX=x86_64-w64-mingw32-g++
+  - export AR=x86_64-w64-mingw32-ar
+  - make clean
+  - rm -fr ~/.wine
+  - make WIN32=true -j2
+  - mv bin win32
+  - mkdir bin
+  - make clean
+  - rm -fr ~/.wine
+  - make WIN64=true -j2
+  - mv bin win64
+  - mkdir bin
+  - cd win64
+  - for f in *.lv2; do cd $f; cp *.ttl ../../osx/$f/ ; cd .. ; done
+  - cd ../osx
+  - for f in *.lv2; do cd $f; perl -pi -e 's/dll/dylib/g' manifest.ttl; perl -pi -e 's/WindowsUI/CocoaUI/g' manifest.ttl; cd .. ; done
+  - cd ../linux
+  - zip -9 -r zam-plugins-`git describe`-linuxlv2.zip *.lv2
+  - mv *.zip ../bin
+  - cd ../osx
+  - zip -9 -r zam-plugins-`git describe`-osxlv2.zip *.lv2
+  - mv *.zip ../bin
+  - cd ../win32
+  - zip -9 -r zam-plugins-`git describe`-win32lv2.zip *.lv2
+  - mv *.zip ../bin
+  - cd ../win64
+  - zip -9 -r zam-plugins-`git describe`-win64lv2.zip *.lv2
+  - mv *.zip ../bin
+  - cd ../bin
+  - echo "ALL DONE!!!"
+
+#deploy:
+#  provider: releases
+#  api_key: "GITHUB OAUTH TOKEN"
+#  file:
+#    - zam-plugins-`git describe`-linuxlv2.zip
+#    - zam-plugins-`git describe`-osxlv2.zip
+#    - zam-plugins-`git describe`-win32lv2.zip
+#    - zam-plugins-`git describe`-win64lv2.zip
+#  skip_cleanup: true
+#  on:
+#    tags: true
