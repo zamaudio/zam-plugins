@@ -13,7 +13,6 @@ git:
 before_install:
   - sudo add-apt-repository ppa:kxstudio-debian/mingw -y
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo add-apt-repository ppa:ubuntu-wine/ppa -y
   - sudo apt-get update -qq -y
   - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-fftw-3/apple-macports-fftw-3_3.3.3-1_all.deb
   - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
@@ -48,15 +47,18 @@ cache:
   - apt
 
 script:
-  - export ZAMVERSION=$(git describe)
   - rm -fr dpf
   - git clone https://github.com/zamaudio/DPF dpf
   - cd dpf
   - git checkout build-osxwin
   - cd ..
+  - export ZAMVERSION=$(git describe)
   - export CC=gcc
   - export CXX=g++-4.8
   - export AR=ar
+  - make clean
+  - rm -fr bin
+  - mkdir bin
   - make LINUX=true -j2
   - mv bin linux
   - mkdir bin
@@ -74,12 +76,10 @@ script:
   - export CXX=x86_64-w64-mingw32-g++
   - export AR=x86_64-w64-mingw32-ar
   - make clean
-  - rm -fr ~/.wine
   - make WIN32=true -j2
   - mv bin win32
   - mkdir bin
   - make clean
-  - rm -fr ~/.wine
   - make WIN64=true -j2
   - mv bin win64
   - mkdir bin
@@ -106,6 +106,7 @@ script:
   - zip -9 -r zam-plugins-$ZAMVERSION-win64lv2.zip *.lv2
   - mv *.zip ../bin
   - cd ../bin
+  - ls -l
   - echo "ALL DONE!!!"
 
 #deploy:
