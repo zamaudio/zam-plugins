@@ -21,13 +21,14 @@ before_install:
   - sudo apt-get install apple-macports-liblo -y
   - sudo apt-get install apple-macports-fftw-3 -y
   - sudo apt-get install apple-macports-libsndfile -y
-  - sudo apt-get install mingw-x-gcc -y
-  - sudo apt-get install mingw-x-binutils -y
+  - sudo apt-get install mingw64-x-gcc -y
+  - sudo apt-get install mingw64-x-binutils -y
+  - sudo apt-get install mingw32-x-binutils -y
   - sudo apt-get install mingw-x-pkgconfig -y
   - sudo apt-get install mingw-x-liblo -y
   - sudo apt-get install mingw-x-fftw3 -y
   - sudo apt-get install mingw-x-libsndfile -y
-  - sudo apt-get install g++-4.9 -y
+  - sudo apt-get install g++ -y
   - sudo apt-get install binutils -y
   - sudo apt-get install pkg-config -y
   - sudo apt-get install libx11-dev -y
@@ -50,7 +51,7 @@ script:
   - git checkout build-osxwin
   - cd ..
   - export CC=gcc
-  - export CXX=g++-4.9
+  - export CXX=g++
   - export AR=ar
   - make LINUX=true -j2
   - mv bin linux
