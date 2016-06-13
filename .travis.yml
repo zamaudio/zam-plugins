@@ -1,4 +1,4 @@
-# travis.yml for zam-plugins
+# travis.yml for zam-plugins uses 12.04 Ubuntu
 
 os:
   - linux
@@ -7,12 +7,8 @@ language: c++
 
 sudo: required
 
-dist: trusty
-
 before_install:
-  - sudo apt-get install apt-transport-https software-properties-common wget -y
-  - wget https://launchpad.net/~kxstudio-debian/+archive/kxstudio/+files/kxstudio-repos_9.2.2~kxstudio1_all.deb --no-check-certificate
-  - sudo dpkg -i kxstudio-repos_9.2.2~kxstudio1_all.deb
+  - sudo add-apt-repository ppa:kxstudio-team/builds -y
   - sudo apt-get update -q -y
   - sudo apt-get install apple-x86-gcc -y
   - sudo apt-get install apple-x86-odcctools -y
