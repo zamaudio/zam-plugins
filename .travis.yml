@@ -115,16 +115,12 @@ deploy:
     - zam-plugins-$TRAVIS_TAG-win32lv2.zip
     - zam-plugins-$TRAVIS_TAG-win64lv2.zip
   skip_cleanup: true
+  overwrite: true
   on:
     repo: zamaudio/zam-plugins
     tags: true
 
 notifications:
   email:
-    on_success: change
-    on_failure: change
-  irc:
-    channels:
-      - "chat.freenode.net#damo22"
     on_success: always
     on_failure: always
