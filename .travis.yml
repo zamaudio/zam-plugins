@@ -31,7 +31,7 @@ before_install:
   - sudo apt-get install binutils -y
   - sudo apt-get install pkg-config -y
   - sudo apt-get install libx11-dev -y
-  - sudo apt-get install libgl-dev -y
+  - sudo apt-get install libgl1-mesa-dev-lts-trusty -y
   - sudo apt-get install liblo-dev -y
   - sudo apt-get install fftw3-dev -y
   - sudo apt-get install libsndfile-dev -y
