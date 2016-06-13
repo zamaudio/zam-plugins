@@ -4,8 +4,10 @@ os:
 sudo: required
 dist: trusty
 
+languages: c++
+
 git:
-  submodules: false
+  submodules: true
 
 before_install:
 - sudo add-apt-repository ppa:kxstudio-debian/mingw -y
@@ -44,14 +46,12 @@ cache:
 - apt
 
 script:
-- rm -fr dpf
-- git clone https://github.com/zamaudio/DPF dpf
-- cd dpf
-- git checkout build-osxwin
-- cd ..
 - export CC=gcc
 - export CXX=g++-4.8
 - export AR=ar
+- export CXXFLAGS=
+- export CFLAGS=
+- export LDFLAGS=
 - make clean
 - rm -fr bin
 - mkdir bin
@@ -62,21 +62,31 @@ script:
 - export CXX=i686-apple-darwin10-g++
 - export AR=i686-apple-darwin10-ar
 - make clean
+- touch dpf/utils/lv2_ttl_generator
+- chmod a+x dpf/utils/lv2_ttl_generator
 - make MACOS=true MACOS_OLD=true -j2
 - mv bin osx
 - mkdir bin
 - export PATH=$PATH:/opt/mingw64/bin
-- export CXXFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
-- export CFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
+- export CXXFLAGS="-m32 -I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
+- export CFLAGS="-m32 -I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
+- export LDFLAGS=-m32
 - export CC=x86_64-w64-mingw32-gcc
 - export CXX=x86_64-w64-mingw32-g++
 - export AR=x86_64-w64-mingw32-ar
 - make clean
+- touch dpf/utils/lv2_ttl_generator.exe
+- chmod a+x dpf/utils/lv2_ttl_generator.exe
 - make WIN32=true -j2
 - mv bin win32
 - mkdir bin
+- export CXXFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
+- export CFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
+- export LDFLAGS=
 - make clean
-- make WIN64=true -j2
+- touch dpf/utils/lv2_ttl_generator.exe
+- chmod a+x dpf/utils/lv2_ttl_generator.exe
+- make WIN32=true -j2
 - mv bin win64
 - mkdir bin
 - cd linux
