@@ -13,7 +13,7 @@ git:
 before_install:
   - sudo add-apt-repository ppa:kxstudio-debian/mingw -y
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo add-apt-repository universe -y
+  - sudo add-apt-repository ppa:ubuntu-wine/ppa -y
   - sudo apt-get update -qq -y
   - sudo apt-get install wine1.6-amd64 wine1.6-i386 -y
   - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-fftw-3/apple-macports-fftw-3_3.3.3-1_all.deb
