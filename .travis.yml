@@ -7,6 +7,9 @@ language: c++
 
 sudo: required
 
+git:
+  submodules: false
+
 before_install:
   - sudo add-apt-repository ppa:kxstudio-team/builds -y
   - sudo apt-get update -q -y
