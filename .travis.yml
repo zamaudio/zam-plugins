@@ -15,6 +15,8 @@ before_install:
   - sudo apt-get update -q -y
   - sudo apt-get install apple-x86-gcc -y
   - sudo apt-get install apple-x86-odcctools -y
+  - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
+  - sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
   - sudo apt-get install apple-x86-setup -y
   - sudo apt-get install apple-macports-liblo -y
   - sudo apt-get install apple-macports-fftw-3 -y
@@ -36,8 +38,6 @@ before_install:
   - sudo apt-get install wine -y
   - sudo apt-get install libjack-dev -y
   - sudo apt-get install ladspa-sdk -y
-  - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
-  - sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
 
 cache:
   - apt
