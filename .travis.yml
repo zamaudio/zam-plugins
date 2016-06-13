@@ -63,6 +63,8 @@ script:
   - mv bin osx
   - mkdir bin
   - export PATH=$PATH:/opt/mingw64/bin
+  - export CXXFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
+  - export CFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
   - export CC=x86_64-w64-mingw32-gcc
   - export CXX=x86_64-w64-mingw32-g++
   - export AR=x86_64-w64-mingw32-ar
