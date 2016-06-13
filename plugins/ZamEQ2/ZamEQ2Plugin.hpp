@@ -11,8 +11,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
- * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
 #ifndef ZAMEQ2PLUGIN_HPP_INCLUDED
@@ -77,7 +75,7 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return d_version(3, 6, 2);
+        return d_version(3, 7, 0);
     }
 
     int64_t getUniqueId() const noexcept override

@@ -27,3 +27,11 @@
 	- Various bugfixes
 	- Key events pass through to host
 
+3.7 DSP overhaul and major release
+	- ZaMaximX2 has great new algorithm from DAFX
+	- ZamEQ2 has improved filter algorithms
+	- Multibands no longer crackle and pop
+	- Numerical labels on all knobs
+	- Mousewheel feels nicer on all knobs
+	- Travis build integration
+	- Various bugfixes

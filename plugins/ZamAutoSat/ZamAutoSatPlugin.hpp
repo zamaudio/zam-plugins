@@ -1,5 +1,5 @@
 /*
- * ZamAutoSat mono compressor 
+ * ZamAutoSat
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -11,8 +11,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
- * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
 #ifndef ZAMAUTOSATPLUGIN_HPP_INCLUDED
@@ -67,7 +65,7 @@ You can apply this plugin generously without affecting the tone.";
 
     uint32_t getVersion() const noexcept override
     {
-        return d_version(3, 6, 1);
+        return d_version(3, 7, 0);
     }
 
     int64_t getUniqueId() const noexcept override

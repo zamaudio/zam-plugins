@@ -11,8 +11,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- *
- * For a full copy of the GNU General Public License see the doc/GPL.txt file.
  */
 
 #ifndef ZAMTUBEPLUGIN_HPP_INCLUDED
@@ -149,7 +147,7 @@ Wave digital filter physical model of a triode tube amplifier stage, with modell
 
     uint32_t getVersion() const noexcept override
     {
-        return 0x1500;
+        return d_version(3, 7, 0);
     }
 
     int64_t getUniqueId() const noexcept override
