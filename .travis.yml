@@ -23,11 +23,10 @@ before_install:
   - sudo apt-get install apple-macports-libsndfile -y
   - sudo apt-get install mingw64-x-gcc -y
   - sudo apt-get install mingw64-x-binutils -y
-  - sudo apt-get install mingw32-x-binutils -y
-  - sudo apt-get install mingw-x-pkgconfig -y
-  - sudo apt-get install mingw-x-liblo -y
-  - sudo apt-get install mingw-x-fftw3 -y
-  - sudo apt-get install mingw-x-libsndfile -y
+  - sudo apt-get install mingw64-x-pkgconfig -y
+  - sudo apt-get install mingw64-x-liblo -y
+  - sudo apt-get install mingw64-x-fftw3 -y
+  - sudo apt-get install mingw64-x-libsndfile -y
   - sudo apt-get install g++ -y
   - sudo apt-get install binutils -y
   - sudo apt-get install pkg-config -y
