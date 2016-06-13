@@ -84,10 +84,16 @@ script:
   - make WIN64=true -j2
   - mv bin win64
   - mkdir bin
-  - cd win64
+  - cd linux
   - for f in *.lv2; do cd $f; cp *.ttl ../../osx/$f/ ; cd .. ; done
+  - for f in *.lv2; do cd $f; cp *.ttl ../../win32/$f/ ; cd .. ; done
+  - for f in *.lv2; do cd $f; cp *.ttl ../../win64/$f/ ; cd .. ; done
   - cd ../osx
-  - for f in *.lv2; do cd $f; perl -pi -e 's/dll/dylib/g' manifest.ttl; perl -pi -e 's/WindowsUI/CocoaUI/g' manifest.ttl; cd .. ; done
+  - for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dylib/g' manifest.ttl; perl -pi -e 's/X11UI/CocoaUI/g' manifest.ttl; cd .. ; done
+  - cd ../win32
+  - for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e 's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
+  - cd ../win64
+  - for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e 's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
   - cd ../linux
   - zip -9 -r zam-plugins-$ZAMVERSION-linuxlv2.zip *.lv2
   - mv *.zip ../bin
