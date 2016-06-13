@@ -11,8 +11,10 @@ git:
   submodules: false
 
 before_install:
+  - sudo apt-get install python-software-properties -y
   - sudo add-apt-repository ppa:kxstudio-team/builds -y
-  - sudo apt-get update -q -y
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -qq -y
   - sudo apt-get install apple-x86-gcc -y
   - sudo apt-get install apple-x86-odcctools -y
   - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
