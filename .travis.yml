@@ -1,33 +1,37 @@
-# travis.yml for zam-plugins uses 12.04 Ubuntu
+# travis.yml for zam-plugins uses 14.04 Ubuntu Trusty
 
 os:
   - linux
 
 sudo: required
 
+dist: trusty
+
 git:
   submodules: false
 
 before_install:
-  - sudo apt-get install python-software-properties -y
-  - sudo add-apt-repository ppa:kxstudio-team/builds -y
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo add-apt-respository ppa:kxstudio-debian/mingw -y
   - sudo apt-get update -qq -y
-  - sudo apt-get install apple-x86-gcc -y
-  - sudo apt-get install apple-x86-odcctools -y
+  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-fftw-3/apple-macports-fftw-3_3.3.3-1_all.deb
+  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
+  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-gcc/apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
+  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-odcctools/apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
   - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
+  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-setup/apple-x86-setup_2_amd64.deb
+  - sudo dpkg -i apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
+  - sudo dpkg -i apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
   - sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
-  - sudo apt-get install apple-x86-setup -y
-  - sudo apt-get install apple-macports-liblo -y
-  - sudo apt-get install apple-macports-fftw-3 -y
-  - sudo apt-get install apple-macports-libsndfile -y
+  - sudo dpkg -i apple-x86-setup_2_amd64.deb
+  - sudo dpkg -i apple-macports-liblo_0.26-1_all.deb
+  - sudo dpkg -i apple-macports-fftw-3_3.3.3-1_all.deb
   - sudo apt-get install mingw64-x-gcc -y
   - sudo apt-get install mingw64-x-binutils -y
   - sudo apt-get install mingw64-x-pkgconfig -y
   - sudo apt-get install mingw64-x-liblo -y
   - sudo apt-get install mingw64-x-fftw3 -y
   - sudo apt-get install mingw64-x-libsndfile -y
-  - sudo apt-get install g++-4.8 -y
+  - sudo apt-get install g++-4.9 -y
   - sudo apt-get install binutils -y
   - sudo apt-get install pkg-config -y
   - sudo apt-get install libx11-dev -y
@@ -43,7 +47,7 @@ cache:
   - apt
 
 script:
-  - export ZAMVERSION=`git describe`
+  - export ZAMVERSION=$(git describe)
   - rm -fr dpf
   - git clone https://github.com/zamaudio/DPF dpf
   - cd dpf
