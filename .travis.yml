@@ -1,122 +1,133 @@
-# travis.yml for zam-plugins uses 14.04 Ubuntu Trusty
-
 os:
-  - linux
+- linux
 
 sudo: required
-
 dist: trusty
 
 git:
   submodules: false
 
 before_install:
-  - sudo add-apt-repository ppa:kxstudio-debian/mingw -y
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq -y
-  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-fftw-3/apple-macports-fftw-3_3.3.3-1_all.deb
-  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
-  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-gcc/apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
-  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-odcctools/apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
-  - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
-  - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-setup/apple-x86-setup_2_amd64.deb
-  - sudo dpkg -i apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
-  - sudo dpkg -i apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
-  - sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
-  - sudo dpkg -i apple-x86-setup_2_amd64.deb
-  - sudo dpkg -i apple-macports-liblo_0.26-1_all.deb
-  - sudo dpkg -i apple-macports-fftw-3_3.3.3-1_all.deb
-  - sudo apt-get install mingw64-x-gcc -y
-  - sudo apt-get install mingw64-x-binutils -y
-  - sudo apt-get install mingw64-x-pkgconfig -y
-  - sudo apt-get install mingw64-x-liblo -y
-  - sudo apt-get install mingw64-x-fftw3 -y
-  - sudo apt-get install mingw64-x-libsndfile -y
-  - sudo apt-get install g++-4.8 -y
-  - sudo apt-get install binutils -y
-  - sudo apt-get install pkg-config -y
-  - sudo apt-get install libx11-dev -y
-  - sudo apt-get install libgl1-mesa-dev -y
-  - sudo apt-get install liblo-dev -y
-  - sudo apt-get install fftw3-dev -y
-  - sudo apt-get install libsndfile-dev -y
-  - sudo apt-get install libjack-dev -y
-  - sudo apt-get install ladspa-sdk -y
+- sudo add-apt-repository ppa:kxstudio-debian/mingw -y
+- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+- sudo apt-get update -qq -y
+- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-fftw-3/apple-macports-fftw-3_3.3.3-1_all.deb
+- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
+- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-gcc/apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
+- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-odcctools/apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
+- wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
+- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-setup/apple-x86-setup_2_amd64.deb
+- sudo dpkg -i apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
+- sudo dpkg -i apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
+- sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
+- sudo dpkg -i apple-x86-setup_2_amd64.deb
+- sudo dpkg -i apple-macports-liblo_0.26-1_all.deb
+- sudo dpkg -i apple-macports-fftw-3_3.3.3-1_all.deb
+- sudo apt-get install mingw64-x-gcc -y
+- sudo apt-get install mingw64-x-binutils -y
+- sudo apt-get install mingw64-x-pkgconfig -y
+- sudo apt-get install mingw64-x-liblo -y
+- sudo apt-get install mingw64-x-fftw3 -y
+- sudo apt-get install mingw64-x-libsndfile -y
+- sudo apt-get install g++-4.8 -y
+- sudo apt-get install binutils -y
+- sudo apt-get install pkg-config -y
+- sudo apt-get install libx11-dev -y
+- sudo apt-get install libgl1-mesa-dev -y
+- sudo apt-get install liblo-dev -y
+- sudo apt-get install fftw3-dev -y
+- sudo apt-get install libsndfile-dev -y
+- sudo apt-get install libjack-dev -y
+- sudo apt-get install ladspa-sdk -y
 
 cache:
-  - apt
+- apt
 
 script:
-  - rm -fr dpf
-  - git clone https://github.com/zamaudio/DPF dpf
-  - cd dpf
-  - git checkout build-osxwin
-  - cd ..
-  - export ZAMVERSION=$(git describe)
-  - export CC=gcc
-  - export CXX=g++-4.8
-  - export AR=ar
-  - make clean
-  - rm -fr bin
-  - mkdir bin
-  - make LINUX=true -j2
-  - mv bin linux
-  - mkdir bin
-  - export CC=i686-apple-darwin10-gcc
-  - export CXX=i686-apple-darwin10-g++
-  - export AR=i686-apple-darwin10-ar
-  - make clean
-  - make MACOS=true MACOS_OLD=true -j2
-  - mv bin osx
-  - mkdir bin
-  - export PATH=$PATH:/opt/mingw64/bin
-  - export CXXFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
-  - export CFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
-  - export CC=x86_64-w64-mingw32-gcc
-  - export CXX=x86_64-w64-mingw32-g++
-  - export AR=x86_64-w64-mingw32-ar
-  - make clean
-  - make WIN32=true -j2
-  - mv bin win32
-  - mkdir bin
-  - make clean
-  - make WIN64=true -j2
-  - mv bin win64
-  - mkdir bin
-  - cd linux
-  - for f in *.lv2; do cd $f; cp *.ttl ../../osx/$f/ ; cd .. ; done
-  - for f in *.lv2; do cd $f; cp *.ttl ../../win32/$f/ ; cd .. ; done
-  - for f in *.lv2; do cd $f; cp *.ttl ../../win64/$f/ ; cd .. ; done
-  - cd ../osx
-  - for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dylib/g' manifest.ttl; perl -pi -e 's/X11UI/CocoaUI/g' manifest.ttl; cd .. ; done
-  - cd ../win32
-  - for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e 's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
-  - cd ../win64
-  - for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e 's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
-  - cd ../linux
-  - zip -9 -r zam-plugins-$ZAMVERSION-linuxlv2.zip *.lv2
-  - mv *.zip ../bin
-  - cd ../osx
-  - zip -9 -r zam-plugins-$ZAMVERSION-osxlv2.zip *.lv2
-  - mv *.zip ../bin
-  - cd ../win32
-  - zip -9 -r zam-plugins-$ZAMVERSION-win32lv2.zip *.lv2
-  - mv *.zip ../bin
-  - cd ../win64
-  - zip -9 -r zam-plugins-$ZAMVERSION-win64lv2.zip *.lv2
-  - mv *.zip ../bin
-  - cd ../bin
-  - ls -l
-  - echo "ALL DONE!!!"
+- rm -fr dpf
+- git clone https://github.com/zamaudio/DPF dpf
+- cd dpf
+- git checkout build-osxwin
+- cd ..
+- export CC=gcc
+- export CXX=g++-4.8
+- export AR=ar
+- make clean
+- rm -fr bin
+- mkdir bin
+- make LINUX=true -j2
+- mv bin linux
+- mkdir bin
+- export CC=i686-apple-darwin10-gcc
+- export CXX=i686-apple-darwin10-g++
+- export AR=i686-apple-darwin10-ar
+- make clean
+- make MACOS=true MACOS_OLD=true -j2
+- mv bin osx
+- mkdir bin
+- export PATH=$PATH:/opt/mingw64/bin
+- export CXXFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
+- export CFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
+- export CC=x86_64-w64-mingw32-gcc
+- export CXX=x86_64-w64-mingw32-g++
+- export AR=x86_64-w64-mingw32-ar
+- make clean
+- make WIN32=true -j2
+- mv bin win32
+- mkdir bin
+- make clean
+- make WIN64=true -j2
+- mv bin win64
+- mkdir bin
+- cd linux
+- for f in *.lv2; do cd $f; cp *.ttl ../../osx/$f/ ; cd .. ; done
+- for f in *.lv2; do cd $f; cp *.ttl ../../win32/$f/ ; cd .. ; done
+- for f in *.lv2; do cd $f; cp *.ttl ../../win64/$f/ ; cd .. ; done
+- cd ../osx
+- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dylib/g' manifest.ttl; perl -pi
+  -e 's/X11UI/CocoaUI/g' manifest.ttl; cd .. ; done
+- cd ../win32
+- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e
+  's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
+- cd ../win64
+- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e
+  's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
+- cd ../linux
+- zip -9 -r zam-plugins-TRAVIS_COMMIT-linuxlv2.zip *.lv2
+- mv *.zip ../bin
+- cd ../osx
+- zip -9 -r zam-plugins-TRAVIS_COMMIT-osxlv2.zip *.lv2
+- mv *.zip ../bin
+- cd ../win32
+- zip -9 -r zam-plugins-TRAVIS_COMMIT-win32lv2.zip *.lv2
+- mv *.zip ../bin
+- cd ../win64
+- zip -9 -r zam-plugins-TRAVIS_COMMIT-win64lv2.zip *.lv2
+- mv *.zip ../bin
+- cd ../bin
+- ls -l
+- echo "ALL DONE!!!"
 
-#deploy:
-#  provider: releases
-#  api_key: "GITHUB OAUTH TOKEN"
-#  file:
-#    - zam-plugins-$ZAMVERSION-linuxlv2.zip
-#    - zam-plugins-$ZAMVERSION-osxlv2.zip
-#    - zam-plugins-$ZAMVERSION-win32lv2.zip
-#    - zam-plugins-$ZAMVERSION-win64lv2.zip
-#  skip_cleanup: true
-#  on:
-#    tags: true
+deploy:
+  provider: releases
+  api_key:
+    secure: Lqo9+84VTeIpl3MHI+WP7gdbtYN1+kZSFrV76RZGkk6W+r1f4yAelNg/hg2nTONeAtU+ZzX1BUlnTglDkrVQIbkecBzQ2H7s2KVPq734TV/VemwiHn0dwr+idL3CK3ASU4X8M6N+7qylO8GiQ4fZETfkzIM0YfNwg6YF0Xm04Lp7lDPH0pZdIy/iWxcOi5Lo3lQClgk8lCLzySiyDiqChRMYJ4x35DUqjpahA+jSv5jffji3rke/2f17zUhl/VtYBfcoAV5YjrrOfvQQeq2+OttDEbXNLaMhgXCJ3VBJY+hlSwl60Olq8aUPvBlVWxNZv61a3xS1y3KzpuUvfnv80Ivn+xmc9lgGmaS0N8Bt+mEP13lW3X9NMM7kwNZ5iBk5gXzqjPO6lud+9mN/G5qE4O0YsE+96yJb9M7M4rgyVp3hUh1GCeqrqJR2JOxy1xsFzO5eXk7p2zAmBoCcsT2ZuQMXY30O0OxKsk4ZZEiIkzQsC/YJHVFRY26CK9dM1uOrxKDMTjDejEso4L2kPGqine7CCX4Fokmyd6/Db2KwKzzugiMLptmbZowTF/KdmApvyg5RIzTghvTq856Xa6+8RuJPY18+gfcGOlXNqy9rbeuBtn/Sdaf7QPSxf+A/WAyL8C4fFMCWwREXnhv/fF9jV7zoq2Wp95WtKAe+Q3KGN/k=
+  file:
+    - zam-plugins-TRAVIS_COMMIT-linuxlv2.zip
+    - zam-plugins-TRAVIS_COMMIT-osxlv2.zip
+    - zam-plugins-TRAVIS_COMMIT-win32lv2.zip
+    - zam-plugins-TRAVIS_COMMIT-win64lv2.zip
+  skip_cleanup: true
+  on:
+    repo: zamaudio/zam-plugins
+    tags: true
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+  irc:
+    channels:
+      - "chat.freenode.net#damo22"
+    on_success: always
+    on_failure: always
