@@ -55,7 +55,7 @@ script:
 - make clean
 - rm -fr bin
 - mkdir bin
-- make LINUX=true -j2
+- make LINUX=true
 - mv bin linux
 - mkdir bin
 - export CC=i686-apple-darwin10-gcc
@@ -84,25 +84,22 @@ script:
 - for f in *.lv2; do cd $f; cp *.ttl ../../win32/$f/ ; cd .. ; done
 - for f in *.lv2; do cd $f; cp *.ttl ../../win64/$f/ ; cd .. ; done
 - cd ../osx
-- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dylib/g' manifest.ttl; perl -pi
-  -e 's/X11UI/CocoaUI/g' manifest.ttl; cd .. ; done
+- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dylib/g' manifest.ttl; perl -pi -e 's/X11UI/CocoaUI/g' manifest.ttl; cd .. ; done
 - cd ../win32
-- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e
-  's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
+- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e 's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
 - cd ../win64
-- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e
-  's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
+- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e 's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
 - cd ../linux
-- zip -9 -r zam-plugins-TRAVIS_COMMIT-linuxlv2.zip *.lv2
+- zip -9 -r zam-plugins-$TRAVIS_TAG-linuxlv2.zip *.lv2
 - mv *.zip ../bin
 - cd ../osx
-- zip -9 -r zam-plugins-TRAVIS_COMMIT-osxlv2.zip *.lv2
+- zip -9 -r zam-plugins-$TRAVIS_TAG-osxlv2.zip *.lv2
 - mv *.zip ../bin
 - cd ../win32
-- zip -9 -r zam-plugins-TRAVIS_COMMIT-win32lv2.zip *.lv2
+- zip -9 -r zam-plugins-$TRAVIS_TAG-win32lv2.zip *.lv2
 - mv *.zip ../bin
 - cd ../win64
-- zip -9 -r zam-plugins-TRAVIS_COMMIT-win64lv2.zip *.lv2
+- zip -9 -r zam-plugins-$TRAVIS_TAG-win64lv2.zip *.lv2
 - mv *.zip ../bin
 - cd ../bin
 - ls -l
@@ -113,10 +110,10 @@ deploy:
   api_key:
     secure: Lqo9+84VTeIpl3MHI+WP7gdbtYN1+kZSFrV76RZGkk6W+r1f4yAelNg/hg2nTONeAtU+ZzX1BUlnTglDkrVQIbkecBzQ2H7s2KVPq734TV/VemwiHn0dwr+idL3CK3ASU4X8M6N+7qylO8GiQ4fZETfkzIM0YfNwg6YF0Xm04Lp7lDPH0pZdIy/iWxcOi5Lo3lQClgk8lCLzySiyDiqChRMYJ4x35DUqjpahA+jSv5jffji3rke/2f17zUhl/VtYBfcoAV5YjrrOfvQQeq2+OttDEbXNLaMhgXCJ3VBJY+hlSwl60Olq8aUPvBlVWxNZv61a3xS1y3KzpuUvfnv80Ivn+xmc9lgGmaS0N8Bt+mEP13lW3X9NMM7kwNZ5iBk5gXzqjPO6lud+9mN/G5qE4O0YsE+96yJb9M7M4rgyVp3hUh1GCeqrqJR2JOxy1xsFzO5eXk7p2zAmBoCcsT2ZuQMXY30O0OxKsk4ZZEiIkzQsC/YJHVFRY26CK9dM1uOrxKDMTjDejEso4L2kPGqine7CCX4Fokmyd6/Db2KwKzzugiMLptmbZowTF/KdmApvyg5RIzTghvTq856Xa6+8RuJPY18+gfcGOlXNqy9rbeuBtn/Sdaf7QPSxf+A/WAyL8C4fFMCWwREXnhv/fF9jV7zoq2Wp95WtKAe+Q3KGN/k=
   file:
-    - zam-plugins-TRAVIS_COMMIT-linuxlv2.zip
-    - zam-plugins-TRAVIS_COMMIT-osxlv2.zip
-    - zam-plugins-TRAVIS_COMMIT-win32lv2.zip
-    - zam-plugins-TRAVIS_COMMIT-win64lv2.zip
+    - zam-plugins-$TRAVIS_TAG-linuxlv2.zip
+    - zam-plugins-$TRAVIS_TAG-osxlv2.zip
+    - zam-plugins-$TRAVIS_TAG-win32lv2.zip
+    - zam-plugins-$TRAVIS_TAG-win64lv2.zip
   skip_cleanup: true
   on:
     repo: zamaudio/zam-plugins
