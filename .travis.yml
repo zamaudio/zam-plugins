@@ -27,7 +27,7 @@ before_install:
   - sudo apt-get install mingw64-x-liblo -y
   - sudo apt-get install mingw64-x-fftw3 -y
   - sudo apt-get install mingw64-x-libsndfile -y
-  - sudo apt-get install g++ -y
+  - sudo apt-get install g++-4.8 -y
   - sudo apt-get install binutils -y
   - sudo apt-get install pkg-config -y
   - sudo apt-get install libx11-dev -y
@@ -43,14 +43,14 @@ cache:
   - apt
 
 script:
-  - cd zam-plugins
+  - export ZAMVERSION=`git describe`
   - rm -fr dpf
   - git clone https://github.com/zamaudio/DPF dpf
   - cd dpf
   - git checkout build-osxwin
   - cd ..
   - export CC=gcc
-  - export CXX=g++
+  - export CXX=g++-4.8
   - export AR=ar
   - make LINUX=true -j2
   - mv bin linux
@@ -62,6 +62,7 @@ script:
   - make MACOS=true MACOS_OLD=true -j2
   - mv bin osx
   - mkdir bin
+  - export PATH=$PATH:/opt/mingw64/bin
   - export CC=x86_64-w64-mingw32-gcc
   - export CXX=x86_64-w64-mingw32-g++
   - export AR=x86_64-w64-mingw32-ar
@@ -80,16 +81,16 @@ script:
   - cd ../osx
   - for f in *.lv2; do cd $f; perl -pi -e 's/dll/dylib/g' manifest.ttl; perl -pi -e 's/WindowsUI/CocoaUI/g' manifest.ttl; cd .. ; done
   - cd ../linux
-  - zip -9 -r zam-plugins-`git describe`-linuxlv2.zip *.lv2
+  - zip -9 -r zam-plugins-$ZAMVERSION-linuxlv2.zip *.lv2
   - mv *.zip ../bin
   - cd ../osx
-  - zip -9 -r zam-plugins-`git describe`-osxlv2.zip *.lv2
+  - zip -9 -r zam-plugins-$ZAMVERSION-osxlv2.zip *.lv2
   - mv *.zip ../bin
   - cd ../win32
-  - zip -9 -r zam-plugins-`git describe`-win32lv2.zip *.lv2
+  - zip -9 -r zam-plugins-$ZAMVERSION-win32lv2.zip *.lv2
   - mv *.zip ../bin
   - cd ../win64
-  - zip -9 -r zam-plugins-`git describe`-win64lv2.zip *.lv2
+  - zip -9 -r zam-plugins-$ZAMVERSION-win64lv2.zip *.lv2
   - mv *.zip ../bin
   - cd ../bin
   - echo "ALL DONE!!!"
@@ -98,10 +99,10 @@ script:
 #  provider: releases
 #  api_key: "GITHUB OAUTH TOKEN"
 #  file:
-#    - zam-plugins-`git describe`-linuxlv2.zip
-#    - zam-plugins-`git describe`-osxlv2.zip
-#    - zam-plugins-`git describe`-win32lv2.zip
-#    - zam-plugins-`git describe`-win64lv2.zip
+#    - zam-plugins-$ZAMVERSION-linuxlv2.zip
+#    - zam-plugins-$ZAMVERSION-osxlv2.zip
+#    - zam-plugins-$ZAMVERSION-win32lv2.zip
+#    - zam-plugins-$ZAMVERSION-win64lv2.zip
 #  skip_cleanup: true
 #  on:
 #    tags: true
