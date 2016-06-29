@@ -227,13 +227,13 @@ void ZamDynamicEQUI::parameterChanged(uint32_t index, float value)
         fToggleSidechain->setDown(value > 0.5);
         break;
     case ZamDynamicEQPlugin::paramToggleLow:
-        fToggleLow->setDown(true);
+        fToggleLow->setDown(value > 0.5);
         break;
     case ZamDynamicEQPlugin::paramTogglePeak:
-        fTogglePeak->setDown(true);
+        fTogglePeak->setDown(value > 0.5);
         break;
     case ZamDynamicEQPlugin::paramToggleHigh:
-        fToggleHigh->setDown(true);
+        fToggleHigh->setDown(value > 0.5);
         break;
     case ZamDynamicEQPlugin::paramControlGain:
         fControlGain = value;
