@@ -626,6 +626,132 @@ float ZamKnob::_invlogscale(float value) const
     return std::log(value/a)/b;
 }
 
+// -----------------------------------------------------------------------
+
+class ZamSwitch : public Widget
+{
+public:
+    class Callback
+    {
+    public:
+        virtual ~Callback() {}
+        virtual void imageSwitchClicked(ZamSwitch* imageButton, bool down) = 0;
+    };
+
+    explicit ZamSwitch(Window& parent, const Image& imageNormal, const Image& imageDown) noexcept;
+    explicit ZamSwitch(Widget* widget, const Image& imageNormal, const Image& imageDown) noexcept;
+    explicit ZamSwitch(const ZamSwitch& imageSwitch) noexcept;
+    ZamSwitch& operator=(const ZamSwitch& imageSwitch) noexcept;
+
+    bool isDown() const noexcept;
+    void setDown(bool down) noexcept;
+
+    void setCallback(Callback* callback) noexcept;
+
+protected:
+     void onDisplay() override;
+     bool onMouse(const MouseEvent&) override;
+
+private:
+    Image fImageNormal;
+    Image fImageDown;
+    bool  fIsDown;
+
+    Callback* fCallback;
+
+    DISTRHO_LEAK_DETECTOR(ZamSwitch)
+};
+
+ZamSwitch::ZamSwitch(Window& parent, const Image& imageNormal, const Image& imageDown) noexcept
+    : Widget(parent),
+      fImageNormal(imageNormal),
+      fImageDown(imageDown),
+      fIsDown(false),
+      fCallback(nullptr)
+{
+    DISTRHO_SAFE_ASSERT(fImageNormal.getSize() == fImageDown.getSize());
+
+    setSize(fImageNormal.getSize());
+}
+
+ZamSwitch::ZamSwitch(Widget* widget, const Image& imageNormal, const Image& imageDown) noexcept
+    : Widget(widget->getParentWindow()),
+      fImageNormal(imageNormal),
+      fImageDown(imageDown),
+      fIsDown(false),
+      fCallback(nullptr)
+{
+    DISTRHO_SAFE_ASSERT(fImageNormal.getSize() == fImageDown.getSize());
+
+    setSize(fImageNormal.getSize());
+}
+
+ZamSwitch::ZamSwitch(const ZamSwitch& imageSwitch) noexcept
+    : Widget(imageSwitch.getParentWindow()),
+      fImageNormal(imageSwitch.fImageNormal),
+      fImageDown(imageSwitch.fImageDown),
+      fIsDown(imageSwitch.fIsDown),
+      fCallback(imageSwitch.fCallback)
+{
+    DISTRHO_SAFE_ASSERT(fImageNormal.getSize() == fImageDown.getSize());
+
+    setSize(fImageNormal.getSize());
+}
+
+ZamSwitch& ZamSwitch::operator=(const ZamSwitch& imageSwitch) noexcept
+{
+    fImageNormal = imageSwitch.fImageNormal;
+    fImageDown   = imageSwitch.fImageDown;
+    fIsDown      = imageSwitch.fIsDown;
+    fCallback    = imageSwitch.fCallback;
+
+    DISTRHO_SAFE_ASSERT(fImageNormal.getSize() == fImageDown.getSize());
+
+    setSize(fImageNormal.getSize());
+
+    return *this;
+}
+
+bool ZamSwitch::isDown() const noexcept
+{
+    return fIsDown;
+}
+
+void ZamSwitch::setDown(bool down) noexcept
+{
+    fIsDown = down;
+}
+
+void ZamSwitch::setCallback(Callback* callback) noexcept
+{
+    fCallback = callback;
+}
+
+void ZamSwitch::onDisplay()
+{
+    if (fIsDown)
+        fImageDown.draw();
+    else
+        fImageNormal.draw();
+}
+
+bool ZamSwitch::onMouse(const MouseEvent& ev)
+{
+    if (ev.press && contains(ev.pos))
+    {
+        fIsDown = true;
+
+        if (fCallback != nullptr)
+            fCallback->imageSwitchClicked(this, true);
+
+        repaint();
+
+        return true;
+    }
+
+    return false;
+}
+
 END_NAMESPACE_DGL
 
 #endif
