@@ -740,11 +740,10 @@ bool ZamSwitch::onMouse(const MouseEvent& ev)
     if (ev.press && contains(ev.pos))
     {
         fIsDown = true;
+        repaint();
 
         if (fCallback != nullptr)
             fCallback->imageSwitchClicked(this, true);
-
-        repaint();
 
         return true;
     }

@@ -228,21 +228,12 @@ void ZamDynamicEQUI::parameterChanged(uint32_t index, float value)
         break;
     case ZamDynamicEQPlugin::paramToggleLow:
         fToggleLow->setDown(true);
-        fTogglePeak->setDown(false);
-        fToggleHigh->setDown(false);
-        repaint();
         break;
     case ZamDynamicEQPlugin::paramTogglePeak:
-        fToggleLow->setDown(false);
         fTogglePeak->setDown(true);
-        fToggleHigh->setDown(false);
-        repaint();
         break;
     case ZamDynamicEQPlugin::paramToggleHigh:
-        fToggleLow->setDown(false);
-        fTogglePeak->setDown(false);
         fToggleHigh->setDown(true);
-        repaint();
         break;
     case ZamDynamicEQPlugin::paramControlGain:
         fControlGain = value;
@@ -274,6 +265,9 @@ void ZamDynamicEQUI::programLoaded(uint32_t index)
 		fKnobTargetFreq->setValue(1000.0f);
 		fKnobTargetWidth->setValue(1.0f);
 		fKnobDetectFreq->setValue(1000.0f);
+		fToggleLow->setDown(false);
+		fTogglePeak->setDown(true);
+		fToggleHigh->setDown(false);
 		break;
 	case 1:
 		fKnobAttack->setValue(10.0f);
@@ -288,6 +282,9 @@ void ZamDynamicEQUI::programLoaded(uint32_t index)
 		fKnobTargetFreq->setValue(1000.0f);
 		fKnobTargetWidth->setValue(1.0f);
 		fKnobDetectFreq->setValue(1000.0f);
+		fToggleLow->setDown(false);
+		fTogglePeak->setDown(true);
+		fToggleHigh->setDown(false);
 		break;
 	case 2:
 		fKnobAttack->setValue(50.0f);
@@ -302,6 +299,9 @@ void ZamDynamicEQUI::programLoaded(uint32_t index)
 		fKnobTargetFreq->setValue(1000.0f);
 		fKnobTargetWidth->setValue(1.0f);
 		fKnobDetectFreq->setValue(1000.0f);
+		fToggleLow->setDown(false);
+		fTogglePeak->setDown(true);
+		fToggleHigh->setDown(false);
 		break;
 	}
 }
@@ -331,33 +331,25 @@ void ZamDynamicEQUI::imageSwitchClicked(ImageSwitch* tog, bool down)
 
 void ZamDynamicEQUI::imageSwitchClicked(ZamSwitch* tog, bool)
 {
+    setParameterValue(tog->getId(), 1.f);
     switch(tog->getId()) {
     case ZamDynamicEQPlugin::paramToggleLow:
-        setParameterValue(ZamDynamicEQPlugin::paramToggleLow, 1.f);
-        setParameterValue(ZamDynamicEQPlugin::paramTogglePeak, 0.f);
         setParameterValue(ZamDynamicEQPlugin::paramToggleHigh, 0.f);
-        fToggleLow->setDown(true);
+        setParameterValue(ZamDynamicEQPlugin::paramTogglePeak, 0.f);
         fTogglePeak->setDown(false);
         fToggleHigh->setDown(false);
-        repaint();
         break;
     case ZamDynamicEQPlugin::paramTogglePeak:
-        setParameterValue(ZamDynamicEQPlugin::paramToggleLow, 0.f);
-        setParameterValue(ZamDynamicEQPlugin::paramTogglePeak, 1.f);
         setParameterValue(ZamDynamicEQPlugin::paramToggleHigh, 0.f);
+        setParameterValue(ZamDynamicEQPlugin::paramToggleLow, 0.f);
         fToggleLow->setDown(false);
-        fTogglePeak->setDown(true);
         fToggleHigh->setDown(false);
-        repaint();
         break;
     case ZamDynamicEQPlugin::paramToggleHigh:
-        setParameterValue(ZamDynamicEQPlugin::paramToggleLow, 0.f);
         setParameterValue(ZamDynamicEQPlugin::paramTogglePeak, 0.f);
-        setParameterValue(ZamDynamicEQPlugin::paramToggleHigh, 1.f);
+        setParameterValue(ZamDynamicEQPlugin::paramToggleLow, 0.f);
         fToggleLow->setDown(false);
         fTogglePeak->setDown(false);
-        fToggleHigh->setDown(true);
-        repaint();
         break;
     }
 }

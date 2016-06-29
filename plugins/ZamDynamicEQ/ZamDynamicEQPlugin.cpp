@@ -250,6 +250,9 @@ void ZamDynamicEQPlugin::loadProgram(uint32_t index)
 		targetwidth = 1.0;
 		controlgain = 0.0;
 		boostcut = 0.0;
+		togpeak = 1.0;
+		toglow = 0.0;
+		toghigh = 0.0;
 		break;
 	case 1:
 		attack = 10.0;
@@ -265,6 +268,9 @@ void ZamDynamicEQPlugin::loadProgram(uint32_t index)
 		targetwidth = 1.0;
 		controlgain = 0.0;
 		boostcut = 0.0;
+		togpeak = 1.0;
+		toglow = 0.0;
+		toghigh = 0.0;
 		break;
 	case 2:
 		attack = 50.0;
@@ -280,9 +286,11 @@ void ZamDynamicEQPlugin::loadProgram(uint32_t index)
 		targetwidth = 1.0;
 		controlgain = 0.0;
 		boostcut = 0.0;
+		togpeak = 1.0;
+		toglow = 0.0;
+		toghigh = 0.0;
 		break;
 	}
-
 	activate();
 }
 
