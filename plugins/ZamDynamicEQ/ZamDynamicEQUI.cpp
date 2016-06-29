@@ -499,17 +499,19 @@ void ZamDynamicEQUI::calceqcurve(float x[], float y[])
 
 void ZamDynamicEQUI::onDisplay()
 {
-    fImgBackground.draw();
-
     calceqcurve(eqx, eqy);
 
+    glClearColor(0.f, 0.f, 0.f, 0.f);
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_LINE_SMOOTH);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    glLineWidth(2);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    fImgBackground.draw();
+
     int i;
+    glLineWidth(1);
     glColor4f(1.f, 1.f, 0.235f, 1.0f);
     for (i = 1; i < EQPOINTS; ++i) {
         glBegin(GL_LINES);
@@ -517,26 +519,27 @@ void ZamDynamicEQUI::onDisplay()
 			&& eqy[i] < fCanvasArea.getY() + fCanvasArea.getHeight()
 			&& eqy[i-1] > fCanvasArea.getY()
 			&& eqy[i] > fCanvasArea.getY()) {
-                glVertex2i(eqx[i-1], eqy[i-1]);
-                glVertex2i(eqx[i], eqy[i]);
+                glVertex2f(eqx[i-1], eqy[i-1]);
+                glVertex2f(eqx[i], eqy[i]);
 	    }
         glEnd();
     }
     // reset color
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    int xval = rintf(fCanvasArea.getWidth() * logf (fKnobDetectFreq->getValue() / 20.0) / logf (1000.0));
+    glLineWidth(2);
 
+    int xval = rintf(fCanvasArea.getWidth() * logf (fKnobDetectFreq->getValue() / 20.0) / logf (1000.0));
     glBegin(GL_LINES);
-    	glVertex2i(xval+fCanvasArea.getX(), 5+fCanvasArea.getY());
-    	glVertex2i(xval+fCanvasArea.getX(), fCanvasArea.getHeight()-5+fCanvasArea.getY());
+    	glVertex2f(xval+fCanvasArea.getX(), 5+fCanvasArea.getY());
+    	glVertex2f(xval+fCanvasArea.getX(), fCanvasArea.getHeight()-5+fCanvasArea.getY());
     glEnd();
 
     glColor4f(1.f, 1.f, 0.235f, 1.0f);
     xval = rintf(fCanvasArea.getWidth() * logf (fKnobTargetFreq->getValue() / 20.0) / logf (1000.0));
 
     glBegin(GL_LINES);
-    	glVertex2i(xval+fCanvasArea.getX(), 5+fCanvasArea.getY());
-    	glVertex2i(xval+fCanvasArea.getX(), fCanvasArea.getHeight()-5+fCanvasArea.getY());
+    	glVertex2f(xval+fCanvasArea.getX(), 5+fCanvasArea.getY());
+    	glVertex2f(xval+fCanvasArea.getX(), fCanvasArea.getHeight()-5+fCanvasArea.getY());
     glEnd();
 }
 
