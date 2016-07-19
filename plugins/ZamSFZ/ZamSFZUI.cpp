@@ -84,7 +84,7 @@ void ZamSFZUI::stateChanged(const char* key, const char*)
 	}
 }
 
-void ZamSFZUI::d_uiFileBrowserSelected(const char* filename)
+void ZamSFZUI::uiFileBrowserSelected(const char* filename)
 {
 	// if a file was selected, tell DSP
 	if (filename != nullptr)

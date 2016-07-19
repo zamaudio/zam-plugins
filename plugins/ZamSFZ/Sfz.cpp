@@ -50,10 +50,13 @@ void Sfz::clearsamples()
 void Sfz::loadsamples(std::string path, std::string filename)
 {
 	int note, i, j, k, key;
-	::sfz::File* sfzfile = NULL;
-	::sfz::Instrument* sfzinstrument = NULL;
-	sfzfile = new ::sfz::File(filename, path);
-	sfzinstrument = sfzfile->GetInstrument();
+	::sfz::SFZParser sfzfile;
+	std::string fullsfzpath = path + std::string("/") + filename;
+	if (sfzfile.readsfz(fullsfzpath) == -1) {
+		printf("Can't open SFZ\n");
+		return;
+	}
+	::sfz::Instrument* sfzinstrument = &sfzfile.instrument;
 
 	SNDFILE *infile = NULL;
 	SF_INFO sfinfo;
@@ -73,10 +76,11 @@ void Sfz::loadsamples(std::string path, std::string filename)
 				layers[note].keymiddle = key;
 				layers[note].dsemitones = 0;
 				infile = NULL;
-				if ((infile = sf_open(sfzinstrument->regions[i]->sample.c_str(), SFM_READ, &sfinfo)) == NULL) {
+				std::string fullsamplepath = path + std::string("/") + sfzinstrument->regions[i]->sample;
+				if ((infile = sf_open(fullsamplepath.c_str(), SFM_READ, &sfinfo)) == NULL) {
 						printf("Missing samples\n");
 						puts (sf_strerror (NULL));
-						printf("File: %s\n",sfzinstrument->regions[i]->sample.c_str());
+						printf("File: %s\n",fullsamplepath.c_str());
 				}
 				readsamples (infile, sfinfo.channels, note, layers[note].max);
 				k = layers[note].max;
@@ -97,7 +101,6 @@ void Sfz::loadsamples(std::string path, std::string filename)
 	}
 	printf("All samples loaded, Woot!\n");
   }
-  delete sfzfile;
   for (i = 0; i < 128; i++) {
   	if (!(layers[i].keymiddle == i)) {
 		k = layers[i].keymiddle;

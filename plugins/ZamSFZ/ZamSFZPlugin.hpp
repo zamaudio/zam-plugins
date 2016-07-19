@@ -120,7 +120,8 @@ protected:
     void run(const float** inputs, float** outputs, uint32_t frames,
     		const MidiEvent* midievent, uint32_t midicount) override;
     void setState(const char* key, const char* value) override;
-    void initState(unsigned int, String&, d_string&) override;
+    String getState(const char* key) const override;
+    void initState(unsigned int, String&, String&) override;
     // -------------------------------------------------------------------
 
 private:

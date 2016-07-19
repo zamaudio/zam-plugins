@@ -91,17 +91,22 @@ void ZamSFZPlugin::setState(const char* key, const char* value)
 		path.assign(value, 0, strlen(value) - strlen(tmp));
 		loading = true;
 		printf("Path: %s\nFile: %s\n", path.c_str(), filename.c_str());
-    		sfz.clearsamples();
+		sfz.clearsamples();
 		sfz.loadsamples(path, filename);
 		sfz.pitchshiftsamples((int)getSampleRate());
 		loading = false;
 	}
 }
 
-void ZamSFZPlugin::initState(unsigned int key, String& val, d_string&)
+String ZamSFZPlugin::getState(const char*) const
+{
+    return String("filepath");
+}
+
+void ZamSFZPlugin::initState(unsigned int key, String& val, String&)
 {
 	if (key == 0)
-		val = "filepath";	
+		val = "filepath";
 }
 
 void ZamSFZPlugin::loadProgram(uint32_t index)

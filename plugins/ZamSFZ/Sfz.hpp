@@ -5,7 +5,8 @@
 #include "libsfz/sfz.h"
 #include <rubberband/RubberBandStretcher.h>
 #include <sndfile.h>
-#define MAX_LAYERS 8
+#include <math.h>
+#define MAX_LAYERS 25
 #define MAX_SAMPLES 64000
 
 class Sfz {

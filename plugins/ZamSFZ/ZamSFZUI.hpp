@@ -19,8 +19,7 @@
 #define ZAMSFZUI_HPP_INCLUDED
 
 #include "DistrhoUI.hpp"
-#include "ImageKnob.hpp"
-#include "ImageButton.hpp"
+#include "ImageWidgets.hpp"
 #include "ZamSFZArtwork.hpp"
 
 using DGL::Image;
@@ -46,7 +45,7 @@ protected:
     void programLoaded(uint32_t index) override;
     void stateChanged(const char* key, const char* value) override;
 
-    void d_uiFileBrowserSelected(const char* filename) override;
+    void uiFileBrowserSelected(const char* filename) override;
 
     // -------------------------------------------------------------------
     // Widget Callbacks
