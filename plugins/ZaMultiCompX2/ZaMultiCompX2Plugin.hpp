@@ -21,7 +21,7 @@
 
 START_NAMESPACE_DISTRHO
 
-#define MAX_FILT 2
+#define MAX_FILT 4
 #define MAX_COMP 3
 #define MAX_SAMPLES 480
 #define STEREOLINK_MAX 1
@@ -164,14 +164,26 @@ Stereo version of ZaMultiComp, with individual threshold controls for each band 
 
     void run_comp(int k, float inL, float inR, float *outL, float *outR);
     void run_limit(float inL, float inR, float *outL, float *outR);
-    void run_lr4(int i, int ch, float in, float *outlo, float *outhi);
-    void calc_lr4(float f, int i, int ch);
+    void run_lr4(int i, float in, float *outlo, float *outhi);
+    void calc_lr4(float f, int i);
 
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
 	void pushsample(float samples[], float sample, int k);
 	float averageabs(float samples[]);
+
+	struct linear_svf {
+		double k;
+		double g;
+
+		double s[2];
+	};
+
+	struct linear_svf simper[2][MAX_FILT];
+	void linear_svf_set_xover(struct linear_svf *self, float sample_rate, float cutoff, float resonance);
+	void linear_svf_reset(struct linear_svf *self);
+	float run_linear_svf_xover(struct linear_svf *self, float in, float mixlow, float mixhigh);
     // -------------------------------------------------------------------
 
 private:
@@ -185,21 +197,6 @@ private:
     float oldxover1, oldxover2;
     bool resetl;
     bool resetr;
-    // Crossover filter coefficients
-    float c1[2][MAX_FILT];
-    float c2[2][MAX_FILT];
-    float c3[2][MAX_FILT];
-    float c4[2][MAX_FILT];
-    float gl[2][MAX_FILT];
-    float gh[2][MAX_FILT];
-
-    //Crossover filter states
-    float z1[2][MAX_FILT];
-    float z2[2][MAX_FILT];
-    float z3[2][MAX_FILT];
-    float z4[2][MAX_FILT];
-    float z5[2][MAX_FILT];
-    float z6[2][MAX_FILT];
 };
 
 // -----------------------------------------------------------------------

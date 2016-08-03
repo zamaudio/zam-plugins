@@ -701,10 +701,15 @@ void ZaMultiCompPlugin::activate()
 	old_ll=old_l1=0.f;
 
 	for (i = 0; i < MAX_FILT; i++) {
-		c1[i] = c2[i] = c3[i] = c4[i] = 0.f;
-		z1[i] = z2[i] = z3[i] = 0.f;
-		z4[i] = z5[i] = z6[i] = 0.f;
-		gl[i] = gh[i] = 0.f;
+		simper[0][i].k = 0.f;
+		simper[0][i].g = 0.f;
+		simper[0][i].s[0] = 0.f;
+		simper[0][i].s[1] = 0.f;
+
+		simper[1][i].k = 0.f;
+		simper[1][i].g = 0.f;
+		simper[1][i].s[0] = 0.f;
+		simper[1][i].s[1] = 0.f;
 	}
 	max = 0.f;
 	for (i = 0; i < MAX_SAMPLES; i++) {
@@ -720,76 +725,59 @@ void ZaMultiCompPlugin::activate()
 	oldxover2 = 0.f;
 }
 
-// LR4 filters adapted from zita-lrx
-void ZaMultiCompPlugin::calc_lr4(float f, int i)
+/*
+ * A. Simper's filters
+ * https://cytomic.com/files/dsp/SvfInputMixing.pdf
+ */
+
+void ZaMultiCompPlugin::linear_svf_set_xover(struct linear_svf *self, float sample_rate, float cutoff, float resonance)
 {
-    float a, b, d1, d2, q, p, s;
+	double w;
 
-    s = 0.f;
+	self->k = 2. - 2. * resonance;
+	w = M_PI * cutoff / sample_rate;
+	self->g = tan(w);
 
-    // Damping for first and second sections, from pole locations.
-    d1 = 2.f * cosf (2.f * M_PI / 8.f);
-    d2 = d1;
-    // Basic coefficients.
-    a = tanf (M_PI * f);
-    b = a * a;
-    // First section.
-    q = a / d1;
-    p = q * b;
-    s = p + q + b;
-    c1[i] = (4 * p + 2 * b) / s;
-    c2[i] = (4 * p) / s;
-    gl[i] = p / s;
-    gh[i] = q / s;
-    // Second section.
-    q = a / d2;
-    p = q * b;
-    s = p + q + b;
-    c3[i] = (4 * p + 2 * b) / s;
-    c4[i] = (4 * p) / s;
-    gl[i] *= p / s;
-    gh[i] *= q / s;
 }
 
-// LR4 filters adapted from zita-lrx
+void ZaMultiCompPlugin::linear_svf_reset(struct linear_svf *self)
+{
+	self->s[0] = self->s[1] = 0.f;
+}
+
+float ZaMultiCompPlugin::run_linear_svf_xover(struct linear_svf *self, float in, float mixlow, float mixhigh)
+{
+	double v[3];
+	double g = self->g;
+	double k = self->k;
+	double s0 = self->s[0];
+	double s1 = self->s[1];
+	double g2 = g*g;
+	double vhigh = in * mixhigh;
+	double vband = in * 0.5;
+	double vlow = in * mixlow;
+
+	v[0] = in;
+	v[1] = -1. / (1. + g2 + g*k) * (-s0 + g*s1 - g*k*s0 + g2*vband + g*vhigh - g*vlow - g2*k*vlow);
+	v[2] = -1. / (1. + g2 + g*k) * (-g*s0 - s1 - g*vband + g2*vhigh + g*k*vhigh - g2*vlow);
+	self->s[0] = 2. * v[1] - s0;
+	self->s[1] = 2. * v[2] - s1;
+
+	return (float)(vhigh + v[2]);
+}
+
+void ZaMultiCompPlugin::calc_lr4(float f, int i)
+{
+	float srate = getSampleRate();
+
+	linear_svf_set_xover(&simper[0][i], srate, f, 0.5);
+	linear_svf_set_xover(&simper[1][i], srate, f, 0.5);
+}
+
 void ZaMultiCompPlugin::run_lr4(int i, float in, float *outlo, float *outhi)
 {
-    float x, y, zz1, zz2, zz3, zz4, zz5, zz6;
-    float glo = 1.f;
-    float ghi = 1.f;
-
-    // Get filter state.
-    zz1 = z1[i];
-    zz2 = z2[i];
-    zz3 = z3[i];
-    zz4 = z4[i];
-    zz5 = z5[i];
-    zz6 = z6[i];
-    // Get gain factors.
-    glo *= gl[i];
-    ghi *= gh[i];
-        // Run filter for 1 sample
-        x = in;
-        x -= c1[i] * zz1 + c2[i] * zz2 + EPS;
-        y = x + 4 * (zz1 + zz2);
-        zz2 += zz1;
-        zz1 += x;
-        x -= c3[i] * zz3 + c4[i] * zz4 - EPS;
-        *outhi = ghi * x;
-        zz4 += zz3;
-        zz3 += x;
-        y -= c3[i] * zz5 + c4[i] * zz6 - EPS;
-        x = y + 4 * (zz5 + zz6);
-        *outlo = glo * x;
-        zz6 += zz5;
-        zz5 += y;
-    // Save filter state.
-    z1[i] = zz1;
-    z2[i] = zz2;
-    z3[i] = zz3;
-    z4[i] = zz4;
-    z5[i] = zz5;
-    z6[i] = zz6;
+	*outlo = run_linear_svf_xover(&simper[0][i], in, 1., 0.);
+	*outhi = run_linear_svf_xover(&simper[1][i], in, 0., 1.);
 }
 
 void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
@@ -877,19 +865,13 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
         int listen3 = (listen[2] > 0.5f) ? 1 : 0;
 
         if (oldxover1 != xover1) {
-		// clear filter state
-		z1[0] = z2[0] = z3[0] = 0.f;
-		z4[0] = z5[0] = z6[0] = 0.f;
 		// recalculate coeffs
-		calc_lr4(xover1/srate, 0);
+		calc_lr4(xover1, 0);
 		oldxover1 = xover1;
 	}
         if (oldxover2 != xover2) {
-		// clear filter state
-		z1[1] = z2[1] = z3[1] = 0.f;
-		z4[1] = z5[1] = z6[1] = 0.f;
 		// recalculate coeffs
-		calc_lr4(xover2/srate, 1);
+		calc_lr4(xover2, 1);
 		oldxover2 = xover2;
 	}
 

@@ -722,12 +722,12 @@ void ZaMultiCompX2Plugin::activate()
 	for (j = 0; j < 2; j++)
 		old_ll[j]=old_l1[j]=0.f;
 
-	for (i = 0; i < MAX_FILT; i++) {
-		for (j = 0; j < 2; j++) {
-			c1[j][i] = c2[j][i] = c3[j][i] = c4[j][i] = 0.f;
-			z1[j][i] = z2[j][i] = z3[j][i] = 0.f;
-			z4[j][i] = z5[j][i] = z6[j][i] = 0.f;
-			gl[j][i] = gh[j][i] = 0.f;
+	for (j = 0; j < 2; j++) {
+		for (i = 0; i < MAX_FILT; i++) {
+			simper[j][i].k = 0.f;
+			simper[j][i].g = 0.f;
+			simper[j][i].s[0] = 0.f;
+			simper[j][i].s[1] = 0.f;
 		}
         }
 	maxL = maxR = 0.f;
@@ -744,76 +744,58 @@ void ZaMultiCompX2Plugin::activate()
 	oldxover2 = 0.f;
 }
 
-// LR4 filters adapted from zita-lrx
-void ZaMultiCompX2Plugin::calc_lr4(float f, int i, int ch)
+/*
+ * A. Simper's filters
+ * https://cytomic.com/files/dsp/SvfInputMixing.pdf
+ */
+
+void ZaMultiCompX2Plugin::linear_svf_set_xover(struct linear_svf *self, float sample_rate, float cutoff, float resonance)
 {
-    float a, b, d1, d2, q, p, s;
+	double w;
 
-    s = 0.f;
-
-    // Damping for first and second sections, from pole locations.
-    d1 = 2.f * cosf (2.f * M_PI / 8.f);
-    d2 = d1;
-    // Basic coefficients.
-    a = tanf (M_PI * f);
-    b = a * a;
-    // First section.
-    q = a / d1;
-    p = q * b;
-    s = p + q + b;
-    c1[ch][i] = (4 * p + 2 * b) / s;
-    c2[ch][i] = (4 * p) / s;
-    gl[ch][i] = p / s;
-    gh[ch][i] = q / s;
-    // Second section.
-    q = a / d2;
-    p = q * b;
-    s = p + q + b;
-    c3[ch][i] = (4 * p + 2 * b) / s;
-    c4[ch][i] = (4 * p) / s;
-    gl[ch][i] *= p / s;
-    gh[ch][i] *= q / s;
+	self->k = 2. - 2. * resonance;
+	w = M_PI * cutoff / sample_rate;
+	self->g = tan(w);
 }
 
-// LR4 filters adapted from zita-lrx
-void ZaMultiCompX2Plugin::run_lr4(int i, int ch, float in, float *outlo, float *outhi)
+void ZaMultiCompX2Plugin::linear_svf_reset(struct linear_svf *self)
 {
-    float x, y, zz1, zz2, zz3, zz4, zz5, zz6;
-    float glo = 1.f;
-    float ghi = 1.f;
+	self->s[0] = self->s[1] = 0.f;
+}
 
-    // Get filter state.
-    zz1 = z1[ch][i];
-    zz2 = z2[ch][i];
-    zz3 = z3[ch][i];
-    zz4 = z4[ch][i];
-    zz5 = z5[ch][i];
-    zz6 = z6[ch][i];
-    // Get gain factors.
-    glo *= gl[ch][i];
-    ghi *= gh[ch][i];
-        // Run filter for 1 sample
-        x = in;
-        x -= c1[ch][i] * zz1 + c2[ch][i] * zz2 + EPS;
-        y = x + 4 * (zz1 + zz2);
-        zz2 += zz1;
-        zz1 += x;
-        x -= c3[ch][i] * zz3 + c4[ch][i] * zz4 - EPS;
-        *outhi = ghi * x;
-        zz4 += zz3;
-        zz3 += x;
-        y -= c3[ch][i] * zz5 + c4[ch][i] * zz6 - EPS;
-        x = y + 4 * (zz5 + zz6);
-        *outlo = glo * x;
-        zz6 += zz5;
-        zz5 += y;
-    // Save filter state.
-    z1[ch][i] = zz1;
-    z2[ch][i] = zz2;
-    z3[ch][i] = zz3;
-    z4[ch][i] = zz4;
-    z5[ch][i] = zz5;
-    z6[ch][i] = zz6;
+float ZaMultiCompX2Plugin::run_linear_svf_xover(struct linear_svf *self, float in, float mixlow, float mixhigh)
+{
+	double v[3];
+	double g = self->g;
+	double k = self->k;
+	double s0 = self->s[0];
+	double s1 = self->s[1];
+	double g2 = g*g;
+	double vhigh = in * mixhigh;
+	double vband = in * 0.5;
+	double vlow = in * mixlow;
+
+	v[0] = in;
+	v[1] = -1. / (1. + g2 + g*k) * (-s0 + g*s1 - g*k*s0 + g2*vband + g*vhigh - g*vlow - g2*k*vlow);
+	v[2] = -1. / (1. + g2 + g*k) * (-g*s0 - s1 - g*vband + g2*vhigh + g*k*vhigh - g2*vlow);
+	self->s[0] = 2. * v[1] - s0;
+	self->s[1] = 2. * v[2] - s1;
+
+	return (float)(vhigh + v[2]);
+}
+
+void ZaMultiCompX2Plugin::calc_lr4(float f, int i)
+{
+	float srate = getSampleRate();
+
+	linear_svf_set_xover(&simper[0][i], srate, f, 0.5);
+	linear_svf_set_xover(&simper[1][i], srate, f, 0.5);
+}
+
+void ZaMultiCompX2Plugin::run_lr4(int i, float in, float *outlo, float *outhi)
+{
+	*outlo = run_linear_svf_xover(&simper[0][i], in, 1., 0.);
+	*outhi = run_linear_svf_xover(&simper[1][i], in, 0., 1.);
 }
 
 void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, float *outR)
@@ -941,22 +923,14 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
         int listen3 = (listen[2] > 0.5f) ? 1 : 0;
 
         if (oldxover1 != xover1) {
-		for (i = 0; i < MAX_FILT; i++) {
-			z1[0][i] = z2[0][i] = z3[0][i] = 0.f;
-			z4[0][i] = z5[0][i] = z6[0][i] = 0.f;
-		}
-		calc_lr4(xover1/srate, 0, 0);
-		calc_lr4(xover1/srate, 0, 1);
+		calc_lr4(xover1, 0);
+		calc_lr4(xover1, 1);
 		oldxover1 = xover1;
 	}
 
         if (oldxover2 != xover2) {
-		for (i = 0; i < MAX_FILT; i++) {
-			z1[1][i] = z2[1][i] = z3[1][i] = 0.f;
-			z4[1][i] = z5[1][i] = z6[1][i] = 0.f;
-		}
-		calc_lr4(xover2/srate, 1, 0);
-		calc_lr4(xover2/srate, 1, 1);
+		calc_lr4(xover2, 2);
+		calc_lr4(xover2, 3);
 		oldxover2 = xover2;
 	}
 
@@ -973,10 +947,10 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 		int listenmode = 0;
 
 		// Interleaved channel processing
-                run_lr4(0, 0, inl, &fil1[0], &fil2[0]);
-                run_lr4(0, 1, inr, &fil1[1], &fil2[1]);
-                run_lr4(1, 0, fil2[0], &fil3[0], &fil4[0]);
-                run_lr4(1, 1, fil2[1], &fil3[1], &fil4[1]);
+                run_lr4(0, inl, &fil1[0], &fil2[0]);
+                run_lr4(1, inr, &fil1[1], &fil2[1]);
+                run_lr4(2, fil2[0], &fil3[0], &fil4[0]);
+                run_lr4(3, fil2[1], &fil3[1], &fil4[1]);
 
 		pushsample(outlevelold[0], std::max(fil1[0], fil1[1]), 0);
 		outlevel[0] = averageabs(outlevelold[0]);

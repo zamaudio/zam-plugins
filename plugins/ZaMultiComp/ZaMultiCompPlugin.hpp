@@ -168,6 +168,18 @@ protected:
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
+	struct linear_svf {
+		double k;
+		double g;
+
+		double s[2];
+	};
+
+	struct linear_svf simper[2][MAX_FILT];
+    void linear_svf_set_xover(struct linear_svf *self, float sample_rate, float cutoff, float resonance);
+    void linear_svf_reset(struct linear_svf *self);
+    float run_linear_svf_xover(struct linear_svf *self, float in, float mixlow, float mixhigh);
+
 	void pushsample(float samples[], float sample, int k);
 	float averageabs(float samples[]);
     // -------------------------------------------------------------------
@@ -182,21 +194,7 @@ private:
     float outlevelold[3][MAX_SAMPLES];
     float oldxover1, oldxover2;
     bool reset;
-    // Crossover filter coefficients
-    float c1[MAX_FILT];
-    float c2[MAX_FILT];
-    float c3[MAX_FILT];
-    float c4[MAX_FILT];
-    float gl[MAX_FILT];
-    float gh[MAX_FILT];
 
-    //Crossover filter states
-    float z1[MAX_FILT];
-    float z2[MAX_FILT];
-    float z3[MAX_FILT];
-    float z4[MAX_FILT];
-    float z5[MAX_FILT];
-    float z6[MAX_FILT];
 };
 
 // -----------------------------------------------------------------------
