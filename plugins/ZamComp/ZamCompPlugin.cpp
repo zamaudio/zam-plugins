@@ -99,7 +99,7 @@ void ZamCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 150.0f;
         break;
     case paramSidechain:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
         parameter.name       = "Sidechain";
         parameter.symbol     = "sidech";
         parameter.unit       = " ";
