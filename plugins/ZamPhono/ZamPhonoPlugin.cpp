@@ -72,8 +72,8 @@ void ZamPhonoPlugin::loadProgram(uint32_t index)
 		inv = 0.0;
 		break;
 	}
-    /* reset filter values */
-    activate();
+
+	activate();
 }
 
 // -----------------------------------------------------------------------
@@ -110,9 +110,53 @@ void ZamPhonoPlugin::setParameterValue(uint32_t index, float value)
 // -----------------------------------------------------------------------
 // Process
 
+void ZamPhonoPlugin::brickwall(float fc, float srate)
+{
+	float w0, alpha, cw, sw, q;
+	q = 0.707;
+	w0 = (2. * M_PI * fc / srate);
+	sw = sin(w0);
+	cw = cos(w0);
+	alpha = sw / (2. * q);
+
+	A0 = 1. + alpha;
+	A1 = -2. * cw;
+	A2 = 1. - alpha;
+	B0 = (1. - cw) / 2.;
+	B1 = (1. - cw);
+	B2 = B0;
+}
+
+void ZamPhonoPlugin::clearbrickwall(void)
+{
+	state[0] = state[1] = state[2] = state[3] = 0.0;
+}
+
 void ZamPhonoPlugin::activate()
 {
+	float srate = getSampleRate();
+
+	typeold = -1.f;
+	invold = -1.f;
+
 	zn1 = zn2 = zd1 = zd2 = 0.0;
+	clearbrickwall();
+	brickwall(std::min(0.45 * srate, 21000.), srate);
+}
+
+double ZamPhonoPlugin::run_brickwall(double in)
+{
+	double out;
+	in = sanitize_denormal(in);
+
+	out = B0/A0*in + B1/A0*state[0] + B2/A0*state[1]
+			-A1/A0*state[2] - A2/A0*state[3] + 1e-20;
+
+	state[1] = state[0];
+	state[0] = in;
+	state[3] = state[2];
+	state[2] = sanitize_denormal(out);
+	return state[2];
 }
 
 void ZamPhonoPlugin::emphasis(float srate)
@@ -156,7 +200,7 @@ void ZamPhonoPlugin::emphasis(float srate)
 
 	t = 1.f / srate;
 	g = 1.0;
-	
+
 	i *= 2.f * M_PI;
 	j *= 2.f * M_PI;
 	k *= 2.f * M_PI;
@@ -203,19 +247,43 @@ double ZamPhonoPlugin::run_filter(double in)
 	return out;
 }
 
-
 void ZamPhonoPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	emphasis(getSampleRate());
+	float srate = getSampleRate();
+	int recalc = 0;
+
+	if (type != typeold) {
+		recalc = 1;
+	}
+
+	if (inv != invold) {
+		recalc = 1;
+	}
+
+	// Settings changed
+	if (recalc) {
+		// Clear filter states
+		zn1 = zn2 = zd1 = zd2 = 0.0;
+		clearbrickwall();
+
+		// Recalculate filter coeffs
+		brickwall(std::min(0.45 * srate, 21000.), srate);
+		emphasis(srate);
+	}
+
 	double tmp;
 	double in;
 
 	for (uint32_t i = 0; i < frames; i++) {
 		in = inputs[0][i];
 		tmp = run_filter(in);
+		tmp = run_brickwall(tmp);
 		outputs[0][i] = in;
 		outputs[0][i] = (float)tmp;
 	}
+
+	typeold = type;
+	invold = inv;
 }
 
 // -----------------------------------------------------------------------

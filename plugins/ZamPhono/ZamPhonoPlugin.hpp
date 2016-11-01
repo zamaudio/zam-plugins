@@ -102,14 +102,20 @@ protected:
     void run(const float** inputs, float** outputs, uint32_t frames) override;
     void emphasis(float srate);
     double run_filter(double in);
+    void brickwall(float fc, float srate);
+    void clearbrickwall(void);
+    double run_brickwall(double in);
 
         double zn1, zn2, zd1, zd2;
         double b0, b1, b2;
         double a1, a2;
+    double state[4];
+    double A0, A1, A2, B0, B1, B2;
+
     // -------------------------------------------------------------------
 
 private:
-    float type, inv;
+    float type, inv, typeold, invold;
 };
 
 // -----------------------------------------------------------------------
