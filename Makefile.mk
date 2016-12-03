@@ -82,7 +82,7 @@ endif
 # Check for optional libs
 
 ifeq ($(LINUX),true)
-HAVE_DGL   = $(shell pkg-config --exists gl x11 && echo true)
+HAVE_DGL   = $(shell pkg-config --exists gl && echo true)
 HAVE_JACK  = $(shell pkg-config --exists jack   && echo true)
 HAVE_LIBLO = $(shell pkg-config --exists liblo  && echo true)
 endif
@@ -101,16 +101,16 @@ endif
 ifeq ($(HAVE_DGL),true)
 
 ifeq ($(LINUX),true)
-DGL_FLAGS = $(shell pkg-config --cflags gl x11)
-DGL_LIBS  = $(shell pkg-config --libs gl x11)
+DGL_FLAGS = $(shell pkg-config --cflags gl glfw3)
+DGL_LIBS  = $(shell pkg-config --libs gl glfw3)
 endif
 
 ifeq ($(MACOS),true)
-DGL_LIBS  = -framework OpenGL -framework Cocoa
+DGL_LIBS  = -framework OpenGL -framework Cocoa -lglfw
 endif
 
 ifeq ($(WIN32),true)
-DGL_LIBS  = -lopengl32 -lgdi32
+DGL_LIBS  = -lopengl32 -lgdi32 -lglfw3dll
 endif
 
 endif # HAVE_DGL
