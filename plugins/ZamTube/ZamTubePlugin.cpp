@@ -237,7 +237,7 @@ void ZamTubePlugin::activate()
 	ckt.warmup_tubes();
 
         fSamplingFreq = Fs;
-        fConst0 = float(std::fminf(192000.0, std::fmaxf(1.0, fSamplingFreq)));
+        fConst0 = float(MIN(192000.0, MAX(1.0, fSamplingFreq)));
         fConst1 = (2 * fConst0);
         fConst2 = faustpower<2>(fConst1);
         fConst3 = (3 * fConst1);

@@ -31,6 +31,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define SWAP_NN(x,y) {T tmp=y; y=-x; x=-tmp;}
 #define TOLERANCE 1e-6
 
+#define MAX(x, y) (( (x) > (y) ) ? x : y )
+#define MIN(x, y) (( (x) < (y) ) ? x : y )
+
 typedef double T;
 
 static inline float
