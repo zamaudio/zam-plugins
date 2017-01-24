@@ -19,17 +19,14 @@
  */
 
 #include "ZamTubePlugin.hpp"
+#include <stdio.h>
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 ZamTubePlugin::ZamTubePlugin()
-    : Plugin(paramCount, 1, 0), // 1 program, 0 states
-		Vi(0.0,10000.0), Ci(0.0000001,48000.0), Ck(0.00001,48000.0), Co(0.00000001,48000.0), Ro(1000000.0), Rg(20000.0), 
-		Ri(1000000.0), Rk(1000.0), E(250.0,100000.0), 
-		S0(&Ci,&Vi), I0(&S0), P0(&I0,&Ri), S1(&Rg,&P0), 
-		I1(&S1), I3(&Ck,&Rk), S2(&Co,&Ro), I4(&S2), P2(&I4,&E) 
+    : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
     // set default values
     loadProgram(0);
@@ -48,7 +45,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "tubedrive";
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -30.0f;
+        parameter.ranges.min = 0.0f;
         parameter.ranges.max = 30.0f;
         break;
     case paramBass:
@@ -56,18 +53,18 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bass";
         parameter.symbol     = "bass";
         parameter.unit       = " ";
-        parameter.ranges.def = 0.5f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
+        parameter.ranges.max = 0.5f;
         break;
     case paramMiddle:
         parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Mids";
         parameter.symbol     = "mids";
         parameter.unit       = " ";
-        parameter.ranges.def = 0.5f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
+        parameter.ranges.max = 0.5f;
         break;
     case paramTreble:
         parameter.hints      = kParameterIsAutomable;
@@ -76,7 +73,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
+        parameter.ranges.max = 0.5f;
         break;
     case paramToneStack:
         parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
@@ -184,8 +181,8 @@ void ZamTubePlugin::loadProgram(uint32_t index)
 
     /* Default parameter values */
     tubedrive = 0.0f;
-    bass = 0.5f;
-    middle = 0.5f;
+    bass = 0.0f;
+    middle = 0.0f;
     treble = 0.0f;
     tonestack = 0.0f;
     mastergain = 0.0f;
@@ -206,51 +203,25 @@ void ZamTubePlugin::activate()
 	T Fs = getSampleRate();
 	
 	// Passive components
-	T ci = 0.0000001;	//100nF
-	T ck = 0.00001;		//10uF
-	T co = 0.00000001;	//10nF
-	T ro = 1000000.0;	//1Mohm
-	T rp = 100000.0;	//100kohm
-	T rg = 20000.0;		//20kohm
-	T ri = 1000000.0;	//1Mohm
-	T rk = 1000.0;		//1kohm
+	ci = 0.0000001	;	//100nF
+	ck = 0.00001;		//10uF
+	co = 0.00000001;	//10nF
+	ro = 1000000.0;		//1Mohm
+	rp = 100000.0;		//100kohm
+	rg = 20000.0;		//20kohm
+	ri = 1000000.0;		//1Mohm
+	rk = 1000.0;		//1kohm
 	e = 250.0;		//250V
 
-	Vi = V(0.0,10000.0);	//1kohm internal resistance
-	Ci = C(ci, Fs);
-	Ck = C(ck, Fs);
-	Co = C(co, Fs);
-	Ro = R(ro);
-	Rg = R(rg);
-	Ri = R(ri);
-	Rk = R(rk);
-	E = V(e, rp);
-
-	//Official
-	//->Gate
-	S0 = ser(&Ci, &Vi);
-	I0 = inv(&S0);
-	P0 = par(&I0, &Ri);
-	S1 = ser(&Rg, &P0);
-	I1 = inv(&S1);
-
-	//->Cathode
-	I3 = par(&Ck, &Rk);
-
-	//->Plate
-	S2 = ser(&Co, &Ro);
-	I4 = inv(&S2);
-	P2 = par(&I4, &E);
-
 	// 12AX7 triode model RSD-1
-	v.g1 = 2.242e-3;
-	v.mu1 = 103.2;
-	v.gamma1 = 1.26;
-	v.c1 = 3.4;
-	v.gg1 = 6.177e-4;
-	v.e1 = 1.314;
-	v.cg1 = 9.901;
-	v.ig01 = 8.025e-8;
+	v.g = 2.242e-3;
+	v.mu = 103.2;
+	v.gamma = 1.26;
+	v.c = 3.4;
+	v.gg = 6.177e-4;
+	v.e = 1.314;
+	v.cg = 9.901;
+	v.ig0 = 8.025e-8;
 
 	// 12AX7 triode model EHX-1
 	v.g2 = 1.371e-3;
@@ -262,8 +233,11 @@ void ZamTubePlugin::activate()
 	v.cg2 = 11.99;
 	v.ig02 = 3.917e-8;
 
+	ckt.updateRValues(ci, ck, co, e, 0.0, rp, rg, ri, rk, ro, 10000.0, Fs, v);
+	ckt.warmup_tubes();
+
         fSamplingFreq = Fs;
-        fConst0 = float(min(192000, max(1, fSamplingFreq)));
+        fConst0 = float(std::fminf(192000.0, std::fmaxf(1.0, fSamplingFreq)));
         fConst1 = (2 * fConst0);
         fConst2 = faustpower<2>(fConst1);
         fConst3 = (3 * fConst1);
@@ -299,18 +273,6 @@ void ZamTubePlugin::activate()
 
 void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	T tubetone = 0.f;
-	
-	//12AX7 triode tube mod
-	v.g = v.g1 + (v.g2-v.g1)*tubetone;
-	v.mu = v.mu1 + (v.mu2-v.mu1)*tubetone;
-	v.gamma = v.gamma1 + (v.gamma2-v.gamma1)*tubetone;
-	v.c = v.c1 + (v.c2-v.c1)*tubetone;
-	v.gg = v.gg1 + (v.gg2-v.gg1)*tubetone;
-	v.e = v.e1 + (v.e2-v.e1)*tubetone;
-	v.cg = v.cg1 + (v.cg2-v.cg1)*tubetone;
-	v.ig0 = v.ig01 + (v.ig02-v.ig01)*tubetone;
-
 	float 	fSlow0 = middle;
 	float 	fSlow1 = (1.3784375e-06f * fSlow0);
 	float 	fSlow2 = expf((3.4f * (bass - 1)));
@@ -978,63 +940,25 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float 	fSlow664 = ((fSlow31 == 0) / fSlow651);
 
 	float tubeout = 0.f;
+	ckt.t.insane = insane;
 	
 	for (uint32_t i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
-		float in = sanitize_denormal(inputs[0][i]);
+		double in = sanitize_denormal(inputs[0][i]);
 
 		// protect against overflowing circuit
 		in = fabs(in) < DANGER ? in : 0.f; 
 
-		Vi.e = in*from_dB(tubedrive);
-
-		//Step 2: propagate waves up to the triode and push values into triode element
-		I1.waveUp();
-		I3.waveUp();
-		P2.waveUp();
-		v.G.WD = sanitize_denormal(I1.WU);
-		v.K.WD = sanitize_denormal(I3.WU); 
-		v.P.WD = sanitize_denormal(P2.WU);
-		v.vg = v.G.WD;
-		v.vk = v.K.WD;
-		v.vp = v.P.WD;
-		v.G.PortRes = sanitize_denormal(I1.PortRes);
-		v.K.PortRes = sanitize_denormal(I3.PortRes);
-		v.P.PortRes = sanitize_denormal(P2.PortRes);
-
-		//Step 3: compute wave reflections inside the triode
-		T vg0, vg1, vp0, vp1;
-
-		vg0 = -10.0;
-		vg1 = 10.0;
-		v.vg = sanitize_denormal(v.zeroffg(vg0,vg1,TOLERANCE));
-		//v.vg = v.secantfg(&vg0,&vg1);
-
-		vp0 = e;
-		vp1 = 0.0;
-		if (insane > 0.5f) {
-			v.vp = sanitize_denormal(v.zeroffp_insane(vp0,vp1,TOLERANCE));
+		double ViE = in*from_dB(tubedrive);
+		tubeout = 10. * ckt.advanc(ViE) * from_dB(30. - tubedrive);
+		if (!ckt.on) {
+			tubeout = 0.0;
 		} else {
-			v.vp = sanitize_denormal(v.zeroffp(vp0,vp1,TOLERANCE));
+			tubeout = sanitize_denormal(tubeout);
 		}
-		//v.vp = v.secantfp(&vp0,&vp1);
-
-		v.vk = sanitize_denormal(v.ffk());
-
-		v.G.WU = sanitize_denormal(2.0*v.vg-v.G.WD);
-		v.K.WU = sanitize_denormal(2.0*v.vk-v.K.WD);
-		v.P.WU = sanitize_denormal(2.0*v.vp-v.P.WD);
-		
 		outputs[0][i] = in;
-		
-		tubeout = -Ro.Voltage()/e; //invert signal and rescale
-		tubeout = sanitize_denormal(tubeout);
 
-		P2.setWD(v.P.WU); 
-		I1.setWD(v.G.WU);
-		I3.setWD(v.K.WU);
-		
 		//Tone Stack sim
 		fRec0[0] = sanitize_denormal((float)tubeout - (fSlow16 * (((fSlow14 * fRec0[2]) + (fSlow13 * fRec0[1])) + (fSlow11 * fRec0[3]))));
 		fRec1[0] = sanitize_denormal((float)tubeout - (fSlow47 * (((fSlow45 * fRec1[2]) + (fSlow44 * fRec1[1])) + (fSlow42 * fRec1[3]))));

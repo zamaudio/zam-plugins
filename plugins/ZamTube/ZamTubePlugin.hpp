@@ -17,7 +17,8 @@
 #define ZAMTUBEPLUGIN_HPP_INCLUDED
 
 #include "DistrhoPlugin.hpp"
-#include "wdf.h"
+#include "triode.h"
+#include "wdfcircuits.h"
 
 START_NAMESPACE_DISTRHO
 
@@ -39,33 +40,16 @@ class ZamTubePlugin : public Plugin
 {
 public:
 	Triode v;
-	V Vi;
-	C Ci;
-	C Ck;
-	C Co;
-	R Ro;
-	R Rg;
-	R Ri;
-	R Rk;
-	V E;
-
+	TubeStageCircuit ckt;
 	T e;
-
-	//Official
-	//->Gate
-	ser S0;
-	inv I0;
-	par P0;
-	ser S1;
-	inv I1;
-
-	//->Cathode
-	par I3;
-
-	//->Plate
-	ser S2;
-	inv I4;
-	par P2;
+	T ci;
+	T ck;
+	T co;
+	T ro;
+	T rp;
+	T rg;
+	T ri;
+	T rk;
 
         float   fConst0;
         float   fConst1;

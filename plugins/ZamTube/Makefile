@@ -14,7 +14,7 @@ NAME = ZamTube
 
 OBJS_DSP = \
 	ZamTubePlugin.cpp.o \
-	wdf.cpp.o
+	triode.cpp.o
 
 OBJS_UI  = \
 	ZamTubeArtwork.cpp.o \

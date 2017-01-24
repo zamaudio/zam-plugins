@@ -1,202 +1,62 @@
-//wdf.cpp
-
 #include <stdio.h>
 #include <inttypes.h>
 #include <cmath>
-#include "wdf.h"
+#include "triode.h"
 using std::abs;
 
-WDF::WDF() {}
-
-void WDF::setWD(T val) {
-	WD = val;
-	state = val;
-	DUMP(printf("DOWN\tWDF\t%c\tWD=%f\tWU=%f\tV=%f\n",type,WD,WU,(WD+WU)/2.0));	
+T Triode::getC(void)
+{
+	return Kb;
 }
 
-void OnePort::setWD(T val) {
-	WD = val;
-	state = val;
-	DUMP(printf("DOWN\tOneport\t%c\tWD=%f\tWU=%f\tV=%f\n",type,WD,WU,(WD+WU)/2.0));	
+T Triode::getP(void)
+{
+	return Pb;
 }
 
-T WDF::Voltage() {
-	T Volts = (WU + WD) / 2.0;
-	return Volts;
+T Triode::getG(void)
+{
+	return Gb;
 }
 
-T WDF::Current() {
-	T Amps = (WU - WD) / (2.0*PortRes);
-	return Amps;
-}
+void Triode::compute(T Pbb, T Gbb, T Kbb)
+{
+//	T Kb_o = Kb;
+//	T Gb_o = Gb;
+//	T Pb_o = Pb;
 
-template <class Port1, class Port2>ser::ser(Port1 *l, Port2 *r) : Adaptor(THREEPORT) {
-	left = l;
-	right = r;
-	PortRes = l->PortRes + r->PortRes;
-	type = 'S';
-}
+//	Kb = (2.0*vk-Kbb);
+//	Gb = (2.0*vg-Gbb);
+//	Pb = (2.0*vp-Pbb);
 
-ser::ser(R* l, par* r) : Adaptor(THREEPORT) {
-	left = l;
-	right = r;
-	PortRes = l->PortRes + r->PortRes;
-	type = 'S';
-}
+	Kb = Kbb;
+	Gb = Gbb;
+	Pb = Pbb;
 
-ser::ser(C* l, R* r) : Adaptor(THREEPORT) {
-	left = l;
-	right = r;
-	PortRes = l->PortRes + r->PortRes;
-	type = 'S';
-}
+	//Step 3: compute wave reflections inside the triode
+	T vg0, vg1, vp0, vp1;
 
-ser::ser(C* l, V* r) : Adaptor(THREEPORT) {
-	left = l;
-	right = r;
-	PortRes = l->PortRes + r->PortRes;
-	type = 'S';
-}
+	vg0 = -10.0;
+	vg1 = 10.0;
+	vg = sanitize_denormal(zeroffg(vg0, vg1, TOLERANCE));
+	//v.vg = v.secantfg(&vg0,&vg1);
 
-template <class Port>inv::inv(Port *l) : Adaptor(PASSTHROUGH) {
-	left = l;
-	PortRes = l->PortRes;
-	type = 'I';
-}
-
-inv::inv(ser *l) : Adaptor(PASSTHROUGH) {
-	left = l;
-	PortRes = l->PortRes;
-	type = 'I';
-}
-
-T ser::waveUp() {
-	//Adaptor::WU = -left->waveUp() - right->waveUp();
-	WDF::WU = -left->waveUp() - right->waveUp();
-	DUMP(printf("UP\tser\tWU=%f\tWD=%f\tV=%f\n",WU,WD,(WD+WU)/2.0));
-	return WU;
-}
-
-template <class Port1, class Port2>par::par(Port1 *l, Port2 *r) : Adaptor(THREEPORT) {
-	left = l;
-	right = r;
-	PortRes = 1.0 / (1.0 / l->PortRes + 1.0 / r->PortRes);
-	type = 'P';
-}
-
-par::par(inv* l, R* r) : Adaptor(THREEPORT) {
-	left = l;
-	right = r;
-	PortRes = 1.0 / (1.0 / l->PortRes + 1.0 / r->PortRes);
-	type = 'P';
-}
-
-par::par(inv* l, V* r) : Adaptor(THREEPORT) {
-	left = l;
-	right = r;
-	PortRes = 1.0 / (1.0 / l->PortRes + 1.0 / r->PortRes);
-	type = 'P';
-}
-
-par::par(C* l, R* r) : Adaptor(THREEPORT) {
-	left = l;
-	right = r;
-	PortRes = 1.0 / (1.0 / l->PortRes + 1.0 / r->PortRes);
-	type = 'P';
-}
-
-T par::waveUp() {
-	T G23 = 1.0 / left->PortRes + 1.0 / right->PortRes;
-	WDF::WU = (1.0 / left->PortRes)/G23*left->waveUp() + (1.0 / right->PortRes)/G23*right->waveUp();
-	DUMP(printf("UP\tpar\tWU=%f\tWD=%f\tV=%f\n",WU,WD,(WD+WU)/2.0));
-	return WU;
-}
-
-Adaptor::Adaptor(int flag) {
-	WU = 0.0;
-	WD = 0.0;
-	switch (flag) {
-		case ONEPORT:
-			left = NULL;
-			right = NULL;
-			break;
-		case PASSTHROUGH:
-			right = NULL;
-			break;
-		default:
-		case THREEPORT:
-			break;
+	vp0 = e;
+	vp1 = 0.0;
+	if (insane) {
+		vp = sanitize_denormal(zeroffp_insane(vp0,vp1,TOLERANCE));
+	} else {
+		vp = sanitize_denormal(zeroffp(vp0,vp1,TOLERANCE));
 	}
-}
+	//v.vp = v.secantfp(&vp0,&vp1);
 
-void ser::setWD(T waveparent) {
-	Adaptor::setWD(waveparent);
-	DUMP(printf("SER WP=%f\n",waveparent));
-	left->setWD(left->WU-(2.0*left->PortRes/(PortRes+left->PortRes+right->PortRes))*(waveparent+left->WU+right->WU));
-	right->setWD(right->WU-(2.0*right->PortRes/(PortRes+left->PortRes+right->PortRes))*(waveparent+left->WU+right->WU));
-}
+	vk = sanitize_denormal(ffk());
 
-void par::setWD(T waveparent) {
-	Adaptor::setWD(waveparent);
-	DUMP(printf("PAR WP=%f\n",waveparent));
-	T p = 2.0*(waveparent/PortRes + left->WU/left->PortRes + right->WU/right->PortRes)/(1.0/PortRes + 1.0/left->PortRes + 1.0/right->PortRes);
+	Kb = (2.0*vk-Kb);
+	Gb = (2.0*vg-Gb);
+	Pb = (2.0*vp-Pb);
 
-	left->setWD((p - left->WU));
-	right->setWD((p - right->WU));
-}
-
-T inv::waveUp() {
-	///////////WD = -left->WD;
-	WU = -left->waveUp(); 	//-
-	DUMP(printf("UP\tinv\tWU=%f\tWD=%f\tV=%f\n",WU,WD,(WD+WU)/2.0));
-	return WU;
-}
-
-void inv::setWD(T waveparent) {
-	WDF::setWD(waveparent);
-	DUMP(printf("INV WP=%f\n",waveparent));
-	//left->WD = -waveparent;		//-
-	///////////left->WU = -WU;
-	left->setWD(-waveparent);	//-
-	
-}
-
-R::R(T res) : Adaptor(ONEPORT) {
-	PortRes = res;
-	type = 'R';
-}
-
-T R::waveUp() {
-	WU = 0.0;
-	DUMP(printf("UP\tR\tWU=%f\tWD=%f\tV=%f\n",WU, WD,(WD+WU)/2.0));
-	return WU;
-}
-
-C::C(T c, T fs) : Adaptor(ONEPORT) {
-	PortRes = 1.0/(2.0*c*fs);
-	state = 0.0;
-	type = 'C';
-}
-
-T C::waveUp() {
-	WU = state;
-	DUMP(printf("UP\tC\tWU=%f\tWD=%f\tV=%f\n",WU,WD,(WD+WU)/2.0));
-	return WU;
-}
-
-V::V(T ee, T r) : Adaptor(ONEPORT) {
-	e = ee;
-	PortRes = r;
-	WD = 0.0;  //always?
-	type = 'V';
-}
-
-T V::waveUp() {
-	T watts = 100.0;
-	WU = 2.0*e - WD;
-	if (Voltage()*Current() > watts) WU *= 0.995;//0.9955;
-	DUMP(printf("UP\tV\tWU=%f\tWD=%f\tV=%f\n",WU, WD,(WD+WU)/2.0));
-	return WU;
+	//printf("vg = %f  vp = %f  vk = %f  Gb = %f  Kb = %f  Pb = %f\n", vg, vp, vk, Gb, Kb, Pb);
 }
 
 inline T _exp(const T x)
@@ -216,55 +76,50 @@ inline T _log(const T x)
     return 2.0*(a+a*a*a/3.0+a*a*a*a*a/5.0+a*a*a*a*a*a*a/7.0+a*a*a*a*a*a*a*a*a/9.0); 
 }
 
-inline T _pow(const T a, const T b)
-{
-    return pow(a,b);
-}
-
 T Triode::ffg(T VG) {
-        return (G.WD-G.PortRes*(gg*_pow(_log(1.0+_exp(cg*VG))/cg,e)+ig0)-VG);
+        return (Gb-Gr*(gg*pow(log(1.0+exp(cg*VG))/cg,e)+ig0)-VG);
 }
 
 T Triode::fgdash(T VG) {
         T a1 = exp(cg*VG);
         T b1 = -e*pow(log(a1+1.0)/cg,e-1.0);
-        T c1 = a1/(a1+1.0)*gg*G.PortRes;
+        T c1 = a1/(a1+1.0)*gg*Gr;
         return (b1*c1);
 }
 
-T Triode::ffp(T VP) { 
-    static bool prepared = false;
-    static double scale;
-    static double coeff[4];
-    if(!prepared) {
-        //go go series expansion
-        const double L2 = log(2.0);
+T Triode::ffp(T VP) {
+	static bool prepared = false;
+	static double scale;
+	static double coeff[4];
+	if(!prepared) {
+		//go go series expansion
+		const double L2 = log(2.0);
 
-        const double scale = pow(L2,gamma-2)/(8.0*pow(c,gamma));
-        coeff[0] = 8.0*L2*L2*scale;
-        coeff[1] = gamma*c*L2*4*scale;
-        coeff[2] = (c*c*gamma*gamma+L2*c*c*gamma-c*c*gamma)*scale;
-        coeff[3] = 0.0;
-        prepared = true;
-    }
+		const double scale = pow(L2,gamma-2)/(8.0*pow(c,gamma));
+		coeff[0] = 8.0*L2*L2*scale;
+		coeff[1] = gamma*c*L2*4*scale;
+		coeff[2] = (c*c*gamma*gamma+L2*c*c*gamma-c*c*gamma)*scale;
+		coeff[3] = 0.0;
+		prepared = true;
+	}
 
-    double A = VP/mu+vg;
-    return (P.WD+P.PortRes*((g*(coeff[0]+coeff[1]*A+coeff[2]*A*A))+(G.WD-vg)/G.PortRes)-VP);
+	double A = VP/mu+vg;
+	return (Pb+Pr*((g*(coeff[0]+coeff[1]*A+coeff[2]*A*A))+(Gb-vg)/Gr)-VP);
 }
 
 T Triode::ffp_insane(T VP) {
-	return (P.WD+P.PortRes*((g*pow(log(1.0+exp(c*(VP/mu+vg)))/c,gamma))+(G.WD-vg)/G.PortRes)-VP);
+	return (Pb+Pr*((g*pow(log(1.0+exp(c*(VP/mu+vg)))/c,gamma))+(Gb-vg)/Gr)-VP);
 }
 
 T Triode::fpdash(T VP) {
         T a1 = exp(c*(vg+VP/mu));
         T b1 = a1/(mu*(a1+1.0));
-        T c1 = g*gamma*P.PortRes*pow(log(a1+1.0)/c,gamma-1.0);
+        T c1 = g*gamma*Pr*pow(log(a1+1.0)/c,gamma-1.0);
         return (c1*b1);
 }
 
 T Triode::ffk() {
-        return (K.WD - K.PortRes*(g*pow(log(1.0+exp(c*(vp/mu+vg)))/c,gamma)));
+        return (Kb - Kr*(g*pow(log(1.0+exp(c*(vp/mu+vg)))/c,gamma)));
 }
 /*
 T Triode::secantfg(T *i1, T *i2) {
@@ -362,6 +217,11 @@ T Triode::r8_abs ( T x )
 
 Triode::Triode()
 {
+	vg = 0.0;
+	vk = 0.0;
+	vp = 0.0;
+	insane = false;
+
 	T r = 1.0;
 
 	while ( 1.0 < ( T ) ( 1.0 + r )	)

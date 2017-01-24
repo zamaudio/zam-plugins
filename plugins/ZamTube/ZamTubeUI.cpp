@@ -58,25 +58,25 @@ ZamTubeUI::ZamTubeUI()
 
     fKnobBass = new ZamKnob(this, knobImage);
     fKnobBass->setAbsolutePos(63, 140.5);
-    fKnobBass->setRange(0.f, 1.0f);
+    fKnobBass->setRange(0.f, 0.5f);
     fKnobBass->setLabel(true);
     fKnobBass->setScrollStep(0.1f);
-    fKnobBass->setDefault(0.5f);
+    fKnobBass->setDefault(0.0f);
     fKnobBass->setRotationAngle(240);
     fKnobBass->setCallback(this);
 
     fKnobMids = new ZamKnob(this, knobImage);
     fKnobMids->setAbsolutePos(63, 87);
-    fKnobMids->setRange(0.f, 1.0f);
+    fKnobMids->setRange(0.f, 0.5f);
     fKnobMids->setLabel(true);
     fKnobMids->setScrollStep(0.1f);
-    fKnobMids->setDefault(0.5f);
+    fKnobMids->setDefault(0.0f);
     fKnobMids->setRotationAngle(240);
     fKnobMids->setCallback(this);
 
     fKnobTreb = new ZamKnob(this, knobImage);
     fKnobTreb->setAbsolutePos(63, 33);
-    fKnobTreb->setRange(0.f, 1.0f);
+    fKnobTreb->setRange(0.f, 0.5f);
     fKnobTreb->setLabel(true);
     fKnobTreb->setScrollStep(0.1f);
     fKnobTreb->setDefault(0.0f);
@@ -151,8 +151,8 @@ void ZamTubeUI::programLoaded(uint32_t index)
 
     // Default values
     fKnobTube->setValue(0.0f);
-    fKnobBass->setValue(0.5f);
-    fKnobMids->setValue(0.5f);
+    fKnobBass->setValue(0.0f);
+    fKnobMids->setValue(0.0f);
     fKnobTreb->setValue(0.0f);
     fKnobGain->setValue(0.0f);
     fToggleInsane->setDown(false);
