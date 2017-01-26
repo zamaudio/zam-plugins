@@ -53,27 +53,27 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bass";
         parameter.symbol     = "bass";
         parameter.unit       = " ";
-        parameter.ranges.def = 0.0f;
+        parameter.ranges.def = 5.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 0.5f;
+        parameter.ranges.max = 10.0f;
         break;
     case paramMiddle:
         parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Mids";
         parameter.symbol     = "mids";
         parameter.unit       = " ";
-        parameter.ranges.def = 0.0f;
+        parameter.ranges.def = 5.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 0.5f;
+        parameter.ranges.max = 10.0f;
         break;
     case paramTreble:
         parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Treble";
         parameter.symbol     = "treb";
         parameter.unit       = " ";
-        parameter.ranges.def = 0.0f;
+        parameter.ranges.def = 5.0f;
         parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 0.5f;
+        parameter.ranges.max = 10.0f;
         break;
     case paramToneStack:
         parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
@@ -90,8 +90,8 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "gain";
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -15.0f;
-        parameter.ranges.max = 15.0f;
+        parameter.ranges.min = -30.0f;
+        parameter.ranges.max = 30.0f;
         break;
     case paramInsane:
         parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
@@ -181,9 +181,9 @@ void ZamTubePlugin::loadProgram(uint32_t index)
 
     /* Default parameter values */
     tubedrive = 0.0f;
-    bass = 0.0f;
-    middle = 0.0f;
-    treble = 0.0f;
+    bass = 5.f;
+    middle = 5.f;
+    treble = 5.f;
     tonestack = 0.0f;
     mastergain = 0.0f;
     insane = 0.0f;
@@ -273,9 +273,9 @@ void ZamTubePlugin::activate()
 
 void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float 	fSlow0 = middle;
+	float 	fSlow0 = middle / 20.;
 	float 	fSlow1 = (1.3784375e-06f * fSlow0);
-	float 	fSlow2 = expf((3.4f * (bass - 1)));
+	float 	fSlow2 = expf((3.4f * (bass / 20. - 1)));
 	float 	fSlow3 = (8.396625e-06f + ((7.405375e-05f * fSlow2) + (fSlow0 * (((1.3784375000000003e-05f * fSlow2) - 5.7371875e-06f) - fSlow1))));
 	float 	fSlow4 = ((1.3062500000000001e-09f * fSlow2) - (1.30625e-10f * fSlow0));
 	float 	fSlow5 = (4.468750000000001e-09f * fSlow2);
@@ -290,7 +290,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float 	fSlow14 = ((fSlow10 + (fConst2 * (fSlow3 - fSlow12))) - 3);
 	float 	fSlow15 = (0 - (1 + (fSlow10 + (fConst2 * (fSlow3 + fSlow7)))));
 	float 	fSlow16 = (1.0f / fSlow15);
-	float 	fSlow17 = treble;
+	float 	fSlow17 = treble / 20.;
 	float 	fSlow18 = ((fSlow0 * (1.30625e-10f + fSlow4)) + (fSlow17 * ((4.46875e-10f - (4.46875e-10f * fSlow0)) + fSlow5)));
 	float 	fSlow19 = (fConst3 * fSlow18);
 	float 	fSlow20 = (2.55375e-07f + (((9.912500000000003e-07f * fSlow17) + (fSlow0 * (1.4128125e-06f - fSlow1))) + (fSlow2 * (2.5537500000000007e-06f + (1.3784375000000003e-05f * fSlow0)))));
@@ -951,7 +951,8 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		in = fabs(in) < DANGER ? in : 0.f; 
 
 		double ViE = in*from_dB(tubedrive);
-		tubeout = 10. * ckt.advanc(ViE) * from_dB(30. - tubedrive);
+		tubeout = 10. * ckt.advanc(ViE) * from_dB(30. - tubedrive)
+				* from_dB(12.);
 		if (!ckt.on) {
 			tubeout = 0.0;
 		} else {
