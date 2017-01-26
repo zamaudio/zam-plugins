@@ -199,7 +199,7 @@ void ZamGateX2Plugin::setParameterValue(uint32_t index, float value)
 	}
 }
 
-void ZamGateX2Plugin::loadProgram(uint32_t index)
+void ZamGateX2Plugin::loadProgram(uint32_t)
 {
 	attack = 50.0;
 	release = 100.0;
@@ -263,7 +263,6 @@ void ZamGateX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	float att;
 	float rel;
 	float g;
-	float ming;
 	float fs;
 	float in0;
 	float in1;

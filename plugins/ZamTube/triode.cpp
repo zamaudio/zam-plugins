@@ -89,7 +89,6 @@ T Triode::fgdash(T VG) {
 
 T Triode::ffp(T VP) {
 	static bool prepared = false;
-	static double scale;
 	static double coeff[4];
 	if(!prepared) {
 		//go go series expansion

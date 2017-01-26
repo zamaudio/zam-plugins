@@ -853,7 +853,6 @@ float ZaMultiCompPlugin::averageabs(float samples[])
 
 void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float srate = getSampleRate();
 	float maxx = max;
 
         int tog1 = (toggle[0] > 0.5f) ? 1 : 0;

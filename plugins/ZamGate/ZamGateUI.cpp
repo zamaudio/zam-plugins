@@ -145,7 +145,7 @@ void ZamGateUI::parameterChanged(uint32_t index, float value)
 	}
 }
 
-void ZamGateUI::programLoaded(uint32_t index)
+void ZamGateUI::programLoaded(uint32_t)
 {
 	// Default values
 	fKnobAttack->setValue(50.0f);

@@ -199,7 +199,7 @@ void ZamGatePlugin::setParameterValue(uint32_t index, float value)
 	}
 }
 
-void ZamGatePlugin::loadProgram(uint32_t index)
+void ZamGatePlugin::loadProgram(uint32_t)
 {
 	attack = 50.0;
 	release = 100.0;
@@ -248,11 +248,10 @@ float ZamGatePlugin::averageabs(float samples[])
 void ZamGatePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
-	float absamplel, absample;
+	float absample;
 	float att;
 	float rel;
 	float gl;
-	float ming;
 	float fs;
 	fs = getSampleRate();
 	gl = gatestatel;

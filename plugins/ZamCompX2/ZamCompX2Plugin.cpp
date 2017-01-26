@@ -317,7 +317,6 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	bool usesidechain = (sidechain < 0.5) ? false : true;
 
         int attslew = 0;
-        int relslew = 0;
 	float max = 0.f;
 	float lgaininp = 0.f;
 	float rgaininp = 0.f;
@@ -335,7 +334,6 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 in0 = inputs[0][i];
 		in1 = inputs[1][i];
 		ingain = usesidechain ? inputs[2][i] : fmaxf(in0, in1);
-		relslew = 0;
                 attslew = 0;
 		Lyg = Ryg = 0.f;
                 if (usesidechain) {
@@ -360,8 +358,6 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 			if (checkwidth <= slewwidth) {
 				if (Lyg >= oldL_yg) {
 					attslew = 1;
-				} else {
-					relslew = 1;
 				}
 			}
                 } else if (2.f*(Lxg-thresdb) > width) {
@@ -378,8 +374,6 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 			if (checkwidth <= slewwidth) {
 				if (Ryg >= oldR_yg) {
 					attslew = 1;
-				} else {
-					relslew = 1;
 				}
 			}
                 } else if (2.f*(Rxg-thresdb) > width) {
@@ -389,7 +383,6 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 
                 attack_coeff = attslew ? exp(-1000.f/((attack + 2.0*(slewfactor - 1)) * srate)) : attack_coeff;
                 // Don't slew on release
-		//release_coeff = relslew ? exp(-1000.f/((release + 2.0*(slewfactor - 1)) * srate)) : release_coeff;
 
                 if (stereo == STEREOLINK_UNCOUPLED) {
                         Lxl = Lxg - Lyg;

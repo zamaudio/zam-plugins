@@ -684,7 +684,6 @@ void ZamDynamicEQPlugin::run(const float** inputs, float** outputs, uint32_t fra
 
 	int choose = (sidechain < 0.5) ? 0 : 1;
 	float gaincontrol = 0.f;
-	float gainq;
 
 	linear_svf_set_params(&bandpass, srate, detectfreq, 4.);
 

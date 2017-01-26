@@ -297,11 +297,9 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
         float release_coeff = exp(-1000.f/(release * srate));
 
         int attslew = 0;
-        int relslew = 0;
 	float max = 0.f;
 	float lgaininp = 0.f;
 	float Lgain = 1.f;
-        float Rgain = 1.f;
         float Lxg, Lxl, Lyg, Lyl, Ly1;
         float checkwidth = 0.f;
 	bool usesidechain = (sidechain < 0.5) ? false : true;
@@ -314,7 +312,6 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
                 in0 = inputs[0][i];
                 in1 = inputs[1][i];
 		ingain = usesidechain ? in1 : in0;
-		relslew = 0;
                 attslew = 0;
 		Lyg = 0.f;
 		Lxg = (ingain==0.f) ? -160.f : to_dB(fabs(ingain));
@@ -331,8 +328,6 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 			if (checkwidth <= slewwidth) {
 				if (Lyg >= oldL_yg) {
 					attslew = 1;
-				} else {
-					relslew = 1;
 				}
 			}
                 } else if (2.f*(Lxg-thresdb) > width) {
@@ -342,7 +337,6 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
                 attack_coeff = attslew ? exp(-1000.f/((attack + 2.0*(slewfactor - 1)) * srate)) : attack_coeff;
                 // Don't slew on release
-		//release_coeff = relslew ? exp(-1000.f/((release + 2.0*(slewfactor - 1)) * srate)) : release_coeff;
 
                 Lxl = Lxg - Lyg;
 

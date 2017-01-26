@@ -116,8 +116,8 @@ private:
 ZamKnob::ZamKnob(Window& parent, const Image& image, Orientation orientation) noexcept
     : Widget(parent),
       NanoVG(CREATE_ANTIALIAS),
-      fLabel(false),
       fImage(image),
+      fLabel(false),
       fMinimum(0.0f),
       fMaximum(1.0f),
       fScrollStep(0.0f),
