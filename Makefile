@@ -15,7 +15,9 @@ include Makefile.mk
 all: libs $(PLUGINS) gen
 
 libs:
+ifeq ($(HAVE_DGL),true)
 	$(MAKE) -C dpf/dgl
+endif
 
 gen: $(PLUGINS) dpf/utils/lv2_ttl_generator
 	@$(CURDIR)/dpf/utils/generate-ttl.sh
@@ -63,7 +65,9 @@ clean:
 	for plugin in $(PLUGINS); do \
 		$(MAKE) -C plugins/"$$plugin" clean; \
 	done
+ifeq ($(HAVE_DGL),true)
 	$(MAKE) clean -C dpf/dgl
+endif
 	$(MAKE) clean -C dpf/utils/lv2-ttl-generator
 
 # --------------------------------------------------------------
