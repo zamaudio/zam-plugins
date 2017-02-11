@@ -35,3 +35,10 @@
 	- Mousewheel feels nicer on all knobs
 	- Travis build integration
 	- Various bugfixes
+
+3.8 Wild-Tube release
+	- Major revamp of ZamTube DSP, no wave discontinuities
+	- Major DSP upgrade for multiband crossovers - flat response
+	- New plugin: ZamDynamicEQ
+	- New plugin: ZamPhono
+	- Fixed various compiler warnings
