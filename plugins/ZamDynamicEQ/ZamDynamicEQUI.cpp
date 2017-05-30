@@ -226,6 +226,9 @@ void ZamDynamicEQUI::parameterChanged(uint32_t index, float value)
     case ZamDynamicEQPlugin::paramSidechain:
         fToggleSidechain->setDown(value > 0.5);
         break;
+    case ZamDynamicEQPlugin::paramBoostCut:
+        fToggleBoostCut->setDown(value > 0.5);
+        break;
     case ZamDynamicEQPlugin::paramToggleLow:
         fToggleLow->setDown(value > 0.5);
         break;
@@ -238,6 +241,9 @@ void ZamDynamicEQUI::parameterChanged(uint32_t index, float value)
     case ZamDynamicEQPlugin::paramControlGain:
         fControlGain = value;
         repaint();
+        break;
+    case ZamDynamicEQPlugin::paramDetectFreq:
+        fKnobDetectFreq->setValue(value);
         break;
     case ZamDynamicEQPlugin::paramTargetFreq:
         fKnobTargetFreq->setValue(value);
