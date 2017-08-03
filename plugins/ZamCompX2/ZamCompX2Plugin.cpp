@@ -322,8 +322,8 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	float rgaininp = 0.f;
 	float Lgain = 1.f;
         float Rgain = 1.f;
-        float Lxg, Lxl, Lyg, Lyl, Ly1;
-        float Rxg, Rxl, Ryg, Ryl, Ry1;
+        float Lxg, Lxl, Lyg, Lyl;
+        float Rxg, Rxl, Ryg, Ryl;
         float checkwidth = 0.f;
 	uint32_t i;
 	float in0;
@@ -393,13 +393,14 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                         Lxl = Rxl = (Lxg - Lyg + Rxg - Ryg) / 2.f;
                 }
 
-                oldL_y1 = sanitize_denormal(oldL_y1);
-                oldR_y1 = sanitize_denormal(oldR_y1);
                 oldL_yl = sanitize_denormal(oldL_yl);
-                oldR_yl = sanitize_denormal(oldR_yl);
-                Ly1 = fmaxf(Lxl, release_coeff * oldL_y1+(1.f-release_coeff)*Lxl);
-		Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Ly1;
-                Ly1 = sanitize_denormal(Ly1);
+		if (Lxl < oldL_yl) {
+			Lyl = release_coeff * oldL_yl + (1.f-release_coeff)*Lxl;
+		} else if (Lxl > oldL_yl) {
+			Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Lxl;
+		} else {
+			Lyl = Lxl;
+		}
                 Lyl = sanitize_denormal(Lyl);
 
                 cdb = -Lyl;
@@ -407,9 +408,14 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 
                 gainred = Lyl;
 
-                Ry1 = fmaxf(Rxl, release_coeff * oldR_y1+(1.f-release_coeff)*Rxl);
-                Ryl = attack_coeff * oldR_yl+(1.f-attack_coeff)*Ry1;
-                Ry1 = sanitize_denormal(Ry1);
+                oldR_y1 = sanitize_denormal(oldR_y1);
+		if (Rxl < oldR_yl) {
+			Ryl = release_coeff * oldR_yl + (1.f-release_coeff)*Rxl;
+		} else if (Rxl > oldR_yl) {
+			Ryl = attack_coeff * oldR_yl+(1.f-attack_coeff)*Rxl;
+		} else {
+			Ryl = Rxl;
+		}
                 Ryl = sanitize_denormal(Ryl);
 
                 cdb = -Ryl;
@@ -424,8 +430,6 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 
                 oldL_yl = Lyl;
                 oldR_yl = Ryl;
-                oldL_y1 = Ly1;
-                oldR_y1 = Ry1;
                 oldL_yg = Lyg;
                 oldR_yg = Ryg;
         }

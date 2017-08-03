@@ -811,8 +811,8 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         float Rgain = 1.f;
         float Lxg, Lyg;
         float Rxg, Ryg;
-        float Lxl, Lyl, Ly1;
-        float Rxl, Ryl, Ry1;
+        float Lxl, Lyl;
+        float Rxl, Ryl;
 
         Lyg = Ryg = 0.f;
 	inL = sanitize_denormal(inL);
@@ -850,22 +850,29 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
                 Lxl = Rxl = (Lxg - Lyg + Rxg - Ryg) / 2.f;
         }
 
-        old_y1[0][k] = sanitize_denormal(old_y1[0][k]);
-        old_y1[1][k] = sanitize_denormal(old_y1[1][k]);
         old_yl[0][k] = sanitize_denormal(old_yl[0][k]);
         old_yl[1][k] = sanitize_denormal(old_yl[1][k]);
 
-        Ly1 = fmaxf(Lxl, release_coeff * old_y1[0][k]+(1.f-release_coeff)*Lxl);
-        Lyl = attack_coeff * old_yl[0][k]+(1.f-attack_coeff)*Ly1;
-        Ly1 = sanitize_denormal(Ly1);
+
+	if (Lxl < old_yl[0][k]) {
+		Lyl = release_coeff * old_yl[0][k] + (1.f-release_coeff)*Lxl;
+	} else if (Lxl > old_yl[0][k]) {
+		Lyl = attack_coeff * old_yl[0][k]+(1.f-attack_coeff)*Lxl;
+	} else {
+		Lyl = Lxl;
+	}
         Lyl = sanitize_denormal(Lyl);
 
         cdb = -Lyl;
         Lgain = from_dB(cdb);
 
-        Ry1 = fmaxf(Rxl, release_coeff * old_y1[1][k]+(1.f-release_coeff)*Rxl);
-        Ryl = attack_coeff * old_yl[1][k]+(1.f-attack_coeff)*Ry1;
-        Ry1 = sanitize_denormal(Ry1);
+	if (Rxl < old_yl[0][k]) {
+		Ryl = release_coeff * old_yl[0][k] + (1.f-release_coeff)*Rxl;
+	} else if (Rxl > old_yl[0][k]) {
+		Ryl = attack_coeff * old_yl[0][k]+(1.f-attack_coeff)*Rxl;
+	} else {
+		Ryl = Rxl;
+	}
         Ryl = sanitize_denormal(Ryl);
 
         cdb = -Ryl;
@@ -881,8 +888,6 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 
         old_yl[0][k] = Lyl;
         old_yl[1][k] = Ryl;
-        old_y1[0][k] = Ly1;
-        old_y1[1][k] = Ry1;
         old_yg[0][k] = Lyg;
         old_yg[1][k] = Ryg;
 }

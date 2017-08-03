@@ -791,7 +791,7 @@ void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
         float cdb=0.f;
         float Lgain = 1.f;
         float Lxg, Lyg;
-        float Lxl, Lyl, Ly1;
+        float Lxl, Lyl;
 
         Lyg = 0.f;
 	in = sanitize_denormal(in);
@@ -811,12 +811,15 @@ void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
 
         Lxl = Lxg - Lyg;
 
-        old_y1[k] = sanitize_denormal(old_y1[k]);
-        old_yl[k] = sanitize_denormal(old_yl[k]);
+	old_yl[k] = sanitize_denormal(old_yl[k]);
 
-        Ly1 = fmaxf(Lxl, release_coeff * old_y1[k]+(1.f-release_coeff)*Lxl);
-        Lyl = attack_coeff * old_yl[k]+(1.f-attack_coeff)*Ly1;
-        Ly1 = sanitize_denormal(Ly1);
+	if (Lxl < old_yl[k]) {
+		Lyl = release_coeff * old_yl[k] + (1.f-release_coeff)*Lxl;
+	} else if (Lxl > old_yl[k]) {
+		Lyl = attack_coeff * old_yl[k]+(1.f-attack_coeff)*Lxl;
+	} else {
+		Lyl = Lxl;
+	}
         Lyl = sanitize_denormal(Lyl);
 
         cdb = -Lyl;
@@ -827,7 +830,6 @@ void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
 	*out = in * Lgain;
 
         old_yl[k] = Lyl;
-        old_y1[k] = Ly1;
         old_yg[k] = Lyg;
 }
 
