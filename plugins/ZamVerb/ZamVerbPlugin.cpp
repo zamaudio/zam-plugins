@@ -146,7 +146,7 @@ void ZamVerbPlugin::loadProgram(uint32_t index)
     master = 0.0f;
     wetdry = 50.f;
     room = 0.f;
-    room_old = 1.f; // invalidate first run()
+    room_old = -1.f; // invalidate first run()
 
     /* reset filter values */
     activate();
