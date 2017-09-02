@@ -343,7 +343,7 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
                 oldL_yl = sanitize_denormal(oldL_yl);
 
 		if (Lxl < oldL_yl) {
-			Lyl = release_coeff * oldL_yl + (1.f-release_coeff)*Lxl;
+			Lyl = release_coeff * oldL_yl+(1.f-release_coeff)*Lxl;
 		} else if (Lxl > oldL_yl) {
 			Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Lxl;
 		} else {

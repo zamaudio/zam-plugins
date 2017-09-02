@@ -814,7 +814,7 @@ void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
 	old_yl[k] = sanitize_denormal(old_yl[k]);
 
 	if (Lxl < old_yl[k]) {
-		Lyl = release_coeff * old_yl[k] + (1.f-release_coeff)*Lxl;
+		Lyl = release_coeff * old_yl[k]+(1.f-release_coeff)*Lxl;
 	} else if (Lxl > old_yl[k]) {
 		Lyl = attack_coeff * old_yl[k]+(1.f-attack_coeff)*Lxl;
 	} else {
