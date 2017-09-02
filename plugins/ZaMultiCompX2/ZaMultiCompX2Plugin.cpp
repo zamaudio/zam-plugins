@@ -866,10 +866,10 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         cdb = -Lyl;
         Lgain = from_dB(cdb);
 
-	if (Rxl < old_yl[0][k]) {
-		Ryl = release_coeff * old_yl[0][k] + (1.f-release_coeff)*Rxl;
-	} else if (Rxl > old_yl[0][k]) {
-		Ryl = attack_coeff * old_yl[0][k]+(1.f-attack_coeff)*Rxl;
+	if (Rxl < old_yl[1][k]) {
+		Ryl = release_coeff * old_yl[1][k] + (1.f-release_coeff)*Rxl;
+	} else if (Rxl > old_yl[1][k]) {
+		Ryl = attack_coeff * old_yl[1][k]+(1.f-attack_coeff)*Rxl;
 	} else {
 		Ryl = Rxl;
 	}
