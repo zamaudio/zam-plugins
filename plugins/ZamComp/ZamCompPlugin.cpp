@@ -300,7 +300,7 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float max = 0.f;
 	float lgaininp = 0.f;
 	float Lgain = 1.f;
-        float Lxg, Lxl, Lyg, Lyl, Ly1;
+        float Lxg, Lxl, Lyg, Lyl;
         float checkwidth = 0.f;
 	bool usesidechain = (sidechain < 0.5) ? false : true;
 	uint32_t i;
@@ -340,11 +340,15 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
                 Lxl = Lxg - Lyg;
 
-                oldL_y1 = sanitize_denormal(oldL_y1);
                 oldL_yl = sanitize_denormal(oldL_yl);
-                Ly1 = fmaxf(Lxl, release_coeff * oldL_y1+(1.f-release_coeff)*Lxl);
-		Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Ly1;
-                Ly1 = sanitize_denormal(Ly1);
+
+		if (Lxl < oldL_yl) {
+			Lyl = release_coeff * oldL_yl+(1.f-release_coeff)*Lxl;
+		} else if (Lxl > oldL_yl) {
+			Lyl = attack_coeff * oldL_yl+(1.f-attack_coeff)*Lxl;
+		} else {
+			Lyl = Lxl;
+		}
                 Lyl = sanitize_denormal(Lyl);
 
                 cdb = -Lyl;
@@ -358,11 +362,10 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		max = (fabsf(outputs[0][i]) > max) ? fabsf(outputs[0][i]) : sanitize_denormal(max);
 
                 oldL_yl = Lyl;
-                oldL_y1 = Ly1;
                 oldL_yg = Lyg;
         }
 	outlevel = (max == 0.f) ? -45.f : to_dB(max); // relative to - thresdb;
-    }
+}
 
 // -----------------------------------------------------------------------
 
