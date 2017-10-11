@@ -42,3 +42,6 @@
 	- New plugin: ZamDynamicEQ
 	- New plugin: ZamPhono
 	- Fixed various compiler warnings
+
+3.9 All compressors bugfix release
+	- Thanks to johmue

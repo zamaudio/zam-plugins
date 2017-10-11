@@ -131,7 +131,7 @@ Wave digital filter physical model of a triode tube amplifier stage, with modell
 
     uint32_t getVersion() const noexcept override
     {
-        return d_version(3, 8, 0);
+        return d_version(3, 9, 0);
     }
 
     int64_t getUniqueId() const noexcept override

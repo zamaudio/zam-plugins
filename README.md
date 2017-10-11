@@ -8,7 +8,7 @@ Note:
 This is a new repo that contains the full history of the old repo.
 Submodules are now required (>= 3.6).
 Uses Distrho Plugin Framework.
-Please use version 3.8 for a stable package, latest git is experimental.
+Please use version 3.9 for a stable package, latest git is experimental.
 
 Build Dependencies:
 ===================
@@ -28,5 +28,5 @@ Bleeding edge installation:
 Package Maintainers:
 ====================
 
-	git checkout 3.8
+	git checkout 3.9
 	make dist
