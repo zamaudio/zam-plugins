@@ -138,10 +138,15 @@ void ZamSynthPlugin::loadProgram(uint32_t index)
     }
 
     for (int i = 0; i < MAX_ENV; i++) {
-        env_y[i] = (sin(i*2.*M_PI/getSampleRate()*1000./2.)) > 0.f ? sin(i*2.*M_PI/d_getSampleRate()*1000./2.) : 0.f;
+        env_y[i] = (sin(i*2.*M_PI/getSampleRate()*1000./2.)) > 0.f ? sin(i*2.*M_PI/getSampleRate()*1000./2.) : 0.f;
     }
     /* reset filter values */
     activate();
+}
+
+String ZamSynthPlugin::getState(const char*) const
+{
+	return String("");
 }
 
 void ZamSynthPlugin::setState(const char* key, const char* value)
@@ -173,10 +178,11 @@ void ZamSynthPlugin::setState(const char* key, const char* value)
 	}
 }
 
-void ZamSynthPlugin::initStateKey(unsigned int index, String& key)
+void ZamSynthPlugin::initState(unsigned int index, String& key, String& defvalue)
 {
 	if (index == 0) key = "waveform";
 	if (index == 1) key = "envelope";
+	defvalue = "";
 }
 
 // -----------------------------------------------------------------------
@@ -202,10 +208,10 @@ void ZamSynthPlugin::run(const float**, float** outputs, uint32_t frames,
 	float RD_0;
 
 	for (i = 0; i < midicount; i++) {
-		int type = midievent[i].buf[0] & 0xF0;
-		int chan = midievent[i].buf[0] & 0x0F;
-		int num = midievent[i].buf[1];
-		int vel = midievent[i].buf[2];
+		int type = midievent[i].data[0] & 0xF0;
+		int chan = midievent[i].data[0] & 0x0F;
+		int num = midievent[i].data[1];
+		int vel = midievent[i].data[2];
 		if (type == 0x90 && chan == 0x0) {
 			// NOTE ON
 			int newvoice = -1;

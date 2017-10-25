@@ -25,6 +25,8 @@ START_NAMESPACE_DISTRHO
 ZamSynthUI::ZamSynthUI()
     : UI()
 {
+    setSize(ZamSynthArtwork::zamsynthWidth, ZamSynthArtwork::zamsynthHeight);
+    
     // background
     fImgBackground = Image(ZamSynthArtwork::zamsynthData, ZamSynthArtwork::zamsynthWidth, ZamSynthArtwork::zamsynthHeight, GL_BGR);
 
@@ -73,10 +75,10 @@ ZamSynthUI::ZamSynthUI()
     }
 
     // toggle
-    fToggleGraph = new ImageToggle(this, toggleonImage, toggleoffImage);
+    fToggleGraph = new ImageSwitch(this, toggleonImage, toggleoffImage);
     fToggleGraph->setAbsolutePos(300, 33);
     fToggleGraph->setCallback(this);
-    fToggleGraph->setValue(0.f);
+    fToggleGraph->setDown(false);
 
     // set default values
     programLoaded(0);
@@ -125,7 +127,7 @@ void ZamSynthUI::parameterChanged(uint32_t index, float value)
 		fKnobSpeed->setValue(value);
 		break;
 	case ZamSynthPlugin::paramGraph:
-		fToggleGraph->setValue(value);
+		fToggleGraph->setDown(value > 0.5);
 		break;
 	}
 }
@@ -176,7 +178,7 @@ void ZamSynthUI::imageButtonClicked(ImageButton*, int)
 	}
 
 	float *gr;
-	gr = (fToggleGraph->getValue() == 1.f) ? env_y : wave_y;
+	gr = fToggleGraph->isDown() ? env_y : wave_y;
 
 	gaussiansmooth(wavesmooth, xs, gr, AREAHEIGHT, 4);
 	memcpy(gr, wavesmooth, AREAHEIGHT*sizeof(float));
@@ -188,17 +190,15 @@ void ZamSynthUI::imageButtonClicked(ImageButton*, int)
 		strcat(tmp, wavestr);
 	}
 
-	if (fToggleGraph->getValue() == 1.f)
+	if (fToggleGraph->isDown())
 		setState("envelope", tmp);
 	else
 		setState("waveform", tmp);
 }
 
-void ZamSynthUI::imageToggleClicked(ImageToggle*, int)
+void ZamSynthUI::imageSwitchClicked(ImageSwitch* tog, bool down)
 {
-	float toggle = fToggleGraph->getValue();
-	fToggleGraph->setValue(toggle);
-	setParameterValue(ZamSynthPlugin::paramGraph, toggle);
+	setParameterValue(tog->getId(), down ? 1.f : 0.f);
 }
 
 void ZamSynthUI::gaussiansmooth(float* smoothed, float* xs, float* ys, int n, int radius)
@@ -262,7 +262,7 @@ bool ZamSynthUI::onMotion(const MotionEvent& ev)
     if (y < 10) y = 10;
 
     float *gr;
-    if (fToggleGraph->getValue() == 0.f) {
+    if (!fToggleGraph->isDown()) {
 	gr = wave_y;
 	if (y > fCanvasArea.getHeight()+10)
 		y = fCanvasArea.getHeight()+10;
@@ -306,7 +306,7 @@ void ZamSynthUI::onDisplay()
 
     glLineWidth(2);
     float *gr;
-    gr = (fToggleGraph->getValue() == 1.f) ? env_y : wave_y;
+    gr = fToggleGraph->isDown() ? env_y : wave_y;
 
     int i;
         glColor4f(0.235f, 1.f, 0.235f, 1.0f);

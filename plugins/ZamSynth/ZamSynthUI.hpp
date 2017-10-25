@@ -20,10 +20,7 @@
 
 #include "DistrhoUI.hpp"
 
-#include "ImageButton.hpp"
-#include "ImageKnob.hpp"
-#include "ImageToggle.hpp"
-
+#include "ImageWidgets.hpp"
 #include "ZamSynthArtwork.hpp"
 
 #define AREAHEIGHT 250
@@ -31,7 +28,7 @@
 using DGL::Image;
 using DGL::ImageButton;
 using DGL::ImageKnob;
-using DGL::ImageToggle;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
@@ -40,7 +37,7 @@ START_NAMESPACE_DISTRHO
 class ZamSynthUI : public UI,
                    public ImageButton::Callback,
                    public ImageKnob::Callback,
-                   public ImageToggle::Callback
+                   public ImageSwitch::Callback
 {
 public:
     ZamSynthUI();
@@ -48,16 +45,6 @@ public:
 protected:
     // -------------------------------------------------------------------
     // Information
-
-    uint d_getWidth() const noexcept override
-    {
-        return ZamSynthArtwork::zamsynthWidth;
-    }
-
-    uint d_getHeight() const noexcept override
-    {
-        return ZamSynthArtwork::zamsynthHeight;
-    }
 
     void gaussiansmooth(float* smoothed, float* xs, float* ys, int n, int radius);
 
@@ -76,7 +63,7 @@ protected:
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
 
     void imageButtonClicked(ImageButton* button, int) override;
-    void imageToggleClicked(ImageToggle* toggle, int) override;
+    void imageSwitchClicked(ImageSwitch* tog, bool down) override;
 
     void onDisplay() override;
     bool onMouse(const MouseEvent&) override;
@@ -86,7 +73,7 @@ private:
     Image fImgBackground;
     ScopedPointer<ImageKnob> fKnobGain, fKnobSpeed;
     ScopedPointer<ImageButton> fButtonSmooth;
-    ScopedPointer<ImageToggle> fToggleGraph;
+    ScopedPointer<ImageSwitch> fToggleGraph;
     float wave_y[AREAHEIGHT];
     float env_y[AREAHEIGHT];
     bool fGraph;
