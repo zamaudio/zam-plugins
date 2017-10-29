@@ -27,8 +27,8 @@ before_install:
 - sudo dpkg -i apple-x86-setup_2_amd64.deb
 - sudo dpkg -i apple-macports-liblo_0.26-1_all.deb
 - sudo dpkg -i apple-macports-fftw-3_3.3.3-1_all.deb
-- sudo dpkg -i apple-macports-libsamplerate_0.1.8-0_all.deb
 - sudo dpkg -i apple-macports-libsndfile_1.0.25-0_all.deb
+- sudo dpkg -i apple-macports-libsamplerate_0.1.8-0_all.deb
 - sudo apt-get install mingw64-x-gcc -y
 - sudo apt-get install mingw64-x-binutils -y
 - sudo apt-get install mingw64-x-pkgconfig -y
