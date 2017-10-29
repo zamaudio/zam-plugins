@@ -17,7 +17,7 @@ endif
 
 TARGET_DIR = ../../bin
 
-BASE_FLAGS += -lzita-convolver -lsamplerate
+BASE_FLAGS += -lfftw3f -lpthread -lsamplerate
 
 BUILD_C_FLAGS   += -I.
 BUILD_CXX_FLAGS += -I. -I.. -I../../dpf/distrho -I../../dpf/dgl

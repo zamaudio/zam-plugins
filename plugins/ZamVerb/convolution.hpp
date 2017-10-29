@@ -19,7 +19,7 @@
 #ifndef CONVOLUTION_H_
 #define CONVOLUTION_H_
 
-#include <zita-convolver.h>
+#include "../../lib/zita-convolver-3.1.0/zita-convolver.h"
 
 #define MAX_CHANNEL_MAPS (4)
 #define VERBOSE_printf(x, ...)

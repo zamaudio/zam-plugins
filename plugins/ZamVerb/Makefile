@@ -15,7 +15,8 @@ NAME = ZamVerb
 OBJS_DSP = \
 	ZamVerbPlugin.cpp.o \
 	ZamVerbImpulses.cpp.o \
-	convolution.cpp.o
+	convolution.cpp.o \
+	../../lib/zita-convolver-3.1.0/zita-convolver.cpp.o
 
 OBJS_UI  = \
 	ZamVerbArtwork.cpp.o \
