@@ -26,7 +26,6 @@ before_install:
 - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-setup/apple-x86-setup_2_amd64.deb
 - wget https://launchpad.net/~kxstudio-team/+archive/ubuntu/builds/+files/mingw64-x-libsamplerate_0.1.8-1kxstudio1_all.deb
-- wget https://launchpad.net/~kxstudio-team/+archive/ubuntu/builds/+files/mingw64-x-pthreads_2.9.1-2kxstudio1_all.deb
 - sudo dpkg -i apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
 - sudo dpkg -i apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
 - sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
@@ -46,7 +45,6 @@ before_install:
 - sudo apt-get install mingw64-x-fftw3 -y
 - sudo apt-get install mingw64-x-libsndfile -y
 - sudo dpkg -i mingw64-x-libsamplerate_0.1.8-1kxstudio1_all.deb
-- sudo dpkg -i mingw64-x-pthreads_2.9.1-2kxstudio1_all.deb
 - sudo apt-get install g++-4.8 -y
 - sudo apt-get install binutils -y
 - sudo apt-get install pkg-config -y
