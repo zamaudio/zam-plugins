@@ -68,7 +68,7 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return d_version(3, 8, 0);
+        return d_version(3, 9, 0);
     }
 
     int64_t getUniqueId() const noexcept override
@@ -88,7 +88,9 @@ protected:
     float getParameterValue(uint32_t index) const override;
     void  setParameterValue(uint32_t index, float value) override;
     void  loadProgram(uint32_t index) override;
-
+    void  setState(const char *key, const char *index) override;
+    String getState(const char* key) const override;
+    void initState(unsigned int index, String& key, String& defval) override;
     // -------------------------------------------------------------------
     // Process
 
@@ -112,7 +114,9 @@ protected:
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
-    LV2convolv *clv;
+    LV2convolv *clv[2];
+    uint8_t swap;
+    uint32_t bufsize_old;
     // -------------------------------------------------------------------
 
     float **tmpouts;

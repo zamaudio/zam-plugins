@@ -22,11 +22,16 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamVerbPlugin::ZamVerbPlugin()
-    : Plugin(paramCount, 1, 0) // 1 program, 0 states
+    : Plugin(paramCount, 1, 1) // 1 program, 1 states
 {
-    clv = new LV2convolv();
-    clv->clv_configure("convolution.ir.preset", "0");
-    clv->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+    swap = 0;
+    clv[swap] = new LV2convolv();
+    clv[swap]->clv_configure("convolution.ir.preset", "0");
+    clv[swap]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+
+    clv[1] = new LV2convolv();
+    clv[1]->clv_configure("convolution.ir.preset", "0");
+    clv[1]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
 
     // Extra buffer for outputs since plugin can work in place
     tmpouts = (float **)malloc (2 * sizeof(float*));
@@ -52,7 +57,8 @@ ZamVerbPlugin::~ZamVerbPlugin()
     free(tmpins[1]);
     free(tmpins);
 
-    delete clv;
+    delete clv[0];
+    delete clv[1];
 }
 
 // -----------------------------------------------------------------------
@@ -157,26 +163,51 @@ void ZamVerbPlugin::loadProgram(uint32_t index)
 
 void ZamVerbPlugin::activate()
 {
+}
 
+String ZamVerbPlugin::getState(const char*) const
+{
+	return String("");
+}
+
+
+void ZamVerbPlugin::initState(unsigned int index, String& key, String& defval)
+{
+	if (index == 0) {
+		key = "reload";
+	}
+	defval = "";
+}
+
+void ZamVerbPlugin::setState(const char* key, const char*)
+{
+	uint8_t other = (swap == 0) ? 1 : 0;
+	char preset[2] = { '\0' };
+
+	if (strcmp(key, "reload") == 0) {
+		snprintf(preset, 2, "%d", (int)room);
+		clv[other]->clv_release();
+		clv[other]->clv_configure("convolution.ir.preset", preset);
+		clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+		swap = other;
+	}
 }
 
 void ZamVerbPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
 	int nprocessed;
-	char preset[2] = { '\0' };
-	if ((int)room_old != (int)room) {
-		snprintf(preset, 2, "%d", (int)room);
-		clv->clv_release();
-		clv->clv_configure("convolution.ir.preset", preset);
-		clv->clv_initialize(getSampleRate(), 2, 2, frames);
+	uint32_t bufsize = getBufferSize();
+	if ( ((int)room_old != (int)room) || (bufsize_old != bufsize) ) {
+		setState("reload", "");
+		bufsize_old = bufsize;
 		room_old = room;
 	}
 
 	assert(frames < 8192);
 	memcpy(tmpins[0], inputs[0], frames * sizeof(float));
 	memcpy(tmpins[1], inputs[1], frames * sizeof(float));
-	nprocessed = clv->clv_convolve(tmpins, tmpouts, 2, 2, frames, from_dB(-16.));
+	nprocessed = clv[swap]->clv_convolve(tmpins, tmpouts, 2, 2, frames, from_dB(-16.));
 	if (nprocessed <= 0) {
 		memcpy(outputs[0], inputs[0], frames * sizeof(float));
 		memcpy(outputs[1], inputs[1], frames * sizeof(float));

@@ -100,6 +100,10 @@ void ZamVerbUI::programLoaded(uint32_t index)
     fSliderNotch->setValue(0.0f);
 }
 
+void ZamVerbUI::stateChanged(const char*, const char*)
+{
+}
+
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
