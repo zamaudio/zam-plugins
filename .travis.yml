@@ -14,7 +14,7 @@ before_install:
 - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
 - sudo apt-get update -qq -y
 - wget http://zamaudio.com/mbox2/apple-macports-fftw-3_3.3.5-1_all.deb
-- wget http://zamaudio.com/mbox2/apple-macports-libsamplerate_0.1.9-0_all.deb
+- wget http://zamaudio.com/mbox2/apple-macports-libsamplerate_0.1.9-1_all.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-gcc/apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-odcctools/apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
@@ -27,7 +27,7 @@ before_install:
 - sudo dpkg -i apple-x86-setup_2_amd64.deb
 - sudo dpkg -i apple-macports-liblo_0.26-1_all.deb
 - sudo dpkg -i apple-macports-fftw-3_3.3.5-1_all.deb
-- sudo dpkg -i apple-macports-libsamplerate_0.1.9-0_all.deb
+- sudo dpkg -i apple-macports-libsamplerate_0.1.9-1_all.deb
 - sudo apt-get install mingw64-x-gcc -y
 - sudo apt-get install mingw64-x-binutils -y
 - sudo apt-get install mingw64-x-pkgconfig -y
