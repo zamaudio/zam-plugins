@@ -72,6 +72,7 @@ ifeq ($(HAVE_DGL),true)
 	$(MAKE) clean -C dpf/dgl
 endif
 	$(MAKE) clean -C dpf/utils/lv2-ttl-generator
+	rm -f lib/zita-convolver-3.1.0/*.o lib/zita-convolver-3.1.0/*.d
 
 # --------------------------------------------------------------
 
