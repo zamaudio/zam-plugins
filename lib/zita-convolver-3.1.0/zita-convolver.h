@@ -21,6 +21,7 @@
 #ifndef _ZITA_CONVOLVER_H
 #define _ZITA_CONVOLVER_H
 
+#define _POSIX_PTHREAD_SEMANTICS
 
 #include <errno.h>
 #include <pthread.h>

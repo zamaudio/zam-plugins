@@ -19,7 +19,6 @@ TARGET_DIR = ../../bin
 
 
 ifeq ($(WIN32),true)
-LINK_FLAGS += /opt/mingw64/lib/libfftw3f.a /opt/mingw64/lib/libsamplerate.a
 LINK_FLAGS += -DPTW32_STATIC_LIB
 endif
 
@@ -35,7 +34,7 @@ endif
 
 BUILD_C_FLAGS   += -I.
 BUILD_CXX_FLAGS += -I. -I.. -I../../dpf/distrho -I../../dpf/dgl
-BUILD_CXX_FLAGS += $(shell pkg-config --cflags samplerate fftw3f) -D_POSIX_PTHREAD_SEMANTICS
+BUILD_CXX_FLAGS += $(shell pkg-config --cflags samplerate fftw3f)
 
 ifeq ($(HAVE_DGL),true)
 BASE_FLAGS += -DHAVE_DGL

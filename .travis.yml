@@ -33,7 +33,6 @@ before_install:
 - sudo apt-get install mingw64-x-pkgconfig -y
 - sudo apt-get install mingw64-x-liblo -y
 - sudo apt-get install mingw64-x-fftw3 -y
-- sudo apt-get install mingw64-x-libsndfile -y
 - sudo dpkg -i mingw64-x-libsamplerate_0.1.8-1kxstudio1_all.deb
 - sudo apt-get install g++-4.8 -y
 - sudo apt-get install binutils -y
@@ -42,7 +41,6 @@ before_install:
 - sudo apt-get install libgl1-mesa-dev -y
 - sudo apt-get install liblo-dev -y
 - sudo apt-get install fftw3-dev -y
-- sudo apt-get install libsndfile-dev -y
 - sudo apt-get install libsamplerate0-dev -y
 - sudo apt-get install libjack-dev -y
 - sudo apt-get install ladspa-sdk -y
@@ -68,6 +66,8 @@ script:
 - export CXX=i686-apple-darwin10-g++
 - export AR=i686-apple-darwin10-ar
 - export PKG_CONFIG_PATH=/opt/local/lib/pkgconfig
+- export CXXFLAGS="-I/opt/local/include"
+- export CFLAGS="-I/opt/local/include"
 - make clean
 - touch dpf/utils/lv2_ttl_generator
 - chmod a+x dpf/utils/lv2_ttl_generator
