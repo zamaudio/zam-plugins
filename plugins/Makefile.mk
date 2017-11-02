@@ -17,10 +17,25 @@ endif
 
 TARGET_DIR = ../../bin
 
-BASE_FLAGS += -lfftw3f -lpthread -lsamplerate
+
+ifeq ($(WIN32),true)
+LINK_FLAGS += /opt/mingw64/lib/libfftw3f.a /opt/mingw64/lib/libsamplerate.a
+LINK_FLAGS += -DPTW32_STATIC_LIB
+endif
+
+ifeq ($(LINUX),true)
+LINK_FLAGS += $(shell pkg-config --libs fftw3f samplerate)
+LINK_FLAGS += -lpthread
+endif
+
+ifeq ($(MACOS),true)
+LINK_FLAGS += $(shell pkg-config --libs --static fftw3f samplerate)
+LINK_FLAGS += -lpthread
+endif
 
 BUILD_C_FLAGS   += -I.
 BUILD_CXX_FLAGS += -I. -I.. -I../../dpf/distrho -I../../dpf/dgl
+BUILD_CXX_FLAGS += $(shell pkg-config --cflags samplerate fftw3f) -D_POSIX_PTHREAD_SEMANTICS
 
 ifeq ($(HAVE_DGL),true)
 BASE_FLAGS += -DHAVE_DGL

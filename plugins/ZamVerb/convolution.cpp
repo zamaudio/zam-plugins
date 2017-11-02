@@ -42,7 +42,7 @@
 #include <pthread.h>
 #include <assert.h>
 
-#include <zita-convolver.h>
+#include "../../lib/zita-convolver-3.1.0/zita-convolver.h"
 #include <sndfile.h>
 #include <samplerate.h>
 #include "convolution.hpp"

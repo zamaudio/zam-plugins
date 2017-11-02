@@ -14,13 +14,8 @@ before_install:
 - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
 - sudo apt-get update -qq -y
 - wget http://zamaudio.com/mbox2/apple-macports-fftw-3_3.3.5-1_all.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-libsamplerate/apple-macports-libsamplerate_0.1.8-0_all.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-libsndfile/apple-macports-libsndfile_1.0.25-0_all.deb
+- wget http://zamaudio.com/mbox2/apple-macports-libsamplerate_0.1.9-0_all.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-flac/apple-macports-flac_1.2.1-1_all.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-libogg/apple-macports-libogg_1.3.0-1_all.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-libvorbis/apple-macports-libvorbis_1.3.3-0_all.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-libiconv/apple-macports-libiconv_1.14-0_all.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-gcc/apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-odcctools/apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
 - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
@@ -32,12 +27,7 @@ before_install:
 - sudo dpkg -i apple-x86-setup_2_amd64.deb
 - sudo dpkg -i apple-macports-liblo_0.26-1_all.deb
 - sudo dpkg -i apple-macports-fftw-3_3.3.5-1_all.deb
-- sudo dpkg -i apple-macports-libiconv_1.14-0_all.deb
-- sudo dpkg -i apple-macports-libogg_1.3.0-1_all.deb
-- sudo dpkg -i apple-macports-libvorbis_1.3.3-0_all.deb
-- sudo dpkg -i apple-macports-flac_1.2.1-1_all.deb
-- sudo dpkg -i apple-macports-libsndfile_1.0.25-0_all.deb
-- sudo dpkg -i apple-macports-libsamplerate_0.1.8-0_all.deb
+- sudo dpkg -i apple-macports-libsamplerate_0.1.9-0_all.deb
 - sudo apt-get install mingw64-x-gcc -y
 - sudo apt-get install mingw64-x-binutils -y
 - sudo apt-get install mingw64-x-pkgconfig -y
@@ -77,6 +67,7 @@ script:
 - export CC=i686-apple-darwin10-gcc
 - export CXX=i686-apple-darwin10-g++
 - export AR=i686-apple-darwin10-ar
+- export PKG_CONFIG_PATH=/opt/local/lib/pkgconfig
 - make clean
 - touch dpf/utils/lv2_ttl_generator
 - chmod a+x dpf/utils/lv2_ttl_generator
