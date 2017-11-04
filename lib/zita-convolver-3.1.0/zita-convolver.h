@@ -76,12 +76,10 @@ private:
 #endif
 
 
-// ADDED BY DZ TO MAKE IT COMPILE FOR >= 10.5
+// ADDED BY DZ TO MAKE IT COMPILE FOR 10.5
 #ifdef __APPLE__
 inline int posix_memalign(void **memptr, size_t alignment, size_t size)
 {
-   if ((alignment && !(alignment & (alignment - 1))) || (alignment > 16))
-       return EINVAL;
    *memptr = malloc(size);
    if (*memptr == NULL)
        return ENOMEM;
