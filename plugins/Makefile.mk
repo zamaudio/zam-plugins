@@ -29,7 +29,7 @@ LINK_FLAGS += -lpthread
 endif
 
 ifeq ($(WIN32),true)
-LINK_FLAGS += $(shell x86_64-w64-mingw32-pkg-config --libs --static pthread fftw3f samplerate)
+LINK_FLAGS += $(shell pkg-config --libs --static pthread fftw3f samplerate)
 endif
 
 BUILD_C_FLAGS   += -I.
