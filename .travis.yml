@@ -15,12 +15,13 @@ before_install:
 - sudo apt-get update -qq -y
 - wget http://zamaudio.com/mbox2/apple-macports-fftw-3_3.3.5-1_all.deb
 - wget http://zamaudio.com/mbox2/apple-macports-libsamplerate_0.1.9-1_all.deb
+- wget http://zamaudio.com/mbox2/mingw64-x-fftw-3_3.3.3-3_all.deb
+- wget http://zamaudio.com/mbox2/mingw64-x-libsamplerate_0.1.9-1_all.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-gcc/apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-odcctools/apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
 - wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-setup/apple-x86-setup_2_amd64.deb
-- wget https://launchpad.net/~kxstudio-team/+archive/ubuntu/builds/+files/mingw64-x-libsamplerate_0.1.8-1kxstudio1_all.deb
 - sudo dpkg -i apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
 - sudo dpkg -i apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
 - sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
@@ -32,8 +33,8 @@ before_install:
 - sudo apt-get install mingw64-x-binutils -y
 - sudo apt-get install mingw64-x-pkgconfig -y
 - sudo apt-get install mingw64-x-liblo -y
-- sudo apt-get install mingw64-x-fftw3 -y
-- sudo dpkg -i mingw64-x-libsamplerate_0.1.8-1kxstudio1_all.deb
+- sudo dpkg -i mingw64-fftw-3_3.3.3-3_all.deb
+- sudo dpkg -i mingw64-x-libsamplerate_0.1.9-1_all.deb
 - sudo apt-get install g++-4.8 -y
 - sudo apt-get install binutils -y
 - sudo apt-get install pkg-config -y
@@ -78,6 +79,7 @@ script:
 - export CXXFLAGS="-m32 -I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
 - export CFLAGS="-m32 -I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
 - export LDFLAGS=-m32
+- export PKG_CONFIG_PATH=/opt/mingw64/lib32/pkgconfig
 - export CC=x86_64-w64-mingw32-gcc
 - export CXX=x86_64-w64-mingw32-g++
 - export AR=x86_64-w64-mingw32-ar
@@ -90,6 +92,7 @@ script:
 - export CXXFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
 - export CFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
 - export LDFLAGS=
+- export PKG_CONFIG_PATH=/opt/mingw64/lib/pkgconfig
 - make clean
 - touch dpf/utils/lv2_ttl_generator.exe
 - chmod a+x dpf/utils/lv2_ttl_generator.exe

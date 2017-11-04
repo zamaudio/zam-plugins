@@ -44,11 +44,12 @@ extern int zita_convolver_minor_version (void);
 #endif
 
 
-#if defined(__linux__) || defined(__FreeBSD_kernel__) || defined(__GNU__)
+#if defined(__linux__) || defined(__FreeBSD_kernel__) || defined(__GNU__) || defined(__WIN32__)
 
 // NOTE: __FreeBSD_kernel__  and __GNU__ were added by the Debian maintainers
 // (the latter for the HURD version of Debian). Things are reported to work
 // with some applications but probably have not been tested in depth.
+// __WIN32__ was added by DZ for MingW
 
 #include <semaphore.h>
 
@@ -76,8 +77,8 @@ private:
 #endif
 
 
-// ADDED BY DZ TO MAKE IT COMPILE FOR 10.5
-#ifdef __APPLE__
+// ADDED BY DZ TO MAKE IT COMPILE FOR OSX 10.5 or Windows
+#if defined(__APPLE__) || defined(__WIN32__)
 inline int posix_memalign(void **memptr, size_t alignment, size_t size)
 {
    *memptr = malloc(size);

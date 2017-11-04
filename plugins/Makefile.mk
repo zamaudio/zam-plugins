@@ -27,7 +27,7 @@ LINK_FLAGS += $(shell pkg-config --libs fftw3f samplerate)
 LINK_FLAGS += -lpthread
 endif
 
-ifeq ($(MACOS),true)
+ifneq ($(LINUX),true)
 LINK_FLAGS += $(shell pkg-config --libs --static fftw3f samplerate)
 LINK_FLAGS += -lpthread
 endif
