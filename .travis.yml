@@ -33,7 +33,7 @@ before_install:
 - sudo apt-get install mingw64-x-binutils -y
 - sudo apt-get install mingw64-x-pkgconfig -y
 - sudo apt-get install mingw64-x-liblo -y
-- sudo dpkg -i mingw64-fftw-3_3.3.3-3_all.deb
+- sudo dpkg -i mingw64-x-fftw-3_3.3.3-3_all.deb
 - sudo dpkg -i mingw64-x-libsamplerate_0.1.9-1_all.deb
 - sudo apt-get install g++-4.8 -y
 - sudo apt-get install binutils -y
@@ -91,7 +91,7 @@ script:
 - mkdir bin
 - export CXXFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
 - export CFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
-- export LDFLAGS=
+- export LDFLAGS=-lpthread
 - export PKG_CONFIG_PATH=/opt/mingw64/lib/pkgconfig
 - make clean
 - touch dpf/utils/lv2_ttl_generator.exe
