@@ -25,6 +25,15 @@ Bleeding edge installation:
 	sudo make install
 
 
+Cross-compiling with docker:
+============================
+
+	sudo docker build . -t zam-plugins-build
+	sudo docker run -v `pwd`:/tmp/build zam-plugins-build /bin/bash -c "cd /tmp/build && ..."
+
+(See .travis.yml file for the required cross build commands)
+
+
 Package Maintainers:
 ====================
 
