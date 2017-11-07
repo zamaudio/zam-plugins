@@ -15,7 +15,7 @@ before_install:
 - sudo apt-get update -qq -y
 - wget http://zamaudio.com/mbox2/apple-macports-fftw-3_3.3.5-1_all.deb
 - wget http://zamaudio.com/mbox2/apple-macports-libsamplerate_0.1.9-1_all.deb
-- wget http://zamaudio.com/mbox2/mingw64-x-fftw-3_3.3.3-3_all.deb
+- wget http://zamaudio.com/mbox2/mingw64-x-fftw-3_3.3.5-1_all.deb
 - wget http://zamaudio.com/mbox2/mingw64-x-libsamplerate_0.1.9-1_all.deb
 - wget http://zamaudio.com/mbox2/mingw64-x-pthread_0.0.1-2_all.deb
 - wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
@@ -35,7 +35,7 @@ before_install:
 - sudo apt-get install mingw64-x-pkgconfig -y
 - sudo apt-get install mingw64-x-liblo -y
 - sudo dpkg -i mingw64-x-pthread_0.0.1-2_all.deb
-- sudo dpkg -i mingw64-x-fftw-3_3.3.3-3_all.deb
+- sudo dpkg -i mingw64-x-fftw-3_3.3.5-1_all.deb
 - sudo dpkg -i mingw64-x-libsamplerate_0.1.9-1_all.deb
 - sudo apt-get install g++-4.8 -y
 - sudo apt-get install binutils -y
