@@ -76,7 +76,7 @@ RUN dpkg -i mingw64-x-libsamplerate_0.1.9-1_all.deb
 RUN wget http://zamaudio.com/mbox2/mingw64-x-fftw-3_3.3.5-1_all.deb
 RUN dpkg -i mingw64-x-fftw-3_3.3.5-1_all.deb
 
-RUN wget http://zamaudio.com/mbox2/mingw64-x-pthread_0.0.1-2_all.deb
-RUN dpkg -i mingw64-x-pthread_0.0.1-2_all.deb
+RUN wget http://zamaudio.com/mbox2/mingw64-x-pthread_0.0.1-3_all.deb
+RUN dpkg -i mingw64-x-pthread_0.0.1-3_all.deb
 
 CMD []
