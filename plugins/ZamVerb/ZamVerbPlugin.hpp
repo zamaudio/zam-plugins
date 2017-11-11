@@ -115,8 +115,8 @@ protected:
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
     LV2convolv *clv[2];
-    uint8_t swap;
-    uint32_t bufsize_old;
+    int8_t swap;
+    int8_t active;
     // -------------------------------------------------------------------
 
     float **tmpouts;

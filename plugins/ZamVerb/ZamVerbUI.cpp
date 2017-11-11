@@ -144,6 +144,7 @@ void ZamVerbUI::imageSliderDragFinished(ImageSlider*)
 void ZamVerbUI::imageSliderValueChanged(ImageSlider*, float value)
 {
     setParameterValue(ZamVerbPlugin::paramRoom, value);
+    setState("reload", "");
 }
 
 void ZamVerbUI::onDisplay()

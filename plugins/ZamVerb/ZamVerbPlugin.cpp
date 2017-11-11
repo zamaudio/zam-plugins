@@ -152,7 +152,6 @@ void ZamVerbPlugin::loadProgram(uint32_t index)
     master = 0.0f;
     wetdry = 50.f;
     room = 0.f;
-    room_old = -1.f; // invalidate first run()
 
     /* reset filter values */
     activate();
@@ -170,22 +169,22 @@ String ZamVerbPlugin::getState(const char*) const
 	return String("");
 }
 
-
 void ZamVerbPlugin::initState(unsigned int index, String& key, String& defval)
 {
 	if (index == 0) {
-		key = "reload";
+		key = String("reload");
 	}
-	defval = "";
+	defval = String("");
 }
 
 void ZamVerbPlugin::setState(const char* key, const char*)
 {
-	uint8_t other = (swap == 0) ? 1 : 0;
-	char preset[2] = { '\0' };
+	uint8_t other;
+	char preset[2] = { 0 };
 
 	if (strcmp(key, "reload") == 0) {
 		snprintf(preset, 2, "%d", (int)room);
+		other = !active;
 		clv[other]->clv_release();
 		clv[other]->clv_configure("convolution.ir.preset", preset);
 		clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
@@ -197,17 +196,12 @@ void ZamVerbPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	uint32_t i;
 	int nprocessed;
-	uint32_t bufsize = getBufferSize();
-	if ( ((int)room_old != (int)room) || (bufsize_old != bufsize) ) {
-		setState("reload", "");
-		bufsize_old = bufsize;
-		room_old = room;
-	}
+	active = swap;
 
 	assert(frames < 8192);
 	memcpy(tmpins[0], inputs[0], frames * sizeof(float));
 	memcpy(tmpins[1], inputs[1], frames * sizeof(float));
-	nprocessed = clv[swap]->clv_convolve(tmpins, tmpouts, 2, 2, frames, from_dB(-16.));
+	nprocessed = clv[active]->clv_convolve(tmpins, tmpouts, 2, 2, frames, from_dB(-16.));
 	if (nprocessed <= 0) {
 		memcpy(outputs[0], inputs[0], frames * sizeof(float));
 		memcpy(outputs[1], inputs[1], frames * sizeof(float));
