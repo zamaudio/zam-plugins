@@ -139,6 +139,7 @@ void ZamVerbPlugin::setParameterValue(uint32_t index, float value)
         break;
     case paramRoom:
         room = value;
+        setState("reload", "");
         break;
     }
 }
@@ -153,7 +154,6 @@ void ZamVerbPlugin::loadProgram(uint32_t index)
     wetdry = 50.f;
     room = 0.f;
 
-    /* reset filter values */
     activate();
 }
 
@@ -162,6 +162,7 @@ void ZamVerbPlugin::loadProgram(uint32_t index)
 
 void ZamVerbPlugin::activate()
 {
+        setState("reload", "");
 }
 
 String ZamVerbPlugin::getState(const char*) const
