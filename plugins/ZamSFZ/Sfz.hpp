@@ -6,8 +6,8 @@
 #include <rubberband/RubberBandStretcher.h>
 #include <sndfile.h>
 #include <math.h>
-#define MAX_LAYERS 25
-#define MAX_SAMPLES 64000
+#define MAX_LAYERS 12
+#define MAX_SAMPLES 130000
 
 class Sfz {
 	
@@ -33,4 +33,5 @@ public:
 	void loadsamples(std::string path, std::string filename);
 	void readsamples (SNDFILE *infile, int channels, int note, int layer);
 	void pitchshiftsamples(int srate);
+	void remapvelocityranges(::sfz::Instrument *inst);
 };

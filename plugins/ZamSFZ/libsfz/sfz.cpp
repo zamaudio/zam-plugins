@@ -400,7 +400,9 @@ SFZRegion::SFZRegion(Instrument* i)
 
 void SFZRegion::clear()
 {
+	lokey = 1;
 	hikey = 127;
+	lovel = 1;
 	hivel = 127;
 	pitch_keycenter = 60; 	// C4
 	pitch_keytrack = 100;

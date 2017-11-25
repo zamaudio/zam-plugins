@@ -23,7 +23,7 @@
 #include "Sfz.hpp"
 
 #define MAX_VOICES 128
-#define MAX_ENV (MAX_SAMPLES / 10)
+#define MAX_ENV (MAX_SAMPLES / 100)
 
 START_NAMESPACE_DISTRHO
 

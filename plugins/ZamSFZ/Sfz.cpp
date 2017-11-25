@@ -4,6 +4,101 @@
 #include <string>
 #define	BLOCK_SIZE 512
 
+void Sfz::remapvelocityranges(::sfz::Instrument *inst)
+{
+	int i, k, r, key, oldkey, l, lowest, idx;
+	::sfz::SFZRegion *reg;
+	std::vector< ::sfz::SFZRegion > tmp;
+	std::vector< ::sfz::SFZRegion* > remap;
+	int layer[128] = {0};
+
+	if (!inst)
+		return;
+
+	for (i = 0; i < inst->regions.size(); i++) {
+		if (inst->regions[i]->lokey == inst->regions[i]->hikey) {
+			key = inst->regions[i]->lokey;
+		} else {
+			key = inst->regions[i]->pitch_keycenter;
+		}
+		layer[key]++;
+	}
+
+	for (key = 0; key < 128; key++) {
+		lowest = 2;
+		idx = -1;
+		for (i = 0; i < layer[key]; i++) {
+			// find next region with correct key
+			for (r = idx+1; r < inst->regions.size(); r++) {
+				if (inst->regions[r]->lokey == inst->regions[r]->hikey) {
+					k = inst->regions[r]->lokey;
+				} else {
+					k = inst->regions[r]->pitch_keycenter;
+				}
+				if (k != key)
+					continue;
+
+				if (inst->regions[r]->lovel <= lowest) {
+					idx = r;
+					lowest = inst->regions[r]->hivel + 2;
+					break;
+				}
+			}
+			if (idx >= 0) {
+				// push found region to new vector
+				tmp.push_back(*(inst->regions[idx]));
+			}
+		}
+	}
+
+	for (i = 0; i < tmp.size(); i++) {
+		printf("tmp: k:%d (%d, %d) %s\n", tmp[i].lokey, tmp[i].lovel, tmp[i].hivel, tmp[i].sample.c_str());
+	}
+
+	oldkey = -1;
+	for (i = 0; i < tmp.size(); i++) {
+		if (tmp[i].lokey == tmp[i].hikey) {
+			key = tmp[i].lokey;
+		} else {
+			key = tmp[i].pitch_keycenter;
+		}
+		if (key != oldkey) {
+			if (layer[key] > MAX_LAYERS) {
+				// Remap velocities
+				// Choose staggered layers
+				int chosen, lo, hi;
+				lo = 0;
+				hi = 0;
+				for (k = 1; k <= MAX_LAYERS; k++) {
+					chosen = k * layer[key] / MAX_LAYERS;
+					lo = hi + 1;
+					hi = k * 127 / MAX_LAYERS;
+					reg = new ::sfz::SFZRegion(inst);
+
+					tmp[(chosen - 1) + i].lovel = lo;
+					tmp[(chosen - 1) + i].hivel = hi;
+					*reg = tmp[(chosen - 1) + i];
+					remap.push_back(reg);
+				}
+			} else {
+				// 1:1 mapping
+				for (k = 0; k < layer[key]; k++) {
+					reg = new ::sfz::SFZRegion(inst);
+					*reg = tmp[k + i];
+					remap.push_back(reg);
+				}
+			}
+		}
+		oldkey = key;
+	}
+
+	inst->regions.clear();
+	for (i = 0; i < remap.size(); i++) {
+		inst->regions.push_back(remap[i]);
+		printf("k:%d (%d, %d) %s\n", remap[i]->lokey, remap[i]->lovel, remap[i]->hivel, remap[i]->sample.c_str());
+	}
+}
+
 void Sfz::readsamples(SNDFILE *infile, 
 				int channels, int note, int layer)
 {
@@ -57,6 +152,8 @@ void Sfz::loadsamples(std::string path, std::string filename)
 		return;
 	}
 	::sfz::Instrument* sfzinstrument = &sfzfile.instrument;
+
+	remapvelocityranges(sfzinstrument);
 
 	SNDFILE *infile = NULL;
 	SF_INFO sfinfo;
