@@ -38,6 +38,8 @@ ZamSFZUI::ZamSFZUI()
     // button
     Image loadImage(ZamSFZArtwork::loadData, ZamSFZArtwork::loadWidth, ZamSFZArtwork::loadHeight);
     Image loadImagePress(ZamSFZArtwork::loadprData, ZamSFZArtwork::loadprWidth, ZamSFZArtwork::loadprHeight);
+    Image loadingImage(ZamSFZArtwork::loadingData, ZamSFZArtwork::loadingWidth, ZamSFZArtwork::loadingHeight);
+    Image emptyImage(ZamSFZArtwork::emptyData, ZamSFZArtwork::emptyWidth, ZamSFZArtwork::emptyHeight);
 
     // knob
 
@@ -52,6 +54,10 @@ ZamSFZUI::ZamSFZUI()
     fButtonLoad->setAbsolutePos(35,25);
     fButtonLoad->setCallback(this);
 
+    fLoading = new ImageSwitch(this, emptyImage, loadingImage);
+    fLoading->setAbsolutePos(35, 55);
+    fLoading->setCallback(this);
+
     // set default values
     programLoaded(0);
 }
@@ -63,6 +69,9 @@ void ZamSFZUI::parameterChanged(uint32_t index, float value)
 {
 	switch (index)
 	{
+	case ZamSFZPlugin::paramLoading:
+		fLoading->setDown(value > 0.5);
+		break;
 	case ZamSFZPlugin::paramGain:
 		fKnobGain->setValue(value);
 		break;
@@ -75,6 +84,7 @@ void ZamSFZUI::programLoaded(uint32_t index)
         return;
 
     fKnobGain->setValue(0.0f);
+    fLoading->setDown(false);
 }
 
 void ZamSFZUI::stateChanged(const char* key, const char*)
@@ -119,6 +129,12 @@ void ZamSFZUI::imageButtonClicked(ImageButton*, int)
     //opts.filters = "sfz;";
 
     getParentWindow().openFileBrowser(opts);
+}
+
+void ZamSFZUI::imageSwitchClicked(ImageSwitch*, bool state)
+{
+	// Hack: unset the toggle
+	fLoading->setDown(!state);
 }
 
 void ZamSFZUI::onDisplay()

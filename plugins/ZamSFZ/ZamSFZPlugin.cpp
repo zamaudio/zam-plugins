@@ -35,6 +35,15 @@ void ZamSFZPlugin::initParameter(uint32_t index, Parameter& parameter)
 {
     switch (index)
     {
+    case paramLoading:
+        parameter.hints      = kParameterIsOutput | kParameterIsBoolean;
+        parameter.name       = "Loading";
+        parameter.symbol     = "load";
+        parameter.unit       = "";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     case paramGain:
         parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Gain";
@@ -62,6 +71,9 @@ float ZamSFZPlugin::getParameterValue(uint32_t index) const
 {
     switch (index)
     {
+    case paramLoading:
+        return (float)loading;
+        break;
     case paramGain:
         return gain;
         break;
@@ -74,6 +86,9 @@ void ZamSFZPlugin::setParameterValue(uint32_t index, float value)
 {
     switch (index)
     {
+    case paramLoading:
+        loading = value > 0.5;
+        break;
     case paramGain:
         gain = value;
         break;
@@ -103,10 +118,12 @@ String ZamSFZPlugin::getState(const char*) const
     return String("filepath");
 }
 
-void ZamSFZPlugin::initState(unsigned int key, String& val, String&)
+void ZamSFZPlugin::initState(unsigned int key, String& val, String& def)
 {
-	if (key == 0)
-		val = "filepath";
+	if (key == 0) {
+		val = String("filepath");
+		def = String("");
+	}
 }
 
 void ZamSFZPlugin::loadProgram(uint32_t index)

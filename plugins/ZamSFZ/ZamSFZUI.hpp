@@ -25,6 +25,7 @@
 using DGL::Image;
 using DGL::ImageKnob;
 using DGL::ImageButton;
+using DGL::ImageSwitch;
 
 START_NAMESPACE_DISTRHO
 
@@ -32,7 +33,8 @@ START_NAMESPACE_DISTRHO
 
 class ZamSFZUI : public UI,
                    public ImageKnob::Callback,
-		   public ImageButton::Callback
+		   public ImageButton::Callback,
+		   public ImageSwitch::Callback
 {
 public:
     ZamSFZUI();
@@ -54,6 +56,7 @@ protected:
     void imageKnobDragFinished(ImageKnob* knob) override;
     void imageKnobValueChanged(ImageKnob* knob, float value) override;
     void imageButtonClicked(ImageButton*, int) override;
+    void imageSwitchClicked(ImageSwitch*, bool) override;
 
     void onDisplay() override;
 
@@ -61,6 +64,7 @@ private:
     Image fImgBackground;
     ScopedPointer<ImageKnob> fKnobGain;
     ScopedPointer<ImageButton> fButtonLoad;
+    ScopedPointer<ImageSwitch> fLoading;
     char* filepath;
 };
 

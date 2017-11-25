@@ -51,10 +51,6 @@ void Sfz::remapvelocityranges(::sfz::Instrument *inst)
 		}
 	}
 
-	for (i = 0; i < tmp.size(); i++) {
-		printf("tmp: k:%d (%d, %d) %s\n", tmp[i].lokey, tmp[i].lovel, tmp[i].hivel, tmp[i].sample.c_str());
-	}
-
 	oldkey = -1;
 	for (i = 0; i < tmp.size(); i++) {
 		if (tmp[i].lokey == tmp[i].hikey) {
@@ -95,7 +91,7 @@ void Sfz::remapvelocityranges(::sfz::Instrument *inst)
 	inst->regions.clear();
 	for (i = 0; i < remap.size(); i++) {
 		inst->regions.push_back(remap[i]);
-		printf("k:%d (%d, %d) %s\n", remap[i]->lokey, remap[i]->lovel, remap[i]->hivel, remap[i]->sample.c_str());
+		//printf("k:%d (%d, %d) %s\n", remap[i]->lokey, remap[i]->lovel, remap[i]->hivel, remap[i]->sample.c_str());
 	}
 }
 

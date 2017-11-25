@@ -34,6 +34,7 @@ class ZamSFZPlugin : public Plugin
 public:
     enum Parameters
     {
+        paramLoading,
         paramGain,
         paramCount
     };
@@ -53,7 +54,7 @@ protected:
 
     const char* getDescription() const noexcept override
     {
-        return "";
+        return "Polyphonic SFZ Player";
     }
 
     const char* getMaker() const noexcept override
@@ -73,7 +74,7 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return d_version(3, 8, 0);
+        return d_version(3, 9, 0);
     }
 
     int64_t getUniqueId() const noexcept override
