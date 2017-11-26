@@ -115,14 +115,26 @@ void ZamSFZPlugin::setState(const char* key, const char* value)
 
 String ZamSFZPlugin::getState(const char*) const
 {
-    return String("filepath");
+	char fullpath[1024];
+	if ((path.size() == 0) || (filename.size() == 0)) {
+		return String("");
+	} else {
+		snprintf(fullpath, 1024, "%s/%s", path.c_str(), filename.c_str());
+		return String(fullpath);
+	}
 }
 
 void ZamSFZPlugin::initState(unsigned int key, String& val, String& def)
 {
+	char fullpath[1024];
 	if (key == 0) {
 		val = String("filepath");
-		def = String("");
+		if ((path.size() == 0) || (filename.size() == 0)) {
+			def = String("");
+		} else {
+			snprintf(fullpath, 1024, "%s/%s", path.c_str(), filename.c_str());
+			def = String(fullpath);
+		}
 	}
 }
 

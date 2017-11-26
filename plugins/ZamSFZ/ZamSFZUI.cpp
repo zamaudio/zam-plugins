@@ -43,10 +43,11 @@ ZamSFZUI::ZamSFZUI()
 
     // knob
 
-    fKnobGain = new ImageKnob(this, knobImage);
+    fKnobGain = new ZamKnob(this, knobImage);
     fKnobGain->setAbsolutePos(189, 24);
     fKnobGain->setRange(-30.f, 30.0f);
     fKnobGain->setDefault(0.0f);
+    fKnobGain->setLabel(true);
     fKnobGain->setRotationAngle(240);
     fKnobGain->setCallback(this);
 
@@ -104,19 +105,19 @@ void ZamSFZUI::uiFileBrowserSelected(const char* filename)
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
-void ZamSFZUI::imageKnobDragStarted(ImageKnob* knob)
+void ZamSFZUI::imageKnobDragStarted(ZamKnob* knob)
 {
     if (knob == fKnobGain)
         editParameter(ZamSFZPlugin::paramGain, true);
 }
 
-void ZamSFZUI::imageKnobDragFinished(ImageKnob* knob)
+void ZamSFZUI::imageKnobDragFinished(ZamKnob* knob)
 {
     if (knob == fKnobGain)
         editParameter(ZamSFZPlugin::paramGain, false);
 }
 
-void ZamSFZUI::imageKnobValueChanged(ImageKnob* knob, float value)
+void ZamSFZUI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     if (knob == fKnobGain)
         setParameterValue(ZamSFZPlugin::paramGain, value);

@@ -21,9 +21,10 @@
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
 #include "ZamSFZArtwork.hpp"
+#include "../../widgets/ZamWidgets.hpp"
 
 using DGL::Image;
-using DGL::ImageKnob;
+using DGL::ZamKnob;
 using DGL::ImageButton;
 using DGL::ImageSwitch;
 
@@ -32,7 +33,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamSFZUI : public UI,
-                   public ImageKnob::Callback,
+                   public ZamKnob::Callback,
 		   public ImageButton::Callback,
 		   public ImageSwitch::Callback
 {
@@ -52,9 +53,9 @@ protected:
     // -------------------------------------------------------------------
     // Widget Callbacks
 
-    void imageKnobDragStarted(ImageKnob* knob) override;
-    void imageKnobDragFinished(ImageKnob* knob) override;
-    void imageKnobValueChanged(ImageKnob* knob, float value) override;
+    void imageKnobDragStarted(ZamKnob* knob) override;
+    void imageKnobDragFinished(ZamKnob* knob) override;
+    void imageKnobValueChanged(ZamKnob* knob, float value) override;
     void imageButtonClicked(ImageButton*, int) override;
     void imageSwitchClicked(ImageSwitch*, bool) override;
 
@@ -62,7 +63,7 @@ protected:
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageKnob> fKnobGain;
+    ScopedPointer<ZamKnob> fKnobGain;
     ScopedPointer<ImageButton> fButtonLoad;
     ScopedPointer<ImageSwitch> fLoading;
     char* filepath;
