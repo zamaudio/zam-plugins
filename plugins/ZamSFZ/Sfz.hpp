@@ -5,9 +5,12 @@
 #include "libsfz/sfz.h"
 #include <rubberband/RubberBandStretcher.h>
 #include <sndfile.h>
+#include <samplerate.h>
 #include <math.h>
 #define MAX_LAYERS 12
 #define MAX_SAMPLES 130000
+#define	BLOCK_SIZE 512
+#define CONVERTER_TYPE SRC_SINC_BEST_QUALITY
 
 class Sfz {
 	
@@ -30,8 +33,9 @@ public:
 
 	layer_t layers[128];
 	void clearsamples();
-	void loadsamples(std::string path, std::string filename);
+	void loadsamples(std::string path, std::string filename, int target_rate);
 	void readsamples (SNDFILE *infile, int channels, int note, int layer);
+	void readsamples_resample (SNDFILE *infile, SF_INFO *sfinfo, int note, int layer, int target_rate);
 	void pitchshiftsamples(int srate);
 	void remapvelocityranges(::sfz::Instrument *inst);
 };

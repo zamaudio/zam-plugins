@@ -2,7 +2,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#define	BLOCK_SIZE 512
 
 void Sfz::remapvelocityranges(::sfz::Instrument *inst)
 {
@@ -95,8 +94,55 @@ void Sfz::remapvelocityranges(::sfz::Instrument *inst)
 	}
 }
 
-void Sfz::readsamples(SNDFILE *infile, 
-				int channels, int note, int layer)
+void Sfz::readsamples_resample(SNDFILE *infile, SF_INFO *sfinfo, int note, int layer, int target_rate)
+{
+	float buf[sfinfo->channels * BLOCK_SIZE];
+	float tmpbuf_pre[2][MAX_SAMPLES] = {0.f};
+	float tmpbuf_post[2][MAX_SAMPLES] = {0.f};
+	SRC_DATA src;
+	int k, m, readcount, i;
+	int maxch = std::min(sfinfo->channels, 2);
+
+	// Read samples in blocks to a flat buffer
+	i = 0;
+	while (i < MAX_SAMPLES && (readcount = sf_readf_float (infile, buf, BLOCK_SIZE)) > 0) {
+		for (k = 0 ; k < readcount ; k++) {
+			for (m = 0; m < maxch; m++) {
+				tmpbuf_pre[m][i+k] = buf[k*sfinfo->channels + m];
+			}
+		}
+		i += readcount;
+	}
+
+	// Resample...
+	src.data_in = &tmpbuf_pre[0][0];
+	src.data_out = &tmpbuf_post[0][0];
+	src.input_frames = MAX_SAMPLES;
+	src.output_frames = MAX_SAMPLES;
+	src.src_ratio = (double)target_rate / (double)sfinfo->samplerate;
+	if (!src_simple(&src, CONVERTER_TYPE, 1)) {
+		// Write left samples out to sample buffer
+		for (i = 0; i < src.output_frames_gen; i++) {
+			sample[note][layer][0][i] = tmpbuf_post[0][i];
+		}
+	}
+
+	if (maxch == 2) {
+		src.data_in = &tmpbuf_pre[1][0];
+		src.data_out = &tmpbuf_post[1][0];
+		src.input_frames = MAX_SAMPLES;
+		src.output_frames = MAX_SAMPLES;
+		src.src_ratio = (double)target_rate / (double)sfinfo->samplerate;
+		if (!src_simple(&src, CONVERTER_TYPE, 1)) {
+			// Write right samples out to sample buffer
+			for (i = 0; i < src.output_frames_gen; i++) {
+				sample[note][layer][1][i] = tmpbuf_post[1][i];
+			}
+		}
+	}
+}
+
+void Sfz::readsamples(SNDFILE *infile, int channels, int note, int layer)
 {
 	float buf[channels*BLOCK_SIZE];
 	int k, m, readcount, i;
@@ -104,7 +150,7 @@ void Sfz::readsamples(SNDFILE *infile,
 	i = 0;
 	while (i < MAX_SAMPLES && (readcount = sf_readf_float (infile, buf, BLOCK_SIZE)) > 0) {	
 		for (k = 0 ; k < readcount ; k++) {	
-			for (m = 0 ; m < channels ; m++) {
+			for (m = 0; m < std::min(channels, 2); m++) {
 				sample[note][layer][m][i+k] = buf[k*channels + m];
 			}
 		}
@@ -138,7 +184,7 @@ void Sfz::clearsamples()
 	}
 }
 
-void Sfz::loadsamples(std::string path, std::string filename)
+void Sfz::loadsamples(std::string path, std::string filename, int target_rate)
 {
 	int note, i, j, k, key;
 	::sfz::SFZParser sfzfile;
@@ -175,8 +221,12 @@ void Sfz::loadsamples(std::string path, std::string filename)
 						puts (sf_strerror (NULL));
 						printf("File: %s\n",fullsamplepath.c_str());
 				}
-				readsamples (infile, sfinfo.channels, note, layers[note].max);
 				k = layers[note].max;
+				if ((int)sfinfo.samplerate == target_rate) {
+					readsamples (infile, sfinfo.channels, note, k);
+				} else {
+					readsamples_resample (infile, &sfinfo, note, k, target_rate);
+				}
 				layers[note].l[k].lovel = sfzinstrument->regions[i]->lovel;
 				layers[note].l[k].hivel = sfzinstrument->regions[i]->hivel;
 				layers[note].l[k].lokey = sfzinstrument->regions[i]->lokey;

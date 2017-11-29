@@ -98,6 +98,7 @@ void ZamSFZPlugin::setParameterValue(uint32_t index, float value)
 void ZamSFZPlugin::setState(const char* key, const char* value)
 {
 	if (strcmp(key, "filepath") == 0) {
+		int curr_srate = (int)getSampleRate();
 		char *tmp;
 		char file[1024] = {0};
 		snprintf(file, 1024, "%s", value);
@@ -107,8 +108,8 @@ void ZamSFZPlugin::setState(const char* key, const char* value)
 		loading = true;
 		printf("Path: %s\nFile: %s\n", path.c_str(), filename.c_str());
 		sfz.clearsamples();
-		sfz.loadsamples(path, filename);
-		sfz.pitchshiftsamples((int)getSampleRate());
+		sfz.loadsamples(path, filename, curr_srate);
+		sfz.pitchshiftsamples(curr_srate);
 		loading = false;
 	}
 }
