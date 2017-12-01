@@ -1,5 +1,5 @@
 /*
- * ZamHeadX2 stereo widener
+ * ZamHeadX2 HRTF simulator 
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -17,6 +17,7 @@
 #define ZAMWIDTHX2PLUGIN_HPP_INCLUDED
 
 #include "DistrhoPlugin.hpp"
+#include "convolution.hpp"
 
 START_NAMESPACE_DISTRHO
 
@@ -88,6 +89,10 @@ protected:
     void  setParameterValue(uint32_t index, float value) override;
     void  loadProgram(uint32_t index);
 
+    String getState(const char*) const override;
+    void initState(unsigned int index, String& key, String& defval) override;
+    void setState(const char* key, const char*) override;
+
     // -------------------------------------------------------------------
     // Process
 
@@ -117,10 +122,11 @@ protected:
 
 private:
     float elevation, azimuth, width;
-	float inbuf[2][4096+200];
-	float outbuf[2][4096+200];
-	int pos[6];
-
+    int azold, elold;
+    int swap, active;
+    float **tmpins;
+    float **tmpouts;
+    LV2convolv *clv[2];
 };
 
 // -----------------------------------------------------------------------

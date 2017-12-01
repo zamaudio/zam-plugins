@@ -1,5 +1,5 @@
 /*
- * ZamHeadX2 Stereo widener
+ * ZamHeadX2 HRTF simulator
  * Copyright (C) 2014  Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -16,20 +16,50 @@
  */
 
 #include "ZamHeadX2Plugin.hpp"
+#include <assert.h>
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 ZamHeadX2Plugin::ZamHeadX2Plugin()
-    : Plugin(paramCount, 1, 0)
+    : Plugin(paramCount, 1, 1)
 {
+    swap = 0;
+    clv[swap] = new LV2convolv();
+    clv[swap]->clv_configure("convolution.ir.preset", "0", "0");
+    clv[swap]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+
+    clv[1] = new LV2convolv();
+    clv[1]->clv_configure("convolution.ir.preset", "0", "0");
+    clv[1]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+
+    // Extra buffer for outputs since plugin can work in place
+    tmpouts = (float **)malloc (2 * sizeof(float*));
+    tmpouts[0] = (float *)calloc (1, 8192 * sizeof(float));
+    tmpouts[1] = (float *)calloc (1, 8192 * sizeof(float));
+
+    // Extra buffer for inputs since convolve might clobber ins
+    tmpins = (float **)malloc (2 * sizeof(float*));
+    tmpins[0] = (float *)calloc (1, 8192 * sizeof(float));
+    tmpins[1] = (float *)calloc (1, 8192 * sizeof(float));
+
     // set default values
     loadProgram(0);
 }
 
 ZamHeadX2Plugin::~ZamHeadX2Plugin()
 {
+    free(tmpouts[0]);
+    free(tmpouts[1]);
+    free(tmpouts);
+
+    free(tmpins[0]);
+    free(tmpins[1]);
+    free(tmpins);
+
+    delete clv[0];
+    delete clv[1];
 }
 
 // -----------------------------------------------------------------------
@@ -40,7 +70,6 @@ void ZamHeadX2Plugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramAzimuth:
-        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Azimuth";
         parameter.symbol     = "az";
         parameter.unit       = " ";
@@ -49,7 +78,6 @@ void ZamHeadX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 270.0f;
         break;
     case paramElevation:
-        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Elevation";
         parameter.symbol     = "elev";
         parameter.unit       = " ";
@@ -118,9 +146,11 @@ void ZamHeadX2Plugin::setParameterValue(uint32_t index, float value)
     {
     case paramAzimuth:
         azimuth = value;
+	setState("reload", "");
         break;
     case paramElevation:
         elevation = value;
+	setState("reload", "");
         break;
     case paramWidth:
         width = value;
@@ -131,379 +161,76 @@ void ZamHeadX2Plugin::setParameterValue(uint32_t index, float value)
 // -----------------------------------------------------------------------
 // Process
 
-static const float fir_left[50][25][200] = {
-	{
-	#include "l1"
-	},
-	{
-	#include "l2"
-	},
-	{
-	#include "l3"
-	},
-	{
-	#include "l4"
-	},
-	{
-	#include "l5"
-	},
-	{
-	#include "l6"
-	},
-	{
-	#include "l7"
-	},
-	{
-	#include "l8"
-	},
-	{
-	#include "l9"
-	},
-	{
-	#include "l10"
-	},
-	{
-	#include "l11"
-	},
-	{
-	#include "l12"
-	},
-	{
-	#include "l13"
-	},
-	{
-	#include "l14"
-	},
-	{
-	#include "l15"
-	},
-	{
-	#include "l16"
-	},
-	{
-	#include "l17"
-	},
-	{
-	#include "l18"
-	},
-	{
-	#include "l19"
-	},
-	{
-	#include "l20"
-	},
-	{
-	#include "l21"
-	},
-	{
-	#include "l22"
-	},
-	{
-	#include "l23"
-	},
-	{
-	#include "l24"
-	},
-	{
-	#include "l25"
-	},
-	{
-	#include "l26"
-	},
-	{
-	#include "l27"
-	},
-	{
-	#include "l28"
-	},
-	{
-	#include "l29"
-	},
-	{
-	#include "l30"
-	},
-	{
-	#include "l31"
-	},
-	{
-	#include "l32"
-	},
-	{
-	#include "l33"
-	},
-	{
-	#include "l34"
-	},
-	{
-	#include "l35"
-	},
-	{
-	#include "l36"
-	},
-	{
-	#include "l37"
-	},
-	{
-	#include "l38"
-	},
-	{
-	#include "l39"
-	},
-	{
-	#include "l40"
-	},
-	{
-	#include "l41"
-	},
-	{
-	#include "l42"
-	},
-	{
-	#include "l43"
-	},
-	{
-	#include "l44"
-	},
-	{
-	#include "l45"
-	},
-	{
-	#include "l46"
-	},
-	{
-	#include "l47"
-	},
-	{
-	#include "l48"
-	},
-	{
-	#include "l49"
-	},
-	{
-	#include "l50"
-	}
-};
-
-static const float fir_right[50][25][200] = {
-	{
-	#include "r1"
-	},
-	{
-	#include "r2"
-	},
-	{
-	#include "r3"
-	},
-	{
-	#include "r4"
-	},
-	{
-	#include "r5"
-	},
-	{
-	#include "r6"
-	},
-	{
-	#include "r7"
-	},
-	{
-	#include "r8"
-	},
-	{
-	#include "r9"
-	},
-	{
-	#include "r10"
-	},
-	{
-	#include "r11"
-	},
-	{
-	#include "r12"
-	},
-	{
-	#include "r13"
-	},
-	{
-	#include "r14"
-	},
-	{
-	#include "r15"
-	},
-	{
-	#include "r16"
-	},
-	{
-	#include "r17"
-	},
-	{
-	#include "r18"
-	},
-	{
-	#include "r19"
-	},
-	{
-	#include "r20"
-	},
-	{
-	#include "r21"
-	},
-	{
-	#include "r22"
-	},
-	{
-	#include "r23"
-	},
-	{
-	#include "r24"
-	},
-	{
-	#include "r25"
-	},
-	{
-	#include "r26"
-	},
-	{
-	#include "r27"
-	},
-	{
-	#include "r28"
-	},
-	{
-	#include "r29"
-	},
-	{
-	#include "r30"
-	},
-	{
-	#include "r31"
-	},
-	{
-	#include "r32"
-	},
-	{
-	#include "r33"
-	},
-	{
-	#include "r34"
-	},
-	{
-	#include "r35"
-	},
-	{
-	#include "r36"
-	},
-	{
-	#include "r37"
-	},
-	{
-	#include "r38"
-	},
-	{
-	#include "r39"
-	},
-	{
-	#include "r40"
-	},
-	{
-	#include "r41"
-	},
-	{
-	#include "r42"
-	},
-	{
-	#include "r43"
-	},
-	{
-	#include "r44"
-	},
-	{
-	#include "r45"
-	},
-	{
-	#include "r46"
-	},
-	{
-	#include "r47"
-	},
-	{
-	#include "r48"
-	},
-	{
-	#include "r49"
-	},
-	{
-	#include "r50"
-	}
-};
-
 void ZamHeadX2Plugin::activate()
 {
-	int i;
-	for (i = 0; i < 6; i++) {
-		pos[i] = 0;
-	}
-	for (i = 0; i < 4096+200; i++) {
-		inbuf[0][i] = 0.f;
-		inbuf[1][i] = 0.f;
-		outbuf[0][i] = 0.f;
-		outbuf[1][i] = 0.f;
-	}
-
+	setState("reload", "");
 }
 
-void ZamHeadX2Plugin::pushsample(float* buf, float val, int i, uint32_t maxframes)
+String ZamHeadX2Plugin::getState(const char*) const
 {
-	buf[pos[i]] = val;
-	pos[i]--;
-	if (pos[i] < 0) {
-		pos[i] = (int)maxframes;
+	return String("");
+}
+
+void ZamHeadX2Plugin::initState(unsigned int index, String& key, String& defval)
+{
+	if (index == 0) {
+		key = String("reload");
+	}
+	defval = String("");
+}
+
+void ZamHeadX2Plugin::setState(const char* key, const char*)
+{
+	uint8_t other;
+	char elev[4] = { 0 };
+	char azim[4] = { 0 };
+	int az, el;
+
+	if (strcmp(key, "reload") == 0) {
+		el = (int)((elevation + 45.) * 24. / 135.);
+		if (el >= 24) el = 24;
+		if (el < 0) el = 0;
+		az = (int)((azimuth + 90.) * 49. / 360.);
+		if (az >= 49) az = 49;
+		if (az < 0) az = 0;
+		if (az > 24) az = 49 - az;
+		snprintf(elev, 3, "%d", el);
+		snprintf(azim, 3, "%d", az);
+		if ((az != azold) || (el != elold)) {
+			other = !active;
+			clv[other]->clv_release();
+			clv[other]->clv_configure("convolution.ir.preset", elev, azim);
+			clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+			swap = other;
+		}
+		azold = az;
+		elold = el;
 	}
 }
 
-float ZamHeadX2Plugin::getsample(float *buf, int i, uint32_t maxframes)
-{
-	float val = buf[pos[i]];
-	pos[i]++;
-	if (pos[i] >= (int)maxframes) {
-		pos[i] = 0;
-	}
-	return val;
-}
 
 void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	uint32_t i;
-	int az, el;
-	
-	el = (int)((elevation + 45.) / 135. * 24.);
-	if (el >= 24) el = 24;
-	if (el < 0) el = 0;
-	az = (int)((azimuth + 90.) / 360. * 49.);
-	if (az >= 49) az = 49;
-	if (az < 0) az = 0;
-	if (az > 24) az = 49 - az;
-
-	float ltmp = 0.f;
-	float rtmp = 0.f;
-	int k;
 	float m, s;
+	uint32_t i;
+	int nprocessed;
+	active = swap;
 
+	assert(frames < 8192);
 	for (i = 0; i < frames; i++) {
 		m = (inputs[0][i] + inputs[1][i]) * 0.5;
 		s = (inputs[0][i] - inputs[1][i]) * 0.5 * width;
-		pushsample(&inbuf[0][0], m - s, 0, 200);
-		pushsample(&inbuf[1][0], m + s, 1, 200);
-		ltmp = 0.f;
-		rtmp = 0.f;
-		for (k = 0; k < 200; k++) {
-			ltmp += getsample(&inbuf[0][0], 0, 200) *
-					fir_left[el][az][(200-k+200)%200];
-			rtmp += getsample(&inbuf[1][0], 1, 200) *
-					fir_right[el][az][(200-k+200)%200];
-		}
-		outputs[0][i] = ltmp;
-		outputs[1][i] = rtmp;
+		tmpins[0][i] = m - s;
+		tmpins[1][i] = m + s;
+	}
+ 
+	nprocessed = clv[active]->clv_convolve(tmpins, tmpouts, 2, 2, frames, from_dB(6.0));
+	if (nprocessed <= 0) {
+		memcpy(outputs[0], inputs[0], frames * sizeof(float));
+		memcpy(outputs[1], inputs[1], frames * sizeof(float));
+	} else {
+		memcpy(outputs[0], tmpouts[0], frames * sizeof(float));
+		memcpy(outputs[1], tmpouts[1], frames * sizeof(float));
 	}
 }
 
