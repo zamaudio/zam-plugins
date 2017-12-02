@@ -34,9 +34,9 @@ public:
         paramThresh,
         paramMakeup,
         paramSlew,
+        paramSidechain,
         paramGainRed,
         paramOutputLevel,
-        paramSidechain,
         paramCount
     };
 

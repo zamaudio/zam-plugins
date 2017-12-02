@@ -57,23 +57,23 @@ public:
         paramXover1,
         paramXover2,
 
-	paramGainR1,
-	paramGainR2,
-	paramGainR3,
+        paramToggle1,
+        paramToggle2,
+        paramToggle3,
 
-	paramToggle1,
-	paramToggle2,
-	paramToggle3,
+        paramListen1,
+        paramListen2,
+        paramListen3,
 
-	paramListen1,
-	paramListen2,
-	paramListen3,
+        paramGlobalGain,
+        paramOutputLevel,
+        paramOutputLevelLow,
+        paramOutputLevelMed,
+        paramOutputLevelHigh,
+        paramGainR1,
+        paramGainR2,
+        paramGainR3,
 
-	paramGlobalGain,
-	paramOutputLevel,
-	paramOutputLevelLow,
-	paramOutputLevelMed,
-	paramOutputLevelHigh,
         paramCount
     };
 
