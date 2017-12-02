@@ -24,6 +24,7 @@ START_NAMESPACE_DISTRHO
 ZamVerbPlugin::ZamVerbPlugin()
     : Plugin(paramCount, 1, 1) // 1 program, 1 states
 {
+    signal = false;
     swap = 0;
     clv[swap] = new LV2convolv();
     clv[swap]->clv_configure("convolution.ir.preset", "0");
@@ -162,7 +163,13 @@ void ZamVerbPlugin::loadProgram(uint32_t index)
 
 void ZamVerbPlugin::activate()
 {
-        setState("reload", "");
+	setState("reload", "");
+	signal = true;
+}
+
+void ZamVerbPlugin::deactivate()
+{
+	signal = false;
 }
 
 String ZamVerbPlugin::getState(const char*) const
@@ -198,6 +205,12 @@ void ZamVerbPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	uint32_t i;
 	int nprocessed;
 	active = swap;
+
+	if (!signal) {
+		memcpy(outputs[0], inputs[0], frames * sizeof(float));
+		memcpy(outputs[1], inputs[1], frames * sizeof(float));
+		return;
+	}
 
 	assert(frames < 8192);
 	memcpy(tmpins[0], inputs[0], frames * sizeof(float));

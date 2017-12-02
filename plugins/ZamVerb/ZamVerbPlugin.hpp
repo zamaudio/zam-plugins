@@ -112,11 +112,13 @@ protected:
 	}
 
     void activate() override;
+    void deactivate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
     LV2convolv *clv[2];
     int8_t swap;
     int8_t active;
+    bool signal;
     // -------------------------------------------------------------------
 
     float **tmpouts;

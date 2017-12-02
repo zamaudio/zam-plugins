@@ -25,6 +25,7 @@ START_NAMESPACE_DISTRHO
 ZamHeadX2Plugin::ZamHeadX2Plugin()
     : Plugin(paramCount, 1, 1)
 {
+    signal = false;
     swap = 0;
     clv[swap] = new LV2convolv();
     clv[swap]->clv_configure("convolution.ir.preset", "0", "0");
@@ -164,6 +165,12 @@ void ZamHeadX2Plugin::setParameterValue(uint32_t index, float value)
 void ZamHeadX2Plugin::activate()
 {
 	setState("reload", "");
+	signal = true;
+}
+
+void ZamHeadX2Plugin::deactivate()
+{
+	signal = false;
 }
 
 String ZamHeadX2Plugin::getState(const char*) const
@@ -215,6 +222,12 @@ void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	uint32_t i;
 	int nprocessed;
 	active = swap;
+
+	if (!signal) {
+		memcpy(outputs[0], inputs[0], frames * sizeof(float));
+		memcpy(outputs[1], inputs[1], frames * sizeof(float));
+		return;
+	}
 
 	assert(frames < 8192);
 	for (i = 0; i < frames; i++) {

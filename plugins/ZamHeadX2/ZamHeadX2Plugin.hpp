@@ -114,6 +114,7 @@ protected:
 	}
 
     void activate() override;
+    void deactivate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
     void pushsample(float* buf, float val, int i, uint32_t maxframes);
     float getsample(float* buf, int i, uint32_t maxframes);
@@ -121,6 +122,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
+    bool signal;
     float elevation, azimuth, width;
     int azold, elold;
     int swap, active;
