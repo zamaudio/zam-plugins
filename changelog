@@ -45,3 +45,9 @@
 
 3.9 All compressors bugfix release
 	- Thanks to johmue
+
+3.10 New plugin and DSP review
+	- New plugin: ZamVerb (convolution reverb with fixed presets)
+	- ZamHeadX2 DSP algorithm redone (sounds much better)
+	- Docker file provided for cross-compiling
+	- Dependencies for all plugins on all OSes provided externally
