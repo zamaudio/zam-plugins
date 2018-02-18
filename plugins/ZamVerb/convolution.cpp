@@ -67,7 +67,7 @@ int LV2convolv::resample_read_presets (const float *in, unsigned int in_frames, 
 	if (n_sp) *n_sp = in_frames;
 
 	if (sample_rate != PRESETS_SAMPLERATE) {
-		fprintf(stderr, "convoLV2: samplerate mismatch preset:%d host:%d\n", PRESETS_SAMPLERATE, sample_rate);
+		fprintf(stderr, "convolution: samplerate mismatch preset:%d host:%d\n", PRESETS_SAMPLERATE, sample_rate);
 		resample_ratio = (float) sample_rate / (float) PRESETS_SAMPLERATE;
 	}
 
@@ -85,12 +85,12 @@ int LV2convolv::resample_read_presets (const float *in, unsigned int in_frames, 
 		}
 
 		if (!*buf) {
-			fprintf (stderr, "convoLV2: memory allocation failed for IR audio-file buffer.\n");
+			fprintf (stderr, "convolution: memory allocation failed for IR audio-file buffer.\n");
 			return (-2);
 		}
 
 		if (resample_ratio != 1.0) {
-			VERBOSE_printf("convoLV2: resampling IR %ld -> %ld [frames * channels].\n",
+			VERBOSE_printf("convolution: resampling IR %ld -> %ld [frames * channels].\n",
 					(long int) frames_in,
 					(long int) frames_out);
 			SRC_STATE* src_state = src_new(SRC_QUALITY, PRESETS_CH, NULL);
@@ -105,7 +105,7 @@ int LV2convolv::resample_read_presets (const float *in, unsigned int in_frames, 
 			src_data.data_in       = iin;
 			src_data.data_out      = *buf;
 			src_process(src_state, &src_data);
-			VERBOSE_printf("convoLV2: resampled IR  %ld -> %ld [frames * channels].\n",
+			VERBOSE_printf("convolution: resampled IR  %ld -> %ld [frames * channels].\n",
 					src_data.input_frames_used * PRESETS_CH,
 					src_data.output_frames_gen * PRESETS_CH);
 			if (n_sp) *n_sp = (unsigned int) src_data.output_frames_gen;
@@ -277,17 +277,17 @@ int LV2convolv::clv_initialize (
 	fragment_size = buffersize;
 
 	if (zita_convolver_major_version () != ZITA_CONVOLVER_MAJOR_VERSION) {
-		fprintf (stderr, "convoLV2: Zita-convolver version does not match.\n");
+		fprintf (stderr, "convolution: Zita-convolver version does not match.\n");
 		return -1;
 	}
 
 	if (convproc) {
-		fprintf (stderr, "convoLV2: already initialized.\n");
+		fprintf (stderr, "convolution: already initialized.\n");
 		return (-1);
 	}
 
 	if (!ir_fn && ir_preset < 0) {
-		fprintf (stderr, "convoLV2: No IR file was configured.\n");
+		fprintf (stderr, "convolution: No IR file was configured.\n");
 		return -1;
 	}
 
@@ -298,7 +298,7 @@ int LV2convolv::clv_initialize (
 	convproc->set_density (density);
 /*
 	if (audiofile_read (ir_fn, sample_rate, &p, &n_chan, &n_frames)) {
-		fprintf(stderr, "convoLV2: failed to read IR.\n");
+		fprintf(stderr, "convolution: failed to read IR.\n");
 		goto errout;
 	}
 */
@@ -306,12 +306,12 @@ int LV2convolv::clv_initialize (
 	unsigned int impulse_frames = preset[ir_preset].size;
 
 	if (resample_read_presets (impulse, impulse_frames, sample_rate, &p, &n_chan, &n_frames)) {
-		fprintf(stderr, "convoLV2: failed to read IR preset.\n");
+		fprintf(stderr, "convolution: failed to read IR preset.\n");
 		goto errout;
 	}
 
 	if (n_frames == 0 || n_chan == 0) {
-		fprintf(stderr, "convoLV2: invalid IR file.\n");
+		fprintf(stderr, "convolution: invalid IR file.\n");
 		goto errout;
 	}
 
@@ -328,7 +328,7 @@ int LV2convolv::clv_initialize (
 		max_size = size;
 	}
 
-	VERBOSE_printf("convoLV2: max-convolution length %d samples (limit %d), period: %d samples\n", max_size, size, buffersize);
+	VERBOSE_printf("convolution: max-convolution length %d samples (limit %d), period: %d samples\n", max_size, size, buffersize);
 
 
 	if (convproc->configure (
@@ -339,17 +339,17 @@ int LV2convolv::clv_initialize (
 			/*min-part*/ buffersize,
 			/*max-part*/ buffersize
 			)) {
-		fprintf (stderr, "convoLV2: Cannot initialize convolution engine.\n");
+		fprintf (stderr, "convolution: Cannot initialize convolution engine.\n");
 		goto errout;
 	}
 
 	gb = (float*) malloc (n_frames * sizeof(float));
 	if (!gb) {
-		fprintf (stderr, "convoLV2: memory allocation failed for convolution buffer.\n");
+		fprintf (stderr, "convolution: memory allocation failed for convolution buffer.\n");
 		goto errout;
 	}
 
-	VERBOSE_printf("convoLV2: Proc: in: %d, out: %d || IR-file: %d chn, %d samples\n",
+	VERBOSE_printf("convolution: Proc: in: %d, out: %d || IR-file: %d chn, %d samples\n",
 			in_channel_cnt, out_channel_cnt, n_chan, n_frames);
 
 	// TODO use pre-configured channel-map (from state), IFF set and valid for the current file
@@ -372,7 +372,7 @@ int LV2convolv::clv_initialize (
 		}
 	}
 	else if (n_elem > n_chan) {
-		VERBOSE_printf("convoLV2: IR file has too few channels for given processor config.\n");
+		VERBOSE_printf("convolution: IR file has too few channels for given processor config.\n");
 		// missing some channels, first assign  in -> out, then x-over
 		// eg.  1: L -> L , 2: R -> R,  3: L -> R,  4: R -> L
 		// this allows to e.g load a 2-channel (stereo) IR into a
@@ -391,7 +391,7 @@ int LV2convolv::clv_initialize (
 	}
 	else {
 		assert (n_elem < n_chan);
-		VERBOSE_printf("convoLV2: IR file has too many channels for given processor config.\n");
+		VERBOSE_printf("convolution: IR file has too many channels for given processor config.\n");
 		// allow loading a quad file to a mono-in stereo-out
 		// eg.  1: L -> L , 2: L -> R
 		for (c = 0; c < n_elem && c < MAX_CHANNEL_MAPS; ++c) {
@@ -415,7 +415,7 @@ int LV2convolv::clv_initialize (
 			gb[i] = p[i * n_chan + ir_chan[c] - 1] * ir_gain[c];
 		}
 
-		VERBOSE_printf ("convoLV2: SET in %d -> out %d [IR chn:%d gain:%+.3f dly:%d]\n",
+		VERBOSE_printf ("convolution: SET in %d -> out %d [IR chn:%d gain:%+.3f dly:%d]\n",
 				chn_inp[c],
 				chn_out[c],
 				ir_chan[c],
@@ -432,12 +432,12 @@ int LV2convolv::clv_initialize (
 	free(gb); gb = NULL;
 	free(p);  p  = NULL;
 
-#if 1 // INFO
+#if 0 // INFO
 	convproc->print (stderr);
 #endif
 
 	if (convproc->start_process (0, 0)) {
-		fprintf(stderr, "convoLV2: Cannot start processing.\n");
+		fprintf(stderr, "convolution: Cannot start processing.\n");
 		goto errout;
 	}
 
