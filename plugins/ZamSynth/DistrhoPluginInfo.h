@@ -33,5 +33,6 @@
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 
 #define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamSynth"
+#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:InstrumentPlugin"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

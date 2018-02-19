@@ -1,5 +1,5 @@
 /*
- * ZamComp
+ * ZamDelay
  * Copyright (C) 2014 Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -34,5 +34,7 @@
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
 #define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamDelay"
+#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:DelayPlugin"
+
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

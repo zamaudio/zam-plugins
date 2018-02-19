@@ -33,5 +33,6 @@
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
 #define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamPhono"
+#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:UtilityPlugin"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

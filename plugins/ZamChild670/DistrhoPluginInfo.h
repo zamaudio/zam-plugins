@@ -1,5 +1,5 @@
 /*
- * ZamCompX2  
+ * ZamChild670
  * Copyright (C) 2014 Damien Zammit <damien@zamaudio.com>
  *
  * This program is free software; you can redistribute it and/or

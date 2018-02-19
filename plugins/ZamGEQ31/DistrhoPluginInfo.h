@@ -34,5 +34,6 @@
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
 #define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamGEQ31"
+#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:EQPlugin"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED
