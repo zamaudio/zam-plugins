@@ -62,7 +62,7 @@ RUN apt-get install -y \
 	ladspa-sdk \
 	libpthread-stubs0-dev
 
-RUN apt-get install -y make
+RUN apt-get install -y make zip
 
 RUN wget http://zamaudio.com/mbox2/apple-macports-libsamplerate_0.1.9-1_all.deb
 RUN dpkg -i apple-macports-libsamplerate_0.1.9-1_all.deb

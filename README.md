@@ -8,7 +8,7 @@ Note:
 This is a new repo that contains the full history of the old repo.
 Submodules are now required (>= 3.6).
 Uses Distrho Plugin Framework.
-Please use version 3.9 for a stable package, latest git is experimental.
+
 
 Build Dependencies:
 ===================
@@ -19,8 +19,7 @@ Build Dependencies:
 Bleeding edge installation:
 ===========================
 
-	git submodule init
-	git submodule update
+	git submodule update --init
 	make
 	sudo make install
 
@@ -28,14 +27,13 @@ Bleeding edge installation:
 Cross-compiling with docker:
 ============================
 
-	sudo docker build . -t zam-plugins-build
-	sudo docker run -v `pwd`:/tmp/build zam-plugins-build /bin/bash -c "cd /tmp/build && ..."
-
-(See .travis.yml file for the required cross build commands)
+	# Make sure docker is installed and configured
+	git submodule update --init
+	./make-all
 
 
 Package Maintainers:
 ====================
 
-	git checkout 3.9
+	git checkout 3.10
 	make dist
