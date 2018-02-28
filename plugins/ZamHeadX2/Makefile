@@ -12,8 +12,11 @@ NAME = ZamHeadX2
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	../../lib/zita-convolver-4.0.0/zita-convolver.cpp.o \
+ifneq ($(HAVE_ZITA_CONVOLVER),true)
+OBJS_DSP = ../../lib/zita-convolver-4.0.0/zita-convolver.cpp.o
+endif
+
+OBJS_DSP += \
 	convolution.cpp.o \
 	ZamHeadX2Plugin.cpp.o
 
@@ -36,6 +39,11 @@ ifeq ($(HAVE_DGL),true)
 TARGETS += lv2_sep
 else
 TARGETS += lv2_dsp
+endif
+
+ifeq ($(HAVE_ZITA_CONVOLVER),true)
+BASE_FLAGS += -DHAVE_ZITA_CONVOLVER
+LINK_FLAGS += $(ZITA_CONVOLVER_LIBS)
 endif
 
 TARGETS += vst

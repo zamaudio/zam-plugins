@@ -85,6 +85,15 @@ ifeq ($(LINUX),true)
 HAVE_DGL   = $(shell pkg-config --exists gl x11 && echo true)
 HAVE_JACK  = $(shell pkg-config --exists jack   && echo true)
 HAVE_LIBLO = $(shell pkg-config --exists liblo  && echo true)
+
+# Allow to use system provided libs
+ifeq ($(USE_SYSTEM_LIBS),1)
+HAVE_ZITA_CONVOLVER = true
+ZITA_CONVOLVER_LIBS = -lzita-convolver
+BASE_FLAGS += -I/usr/include
+export HAVE_ZITA_CONVOLVER
+endif
+
 endif
 
 ifeq ($(MACOS),true)
