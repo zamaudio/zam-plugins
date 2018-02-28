@@ -42,7 +42,6 @@
 #include <pthread.h>
 #include <assert.h>
 
-#include "../../lib/zita-convolver-3.1.0/zita-convolver.h"
 #include <samplerate.h>
 #include "convolution.hpp"
 #include "ZamVerbImpulses.hpp"

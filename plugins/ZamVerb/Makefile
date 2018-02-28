@@ -15,8 +15,11 @@ NAME = ZamVerb
 OBJS_DSP = \
 	ZamVerbPlugin.cpp.o \
 	ZamVerbImpulses.cpp.o \
-	convolution.cpp.o \
-	../../lib/zita-convolver-3.1.0/zita-convolver.cpp.o
+	convolution.cpp.o
+
+ifneq ($(HAVE_ZITA_CONVOLVER),true)
+OBJS_DSP += ../../lib/zita-convolver-3.1.0/zita-convolver.cpp.o
+endif
 
 OBJS_UI  = \
 	ZamVerbArtwork.cpp.o \
@@ -37,6 +40,11 @@ ifeq ($(HAVE_DGL),true)
 TARGETS += lv2_sep
 else
 TARGETS += lv2_dsp
+endif
+
+ifeq ($(HAVE_ZITA_CONVOLVER),true)
+BASE_FLAGS += -DHAVE_ZITA_CONVOLVER
+LINK_FLAGS += $(ZITA_CONVOLVER_LIBS)
 endif
 
 TARGETS += vst
