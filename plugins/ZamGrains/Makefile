@@ -15,9 +15,9 @@ NAME = ZamGrains
 OBJS_DSP = \
 	ZamGrainsPlugin.cpp.o
 
-OBJS_UI  = #\
-	#ZamGrainsArtwork.cpp.o \
-	#ZamGrainsUI.cpp.o
+OBJS_UI  = \
+	ZamGrainsArtwork.cpp.o \
+	ZamGrainsUI.cpp.o
 
 # --------------------------------------------------------------
 # Do some magic
