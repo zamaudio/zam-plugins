@@ -113,6 +113,14 @@ void ZamGrainsUI::parameterChanged(uint32_t index, float value)
     case ZamGrainsPlugin::paramDelaytime:
         fKnobLooptime->setValue(value);
         break;
+    case ZamGrainsPlugin::paramGrainpos:
+        grainpos = value;
+        repaint();
+        break;
+    case ZamGrainsPlugin::paramPlaypos:
+        playpos = value;
+        repaint();
+        break;
     }
 }
 
@@ -125,6 +133,8 @@ void ZamGrainsUI::programLoaded(uint32_t index)
 		fKnobGrains->setValue(1.0f);
 		fKnobMaster->setValue(0.0f);
 		fKnobLooptime->setValue(1000.0f);
+		grainpos = 0.f;
+		playpos = 0.f;
 		break;
 	}
 }
@@ -149,7 +159,44 @@ void ZamGrainsUI::imageKnobValueChanged(ZamKnob* knob, float value)
 
 void ZamGrainsUI::onDisplay()
 {
+    int i;
+    int grainx = 0;
+    int grains = (int)fKnobGrains->getValue();
+    float playspeed = fKnobPlayspeed->getValue();
+    int width = 345;
+    int height = 140;
+    int offsetx = 5;
+    int offsety = 175;
+
     fImgBackground.draw();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_LINE_SMOOTH);
+    //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glEnable(GL_POINT_SMOOTH);
+    glPointSize(8.0);
+    glEnable(GL_POINT_SPRITE);
+
+    glLineWidth(1);
+    glColor4f(1.f, 1.f, 0.235f, 1.0f);
+    for (i = 0; i < grains + 1; ++i) {
+        grainx = i * width / grains;
+	glBegin(GL_LINES);
+        glVertex2i(offsetx + grainx, offsety + 5);
+        glVertex2i(offsetx + grainx, offsety + height - 5);
+        glEnd();
+    }
+    // reset color
+
+    glBegin(GL_POINTS);
+    glColor4f(1.0f, 0.235f, 0.235f, 1.0f);
+    glVertex2i(offsetx + ((int)(width * playpos * playspeed) % width), offsety + 5 + height / 3);
+    glColor4f(0.235f, 0.235f, 1.0f, 1.0f);
+    glVertex2i(offsetx + width * playpos, offsety + 5 + height / 2);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glVertex2i(offsetx + width * grainpos, offsety + 5 + 2 * height / 3);
+    glEnd();
 }
 
 // -----------------------------------------------------------------------

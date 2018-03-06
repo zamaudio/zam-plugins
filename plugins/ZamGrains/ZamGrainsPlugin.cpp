@@ -80,6 +80,24 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -60.0f;
         parameter.ranges.max = 0.0f;
         break;
+    case paramGrainpos:
+        parameter.hints      = kParameterIsOutput;
+        parameter.name       = "Grain Position";
+        parameter.symbol     = "grpos";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
+    case paramPlaypos:
+        parameter.hints      = kParameterIsOutput;
+        parameter.name       = "Playback Position";
+        parameter.symbol     = "playpos";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     }
 }
 
@@ -102,6 +120,8 @@ void ZamGrainsPlugin::loadProgram(uint32_t index)
 		playspeed = 1.f;
 		grains = 1.f;
 		gain = 0.f;
+		grainpos = 0.f;
+		playpos = 0.f;
 		break;
 	}
 
@@ -129,6 +149,12 @@ float ZamGrainsPlugin::getParameterValue(uint32_t index) const
         break;
     case paramGain:
         return gain;
+        break;
+    case paramGrainpos:
+        return grainpos;
+        break;
+    case paramPlaypos:
+        return playpos;
         break;
     default:
         return 0.0f;
@@ -176,6 +202,8 @@ void ZamGrainsPlugin::activate()
 	zidx2 = 0;
 	zidxold = 0;
 	zidx2old = 0;
+	grainpos = 0;
+	playpos = 0;
 }
 
 float ZamGrainsPlugin::sample_and_hold(int ctrl, float input, int *state) {
@@ -241,7 +269,8 @@ void ZamGrainsPlugin::run(const float** inputs, float** outputs, uint32_t frames
 					sampz * hanning(posphasor, windowsize) +
 					sampz2 * hanning(outofphase, windowsize)
 		);
-		
+		grainpos = (float)zidx * 1000. / (srate * delaytime);
+		playpos = (float)posz * 1000. / (srate * delaytime);
 		zidxold = zidx;
 		zidx2old = zidx2;
 	}

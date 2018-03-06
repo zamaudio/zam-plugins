@@ -52,6 +52,7 @@ protected:
     void onDisplay() override;
 
 private:
+    float playpos, grainpos;
     Image fImgBackground;
     ScopedPointer<ZamKnob> fKnobPlayspeed, fKnobGrainspeed, fKnobMaster, fKnobGrains, fKnobLooptime;
 };
