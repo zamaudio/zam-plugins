@@ -98,6 +98,15 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
+    case paramFinalpos:
+        parameter.hints      = kParameterIsOutput;
+        parameter.name       = "Final Position";
+        parameter.symbol     = "finalpos";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     }
 }
 
@@ -122,6 +131,7 @@ void ZamGrainsPlugin::loadProgram(uint32_t index)
 		gain = 0.f;
 		grainpos = 0.f;
 		playpos = 0.f;
+		finalpos = 0.f;
 		break;
 	}
 
@@ -156,6 +166,9 @@ float ZamGrainsPlugin::getParameterValue(uint32_t index) const
     case paramPlaypos:
         return playpos;
         break;
+    case paramFinalpos:
+        return finalpos;
+        break;
     default:
         return 0.0f;
     }
@@ -180,6 +193,15 @@ void ZamGrainsPlugin::setParameterValue(uint32_t index, float value)
     case paramGain:
         gain = value;
         break;
+    case paramGrainpos:
+        grainpos = value;
+	break;
+    case paramPlaypos:
+        playpos = value;
+	break;
+    case paramFinalpos:
+        finalpos = value;
+	break;
     }
 }
 
@@ -193,7 +215,6 @@ void ZamGrainsPlugin::activate()
 		z[i] = 0.f;
 	}
 	posz = 0;
-	posrate = 0;
 	posphasor = 0;
 	currgrains = 0;
 	samphold = 0;
@@ -204,6 +225,7 @@ void ZamGrainsPlugin::activate()
 	zidx2old = 0;
 	grainpos = 0;
 	playpos = 0;
+	finalpos = 0;
 }
 
 float ZamGrainsPlugin::sample_and_hold(int ctrl, float input, int *state) {
@@ -269,7 +291,8 @@ void ZamGrainsPlugin::run(const float** inputs, float** outputs, uint32_t frames
 					sampz * hanning(posphasor, windowsize) +
 					sampz2 * hanning(outofphase, windowsize)
 		);
-		grainpos = (float)zidx * 1000. / (srate * delaytime);
+		finalpos = (float)zidx * 1000. / (srate * delaytime);
+		grainpos = (float)posphasor * 1000. / (srate * delaytime);
 		playpos = (float)posz * 1000. / (srate * delaytime);
 		zidxold = zidx;
 		zidx2old = zidx2;

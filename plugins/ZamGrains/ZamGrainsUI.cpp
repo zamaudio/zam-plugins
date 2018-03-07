@@ -115,10 +115,12 @@ void ZamGrainsUI::parameterChanged(uint32_t index, float value)
         break;
     case ZamGrainsPlugin::paramGrainpos:
         grainpos = value;
-        repaint();
         break;
     case ZamGrainsPlugin::paramPlaypos:
         playpos = value;
+        break;
+    case ZamGrainsPlugin::paramFinalpos:
+        finalpos = value;
         repaint();
         break;
     }
@@ -135,6 +137,7 @@ void ZamGrainsUI::programLoaded(uint32_t index)
 		fKnobLooptime->setValue(1000.0f);
 		grainpos = 0.f;
 		playpos = 0.f;
+		finalpos = 0.f;
 		break;
 	}
 }
@@ -163,6 +166,7 @@ void ZamGrainsUI::onDisplay()
     int grainx = 0;
     int grains = (int)fKnobGrains->getValue();
     float playspeed = fKnobPlayspeed->getValue();
+    float grainspeed = fKnobGrainspeed->getValue();
     int width = 345;
     int height = 140;
     int offsetx = 5;
@@ -190,12 +194,14 @@ void ZamGrainsUI::onDisplay()
     // reset color
 
     glBegin(GL_POINTS);
-    glColor4f(1.0f, 0.235f, 0.235f, 1.0f);
-    glVertex2i(offsetx + ((int)(width * playpos * playspeed) % width), offsety + 5 + height / 3);
     glColor4f(0.235f, 0.235f, 1.0f, 1.0f);
-    glVertex2i(offsetx + width * playpos, offsety + 5 + height / 2);
+    glVertex2i(offsetx + width * playpos, offsety + 5);
+    glColor4f(1.0f, 0.235f, 0.235f, 1.0f);
+    glVertex2i(offsetx + ((int)(width * playpos * playspeed) % width), offsety + height / 3);
+    glColor4f(0.235f, 1.0f, 0.235f, 1.0f);
+    glVertex2i(offsetx + ((int)(width * grainpos * grainspeed) % width), offsety + 2 * height / 3);
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    glVertex2i(offsetx + width * grainpos, offsety + 5 + 2 * height / 3);
+    glVertex2i(offsetx + (int)width * finalpos, offsety + height - 5);
     glEnd();
 }
 
