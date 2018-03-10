@@ -23,6 +23,7 @@
 #include "ZamGrainsArtwork.hpp"
 
 using DGL::Image;
+using DGL::ImageSwitch;
 using DGL::ZamKnob;
 
 START_NAMESPACE_DISTRHO
@@ -30,7 +31,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 class ZamGrainsUI : public UI,
-                    public ZamKnob::Callback
+                    public ZamKnob::Callback,
+                    public ImageSwitch::Callback
 {
 public:
     ZamGrainsUI();
@@ -48,6 +50,7 @@ protected:
     void imageKnobDragStarted(ZamKnob* knob) override;
     void imageKnobDragFinished(ZamKnob* knob) override;
     void imageKnobValueChanged(ZamKnob* knob, float value) override;
+    void imageSwitchClicked(ImageSwitch* toggle, bool down) override;
 
     void onDisplay() override;
 
@@ -55,6 +58,7 @@ private:
     float playpos, grainpos, finalpos;
     Image fImgBackground;
     ScopedPointer<ZamKnob> fKnobPlayspeed, fKnobGrainspeed, fKnobMaster, fKnobGrains, fKnobLooptime;
+    ScopedPointer<ImageSwitch> fToggleFreeze;
 };
 
 // -----------------------------------------------------------------------

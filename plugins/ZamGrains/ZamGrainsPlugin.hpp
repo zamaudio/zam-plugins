@@ -35,6 +35,7 @@ public:
         paramGrainspeed,
         paramPlayspeed,
         paramDelaytime,
+	paramFreeze,
         paramGrainpos,
         paramPlaypos,
         paramFinalpos,
@@ -124,7 +125,7 @@ protected:
 
 private:
     int currgrains, zidx, zidx2, zidxold, zidx2old, samphold, samphold2;
-    float grains, grainspeed, playspeed, delaytime, gain, delaytimeout, playpos, grainpos, finalpos;
+    float freeze, grains, grainspeed, playspeed, delaytime, gain, delaytimeout, playpos, grainpos, finalpos;
     float delaytimeold, grainsold, grainspeedold;
     float z[MAX_DELAY];
     unsigned int posz;

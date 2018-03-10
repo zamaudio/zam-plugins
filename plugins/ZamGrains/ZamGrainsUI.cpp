@@ -33,6 +33,11 @@ ZamGrainsUI::ZamGrainsUI()
     // knob
     Image knobImage(ZamGrainsArtwork::knobData, ZamGrainsArtwork::knobWidth, ZamGrainsArtwork::knobHeight);
 
+    // toggleon
+    Image toggleonImage(ZamGrainsArtwork::toggleonData, ZamGrainsArtwork::toggleonWidth, ZamGrainsArtwork::toggleonHeight);
+    // toggleoff
+    Image toggleoffImage(ZamGrainsArtwork::toggleoffData, ZamGrainsArtwork::toggleoffWidth, ZamGrainsArtwork::toggleoffHeight);
+
     // knob
     fKnobPlayspeed = new ZamKnob(this, knobImage);
     fKnobPlayspeed->setAbsolutePos(130, 36);
@@ -87,6 +92,13 @@ ZamGrainsUI::ZamGrainsUI()
     fKnobMaster->setRotationAngle(240);
     fKnobMaster->setCallback(this);
 
+    Point<int> togglePosStart(212,120);
+
+    fToggleFreeze = new ImageSwitch(this, toggleoffImage, toggleonImage);
+    fToggleFreeze->setAbsolutePos(togglePosStart);
+    fToggleFreeze->setId(ZamGrainsPlugin::paramFreeze);
+    fToggleFreeze->setCallback(this);
+
     // set default values
     programLoaded(0);
 }
@@ -113,6 +125,9 @@ void ZamGrainsUI::parameterChanged(uint32_t index, float value)
     case ZamGrainsPlugin::paramDelaytime:
         fKnobLooptime->setValue(value);
         break;
+    case ZamGrainsPlugin::paramFreeze:
+        fToggleFreeze->setDown(value > 0.5f);
+        break;
     case ZamGrainsPlugin::paramGrainpos:
         grainpos = value;
         break;
@@ -135,6 +150,7 @@ void ZamGrainsUI::programLoaded(uint32_t index)
 		fKnobGrains->setValue(1.0f);
 		fKnobMaster->setValue(0.0f);
 		fKnobLooptime->setValue(1000.0f);
+		fToggleFreeze->setDown(false);
 		grainpos = 0.f;
 		playpos = 0.f;
 		finalpos = 0.f;
@@ -158,6 +174,12 @@ void ZamGrainsUI::imageKnobDragFinished(ZamKnob* knob)
 void ZamGrainsUI::imageKnobValueChanged(ZamKnob* knob, float value)
 {
     setParameterValue(knob->getId(), value);
+}
+
+void ZamGrainsUI::imageSwitchClicked(ImageSwitch* toggle, bool down)
+{
+    float val = down ? 1.f : 0.f;
+    setParameterValue(toggle->getId(), val);
 }
 
 void ZamGrainsUI::onDisplay()

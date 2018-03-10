@@ -80,6 +80,15 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = -60.0f;
         parameter.ranges.max = 0.0f;
         break;
+    case paramFreeze:
+        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.name       = "Freeze";
+        parameter.symbol     = "freeze";
+        parameter.unit       = " ";
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        break;
     case paramGrainpos:
         parameter.hints      = kParameterIsOutput;
         parameter.name       = "Grain Position";
@@ -129,6 +138,7 @@ void ZamGrainsPlugin::loadProgram(uint32_t index)
 		playspeed = 1.f;
 		grains = 1.f;
 		gain = 0.f;
+		freeze = 0.f;
 		grainpos = 0.f;
 		playpos = 0.f;
 		finalpos = 0.f;
@@ -159,6 +169,9 @@ float ZamGrainsPlugin::getParameterValue(uint32_t index) const
         break;
     case paramGain:
         return gain;
+        break;
+    case paramFreeze:
+        return freeze;
         break;
     case paramGrainpos:
         return grainpos;
@@ -192,6 +205,9 @@ void ZamGrainsPlugin::setParameterValue(uint32_t index, float value)
         break;
     case paramGain:
         gain = value;
+        break;
+    case paramFreeze:
+        freeze = value;
         break;
     case paramGrainpos:
         grainpos = value;
@@ -272,8 +288,9 @@ void ZamGrainsPlugin::run(const float** inputs, float** outputs, uint32_t frames
 	sampz_f = z[zidxold];
 	sampz2_f = z[zidx2old];
 	for (i = 0; i < frames; i++) {
-		z[posz] = inputs[0][i];
-
+		if (freeze < 0.5f) {
+			z[posz] = inputs[0][i];
+		}
 		outofphase = (posphasor + windowsize / 2) % windowsize;
 		zidx = (int)(sample_and_hold(posphasor, (float)posz * playspeed, &samphold) + (float)posphasor * grainspeed);
 		zidx2 = (int)(sample_and_hold(outofphase, (float)posz * playspeed, &samphold2) + (float)outofphase * grainspeed);
