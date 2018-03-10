@@ -39,7 +39,7 @@ ZamGrainsUI::ZamGrainsUI()
     fKnobPlayspeed->setId(ZamGrainsPlugin::paramPlayspeed);
     fKnobPlayspeed->setRange(0.1f, 20.0f);
     fKnobPlayspeed->setLabel(true);
-    fKnobPlayspeed->setScrollStep(0.1f);
+    fKnobPlayspeed->setScrollStep(0.01f);
     fKnobPlayspeed->setUsingLogScale(true);
     fKnobPlayspeed->setDefault(1.0f);
     fKnobPlayspeed->setRotationAngle(240);
@@ -50,7 +50,7 @@ ZamGrainsUI::ZamGrainsUI()
     fKnobGrainspeed->setId(ZamGrainsPlugin::paramGrainspeed);
     fKnobGrainspeed->setRange(0.1f, 20.0f);
     fKnobGrainspeed->setLabel(true);
-    fKnobGrainspeed->setScrollStep(0.1f);
+    fKnobGrainspeed->setScrollStep(0.01f);
     fKnobGrainspeed->setUsingLogScale(true);
     fKnobGrainspeed->setDefault(1.0f);
     fKnobGrainspeed->setRotationAngle(240);

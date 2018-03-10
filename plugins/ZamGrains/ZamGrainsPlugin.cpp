@@ -226,6 +226,9 @@ void ZamGrainsPlugin::activate()
 	grainpos = 0;
 	playpos = 0;
 	finalpos = 0;
+	delaytimeold = 0.f;
+	grainsold = 0.f;
+	grainspeedold = 0.f;
 }
 
 float ZamGrainsPlugin::sample_and_hold(int ctrl, float input, int *state) {
@@ -245,17 +248,32 @@ void ZamGrainsPlugin::run(const float** inputs, float** outputs, uint32_t frames
 	uint32_t i;
 	float srate = getSampleRate();
 	int delaysamples;
-	float sampz, sampz2;
+	float sampz, sampz2, sampz_f, sampz2_f;
 	float xfade;
-
+	int recalc;
 	int windowsize;
 	int outofphase;
 
 	delaysamples = (int)(delaytime * srate) / 1000;
 	windowsize = delaysamples / grains;
 
+	recalc = 0;
+	if (grainspeed != grainspeedold) {
+		recalc = 1;
+	}
+	if (grains != grainsold) {
+		recalc = 1;
+	}
+	if (delaytime != delaytimeold) {
+		recalc = 1;
+	}
+
+	xfade = 0.f;
+	sampz_f = z[zidxold];
+	sampz2_f = z[zidx2old];
 	for (i = 0; i < frames; i++) {
 		z[posz] = inputs[0][i];
+
 		outofphase = (posphasor + windowsize / 2) % windowsize;
 		zidx = (int)(sample_and_hold(posphasor, (float)posz * playspeed, &samphold) + (float)posphasor * grainspeed);
 		zidx2 = (int)(sample_and_hold(outofphase, (float)posz * playspeed, &samphold2) + (float)outofphase * grainspeed);
@@ -276,17 +294,18 @@ void ZamGrainsPlugin::run(const float** inputs, float** outputs, uint32_t frames
 			posz = 0;
 		}
 
-		
-		xfade = 1.0f / (float)frames;
-		sampz = z[zidxold];
-		sampz2 = z[zidx2old];
-		sampz *= (1.-xfade);
-		sampz2 *= (1.-xfade);
-		sampz += z[zidx] * xfade;
-		sampz2 += z[zidx2] * xfade;
-		sampz = sanitize_denormal(sampz);
-		sampz2 = sanitize_denormal(sampz2);
-
+		if (recalc) {
+			xfade += 1.0f / (float)frames;
+			sampz = sampz_f;
+			sampz2 = sampz2_f;
+			sampz *= (1.-xfade);
+			sampz2 *= (1.-xfade);
+			sampz += z[zidx] * xfade;
+			sampz2 += z[zidx2] * xfade;
+		} else {
+			sampz = z[zidx];
+			sampz2 = z[zidx2];
+		}
 		outputs[0][i] = from_dB(gain) * (
 					sampz * hanning(posphasor, windowsize) +
 					sampz2 * hanning(outofphase, windowsize)
@@ -294,10 +313,12 @@ void ZamGrainsPlugin::run(const float** inputs, float** outputs, uint32_t frames
 		finalpos = (float)zidx * 1000. / (srate * delaytime);
 		grainpos = (float)posphasor * 1000. / (srate * delaytime);
 		playpos = (float)posz * 1000. / (srate * delaytime);
-		zidxold = zidx;
-		zidx2old = zidx2;
 	}
+	grainsold = grains;
+	grainspeedold = grainspeed;
 	delaytimeold = delaytime;
+	zidxold = zidx;
+	zidx2old = zidx2;
 }
 
 // -----------------------------------------------------------------------
