@@ -9,123 +9,14 @@ languages: c++
 git:
   submodules: true
 
-before_install:
-- sudo add-apt-repository ppa:kxstudio-debian/mingw -y
-- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-- sudo apt-get update -qq -y
-- wget http://zamaudio.com/mbox2/apple-macports-fftw-3_3.3.5-1_all.deb
-- wget http://zamaudio.com/mbox2/apple-macports-libsamplerate_0.1.9-1_all.deb
-- wget http://zamaudio.com/mbox2/mingw64-x-fftw-3_3.3.5-1_all.deb
-- wget http://zamaudio.com/mbox2/mingw64-x-libsamplerate_0.1.9-1_all.deb
-- wget http://zamaudio.com/mbox2/mingw64-x-pthread_0.0.1-3_all.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-macports-liblo/apple-macports-liblo_0.26-1_all.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-gcc/apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-odcctools/apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
-- wget -c https://launchpad.net/~flosoft/+archive/ubuntu/cross-apple/+files/apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb --no-check-certificate
-- wget http://ppa.launchpad.net/kxstudio-team/builds/ubuntu/pool/main/a/apple-x86-setup/apple-x86-setup_2_amd64.deb
-- sudo dpkg -i apple-x86-odcctools_758.159-0kxstudio2_amd64.deb
-- sudo dpkg -i apple-x86-gcc_4.2.1~5646-1kxstudio2_amd64.deb
-- sudo dpkg -i apple-uni-sdk-10.5_20110407-0.flosoft1_amd64.deb
-- sudo dpkg -i apple-x86-setup_2_amd64.deb
-- sudo dpkg -i apple-macports-liblo_0.26-1_all.deb
-- sudo dpkg -i apple-macports-fftw-3_3.3.5-1_all.deb
-- sudo dpkg -i apple-macports-libsamplerate_0.1.9-1_all.deb
-- sudo apt-get install mingw64-x-gcc -y
-- sudo apt-get install mingw64-x-binutils -y
-- sudo apt-get install mingw64-x-pkgconfig -y
-- sudo apt-get install mingw64-x-liblo -y
-- sudo dpkg -i mingw64-x-pthread_0.0.1-3_all.deb
-- sudo dpkg -i mingw64-x-fftw-3_3.3.5-1_all.deb
-- sudo dpkg -i mingw64-x-libsamplerate_0.1.9-1_all.deb
-- sudo apt-get install g++-4.8 -y
-- sudo apt-get install binutils -y
-- sudo apt-get install pkg-config -y
-- sudo apt-get install libx11-dev -y
-- sudo apt-get install libgl1-mesa-dev -y
-- sudo apt-get install liblo-dev -y
-- sudo apt-get install fftw3-dev -y
-- sudo apt-get install libsamplerate0-dev -y
-- sudo apt-get install libjack-dev -y
-- sudo apt-get install ladspa-sdk -y
-- sudo apt-get install libpthread-stubs0-dev -y
+services:
+  - docker
 
-cache:
-- apt
+before_install:
+  - docker build -t damo22/zam-plugins-build:latest .
 
 script:
-- export CC=gcc
-- export CXX=g++-4.8
-- export AR=ar
-- export CXXFLAGS=
-- export CFLAGS=
-- export LDFLAGS=
-- make clean
-- rm -fr bin
-- mkdir bin
-- make LINUX=true
-- mv bin linux
-- mkdir bin
-- export CC=i686-apple-darwin10-gcc
-- export CXX=i686-apple-darwin10-g++
-- export AR=i686-apple-darwin10-ar
-- export PKG_CONFIG_PATH=/opt/local/lib/pkgconfig
-- export CXXFLAGS="-I/opt/local/include"
-- export CFLAGS="-I/opt/local/include"
-- make clean
-- touch dpf/utils/lv2_ttl_generator
-- chmod a+x dpf/utils/lv2_ttl_generator
-- make MACOS=true MACOS_OLD=true -j2
-- mv bin osx
-- mkdir bin
-- export PATH=$PATH:/opt/mingw64/bin
-- export CXXFLAGS="-m32 -I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
-- export CFLAGS="-m32 -I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
-- export LDFLAGS=-m32
-- export PKG_CONFIG_PATH=/opt/mingw64/lib32/pkgconfig
-- export CC=x86_64-w64-mingw32-gcc
-- export CXX=x86_64-w64-mingw32-g++
-- export AR=x86_64-w64-mingw32-ar
-- make clean
-- touch dpf/utils/lv2_ttl_generator.exe
-- chmod a+x dpf/utils/lv2_ttl_generator.exe
-- make WIN32=true -j2
-- mv bin win32
-- mkdir bin
-- export CXXFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
-- export CFLAGS="-I/opt/mingw64/x86_64-w64-mingw32/include -I/opt/mingw64/include"
-- export LDFLAGS=
-- export PKG_CONFIG_PATH=/opt/mingw64/lib/pkgconfig
-- make clean
-- touch dpf/utils/lv2_ttl_generator.exe
-- chmod a+x dpf/utils/lv2_ttl_generator.exe
-- make WIN32=true -j2
-- mv bin win64
-- mkdir bin
-- cd linux
-- for f in *.lv2; do cd $f; cp *.ttl ../../osx/$f/ ; cd .. ; done
-- for f in *.lv2; do cd $f; cp *.ttl ../../win32/$f/ ; cd .. ; done
-- for f in *.lv2; do cd $f; cp *.ttl ../../win64/$f/ ; cd .. ; done
-- cd ../osx
-- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dylib/g' manifest.ttl; perl -pi -e 's/X11UI/CocoaUI/g' manifest.ttl; cd .. ; done
-- cd ../win32
-- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e 's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
-- cd ../win64
-- for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e 's/X11UI/WindowsUI/g' manifest.ttl; cd .. ; done
-- cd ../linux
-- zip -9 -r zam-plugins-$TRAVIS_TAG-linuxlv2.zip *.lv2
-- mv *.zip ../bin
-- cd ../osx
-- zip -9 -r zam-plugins-$TRAVIS_TAG-osxlv2.zip *.lv2
-- mv *.zip ../bin
-- cd ../win32
-- zip -9 -r zam-plugins-$TRAVIS_TAG-win32lv2.zip *.lv2
-- mv *.zip ../bin
-- cd ../win64
-- zip -9 -r zam-plugins-$TRAVIS_TAG-win64lv2.zip *.lv2
-- mv *.zip ../bin
-- cd ../bin
-- ls -l
-- echo "ALL DONE!!!"
+  - docker run -v `pwd`:/tmp/build --entrypoint "/bin/bash" damo22/zam-plugins-build:latest -c "cd /tmp/build; CPUS=2 bash docker-script"
 
 deploy:
   provider: releases
@@ -136,6 +27,9 @@ deploy:
     - zam-plugins-$TRAVIS_TAG-osxlv2.zip
     - zam-plugins-$TRAVIS_TAG-win32lv2.zip
     - zam-plugins-$TRAVIS_TAG-win64lv2.zip
+    - zam-plugins-$TRAVIS_TAG-osxvst.zip
+    - zam-plugins-$TRAVIS_TAG-win32vst.zip
+    - zam-plugins-$TRAVIS_TAG-win64vst.zip
   skip_cleanup: true
   overwrite: true
   on:
