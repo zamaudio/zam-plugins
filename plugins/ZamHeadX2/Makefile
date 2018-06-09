@@ -13,7 +13,7 @@ NAME = ZamHeadX2
 # Files to build
 
 OBJS_DSP = \
-	../../lib/zita-convolver-3.1.0/zita-convolver.cpp.o \
+	../../lib/zita-convolver-4.0.0/zita-convolver.cpp.o \
 	convolution.cpp.o \
 	ZamHeadX2Plugin.cpp.o
 

@@ -42,12 +42,12 @@
 #include <pthread.h>
 #include <assert.h>
 
-#include "../../lib/zita-convolver-3.1.0/zita-convolver.h"
+#include "../../lib/zita-convolver-4.0.0/zita-convolver.h"
 #include <samplerate.h>
 #include "convolution.hpp"
 
-#if ZITA_CONVOLVER_MAJOR_VERSION != 3
-# error "This programs requires zita-convolver 3.x.x"
+#if ZITA_CONVOLVER_MAJOR_VERSION != 4
+# error "This programs requires zita-convolver 4.x.x"
 #endif
 
 #ifndef SRC_QUALITY
@@ -557,7 +557,6 @@ int LV2convolv::clv_initialize (
 
 	convproc = new Convproc();
 	convproc->set_options (options);
-	convproc->set_density (density);
 
 	float fir_coeffs_lr[400] = { 0 };
 	for (int i = 0; i < 200; i++) {
@@ -600,7 +599,8 @@ int LV2convolv::clv_initialize (
 			/*max-convolution length */ max_size,
 			/*quantum*/  buffersize,
 			/*min-part*/ buffersize,
-			/*max-part*/ buffersize
+			/*max-part*/ buffersize,
+			density
 			)) {
 		fprintf (stderr, "convolution: Cannot initialize convolution engine.\n");
 		goto errout;

@@ -42,13 +42,13 @@
 #include <pthread.h>
 #include <assert.h>
 
-#include "../../lib/zita-convolver-3.1.0/zita-convolver.h"
+#include "../../lib/zita-convolver-4.0.0/zita-convolver.h"
 #include <samplerate.h>
 #include "convolution.hpp"
 #include "ZamVerbImpulses.hpp"
 
-#if ZITA_CONVOLVER_MAJOR_VERSION != 3
-# error "This programs requires zita-convolver 3.x.x"
+#if ZITA_CONVOLVER_MAJOR_VERSION != 4
+# error "This programs requires zita-convolver 4.x.x"
 #endif
 
 #ifndef SRC_QUALITY
@@ -295,7 +295,6 @@ int LV2convolv::clv_initialize (
 
 	convproc = new Convproc();
 	convproc->set_options (options);
-	convproc->set_density (density);
 /*
 	if (audiofile_read (ir_fn, sample_rate, &p, &n_chan, &n_frames)) {
 		fprintf(stderr, "convolution: failed to read IR.\n");
@@ -337,7 +336,8 @@ int LV2convolv::clv_initialize (
 			/*max-convolution length */ max_size,
 			/*quantum*/  buffersize,
 			/*min-part*/ buffersize,
-			/*max-part*/ buffersize
+			/*max-part*/ buffersize,
+			density
 			)) {
 		fprintf (stderr, "convolution: Cannot initialize convolution engine.\n");
 		goto errout;

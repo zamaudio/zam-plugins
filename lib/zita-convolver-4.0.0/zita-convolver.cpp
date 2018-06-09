@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 //
-//  Copyright (C) 2006-2011 Fons Adriaensen <fons@linuxaudio.org>
+//  Copyright (C) 2006-2018 Fons Adriaensen <fons@linuxaudio.org>
 //    
 //  This program is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -42,11 +42,27 @@ float Convproc::_mac_cost = 1.0f;
 float Convproc::_fft_cost = 5.0f;
 
 
+static float *calloc_real (uint32_t k)
+{
+    float *p = fftwf_alloc_real (k);
+    if (!p) throw (Converror (Converror::MEM_ALLOC));
+    memset (p, 0, k * sizeof (float));
+    return p;
+}
+
+static fftwf_complex *calloc_complex (uint32_t k)
+{
+    fftwf_complex *p = fftwf_alloc_complex (k);
+    if (!p) throw (Converror (Converror::MEM_ALLOC));
+    memset (p, 0, k * sizeof (fftwf_complex));
+    return p;
+}
+
+
 Convproc::Convproc (void) :
     _state (ST_IDLE),
     _options (0),
     _skipcnt (0),
-    _density (0),
     _ninp (0),
     _nout (0),
     _quantum (0),
@@ -63,41 +79,39 @@ Convproc::Convproc (void) :
 
 Convproc::~Convproc (void)
 {
+    stop_process ();
     cleanup ();
 }
 
 
-void Convproc::set_options (unsigned int options)
+void Convproc::set_options (uint32_t options)
 {
     _options = options;
 }
 
 
-void Convproc::set_density (float density)
-{
-    _density = density;
-}
-
-
-void Convproc::set_skipcnt (unsigned int skipcnt)
+void Convproc::set_skipcnt (uint32_t skipcnt)
 {
     if ((_quantum == _minpart) && (_quantum == _maxpart)) _skipcnt = skipcnt;
 }
 
 
-int Convproc::configure (unsigned int ninp,
-                         unsigned int nout,
-                         unsigned int maxsize,
-                         unsigned int quantum,
-                         unsigned int minpart,
-			 unsigned int maxpart)
+int Convproc::configure (uint32_t  ninp,
+                         uint32_t  nout,
+                         uint32_t  maxsize,
+                         uint32_t  quantum,
+                         uint32_t  minpart,
+			 uint32_t  maxpart,
+                         float     density)
 {
-    unsigned int  offs, npar, size, pind, nmin, nmax, step, i;
-    int           prio, d, r, s;
-    float         cfft, cmac, t;
+    uint32_t  offs, npar, size, pind, nmin, i;
+    int       prio, step, d, r, s;
+    float     cfft, cmac;
     
     if (_state != ST_IDLE) return Converror::BAD_STATE;
-    if (   (quantum & (quantum - 1))
+    if (   (ninp < 1) || (ninp > MAXINP)
+        || (nout < 1) || (nout > MAXOUT)
+	|| (quantum & (quantum - 1))
         || (quantum < MINQUANT)
         || (quantum > MAXQUANT)
         || (minpart & (minpart - 1))
@@ -108,21 +122,12 @@ int Convproc::configure (unsigned int ninp,
 	|| (maxpart > MAXPART)
 	|| (maxpart < minpart)) return Converror::BAD_PARAM;
 
-    if (ninp < nout) { nmin = ninp; nmax = nout; }
-    else             { nmin = nout; nmax = ninp; }
-
-    if (_density <= 0) _density = 1.0 / nmin;
-    else
-    {
-        t = 1.0f / nmax;
-        if (_density < t) _density = t;
-        if (_density > 1) _density = 1;
-    }
-
+    nmin = (ninp < nout) ? ninp : nout;
+    if (density <= 0.0f) density = 1.0f / nmin;
+    if (density >  1.0f) density = 1.0f;
     cfft = _fft_cost * (ninp + nout);
-    cmac = _mac_cost * ninp * nout * _density;
+    cmac = _mac_cost * ninp * nout * density;
     step = (cfft < 4 * cmac) ? 1 : 2;
-
     if (step == 2)
     {
         r = maxpart / minpart;
@@ -131,7 +136,6 @@ int Convproc::configure (unsigned int ninp,
     else s = 1;
     nmin = (s == 1) ? 2 : 6;
     if (minpart == quantum) nmin++;
-
     prio = 0;
     size = quantum;
     while (size < minpart)
@@ -154,7 +158,6 @@ int Convproc::configure (unsigned int ninp,
 	    }
 	    _convlev [pind] = new Convlevel ();
 	    _convlev [pind]->configure (prio, offs, npar, size, _options);
-
 	    offs += size * npar;
 	    if (offs < maxsize)
 	    {
@@ -188,21 +191,22 @@ int Convproc::configure (unsigned int ninp,
 }
 
 
-int Convproc::impdata_create (unsigned int inp,
-                              unsigned int out,
-                              unsigned int step,
-                              float       *data,
-                              int          ind0,
-                              int          ind1)
+int Convproc::impdata_create (uint32_t  inp,
+                              uint32_t  out,
+                              int32_t   step,
+                              float     *data,
+                              int32_t   ind0,
+                              int32_t   ind1)
 {
-    unsigned int j;
+    uint32_t j;
 
     if (_state != ST_STOP) return Converror::BAD_STATE;
+    if ((inp >= _ninp) || (out >= _nout)) return Converror::BAD_PARAM;
     try
     {
         for (j = 0; j < _nlevels; j++)
 	{
-            _convlev [j]->impdata_create (inp, out, step, data, ind0, ind1);
+            _convlev [j]->impdata_write (inp, out, step, data, ind0, ind1, true);
 	}
     }
     catch (...)
@@ -214,37 +218,51 @@ int Convproc::impdata_create (unsigned int inp,
 }
 
 
-int Convproc::impdata_update (unsigned int inp,
-                              unsigned int out,
-                              unsigned int step,
-                              float       *data, 
-                              int          ind0,
-                              int          ind1)
+int Convproc::impdata_clear (uint32_t inp, uint32_t out)
 {
-    unsigned int j;
+    uint32_t k;
 
     if (_state < ST_STOP) return Converror::BAD_STATE;
+    for (k = 0; k < _nlevels; k++) _convlev [k]->impdata_clear (inp, out);
+    return 0;
+}
+
+
+int Convproc::impdata_update (uint32_t  inp,
+                              uint32_t  out,
+                              int32_t   step,
+                              float     *data, 
+                              int32_t   ind0,
+                              int32_t   ind1)
+{
+    uint32_t j;
+
+    if (_state < ST_STOP) return Converror::BAD_STATE;
+    if ((inp >= _ninp) || (out >= _nout)) return Converror::BAD_PARAM;
     for (j = 0; j < _nlevels; j++)
     {
-        _convlev [j]->impdata_update (inp, out, step, data, ind0, ind1);
+        _convlev [j]->impdata_write (inp, out, step, data, ind0, ind1, false);
     }
     return 0;
 }
 
 
-int Convproc::impdata_copy (unsigned int inp1,
-                            unsigned int out1,
-                            unsigned int inp2,
-                            unsigned int out2) 
+int Convproc::impdata_link (uint32_t inp1,
+                            uint32_t out1,
+                            uint32_t inp2,
+                            uint32_t out2) 
 {
-    unsigned int j;
-
+    uint32_t j;
+    
+    if ((inp1 >= _ninp) || (out1 >= _nout)) return Converror::BAD_PARAM;
+    if ((inp2 >= _ninp) || (out2 >= _nout)) return Converror::BAD_PARAM;
+    if ((inp1 == inp2) && (out1 == out2)) return Converror::BAD_PARAM;
     if (_state != ST_STOP) return Converror::BAD_STATE;
     try
     {
         for (j = 0; j < _nlevels; j++)
 	{
-            _convlev [j]->impdata_copy (inp1, out1, inp2, out2);
+            _convlev [j]->impdata_link (inp1, out1, inp2, out2);
 	}
     }
     catch (...)
@@ -258,7 +276,7 @@ int Convproc::impdata_copy (unsigned int inp1,
 
 int Convproc::reset (void)
 {
-    unsigned int k;
+    uint32_t k;
 
     if (_state == ST_IDLE) return Converror::BAD_STATE;
     for (k = 0; k < _ninp; k++) memset (_inpbuff [k], 0, _inpsize * sizeof (float));
@@ -270,17 +288,17 @@ int Convproc::reset (void)
 
 int Convproc::start_process (int abspri, int policy)
 {
-    unsigned int k;
+    uint32_t k;
 
     if (_state != ST_STOP) return Converror::BAD_STATE;
-
     _latecnt = 0;
     _inpoffs = 0;
     _outoffs = 0;
     reset ();
+
     for (k = (_minpart == _quantum) ? 1 : 0; k < _nlevels; k++)
     {
-         _convlev [k]->start (abspri, policy);
+        _convlev [k]->start (abspri, policy);
     }
     _state = ST_PROC;
     return 0;
@@ -289,14 +307,12 @@ int Convproc::start_process (int abspri, int policy)
 
 int Convproc::process (bool sync)
 {
-    unsigned int k;
-    int f = 0;
+    uint32_t  k;
+    int       f = 0;
 
     if (_state != ST_PROC) return 0;
-    
     _inpoffs += _quantum;
     if (_inpoffs == _inpsize) _inpoffs = 0;
-
     _outoffs += _quantum;
     if (_outoffs == _minpart)
     {
@@ -309,7 +325,7 @@ int Convproc::process (bool sync)
 	{
             if (++_latecnt >= 5)
             {
-	        stop_process ();
+	        if (~_options & OPT_LATE_CONTIN) stop_process ();
 	        f |= FL_LOAD;
 	    }
 	}
@@ -321,7 +337,7 @@ int Convproc::process (bool sync)
 
 int Convproc::stop_process (void)
 {
-    unsigned int k;
+    uint32_t k;
 
     if (_state != ST_PROC) return Converror::BAD_STATE;
     for (k = 0; k < _nlevels; k++) _convlev [k]->stop ();
@@ -332,17 +348,12 @@ int Convproc::stop_process (void)
 
 int Convproc::cleanup (void)
 {
-    unsigned int k;
+    uint32_t k;
 
     while (! check_stop ())
     {
         usleep (100000);
     }
-    if (_state != ST_STOP)
-    {
-        return Converror::BAD_STATE;
-    }
-
     for (k = 0; k < _ninp; k++)
     {
         delete[] _inpbuff [k];
@@ -362,7 +373,6 @@ int Convproc::cleanup (void)
     _state = ST_IDLE;
     _options = 0;
     _skipcnt = 0;
-    _density = 0;
     _ninp = 0;
     _nout = 0;
     _quantum = 0;
@@ -376,7 +386,7 @@ int Convproc::cleanup (void)
 
 bool Convproc::check_stop (void)
 {
-    unsigned int k;
+    uint32_t k;
 
     for (k = 0; (k < _nlevels) && (_convlev [k]->_stat == Convlevel::ST_IDLE); k++);
     if (k == _nlevels)
@@ -390,7 +400,7 @@ bool Convproc::check_stop (void)
 
 void Convproc::print (FILE *F)
 {
-    unsigned int k;
+    uint32_t k;
 
     for (k = 0; k < _nlevels; k++) _convlev [k]->print (F);
 }
@@ -424,21 +434,11 @@ Convlevel::~Convlevel (void)
 }
 
 
-void *Convlevel::alloc_aligned (size_t size)
-{
-    void *p;
-
-    if (posix_memalign (&p, 16, size)) throw (Converror (Converror::MEM_ALLOC));
-    memset (p, 0, size);
-    return p;
-}
-
-
-void Convlevel::configure (int prio,
-                           unsigned int offs,
-                           unsigned int npar,
-                           unsigned int parsize,
-			   unsigned int options)
+void Convlevel::configure (int       prio,
+                           uint32_t  offs,
+                           uint32_t  npar,
+                           uint32_t  parsize,
+			   uint32_t  options)
 {
     int fftwopt = (options & OPT_FFTW_MEASURE) ? FFTW_MEASURE : FFTW_ESTIMATE;
 
@@ -448,9 +448,9 @@ void Convlevel::configure (int prio,
     _parsize = parsize;
     _options = options;
     
-    _time_data = (float *)(alloc_aligned (2 * _parsize * sizeof (float)));
-    _prep_data = (float *)(alloc_aligned (2 * _parsize * sizeof (float)));
-    _freq_data = (fftwf_complex *)(alloc_aligned ((_parsize + 1) * sizeof (fftwf_complex)));
+    _time_data = calloc_real (2 * _parsize);
+    _prep_data = calloc_real (2 * _parsize);
+    _freq_data = calloc_complex (_parsize + 1);
     _plan_r2c = fftwf_plan_dft_r2c_1d (2 * _parsize, _time_data, _freq_data, fftwopt);
     _plan_c2r = fftwf_plan_dft_c2r_1d (2 * _parsize, _freq_data, _time_data, fftwopt);
     if (_plan_r2c && _plan_c2r) return;
@@ -458,42 +458,49 @@ void Convlevel::configure (int prio,
 }
 
 
-void Convlevel::impdata_create (unsigned int inp,
-                                unsigned int out,
-                                unsigned int step,
-                                float *data,
-                                int i0,
-                                int i1)
+void Convlevel::impdata_write (uint32_t  inp,
+                               uint32_t  out,
+                               int32_t   step,
+                               float     *data,
+                               int32_t   i0,
+                               int32_t   i1,
+                               bool      create)
 {
-    unsigned int   k;
-    int            j, j0, j1, n;
-    float          norm;
-    fftwf_complex  *fftb;
-    Macnode        *M;
+    uint32_t        k;
+    int32_t         j, j0, j1, n;
+    float           norm;
+    fftwf_complex   *fftb;
+    Macnode         *M;
 
     n = i1 - i0;
     i0 = _offs - i0;
     i1 = i0 + _npar * _parsize;
     if ((i0 >= n) || (i1 <= 0)) return;
 
-    M = findmacnode (inp, out, true);
-    if (! (M->_fftb))
+    if (create)
     {
-	M->_fftb = new fftwf_complex * [_npar];
-	memset (M->_fftb, 0, _npar * sizeof (fftwf_complex *));
+        M = findmacnode (inp, out, true);
+	if (M == 0 || M->_link) return;
+	if (M->_fftb == 0) M->alloc_fftb (_npar);
     }
-
+    else
+    {
+        M = findmacnode (inp, out, false);
+	if (M == 0 || M->_link || M->_fftb == 0) return;
+    }
+    
     norm = 0.5f / _parsize;
     for (k = 0; k < _npar; k++)
     {
 	i1 = i0 + _parsize;
 	if ((i0 < n) && (i1 > 0))
 	{
-	    if (! (M->_fftb [k]))
-	    {
-		M->_fftb [k] = (fftwf_complex *)(alloc_aligned ((_parsize + 1) * sizeof (fftwf_complex)));
+	    fftb = M->_fftb [k];
+            if (fftb == 0 && create)
+            {
+		M->_fftb [k] = fftb = calloc_complex (_parsize + 1);
 	    }
-	    if (data)
+	    if (fftb && data)
 	    {
 	        memset (_prep_data, 0, 2 * _parsize * sizeof (float));
 	        j0 = (i0 < 0) ? 0 : i0;
@@ -503,7 +510,6 @@ void Convlevel::impdata_create (unsigned int inp,
 #ifdef ENABLE_VECTOR_MODE
 	        if (_options & OPT_VECTOR_MODE) fftswap (_freq_data);
 #endif
-  	        fftb = M->_fftb [k];
 	        for (j = 0; j <= (int)_parsize; j++)
 	        {
 	            fftb [j][0] += _freq_data [j][0];
@@ -516,52 +522,27 @@ void Convlevel::impdata_create (unsigned int inp,
 }
 
 
-void Convlevel::impdata_update (unsigned int inp,
-                                unsigned int out,
-                                unsigned int step,
-                                float *data,
-                                int i0,
-                                int i1)
+void Convlevel::impdata_clear (uint32_t inp, uint32_t out)
 {
-    unsigned int   k;
-    int            j, j0, j1, n;
-    float          norm;
-    fftwf_complex  *fftb;
-    Macnode        *M;
+    uint32_t  i;
+    Macnode   *M;
 
     M = findmacnode (inp, out, false);
-    if (! M) return;
-
-    n = i1 - i0;
-    i0 = _offs - i0;
-    i1 = i0 + _npar * _parsize;
-    if ((i0 >= n) || (i1 <= 0)) return;
-
-    norm = 0.5f / _parsize;
-    for (k = 0; k < _npar; k++)
+    if (M == 0 || M->_link || M->_fftb == 0) return;
+    for (i = 0; i < _npar; i++)
     {
-	i1 = i0 + _parsize;
-	fftb = M->_fftb [k];
-	if (fftb && (i0 < n) && (i1 > 0))
-	{
-	    memset (_prep_data, 0, 2 * _parsize * sizeof (float));
-	    j0 = (i0 < 0) ? 0 : i0;
-	    j1 = (i1 > n) ? n : i1;
-	    for (j = j0; j < j1; j++) _prep_data [j - i0] = norm * data [j * step];
-	    fftwf_execute_dft_r2c (_plan_r2c, _prep_data, fftb);
-#ifdef ENABLE_VECTOR_MODE
-	    if (_options & OPT_VECTOR_MODE) fftswap (fftb);
-#endif
+        if (M->_fftb [i])
+        {
+  	    memset (M->_fftb [i], 0, (_parsize + 1) * sizeof (fftwf_complex));
 	}
-	i0 = i1;
     }
 }
 
 
-void Convlevel::impdata_copy (unsigned int inp1,
-                              unsigned int out1,
-                              unsigned int inp2,
-                              unsigned int out2)
+void Convlevel::impdata_link (uint32_t inp1,
+                              uint32_t out1,
+                              uint32_t inp2,
+                              uint32_t out2)
 {
     Macnode  *M1;
     Macnode  *M2;
@@ -569,18 +550,17 @@ void Convlevel::impdata_copy (unsigned int inp1,
     M1 = findmacnode (inp1, out1, false);
     if (! M1) return;
     M2 = findmacnode (inp2, out2, true);
-    if (M2->_fftb) return;
-    M2->_fftb = M1->_fftb;
-    M2->_copy = true;
+    M2->free_fftb ();	
+    M2->_link = M1;
 }
 
 
-void Convlevel::reset (unsigned int  inpsize,
-                       unsigned int  outsize,
+void Convlevel::reset (uint32_t  inpsize,
+                       uint32_t  outsize,
 		       float         **inpbuff,
 		       float         **outbuff)
 {
-    unsigned int  i;
+    uint32_t     i;
     Inpnode      *X; 
     Outnode      *Y; 
 
@@ -658,7 +638,6 @@ void Convlevel::stop (void)
 
 void Convlevel::cleanup (void)
 {
-    unsigned int  i;
     Inpnode       *X, *X1;
     Outnode       *Y, *Y1;
     Macnode       *M, *M1;
@@ -666,8 +645,6 @@ void Convlevel::cleanup (void)
     X = _inp_list;
     while (X)
     {
-        for (i = 0; i < _npar; i++) free (X->_ffta [i]);
-	delete[] X->_ffta;
 	X1 = X->_next;
 	delete X;
 	X = X1;
@@ -680,19 +657,10 @@ void Convlevel::cleanup (void)
 	M = Y->_list;
 	while (M)
 	{
-	    if ((M->_fftb) && !(M->_copy))
-	    {
-	        for (i = 0; i < _npar; i++) 
-		{
-                    free (M->_fftb [i]);
-		}
-	        delete[] M->_fftb;
-	    }
 	    M1 = M->_next;
 	    delete M;
 	    M = M1;
 	}
-	for (i = 0; i < 3; i++) free (Y->_buff [i]);
 	Y1 = Y->_next;
 	delete Y;
 	Y = Y1;
@@ -701,9 +669,9 @@ void Convlevel::cleanup (void)
 
     fftwf_destroy_plan (_plan_r2c);
     fftwf_destroy_plan (_plan_c2r);
-    free (_time_data);
-    free (_prep_data);
-    free (_freq_data);
+    fftwf_free (_time_data);
+    fftwf_free (_prep_data);
+    fftwf_free (_freq_data);
     _plan_r2c = 0;
     _plan_c2r = 0;
     _time_data = 0;
@@ -739,9 +707,7 @@ void Convlevel::main (void)
 
 void Convlevel::process (bool skip)
 {
-    unsigned int    i, j, k;
-    unsigned int    i1, n1, n2, opi1, opi2;
-
+    uint32_t        i, i1, j, k, n1, n2, opi1, opi2;
     Inpnode         *X;
     Macnode         *M;
     Outnode         *Y;
@@ -796,7 +762,7 @@ void Convlevel::process (bool skip)
 		for (j = 0; j < _npar; j++)
 		{
 		    ffta = X->_ffta [i];
-		    fftb = M->_fftb [j];
+		    fftb = M->_link ? M->_link->_fftb [j] : M->_fftb [j];
 		    if (fftb)
 		    {
 #ifdef ENABLE_VECTOR_MODE
@@ -847,11 +813,11 @@ void Convlevel::process (bool skip)
 }
 
 
-int Convlevel::readout (bool sync, unsigned int skipcnt)
+int Convlevel::readout (bool sync, uint32_t skipcnt)
 {
-    unsigned int  i;
-    float         *p, *q;	
-    Outnode       *Y;
+    uint32_t   i;
+    float      *p, *q;	
+    Outnode    *Y;
 
     _outoffs += _outsize;
     if (_outoffs == _parsize)
@@ -893,58 +859,38 @@ void Convlevel::print (FILE *F)
 }
 
 
-Macnode *Convlevel::findmacnode (unsigned int inp, unsigned int out, bool create)
+Macnode *Convlevel::findmacnode (uint32_t inp, uint32_t out, bool create)
 {
-    unsigned int  i;
-    Inpnode       *X;
-    Outnode       *Y;
-    Macnode       *M;
+    Inpnode   *X;
+    Outnode   *Y;
+    Macnode   *M;
 
     for (X = _inp_list; X && (X->_inp != inp); X = X->_next);
     if (! X)
     {
 	if (! create) return 0;
-	X = new Inpnode;
+	X = new Inpnode (inp);
 	X->_next = _inp_list;
 	_inp_list = X;
-	X->_inp = inp;
-	X->_ffta = new fftwf_complex * [_npar];
-	memset (X->_ffta, 0, _npar * sizeof (fftw_complex *));
-        for (i = 0; i < _npar; i++)
-	{
-            X->_ffta [i] = (fftwf_complex *)(alloc_aligned ((_parsize + 1) * sizeof (fftwf_complex)));
-	}
+	X->alloc_ffta (_npar, _parsize);
     }
 
     for (Y = _out_list; Y && (Y->_out != out); Y = Y->_next);
     if (! Y)
     {
 	if (! create) return 0;
-	Y = new Outnode;
+	Y = new Outnode (out, _parsize);
 	Y->_next = _out_list;
 	_out_list = Y;
-	Y->_out = out;
-	Y->_list = 0;
-        for (i = 0; i < 3; i++)
-	{
-	    Y->_buff [i] = 0;
-	}
-        for (i = 0; i < 3; i++)
-	{
-	    Y->_buff [i] = (float *)(alloc_aligned (_parsize * sizeof (float)));
-	}
     }
 
     for (M = Y->_list; M && (M->_inpn != X); M = M->_next);
     if (! M)
     {
 	if (! create) return 0;
-	M = new Macnode;
+	M = new Macnode (X);
 	M->_next = Y->_list;
 	Y->_list = M;
-	M->_inpn = X;
-	M->_fftb = 0;
-	M->_copy = false;
     }
 
     return M;
@@ -955,8 +901,8 @@ Macnode *Convlevel::findmacnode (unsigned int inp, unsigned int out, bool create
 
 void Convlevel::fftswap (fftwf_complex *p)
 {
-    unsigned int  n = _parsize;
-    float         a, b;
+    uint32_t  n = _parsize;
+    float     a, b;
 
     while (n)
     {
@@ -974,3 +920,98 @@ void Convlevel::fftswap (fftwf_complex *p)
 #endif
 
 
+Inpnode::Inpnode (uint16_t inp):
+    _next (0),
+    _ffta (0),	
+    _npar (0),
+    _inp (inp)
+{
+}
+    
+
+Inpnode::~Inpnode (void)
+{
+    free_ffta ();
+}
+    
+
+void Inpnode::alloc_ffta (uint16_t npar, int32_t size)
+{
+    _npar = npar;
+    _ffta = new fftwf_complex * [_npar];
+    for (int i = 0; i < _npar; i++)
+    {
+        _ffta [i] = calloc_complex (size + 1);
+    }
+}
+
+
+void Inpnode::free_ffta (void)
+{
+    if (!_ffta) return;
+    for (uint16_t i = 0; i < _npar; i++)
+    {
+        fftwf_free ( _ffta [i]);
+    }
+    delete[] _ffta;
+    _ffta = 0;
+    _npar = 0;
+}
+
+
+Macnode::Macnode (Inpnode *inpn):
+    _next (0),
+    _inpn (inpn),
+    _link (0),
+    _fftb (0),
+    _npar (0)
+{}
+
+
+Macnode::~Macnode (void)
+{
+    free_fftb ();
+}
+
+
+void Macnode::alloc_fftb (uint16_t npar)
+{
+    _npar = npar;
+    _fftb = new fftwf_complex * [_npar];
+    for (uint16_t i = 0; i < _npar; i++)
+    {
+        _fftb [i] = 0;
+    }
+}
+
+
+void Macnode::free_fftb (void)
+{
+    if (!_fftb) return;
+    for (uint16_t i = 0; i < _npar; i++)
+    {
+        fftwf_free ( _fftb [i]);
+    }
+    delete[] _fftb;
+    _fftb = 0;
+    _npar = 0;
+}
+
+
+Outnode::Outnode (uint16_t out, int32_t size):
+    _next (0),
+    _list (0),
+    _out (out)
+{
+    _buff [0] = calloc_real (size);
+    _buff [1] = calloc_real (size);
+    _buff [2] = calloc_real (size);
+}
+    
+
+Outnode::~Outnode (void)
+{
+    fftwf_free (_buff [0]);
+    fftwf_free (_buff [1]);
+    fftwf_free (_buff [2]);
+}
