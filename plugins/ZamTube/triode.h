@@ -67,6 +67,7 @@ public:
 	
 	Triode();
 	void compute(T Kbb, T Gbb, T Pbb);
+	void prepare(void);
 	T getC(void);
 	T getG(void);
 	T getP(void);
@@ -79,6 +80,11 @@ public:
 	T zeroffp ( T a, T b, T t );
 	T zeroffp_insane ( T a, T b, T t );
 	T zeroffg ( T a, T b, T t );
+
+private:
+	//Taylor series coefficients for fast calculations
+	double ffp_raw[3];
+	double ffp_coeff[3];
 };
 
 #endif
