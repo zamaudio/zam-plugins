@@ -61,7 +61,7 @@ void Triode::compute(T Pbb, T Gbb, T Kbb)
 
 inline T _exp(const T x)
 {
-    if(x < 10.0 && x > 10.0)
+    if(x > -10.0 && x < 10.0)
         return 1.0 + x + x*x/2.0 + x*x*x/6.0 + x*x*x*x/24.0 + x*x*x*x*x/120.0
             + x*x*x*x*x*x/720.0 + x*x*x*x*x*x*x/5040.0;
     else
