@@ -59,23 +59,6 @@ void Triode::compute(T Pbb, T Gbb, T Kbb)
 	//printf("vg = %f  vp = %f  vk = %f  Gb = %f  Kb = %f  Pb = %f\n", vg, vp, vk, Gb, Kb, Pb);
 }
 
-inline T _exp(const T x)
-{
-    if(x > -10.0 && x < 10.0)
-        return 1.0 + x + x*x/2.0 + x*x*x/6.0 + x*x*x*x/24.0 + x*x*x*x*x/120.0
-            + x*x*x*x*x*x/720.0 + x*x*x*x*x*x*x/5040.0;
-    else
-        return exp(x);
-}
-
-inline T _log(const T x)
-{
-    if(x > 10)
-        return log(x);
-    const T a=(x-1)/(x+1);
-    return 2.0*(a+a*a*a/3.0+a*a*a*a*a/5.0+a*a*a*a*a*a*a/7.0+a*a*a*a*a*a*a*a*a/9.0); 
-}
-
 T Triode::ffg(T VG) {
         return (Gb-Gr*(gg*pow(log(1.0+exp(cg*VG))/cg,e)+ig0)-VG);
 }
@@ -96,7 +79,7 @@ T Triode::ffp(T VP) {
 		const double scale = pow(L2,gamma-2)/(8.0*pow(c,gamma));
 		ffp_raw[0] = 8.0*L2*L2*scale;
 		ffp_raw[1] = gamma*c*L2*4*scale;
-		ffp_raw[2] = (c*c*gamma*gamma+L2*c*c*gamma-c*c*gamma)*scale;
+		ffp_raw[2] = (c*c*gamma*scale)*(gamma+L2-1.);
 		prepared = true;
 	}
 
@@ -108,8 +91,8 @@ void Triode::prepare(void)
     const double c0 = ffp_raw[0],
                  c1 = ffp_raw[1],
                  c2 = ffp_raw[2];
-    ffp_coeff[0] = Pb + Pr*Gb/Gr + c2*Pr*vg*vg - Pr*vg/Gr + c1*Pr*vg + c0*Pr;
-    ffp_coeff[1] = 2.*c2*Pr*vg/mu + c1*Pr/mu - 1.;
+    ffp_coeff[0] = Pb + Pr*(Gb/Gr + c2*vg*vg - vg/Gr + c1*vg + c0);
+    ffp_coeff[1] = (2.*c2*vg + c1)*(Pr/mu) - 1.;
     ffp_coeff[2] = c2*Pr/(mu*mu);
 }
 
