@@ -772,7 +772,7 @@ float ZaMultiCompX2Plugin::run_linear_svf_xover(struct linear_svf *self, float i
 	double s1 = self->s[1];
 	double g2 = g*g;
 	double vhigh = in * mixhigh;
-	double vband = in * 0.5;
+	double vband = in * 0.75;
 	double vlow = in * mixlow;
 
 	v[0] = in;
@@ -788,8 +788,8 @@ void ZaMultiCompX2Plugin::calc_lr4(float f, int i)
 {
 	float srate = getSampleRate();
 
-	linear_svf_set_xover(&simper[0][i], srate, f, 0.5);
-	linear_svf_set_xover(&simper[1][i], srate, f, 0.5);
+	linear_svf_set_xover(&simper[0][i], srate, f, 0.25);
+	linear_svf_set_xover(&simper[1][i], srate, f, 0.25);
 }
 
 void ZaMultiCompX2Plugin::run_lr4(int i, float in, float *outlo, float *outhi)
