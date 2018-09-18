@@ -62,7 +62,7 @@ vst        = $(TARGET_DIR)/$(NAME)-vst$(LIB_EXT)
 DISTRHO_PLUGIN_FILES = ../../dpf/distrho/DistrhoPluginMain.cpp
 
 ifeq ($(HAVE_DGL),true)
-DISTRHO_UI_FILES     = ../../dpf/distrho/DistrhoUIMain.cpp ../../dpf/libdgl.a
+DISTRHO_UI_FILES     = ../../dpf/distrho/DistrhoUIMain.cpp ../../dpf/build/libdgl.a
 endif
 
 # --------------------------------------------------------------
