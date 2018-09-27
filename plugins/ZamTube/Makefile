@@ -12,18 +12,18 @@ NAME = ZamTube
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamTubePlugin.cpp.o \
-	triode.cpp.o
+FILES_DSP = \
+	ZamTubePlugin.cpp \
+	triode.cpp
 
-OBJS_UI  = \
-	ZamTubeArtwork.cpp.o \
-	ZamTubeUI.cpp.o
+FILES_UI  = \
+	ZamTubeArtwork.cpp \
+	ZamTubeUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

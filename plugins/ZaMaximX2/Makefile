@@ -12,17 +12,17 @@ NAME = ZaMaximX2
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZaMaximX2Plugin.cpp.o
+FILES_DSP = \
+	ZaMaximX2Plugin.cpp
 
-OBJS_UI  = \
-	ZaMaximX2Artwork.cpp.o \
-	ZaMaximX2UI.cpp.o
+FILES_UI  = \
+	ZaMaximX2Artwork.cpp \
+	ZaMaximX2UI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

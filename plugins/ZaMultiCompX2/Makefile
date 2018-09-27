@@ -12,17 +12,17 @@ NAME = ZaMultiCompX2
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZaMultiCompX2Plugin.cpp.o
+FILES_DSP = \
+	ZaMultiCompX2Plugin.cpp
 
-OBJS_UI  = \
-	ZaMultiCompX2Artwork.cpp.o \
-	ZaMultiCompX2UI.cpp.o
+FILES_UI  = \
+	ZaMultiCompX2Artwork.cpp \
+	ZaMultiCompX2UI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

@@ -12,22 +12,22 @@ NAME = ZamChild670
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamChild670Plugin.cpp.o \
-	sidechainamplifier.cpp.o \
-	tubemodel.cpp.o \
-	variablemuamplifier.cpp.o \
-	wdfcircuits.cpp.o \
-	wavechild670.cpp.o
+FILES_DSP = \
+	ZamChild670Plugin.cpp \
+	sidechainamplifier.cpp \
+	tubemodel.cpp \
+	variablemuamplifier.cpp \
+	wdfcircuits.cpp \
+	wavechild670.cpp
 
-OBJS_UI  = \
-	ZamChild670Artwork.cpp.o \
-	ZamChild670UI.cpp.o
+FILES_UI  = \
+	ZamChild670Artwork.cpp \
+	ZamChild670UI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

@@ -12,17 +12,17 @@ NAME = ZamDynamicEQ
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamDynamicEQPlugin.cpp.o
+FILES_DSP = \
+	ZamDynamicEQPlugin.cpp
 
-OBJS_UI  = \
-	ZamDynamicEQArtwork.cpp.o \
-	ZamDynamicEQUI.cpp.o
+FILES_UI  = \
+	ZamDynamicEQArtwork.cpp \
+	ZamDynamicEQUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

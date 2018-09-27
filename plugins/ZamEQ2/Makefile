@@ -12,17 +12,17 @@ NAME = ZamEQ2
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamEQ2Plugin.cpp.o
+FILES_DSP = \
+	ZamEQ2Plugin.cpp
 
-OBJS_UI  = \
-	ZamEQ2Artwork.cpp.o \
-	ZamEQ2UI.cpp.o
+FILES_UI  = \
+	ZamEQ2Artwork.cpp \
+	ZamEQ2UI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

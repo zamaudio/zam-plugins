@@ -12,17 +12,17 @@ NAME = ZaMultiComp
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZaMultiCompPlugin.cpp.o
+FILES_DSP = \
+	ZaMultiCompPlugin.cpp
 
-OBJS_UI  = \
-	ZaMultiCompArtwork.cpp.o \
-	ZaMultiCompUI.cpp.o
+FILES_UI  = \
+	ZaMultiCompArtwork.cpp \
+	ZaMultiCompUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

@@ -12,22 +12,44 @@ NAME = ZamHeadX2
 # --------------------------------------------------------------
 # Files to build
 
+FILES_DSP += \
+	convolution.cpp \
+	ZamHeadX2Plugin.cpp \
+	zita-convolver.cpp
+
 ifneq ($(HAVE_ZITA_CONVOLVER),true)
-OBJS_DSP = ../../lib/zita-convolver-4.0.0/zita-convolver.cpp.o
+FILES_DSP += \
+	zita-convolver.cpp
 endif
 
-OBJS_DSP += \
-	convolution.cpp.o \
-	ZamHeadX2Plugin.cpp.o
-
-OBJS_UI  = \
-	ZamHeadX2Artwork.cpp.o \
-	ZamHeadX2UI.cpp.o
+FILES_UI  = \
+	ZamHeadX2Artwork.cpp \
+	ZamHeadX2UI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
+
+ifeq ($(HAVE_ZITA_CONVOLVER),true)
+BASE_FLAGS += -DHAVE_ZITA_CONVOLVER
+LINK_FLAGS += $(ZITA_CONVOLVER_LIBS)
+else
+include ../zita-convolver.mk
+endif
+
+# --------------------------------------------------------------
+# Extra flags
+
+ifeq ($(LINUX),true)
+BASE_FLAGS += $(shell pkg-config --cflags samplerate fftw3f)
+LINK_FLAGS += $(shell pkg-config --libs fftw3f samplerate)
+else
+BASE_FLAGS += $(shell pkg-config --static --cflags samplerate fftw3f)
+LINK_FLAGS += $(shell pkg-config --static --libs fftw3f samplerate)
+endif
+
+LINK_FLAGS += -lpthread
 
 # --------------------------------------------------------------
 
@@ -39,11 +61,6 @@ ifeq ($(HAVE_DGL),true)
 TARGETS += lv2_sep
 else
 TARGETS += lv2_dsp
-endif
-
-ifeq ($(HAVE_ZITA_CONVOLVER),true)
-BASE_FLAGS += -DHAVE_ZITA_CONVOLVER
-LINK_FLAGS += $(ZITA_CONVOLVER_LIBS)
 endif
 
 TARGETS += vst

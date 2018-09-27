@@ -12,17 +12,17 @@ NAME = ZamDelay
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamDelayPlugin.cpp.o
+FILES_DSP = \
+	ZamDelayPlugin.cpp
 
-OBJS_UI  = \
-	ZamDelayArtwork.cpp.o \
-	ZamDelayUI.cpp.o
+FILES_UI  = \
+	ZamDelayArtwork.cpp \
+	ZamDelayUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

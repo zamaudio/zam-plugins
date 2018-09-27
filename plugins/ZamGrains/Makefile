@@ -12,17 +12,17 @@ NAME = ZamGrains
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamGrainsPlugin.cpp.o
+FILES_DSP = \
+	ZamGrainsPlugin.cpp
 
-OBJS_UI  = \
-	ZamGrainsArtwork.cpp.o \
-	ZamGrainsUI.cpp.o
+FILES_UI  = \
+	ZamGrainsArtwork.cpp \
+	ZamGrainsUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

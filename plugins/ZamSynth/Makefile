@@ -12,17 +12,17 @@ NAME = ZamSynth
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamSynthPlugin.cpp.o
+FILES_DSP = \
+	ZamSynthPlugin.cpp
 
-OBJS_UI  = \
-	ZamSynthArtwork.cpp.o \
-	ZamSynthUI.cpp.o
+FILES_UI  = \
+	ZamSynthArtwork.cpp \
+	ZamSynthUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

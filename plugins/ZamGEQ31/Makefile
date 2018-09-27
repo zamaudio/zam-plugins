@@ -12,17 +12,17 @@ NAME = ZamGEQ31
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamGEQ31Plugin.cpp.o
+FILES_DSP = \
+	ZamGEQ31Plugin.cpp
 
-OBJS_UI  = \
-	ZamGEQ31Artwork.cpp.o \
-	ZamGEQ31UI.cpp.o
+FILES_UI  = \
+	ZamGEQ31Artwork.cpp \
+	ZamGEQ31UI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

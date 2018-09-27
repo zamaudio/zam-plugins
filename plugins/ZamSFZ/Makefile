@@ -12,19 +12,19 @@ NAME = ZamSFZ
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	libsfz/sfz.cpp.o \
-	Sfz.cpp.o \
-	ZamSFZPlugin.cpp.o
+FILES_DSP = \
+	libsfz/sfz.cpp \
+	Sfz.cpp \
+	ZamSFZPlugin.cpp
 
-OBJS_UI  = \
-	ZamSFZArtwork.cpp.o \
-	ZamSFZUI.cpp.o
+FILES_UI  = \
+	ZamSFZArtwork.cpp \
+	ZamSFZUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Extra flags

@@ -12,17 +12,17 @@ NAME = ZamCompX2
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamCompX2Plugin.cpp.o
+FILES_DSP = \
+	ZamCompX2Plugin.cpp
 
-OBJS_UI  = \
-	ZamCompX2Artwork.cpp.o \
-	ZamCompX2UI.cpp.o
+FILES_UI  = \
+	ZamCompX2Artwork.cpp \
+	ZamCompX2UI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

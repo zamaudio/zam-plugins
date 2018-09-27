@@ -12,17 +12,17 @@ NAME = ZamPhono
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamPhonoPlugin.cpp.o
+FILES_DSP = \
+	ZamPhonoPlugin.cpp
 
-OBJS_UI  = \
-	ZamPhonoArtwork.cpp.o \
-	ZamPhonoUI.cpp.o
+FILES_UI  = \
+	ZamPhonoArtwork.cpp \
+	ZamPhonoUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

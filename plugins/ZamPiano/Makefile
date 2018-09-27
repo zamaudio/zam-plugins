@@ -12,19 +12,19 @@ NAME = ZamPiano
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	instrument.cpp.o \
-	PianoNote.cpp.o \
-	ZamPianoPlugin.cpp.o
+FILES_DSP = \
+	instrument.cpp \
+	PianoNote.cpp \
+	ZamPianoPlugin.cpp
 
-OBJS_UI  = \
-	ZamPianoArtwork.cpp.o \
-	ZamPianoUI.cpp.o
+FILES_UI  = \
+	ZamPianoArtwork.cpp \
+	ZamPianoUI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types

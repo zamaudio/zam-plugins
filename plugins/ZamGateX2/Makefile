@@ -12,17 +12,17 @@ NAME = ZamGateX2
 # --------------------------------------------------------------
 # Files to build
 
-OBJS_DSP = \
-	ZamGateX2Plugin.cpp.o
+FILES_DSP = \
+	ZamGateX2Plugin.cpp
 
-OBJS_UI  = \
-	ZamGateX2Artwork.cpp.o \
-	ZamGateX2UI.cpp.o
+FILES_UI  = \
+	ZamGateX2Artwork.cpp \
+	ZamGateX2UI.cpp
 
 # --------------------------------------------------------------
 # Do some magic
 
-include ../Makefile.mk
+include ../../dpf/Makefile.plugins.mk
 
 # --------------------------------------------------------------
 # Enable all possible plugin types
