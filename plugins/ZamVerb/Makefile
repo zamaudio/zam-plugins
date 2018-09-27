@@ -33,7 +33,7 @@ include ../../dpf/Makefile.plugins.mk
 
 ifeq ($(HAVE_ZITA_CONVOLVER),true)
 BASE_FLAGS += -DHAVE_ZITA_CONVOLVER
-LINK_FLAGS += $(ZITA_CONVOLVER_LIBS)
+LINK_FLAGS += -lzita-convolver
 else
 include ../zita-convolver.mk
 endif
