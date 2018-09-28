@@ -100,7 +100,7 @@ ZamTubeUI::ZamTubeUI()
     fSliderNotch->setEndPos(notchPosEnd);
     fSliderNotch->setRange(0.f, 24.f);
     fSliderNotch->setStep(1.f);
-    fSliderNotch->setValue(0.f);
+    fSliderNotch->setDefault(0.f);
     fSliderNotch->setCallback(this);
 
     Point<int> insaneStart(165,140);

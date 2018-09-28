@@ -63,7 +63,7 @@ ZamVerbUI::ZamVerbUI()
     fSliderNotch->setEndPos(notchPosEnd);
     fSliderNotch->setRange(0.f, 6.f);
     fSliderNotch->setStep(1.f);
-    fSliderNotch->setValue(0.f);
+    fSliderNotch->setDefault(0.f);
     fSliderNotch->setCallback(this);
 
     // set default values

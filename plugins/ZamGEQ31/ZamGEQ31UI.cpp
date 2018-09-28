@@ -55,7 +55,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain1->setStartPos(masterPosStart);
     fSliderGain1->setEndPos(masterPosEnd);
     fSliderGain1->setRange(-12.f,12.f);
-    fSliderGain1->setValue(0.f);
+    fSliderGain1->setDefault(0.f);
     fSliderGain1->setCallback(this);
     fSliderGain1->setInverted(true);
 
@@ -66,7 +66,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain2->setStartPos(masterPosStart);
     fSliderGain2->setEndPos(masterPosEnd);
     fSliderGain2->setRange(-12.f,12.f);
-    fSliderGain2->setValue(0.f);
+    fSliderGain2->setDefault(0.f);
     fSliderGain2->setCallback(this);
     fSliderGain2->setInverted(true);
 
@@ -77,7 +77,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain3->setStartPos(masterPosStart);
     fSliderGain3->setEndPos(masterPosEnd);
     fSliderGain3->setRange(-12.f,12.f);
-    fSliderGain3->setValue(0.f);
+    fSliderGain3->setDefault(0.f);
     fSliderGain3->setCallback(this);
     fSliderGain3->setInverted(true);
 
@@ -88,7 +88,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain4->setStartPos(masterPosStart);
     fSliderGain4->setEndPos(masterPosEnd);
     fSliderGain4->setRange(-12.f,12.f);
-    fSliderGain4->setValue(0.f);
+    fSliderGain4->setDefault(0.f);
     fSliderGain4->setCallback(this);
     fSliderGain4->setInverted(true);
 
@@ -99,7 +99,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain5->setStartPos(masterPosStart);
     fSliderGain5->setEndPos(masterPosEnd);
     fSliderGain5->setRange(-12.f,12.f);
-    fSliderGain5->setValue(0.f);
+    fSliderGain5->setDefault(0.f);
     fSliderGain5->setCallback(this);
     fSliderGain5->setInverted(true);
 
@@ -110,7 +110,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain6->setStartPos(masterPosStart);
     fSliderGain6->setEndPos(masterPosEnd);
     fSliderGain6->setRange(-12.f,12.f);
-    fSliderGain6->setValue(0.f);
+    fSliderGain6->setDefault(0.f);
     fSliderGain6->setCallback(this);
     fSliderGain6->setInverted(true);
 
@@ -121,7 +121,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain7->setStartPos(masterPosStart);
     fSliderGain7->setEndPos(masterPosEnd);
     fSliderGain7->setRange(-12.f,12.f);
-    fSliderGain7->setValue(0.f);
+    fSliderGain7->setDefault(0.f);
     fSliderGain7->setCallback(this);
     fSliderGain7->setInverted(true);
 
@@ -132,7 +132,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain8->setStartPos(masterPosStart);
     fSliderGain8->setEndPos(masterPosEnd);
     fSliderGain8->setRange(-12.f,12.f);
-    fSliderGain8->setValue(0.f);
+    fSliderGain8->setDefault(0.f);
     fSliderGain8->setCallback(this);
     fSliderGain8->setInverted(true);
 
@@ -143,7 +143,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain9->setStartPos(masterPosStart);
     fSliderGain9->setEndPos(masterPosEnd);
     fSliderGain9->setRange(-12.f,12.f);
-    fSliderGain9->setValue(0.f);
+    fSliderGain9->setDefault(0.f);
     fSliderGain9->setCallback(this);
     fSliderGain9->setInverted(true);
 
@@ -154,7 +154,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain10->setStartPos(masterPosStart);
     fSliderGain10->setEndPos(masterPosEnd);
     fSliderGain10->setRange(-12.f,12.f);
-    fSliderGain10->setValue(0.f);
+    fSliderGain10->setDefault(0.f);
     fSliderGain10->setCallback(this);
     fSliderGain10->setInverted(true);
 
@@ -165,7 +165,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain11->setStartPos(masterPosStart);
     fSliderGain11->setEndPos(masterPosEnd);
     fSliderGain11->setRange(-12.f,12.f);
-    fSliderGain11->setValue(0.f);
+    fSliderGain11->setDefault(0.f);
     fSliderGain11->setCallback(this);
     fSliderGain11->setInverted(true);
 
@@ -176,7 +176,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain12->setStartPos(masterPosStart);
     fSliderGain12->setEndPos(masterPosEnd);
     fSliderGain12->setRange(-12.f,12.f);
-    fSliderGain12->setValue(0.f);
+    fSliderGain12->setDefault(0.f);
     fSliderGain12->setCallback(this);
     fSliderGain12->setInverted(true);
 
@@ -187,7 +187,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain13->setStartPos(masterPosStart);
     fSliderGain13->setEndPos(masterPosEnd);
     fSliderGain13->setRange(-12.f,12.f);
-    fSliderGain13->setValue(0.f);
+    fSliderGain13->setDefault(0.f);
     fSliderGain13->setCallback(this);
     fSliderGain13->setInverted(true);
 
@@ -198,7 +198,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain14->setStartPos(masterPosStart);
     fSliderGain14->setEndPos(masterPosEnd);
     fSliderGain14->setRange(-12.f,12.f);
-    fSliderGain14->setValue(0.f);
+    fSliderGain14->setDefault(0.f);
     fSliderGain14->setCallback(this);
     fSliderGain14->setInverted(true);
 
@@ -209,7 +209,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain15->setStartPos(masterPosStart);
     fSliderGain15->setEndPos(masterPosEnd);
     fSliderGain15->setRange(-12.f,12.f);
-    fSliderGain15->setValue(0.f);
+    fSliderGain15->setDefault(0.f);
     fSliderGain15->setCallback(this);
     fSliderGain15->setInverted(true);
 
@@ -220,7 +220,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain16->setStartPos(masterPosStart);
     fSliderGain16->setEndPos(masterPosEnd);
     fSliderGain16->setRange(-12.f,12.f);
-    fSliderGain16->setValue(0.f);
+    fSliderGain16->setDefault(0.f);
     fSliderGain16->setCallback(this);
     fSliderGain16->setInverted(true);
 
@@ -231,7 +231,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain17->setStartPos(masterPosStart);
     fSliderGain17->setEndPos(masterPosEnd);
     fSliderGain17->setRange(-12.f,12.f);
-    fSliderGain17->setValue(0.f);
+    fSliderGain17->setDefault(0.f);
     fSliderGain17->setCallback(this);
     fSliderGain17->setInverted(true);
 
@@ -242,7 +242,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain18->setStartPos(masterPosStart);
     fSliderGain18->setEndPos(masterPosEnd);
     fSliderGain18->setRange(-12.f,12.f);
-    fSliderGain18->setValue(0.f);
+    fSliderGain18->setDefault(0.f);
     fSliderGain18->setCallback(this);
     fSliderGain18->setInverted(true);
 
@@ -253,7 +253,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain19->setStartPos(masterPosStart);
     fSliderGain19->setEndPos(masterPosEnd);
     fSliderGain19->setRange(-12.f,12.f);
-    fSliderGain19->setValue(0.f);
+    fSliderGain19->setDefault(0.f);
     fSliderGain19->setCallback(this);
     fSliderGain19->setInverted(true);
 
@@ -264,7 +264,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain20->setStartPos(masterPosStart);
     fSliderGain20->setEndPos(masterPosEnd);
     fSliderGain20->setRange(-12.f,12.f);
-    fSliderGain20->setValue(0.f);
+    fSliderGain20->setDefault(0.f);
     fSliderGain20->setCallback(this);
     fSliderGain20->setInverted(true);
 
@@ -275,7 +275,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain21->setStartPos(masterPosStart);
     fSliderGain21->setEndPos(masterPosEnd);
     fSliderGain21->setRange(-12.f,12.f);
-    fSliderGain21->setValue(0.f);
+    fSliderGain21->setDefault(0.f);
     fSliderGain21->setCallback(this);
     fSliderGain21->setInverted(true);
 
@@ -286,7 +286,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain22->setStartPos(masterPosStart);
     fSliderGain22->setEndPos(masterPosEnd);
     fSliderGain22->setRange(-12.f,12.f);
-    fSliderGain22->setValue(0.f);
+    fSliderGain22->setDefault(0.f);
     fSliderGain22->setCallback(this);
     fSliderGain22->setInverted(true);
 
@@ -297,7 +297,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain23->setStartPos(masterPosStart);
     fSliderGain23->setEndPos(masterPosEnd);
     fSliderGain23->setRange(-12.f,12.f);
-    fSliderGain23->setValue(0.f);
+    fSliderGain23->setDefault(0.f);
     fSliderGain23->setCallback(this);
     fSliderGain23->setInverted(true);
 
@@ -308,7 +308,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain24->setStartPos(masterPosStart);
     fSliderGain24->setEndPos(masterPosEnd);
     fSliderGain24->setRange(-12.f,12.f);
-    fSliderGain24->setValue(0.f);
+    fSliderGain24->setDefault(0.f);
     fSliderGain24->setCallback(this);
     fSliderGain24->setInverted(true);
 
@@ -319,7 +319,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain25->setStartPos(masterPosStart);
     fSliderGain25->setEndPos(masterPosEnd);
     fSliderGain25->setRange(-12.f,12.f);
-    fSliderGain25->setValue(0.f);
+    fSliderGain25->setDefault(0.f);
     fSliderGain25->setCallback(this);
     fSliderGain25->setInverted(true);
 
@@ -330,7 +330,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain26->setStartPos(masterPosStart);
     fSliderGain26->setEndPos(masterPosEnd);
     fSliderGain26->setRange(-12.f,12.f);
-    fSliderGain26->setValue(0.f);
+    fSliderGain26->setDefault(0.f);
     fSliderGain26->setCallback(this);
     fSliderGain26->setInverted(true);
 
@@ -341,7 +341,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain27->setStartPos(masterPosStart);
     fSliderGain27->setEndPos(masterPosEnd);
     fSliderGain27->setRange(-12.f,12.f);
-    fSliderGain27->setValue(0.f);
+    fSliderGain27->setDefault(0.f);
     fSliderGain27->setCallback(this);
     fSliderGain27->setInverted(true);
 
@@ -352,7 +352,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain28->setStartPos(masterPosStart);
     fSliderGain28->setEndPos(masterPosEnd);
     fSliderGain28->setRange(-12.f,12.f);
-    fSliderGain28->setValue(0.f);
+    fSliderGain28->setDefault(0.f);
     fSliderGain28->setCallback(this);
     fSliderGain28->setInverted(true);
 
@@ -363,7 +363,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     fSliderGain29->setStartPos(masterPosStart);
     fSliderGain29->setEndPos(masterPosEnd);
     fSliderGain29->setRange(-12.f,12.f);
-    fSliderGain29->setValue(0.f);
+    fSliderGain29->setDefault(0.f);
     fSliderGain29->setCallback(this);
     fSliderGain29->setInverted(true);
 

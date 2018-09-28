@@ -139,8 +139,7 @@ ZamEQ2UI::ZamEQ2UI()
     fSliderMaster->setStartPos(masterPosStart);
     fSliderMaster->setEndPos(masterPosEnd);
     fSliderMaster->setRange(-12.f,12.f);
-    fSliderMaster->setValue(0.f);
-    fSliderMaster->setStep(6.f);
+    fSliderMaster->setDefault(0.f);
     fSliderMaster->setCallback(this);
 
     fCanvasArea.setPos(165,10);

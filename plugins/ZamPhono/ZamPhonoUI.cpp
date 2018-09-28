@@ -44,7 +44,7 @@ ZamPhonoUI::ZamPhonoUI()
     fSliderNotch->setEndPos(notchPosEnd);
     fSliderNotch->setRange(0.f, 4.f);
     fSliderNotch->setStep(1.f);
-    fSliderNotch->setValue(3.f);
+    fSliderNotch->setDefault(3.f);
     fSliderNotch->setCallback(this);
 
     Point<int> playcutStart(10, 168);
