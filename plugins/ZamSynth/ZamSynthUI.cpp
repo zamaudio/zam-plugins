@@ -23,10 +23,12 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamSynthUI::ZamSynthUI()
-    : UI()
+    : UI(),
+      fWaveUpdated(false),
+      fEnvUpdated(false)
 {
     setSize(ZamSynthArtwork::zamsynthWidth, ZamSynthArtwork::zamsynthHeight);
-    
+
     // background
     fImgBackground = Image(ZamSynthArtwork::zamsynthData, ZamSynthArtwork::zamsynthWidth, ZamSynthArtwork::zamsynthHeight, GL_BGR);
 
@@ -81,7 +83,8 @@ ZamSynthUI::ZamSynthUI()
     fToggleGraph->setDown(false);
 
     // set default values
-    programLoaded(0);
+    fKnobGain->setValue(0.0f);
+    fKnobSpeed->setValue(10.0f);
 }
 
 void ZamSynthUI::stateChanged(const char* key, const char* value)
@@ -111,6 +114,7 @@ void ZamSynthUI::stateChanged(const char* key, const char* value)
 	                tmp = strtok(NULL, " ");
 	        }
 	}
+	repaint();
 }
 
 // -----------------------------------------------------------------------
@@ -130,15 +134,6 @@ void ZamSynthUI::parameterChanged(uint32_t index, float value)
 		fToggleGraph->setDown(value > 0.5);
 		break;
 	}
-}
-
-void ZamSynthUI::programLoaded(uint32_t index)
-{
-    if (index != 0)
-        return;
-
-    fKnobGain->setValue(0.0f);
-    fKnobSpeed->setValue(10.0f);
 }
 
 // -----------------------------------------------------------------------
@@ -170,6 +165,8 @@ void ZamSynthUI::imageKnobValueChanged(ImageKnob* knob, float value)
 
 void ZamSynthUI::imageButtonClicked(ImageButton*, int)
 {
+	const bool isEnvelope = fToggleGraph->isDown();
+
 	float wavesmooth[AREAHEIGHT];
 	float xs[AREAHEIGHT];
 	int i;
@@ -183,17 +180,18 @@ void ZamSynthUI::imageButtonClicked(ImageButton*, int)
 	gaussiansmooth(wavesmooth, xs, gr, AREAHEIGHT, 4);
 	memcpy(gr, wavesmooth, AREAHEIGHT*sizeof(float));
 
-	char tmp[4*AREAHEIGHT+1] = {0};
+	char* tmp = isEnvelope ? fEnvState : fWaveState;
+	memset(tmp, 0, sizeof(fWaveState));
 	for(i = 0; i < AREAHEIGHT; i++) {
 		char wavestr[5] = {0};
 		snprintf(wavestr, sizeof(wavestr), "%03d ", (int) (fCanvasArea.getHeight()-gr[i]));
 		strcat(tmp, wavestr);
 	}
 
-	if (fToggleGraph->isDown())
-		setState("envelope", tmp);
+	if (isEnvelope)
+		fEnvUpdated = true;
 	else
-		setState("waveform", tmp);
+		fWaveUpdated = true;
 }
 
 void ZamSynthUI::imageSwitchClicked(ImageSwitch* tog, bool down)
@@ -253,6 +251,8 @@ bool ZamSynthUI::onMotion(const MotionEvent& ev)
         fDragValid = true;
     }
 
+	const bool isEnvelope = fToggleGraph->isDown();
+
     int x = ev.pos.getX();
     int y = ev.pos.getY();
 
@@ -262,33 +262,35 @@ bool ZamSynthUI::onMotion(const MotionEvent& ev)
     if (y < 10) y = 10;
 
     float *gr;
-    if (!fToggleGraph->isDown()) {
-	gr = wave_y;
-	if (y > fCanvasArea.getHeight()+10)
-		y = fCanvasArea.getHeight()+10;
+    if (isEnvelope) {
+        gr = env_y;
+        if (y > fCanvasArea.getHeight() / 2. + 10)
+            y = fCanvasArea.getHeight() / 2. + 10;
     } else {
-    	gr = env_y;
-	if (y > fCanvasArea.getHeight() / 2. + 10)
-		y = fCanvasArea.getHeight() / 2. + 10;
+        gr = wave_y;
+        if (y > fCanvasArea.getHeight()+10)
+            y = fCanvasArea.getHeight()+10;
     }
 
     if (gr[x-10] != (y-10)) {
-	char tmp[4*AREAHEIGHT+1] = {0};
-	int i;
-	for(i = 0; i < AREAHEIGHT; i++) {
-		char wavestr[5] = {0};
-		snprintf(wavestr, sizeof(wavestr), "%03d ", (int) (fCanvasArea.getHeight()-gr[i]));
-		strcat(tmp, wavestr);
-	}
+        char* tmp = isEnvelope ? fEnvState : fWaveState;
+        memset(tmp, 0, sizeof(fWaveState));
+
+        int i;
+        for(i = 0; i < AREAHEIGHT; i++) {
+            char wavestr[5] = {0};
+            snprintf(wavestr, sizeof(wavestr), "%03d ", (int) (fCanvasArea.getHeight()-gr[i]));
+            strcat(tmp, wavestr);
+        }
 
         gr[x-10] = y-10;
 
-	if (gr == env_y)
-		setState("envelope",tmp);
-	else
-		setState("waveform",tmp);
+        if (isEnvelope)
+            fEnvUpdated = true;
+        else
+            fWaveUpdated = true;
 
-	repaint();
+        repaint();
     }
 
     return true;
@@ -319,6 +321,22 @@ void ZamSynthUI::onDisplay()
     // reset color
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
+
+void ZamSynthUI::uiIdle()
+{
+    if (fWaveUpdated)
+    {
+        fWaveUpdated = false;
+        setState("waveform", fWaveState);
+    }
+
+    if (fEnvUpdated)
+    {
+        fEnvUpdated = false;
+        setState("envelope", fEnvState);
+    }
+}
+
 // -----------------------------------------------------------------------
 
 UI* createUI()

@@ -52,7 +52,6 @@ protected:
     // DSP Callbacks
 
     void parameterChanged(uint32_t index, float value) override;
-    void programLoaded(uint32_t index) override;
     void stateChanged(const char*, const char*) override;
 
     // -------------------------------------------------------------------
@@ -66,6 +65,7 @@ protected:
     void imageSwitchClicked(ImageSwitch* tog, bool down) override;
 
     void onDisplay() override;
+    void uiIdle() override;
     bool onMouse(const MouseEvent&) override;
     bool onMotion(const MotionEvent&) override;
 
@@ -81,6 +81,12 @@ private:
     bool fDragging;
     bool fDragValid;
     DGL::Rectangle<int> fCanvasArea;
+
+    bool fWaveUpdated;
+    char fWaveState[4*AREAHEIGHT+1];
+
+    bool fEnvUpdated;
+    char fEnvState[4*AREAHEIGHT+1];
 };
 
 // -----------------------------------------------------------------------
