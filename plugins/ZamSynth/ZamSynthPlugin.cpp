@@ -22,10 +22,33 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamSynthPlugin::ZamSynthPlugin()
-    : Plugin(paramCount, 1, 1) // 1 program, 1 state
+    : Plugin(paramCount, 0, 2) // 0 programs, 2 states
 {
-    // set default values
-    loadProgram(0);
+    /* Default parameter values */
+    gain = 0.0f;
+    graph = 0.0f;
+    speed = 10.0f;
+
+    /* Default variable values */
+    for (int i = 0; i < MAX_VOICES; i++) {
+        voice[i].playing = false;
+	voice[i].notenum = -1;
+	voice[i].envpos = 0;
+	voice[i].slowcount = 0;
+	voice[i].curamp = 0.f;
+	voice[i].vi = 0.f;
+        voice[i].rampstate = 0.f;
+    }
+
+    curvoice = voice; //ptr to first voice
+
+    for (int i = 0; i < AREAHEIGHT; i++) {
+        wave_y[i] = sin(i*2.*M_PI/getSampleRate());//*1000
+    }
+
+    for (int i = 0; i < MAX_ENV; i++) {
+        env_y[i] = (sin(i*2.*M_PI/getSampleRate()*1000./2.)) > 0.f ? sin(i*2.*M_PI/getSampleRate()*1000./2.) : 0.f;
+    }
 }
 
 // -----------------------------------------------------------------------
@@ -65,14 +88,6 @@ void ZamSynthPlugin::initParameter(uint32_t index, Parameter& parameter)
     }
 }
 
-void ZamSynthPlugin::initProgramName(uint32_t index, String& programName)
-{
-    if (index != 0)
-        return;
-
-    programName = "Default";
-}
-
 // -----------------------------------------------------------------------
 // Internal data
 
@@ -108,45 +123,6 @@ void ZamSynthPlugin::setParameterValue(uint32_t index, float value)
         graph = value;
         break;
     }
-}
-
-void ZamSynthPlugin::loadProgram(uint32_t index)
-{
-    if (index != 0)
-        return;
-
-    /* Default parameter values */
-    gain = 0.0f;
-    graph = 0.0f;
-    speed = 10.0f;
-
-    /* Default variable values */
-    for (int i = 0; i < MAX_VOICES; i++) {
-        voice[i].playing = false;
-	voice[i].notenum = -1;
-	voice[i].envpos = 0;
-	voice[i].slowcount = 0;
-	voice[i].curamp = 0.f;
-	voice[i].vi = 0.f;
-        voice[i].rampstate = 0.f;
-    }
-
-    curvoice = voice; //ptr to first voice
-
-    for (int i = 0; i < AREAHEIGHT; i++) {
-        wave_y[i] = sin(i*2.*M_PI/getSampleRate());//*1000
-    }
-
-    for (int i = 0; i < MAX_ENV; i++) {
-        env_y[i] = (sin(i*2.*M_PI/getSampleRate()*1000./2.)) > 0.f ? sin(i*2.*M_PI/getSampleRate()*1000./2.) : 0.f;
-    }
-    /* reset filter values */
-    activate();
-}
-
-String ZamSynthPlugin::getState(const char*) const
-{
-	return String("");
 }
 
 void ZamSynthPlugin::setState(const char* key, const char* value)

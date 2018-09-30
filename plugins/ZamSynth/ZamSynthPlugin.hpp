@@ -83,15 +83,13 @@ protected:
     // -------------------------------------------------------------------
     // Init
 
-    void initParameter(uint32_t index, Parameter& parameter) ;
-    void initProgramName(uint32_t index, String& programName) ;
+    void initParameter(uint32_t index, Parameter& parameter) override;
 
     // -------------------------------------------------------------------
     // Internal data
 
     float getParameterValue(uint32_t index) const override;
     void  setParameterValue(uint32_t index, float value) override;
-    void  loadProgram(uint32_t index) override;
 
     // -------------------------------------------------------------------
     // Process
@@ -118,7 +116,6 @@ protected:
     void run(const float** inputs, float** outputs, uint32_t frames,
     		const MidiEvent* midievent, uint32_t midicount) override;
     void setState(const char* key, const char* value) override;
-    String getState(const char* key) const override;
     void initState(unsigned int index, String& key, String& defval) override;
     // -------------------------------------------------------------------
 
