@@ -29,8 +29,8 @@ include ../../dpf/Makefile.plugins.mk
 # --------------------------------------------------------------
 # Extra flags
 
-BASE_FLAGS += $(shell pkg-config --cflags sndfile rubberband)
-LINK_FLAGS += $(shell pkg-config --libs sndfile rubberband)
+BASE_FLAGS += $(shell pkg-config --cflags sndfile rubberband samplerate)
+LINK_FLAGS += $(shell pkg-config --libs sndfile rubberband samplerate)
 
 # --------------------------------------------------------------
 # Enable all possible plugin types
