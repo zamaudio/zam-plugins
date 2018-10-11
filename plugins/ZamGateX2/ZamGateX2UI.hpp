@@ -59,6 +59,7 @@ private:
 	ScopedPointer<ZamKnob> fKnobAttack, fKnobRelease, fKnobThresh;
 	ScopedPointer<ZamKnob> fKnobMakeup, fKnobGateclose;
 	ScopedPointer<ImageSwitch> fToggleSidechain;
+	ScopedPointer<ImageSwitch> fToggleMode;
 
 	Image fLedRedImg;
 	float fLedRedValue;

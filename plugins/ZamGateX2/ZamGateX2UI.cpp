@@ -99,6 +99,11 @@ ZamGateX2UI::ZamGateX2UI()
 	fToggleSidechain->setId(ZamGateX2Plugin::paramSidechain);
 	fToggleSidechain->setCallback(this);
 
+	fToggleMode = new ImageSwitch(this, fTogOff, fTogOn);
+	fToggleMode->setAbsolutePos(580, 61);
+	fToggleMode->setId(ZamGateX2Plugin::paramOpenshut);
+	fToggleMode->setCallback(this);
+
 	// set default values
 	programLoaded(0);
 }

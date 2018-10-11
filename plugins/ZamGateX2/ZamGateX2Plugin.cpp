@@ -100,6 +100,15 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.min = 0.0f;
 		parameter.ranges.max = 1.0f;
 		break;
+	case paramOpenshut:
+		parameter.hints = kParameterIsAutomable | kParameterIsBoolean;
+		parameter.name = "Mode open/shut";
+		parameter.symbol = "mode";
+		parameter.unit = " ";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = 0.0f;
+		parameter.ranges.max = 1.0f;
+		break;
 	case paramGainR:
 		parameter.hints = kParameterIsOutput;
 		parameter.name = "Gain Reduction";
@@ -157,6 +166,9 @@ float ZamGateX2Plugin::getParameterValue(uint32_t index) const
 	case paramSidechain:
 		return sidechain;
 		break;
+	case paramOpenshut:
+		return openshut;
+		break;
 	case paramGainR:
 		return gainr;
 		break;
@@ -190,6 +202,9 @@ void ZamGateX2Plugin::setParameterValue(uint32_t index, float value)
 	case paramSidechain:
 		sidechain = value;
 		break;
+	case paramOpenshut:
+		openshut = value;
+		break;
 	case paramGainR:
 		gainr = value;
 		break;
@@ -209,6 +224,7 @@ void ZamGateX2Plugin::loadProgram(uint32_t)
 	outlevel = -45.0;
 	gateclose = -50.0;
 	sidechain = 0.0;
+	openshut = 0.0;
 
 	activate();
 }
@@ -290,14 +306,26 @@ void ZamGateX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 			absampler = averageabs(samplesr);
 			absample = std::max(absamplel, absampler);
 		}
-		if (absample < from_dB(thresdb)) {
-			g -= rel;
-			if (g < mingate)
-				g = mingate;
+		if (openshut < 0.5) {
+			if (absample > from_dB(thresdb)) {
+				g += att;
+				if (g > 1.f)
+					g = 1.f;
+			} else {
+				g -= rel;
+				if (g < mingate)
+					g = mingate;
+			}
 		} else {
-			g += att;
-			if (g > 1.f)
-				g = 1.f;
+			if (absample > from_dB(thresdb)) {
+				g -= att;
+				if (g < mingate)
+					g = mingate;
+			} else {
+				g += rel;
+				if (g > 1.f)
+					g = 1.f;
+			}
 		}
 
 		gatestate = g;

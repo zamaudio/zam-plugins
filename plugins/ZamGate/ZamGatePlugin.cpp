@@ -100,6 +100,15 @@ void ZamGatePlugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.min = -50.0f;
 		parameter.ranges.max = 0.0f;
 		break;
+	case paramOpenshut:
+		parameter.hints = kParameterIsAutomable | kParameterIsBoolean;
+		parameter.name = "Mode open/shut";
+		parameter.symbol = "mode";
+		parameter.unit = " ";
+		parameter.ranges.def = 0.0f;
+		parameter.ranges.min = 0.0f;
+		parameter.ranges.max = 1.0f;
+		break;
 	case paramGainR:
 		parameter.hints = kParameterIsOutput;
 		parameter.name = "Gain Reduction";
@@ -157,6 +166,9 @@ float ZamGatePlugin::getParameterValue(uint32_t index) const
 	case paramGateclose:
 		return gateclose;
 		break;
+	case paramOpenshut:
+		return openshut;
+		break;
 	case paramGainR:
 		return gainr;
 		break;
@@ -190,6 +202,9 @@ void ZamGatePlugin::setParameterValue(uint32_t index, float value)
 	case paramGateclose:
 		gateclose = value;
 		break;
+	case paramOpenshut:
+		openshut = value;
+		break;
 	case paramGainR:
 		gainr = value;
 		break;
@@ -207,6 +222,7 @@ void ZamGatePlugin::loadProgram(uint32_t)
 	gainr = 0.0;
 	makeup = 0.0;
 	sidechain = 0.0;
+	openshut = 0.0;
 	gateclose = -50.f;
 	outlevel = -45.0;
 	activate();
@@ -272,16 +288,27 @@ void ZamGatePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 			pushsamplel(samplesl, in0);
 		}
 		absample = averageabs(samplesl);
-		if (absample < from_dB(thresdb)) {
-			gl -= rel;
-			if (gl < mingate)
-				gl = mingate;
+		if (openshut < 0.5) {
+			if (absample > from_dB(thresdb)) {
+				gl += att;
+				if (gl > 1.f)
+					gl = 1.f;
+			} else {
+				gl -= rel;
+				if (gl < mingate)
+					gl = mingate;
+			}
 		} else {
-			gl += att;
-			if (gl > 1.f)
-				gl = 1.f;
+			if (absample > from_dB(thresdb)) {
+				gl -= att;
+				if (gl < mingate)
+					gl = mingate;
+			} else {
+				gl += rel;
+				if (gl > 1.f)
+					gl = 1.f;
+			}
 		}
-
 		gatestatel = gl;
 
 		outputs[0][i] = gl * from_dB(makeup) * in0;

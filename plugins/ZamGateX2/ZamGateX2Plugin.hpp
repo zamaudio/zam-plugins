@@ -36,6 +36,7 @@ public:
 		paramMakeup,
 		paramSidechain,
 		paramGateclose,
+		paramOpenshut,
 		paramOutputLevel,
 		paramGainR,
 		paramCount
@@ -118,7 +119,7 @@ protected:
 	}
 
 	// -------------------------------------------------------------------
-	float attack,release,thresdb,makeup,gateclose,sidechain,gainr,outlevel; //parameters
+	float attack,release,thresdb,makeup,gateclose,sidechain,openshut,gainr,outlevel; //parameters
 
 	void pushsamplel(float samples[], float sample);
 	void pushsampler(float samples[], float sample);

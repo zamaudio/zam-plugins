@@ -99,6 +99,11 @@ ZamGateUI::ZamGateUI()
 	fToggleSidechain->setId(ZamGatePlugin::paramSidechain);
 	fToggleSidechain->setCallback(this);
 
+	fToggleMode = new ImageSwitch(this, fTogOff, fTogOn);
+	fToggleMode->setAbsolutePos(580, 61);
+	fToggleMode->setId(ZamGatePlugin::paramOpenshut);
+	fToggleMode->setCallback(this);
+
 	// set default values
 	programLoaded(0);
 }
@@ -128,6 +133,9 @@ void ZamGateUI::parameterChanged(uint32_t index, float value)
 	case ZamGatePlugin::paramSidechain:
 		fToggleSidechain->setDown(value > 0.5);
 		break;
+	case ZamGatePlugin::paramOpenshut:
+		fToggleMode->setDown(value > 0.5);
+		break;
 	case ZamGatePlugin::paramGainR:
 		if (fLedRedValue != value)
 		{
@@ -154,6 +162,7 @@ void ZamGateUI::programLoaded(uint32_t)
 	fKnobMakeup->setValue(0.0f);
 	fKnobGateclose->setValue(-50.0f);
 	fToggleSidechain->setDown(false);
+	fToggleMode->setDown(false);
 }
 
 // -----------------------------------------------------------------------
