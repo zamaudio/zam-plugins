@@ -518,7 +518,7 @@ void ZamGEQ31Plugin::setParameterValue(uint32_t index, float value)
 void ZamGEQ31Plugin::geq(int i, float srate, float g)
 {
 	int mm;
-	float w, omegaB, omegaM, glinear, alpham;
+	float w, omegaU, omegaL, omegaB, omegaM, glinear, alpham;
 	// 2dB tolerance
 	//const int stack[29] = {	2, 1, 1, 1, 1, 1, 1, 1,
 	//			1, 1, 1, 1, 1, 1, 1, 1,
@@ -531,9 +531,19 @@ void ZamGEQ31Plugin::geq(int i, float srate, float g)
 				9, 9, 9, 9, 9, 9, 9, 10,
 				11, 12, 15, 20, 20 };
 
+	const float omegaLimit = 0.95 * M_PI;
+
 	w = 2. * M_PI / srate;
-	omegaB = w * (omegaU[i] - omegaL[i]);
-	omegaM = 2. * atan(sqrt(tan(w*omegaU[i]/2.) * tan(w*omegaL[i]/2.)));
+	omegaU = w * this->omegaU[i];
+	omegaL = w * this->omegaL[i];
+
+	if (omegaU > omegaLimit) {
+		m[i] = 0;
+		return;
+	}
+
+	omegaB = omegaU - omegaL;
+	omegaM = 2. * atan(sqrt(tan(omegaU/2.) * tan(omegaL/2.)));
 
 	glinear = from_dB(g);
 	m[i] = 2. * stack[i];
