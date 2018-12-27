@@ -14,8 +14,7 @@ NAME = ZamHeadX2
 
 FILES_DSP += \
 	convolution.cpp \
-	ZamHeadX2Plugin.cpp \
-	zita-convolver.cpp
+	ZamHeadX2Plugin.cpp
 
 ifneq ($(HAVE_ZITA_CONVOLVER),true)
 FILES_DSP += \

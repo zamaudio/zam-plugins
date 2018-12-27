@@ -47,7 +47,7 @@
 #include "ZamVerbImpulses.hpp"
 
 #if ZITA_CONVOLVER_MAJOR_VERSION != 4
-# error "This programs requires zita-convolver 4.x.x"
+# error "This program requires zita-convolver 4.x.x"
 #endif
 
 #ifndef SRC_QUALITY
