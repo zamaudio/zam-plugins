@@ -57,7 +57,7 @@ public:
 		P2_3Gamma1 = 1.0 / P2_1R/(1.0 / P2_1R + 1.0 / P2_2R);
 		Assert(P2_3Gamma1 >= 0.0 && P2_3Gamma1 <= 1.0);
 		t.Kr = sanitize_denormal(I3_3Gamma1);
-		t.Pr = sanitize_denormal(S2_3Gamma1);
+		t.Pr = sanitize_denormal(P2_3Gamma1);
 		t.Gr = sanitize_denormal(S1_3Gamma1);
 		//printf("Kr = %f  Pr = %f  Gr = %f\n", t.Kr, t.Pr, t.Gr);
 	}
@@ -65,7 +65,7 @@ public:
 	void warmup_tubes(void) {
 		int i;
 		on = false;
-		for (i = 0; i < 1000; i++) {
+		for (i = 0; i < 8000; i++) {
 			advanc(0.0);
 		}
 		on = true;
@@ -76,12 +76,12 @@ public:
 		Real Ckb = Cka;
 		Real I3_3b3 = I3_3Gamma1 * Ckb;
 		Real Cib = Cia;
-		Real S0_3b3 = Cib + ViE;
-		Real P0_3b3 = P0_3Gamma1*(S0_3b3);
-		Real S1_3b3 = P0_3b3;
+		Real S0_3b3 = ViE + S0_3Gamma1*(Cib);
+		Real P0_3b3 = P0_3Gamma1*(-S0_3b3);
+		Real S1_3b3 = P0_3b3 + S1_3Gamma1*(P0_3b3);
 		Real Cob = Coa;
 		Real S2_3b3 = Cob;
-		Real P2_3b3 = E250E - P2_3Gamma1*(E250E + S2_3b3);
+		Real P2_3b3 = E250E + P2_3Gamma1*(-S2_3b3);
 		//Tube:    K       G      P
 		//printf("K=%f G=%f P=%f\n", I3_3b3,-S1_3b3,P2_3b3);
 		t.compute(I3_3b3,-S1_3b3,P2_3b3);
@@ -89,18 +89,18 @@ public:
 		Real b2 = t.getG();
 		Real b3 = t.getP();
 		//Set As
-		Real I3_3b1 = (b1 + Ckb - I3_3Gamma1*(Ckb));
+		Real I3_3b1 = (b1 - I3_3Gamma1*(b1 + Ckb));
 		Cka = I3_3b1;
-		Real S1_3b2 = ((-b2) - S1_3Gamma1*(P0_3b3 + (-b2)));
-		Real P0_3b1 = (S1_3b2 + (S0_3b3) - P0_3Gamma1*(S0_3b3));
-		Real S0_3b1 = (Cib - S0_3Gamma1*(Cib + ViE + P0_3b1));
+		Real S1_3b2 = P0_3b3 - b2 - S1_3Gamma1*(P0_3b3 - b2);
+		Real P0_3b1 = S1_3b2 + (-S0_3b3) - P0_3Gamma1*(S1_3b2 - S0_3b3);
+		Real S0_3b1 = (Cib - P0_3b1 - S0_3Gamma1*(Cib - P0_3b1));
 		Cia = S0_3b1;
-		Real P2_3b1 = (b3 + E250E + (S2_3b3) - P2_3Gamma1*(E250E + S2_3b3));
-		Real S2_3b1 = (Cob - S2_3Gamma1*(Cob + P2_3b1));
-		Coa = S2_3b1;
-		Real S2_3b2 = (Cob + P2_3b1 - S2_3Gamma1*(Cob + P2_3b1));
-		Real Roa = S2_3b2;
-		return -Roa;
+		Real P2_3b1 = (b3 - S2_3b3 - P2_3Gamma1*(b3 - S2_3b3));
+		Real S2_3b2 = (Cob - S2_3Gamma1*(Cob - P2_3b1));
+		Coa = S2_3b2;
+		Real S2_3b1 = (Cob - P2_3b1 - S2_3Gamma1*(Cob - P2_3b1));
+		Real Roa = S2_3b1;
+		return Roa;
 	}
 
 private:
