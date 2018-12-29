@@ -15,18 +15,17 @@ public:
 		Coa = 0.0;
 		on = false;
 	}
-	TubeStageCircuit(Real C_Ci, Real C_Ck, Real C_Co, Real E_E250, Real E_Vi, Real R_E250, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Ro, Real R_Vi, Real sampleRate, Triode& tube) {
+	TubeStageCircuit(Real C_Ci, Real C_Ck, Real C_Co, Real E_E250, Real R_E250, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Ro, Real R_Vi, Real sampleRate, Triode& tube) {
 		Cia = 0.0;
 		Cka = 0.0;
 		Coa = 0.0;
 		on = false;
-		updateRValues(C_Ci, C_Ck, C_Co, E_E250, E_Vi, R_E250, R_Rg, R_Ri, R_Rk, R_Ro, R_Vi, sampleRate, tube);
+		updateRValues(C_Ci, C_Ck, C_Co, E_E250, R_E250, R_Rg, R_Ri, R_Rk, R_Ro, R_Vi, sampleRate, tube);
 	}
 
-	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E250, Real E_Vi, Real R_E250, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Ro, Real R_Vi, Real sampleRate, Triode& tube) {
+	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E250, Real R_E250, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Ro, Real R_Vi, Real sampleRate, Triode& tube) {
 		t = tube;
 		Real ViR = R_Vi;
-		ViE = E_Vi;
 		Real CiR = 1.0 / (2.0*C_Ci*sampleRate);
 		Real CkR = 1.0 / (2.0*C_Ck*sampleRate);
 		Real CoR = 1.0 / (2.0*C_Co*sampleRate);
@@ -66,7 +65,7 @@ public:
 	void warmup_tubes(void) {
 		int i;
 		on = false;
-		for (i = 0; i < 8000; i++) {
+		for (i = 0; i < 1000; i++) {
 			advanc(0.0);
 		}
 		on = true;
@@ -75,46 +74,33 @@ public:
 	Real advanc(Real VE){
 		ViE = VE;
 		Real Ckb = Cka;
-		Real I3_3b3 = -I3_3Gamma1*(-Ckb);
+		Real I3_3b3 = I3_3Gamma1 * Ckb;
 		Real Cib = Cia;
-		Real S0_3b3 = -( Cib) + -( ViE);
-		Real P0_3b3 = -P0_3Gamma1*(-S0_3b3);
-		Real S1_3b3 = -( 0.0) + -( P0_3b3);
+		Real S0_3b3 = Cib + ViE;
+		Real P0_3b3 = P0_3Gamma1*(S0_3b3);
+		Real S1_3b3 = P0_3b3;
 		Real Cob = Coa;
-		Real S2_3b3 = -( Cob) + -( 0.0);
-		Real P2_3b3 = E250E - P2_3Gamma1*(E250E - S2_3b3);
+		Real S2_3b3 = Cob;
+		Real P2_3b3 = E250E - P2_3Gamma1*(E250E + S2_3b3);
 		//Tube:    K       G      P
-		t.compute(I3_3b3,S1_3b3,P2_3b3);
+		//printf("K=%f G=%f P=%f\n", I3_3b3,-S1_3b3,P2_3b3);
+		t.compute(I3_3b3,-S1_3b3,P2_3b3);
 		Real b1 = t.getC();
 		Real b2 = t.getG();
 		Real b3 = t.getP();
 		//Set As
-		Real I3_3b1 = b1  - Ckb - I3_3Gamma1*(-Ckb);
+		Real I3_3b1 = (b1 + Ckb - I3_3Gamma1*(Ckb));
 		Cka = I3_3b1;
-		Real S1_3b2 = -( -( 0.0) + -( b2) - S1_3Gamma1*(-( 0.0) + -( P0_3b3) + -( b2)));
-		Real P0_3b1 = S1_3b2  - S0_3b3 - P0_3Gamma1*(-S0_3b3);
-		Real S0_3b1 = -( -( Cib) - S0_3Gamma1*(-( Cib) + -( ViE) + -( P0_3b1)));
+		Real S1_3b2 = ((-b2) - S1_3Gamma1*(P0_3b3 + (-b2)));
+		Real P0_3b1 = (S1_3b2 + (S0_3b3) - P0_3Gamma1*(S0_3b3));
+		Real S0_3b1 = (Cib - S0_3Gamma1*(Cib + ViE + P0_3b1));
 		Cia = S0_3b1;
-		Real P2_3b1 = b3 + E250E - S2_3b3 - P2_3Gamma1*(E250E - S2_3b3);
-		Real S2_3b1 = -( -( Cob) - S2_3Gamma1*(-( Cob) + -( 0.0) + -( P2_3b1)));
+		Real P2_3b1 = (b3 + E250E + (S2_3b3) - P2_3Gamma1*(E250E + S2_3b3));
+		Real S2_3b1 = (Cob - S2_3Gamma1*(Cob + P2_3b1));
 		Coa = S2_3b1;
-		Real S2_3b2 = -( -( Cob) + -( P2_3b1) - S2_3Gamma1*(-( Cob) + -( 0.0) + -( P2_3b1)));
+		Real S2_3b2 = (Cob + P2_3b1 - S2_3Gamma1*(Cob + P2_3b1));
 		Real Roa = S2_3b2;
-		return -(Roa);
-	}
-
-	std::vector<Real> getState(){
-		std::vector<Real> state(3, 0.0);
-		state[0] = Cia;
-		state[1] = Cka;
-		state[2] = Coa;
-		return state;
-	}
-	void setState(std::vector<Real> state) {
-		Assert(state.size() == 3);
-		Cia = state[0];
-		Cka = state[1];
-		Coa = state[2];
+		return -Roa;
 	}
 
 private:

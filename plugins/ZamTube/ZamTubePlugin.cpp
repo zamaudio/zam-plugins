@@ -53,7 +53,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bass";
         parameter.symbol     = "bass";
         parameter.unit       = " ";
-        parameter.ranges.def = 5.0f;
+        parameter.ranges.def = 1.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 10.0f;
         break;
@@ -62,7 +62,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Mids";
         parameter.symbol     = "mids";
         parameter.unit       = " ";
-        parameter.ranges.def = 5.0f;
+        parameter.ranges.def = 1.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 10.0f;
         break;
@@ -71,7 +71,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Treble";
         parameter.symbol     = "treb";
         parameter.unit       = " ";
-        parameter.ranges.def = 5.0f;
+        parameter.ranges.def = 1.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 10.0f;
         break;
@@ -181,9 +181,9 @@ void ZamTubePlugin::loadProgram(uint32_t index)
 
     /* Default parameter values */
     tubedrive = 0.0f;
-    bass = 5.f;
-    middle = 5.f;
-    treble = 5.f;
+    bass = 1.f;
+    middle = 1.f;
+    treble = 1.f;
     tonestack = 0.0f;
     mastergain = 0.0f;
     insane = 0.0f;
@@ -233,7 +233,7 @@ void ZamTubePlugin::activate()
 	v.cg2 = 11.99;
 	v.ig02 = 3.917e-8;
 
-	ckt.updateRValues(ci, ck, co, e, 0.0, rp, rg, ri, rk, ro, 10000.0, Fs, v);
+	ckt.updateRValues(ci, ck, co, e, rp, rg, ri, rk, ro, 10000.0, Fs, v);
 	ckt.warmup_tubes();
 
         fSamplingFreq = Fs;
@@ -951,14 +951,12 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		in = fabs(in) < DANGER ? in : 0.f; 
 
 		double ViE = in*from_dB(tubedrive);
-		tubeout = 10. * ckt.advanc(ViE) * from_dB(30. - tubedrive)
-				* from_dB(12.);
+		tubeout = 10. * ckt.advanc(ViE) * from_dB(30. - tubedrive) * from_dB(12.);
 		if (!ckt.on) {
 			tubeout = 0.0;
 		} else {
 			tubeout = sanitize_denormal(tubeout);
 		}
-		outputs[0][i] = in;
 
 		//Tone Stack sim
 		fRec0[0] = sanitize_denormal((float)tubeout - (fSlow16 * (((fSlow14 * fRec0[2]) + (fSlow13 * fRec0[1])) + (fSlow11 * fRec0[3]))));
