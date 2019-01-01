@@ -951,7 +951,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		in = fabs(in) < DANGER ? in : 0.f; 
 
 		double ViE = in*from_dB(tubedrive - 10.);
-		tubeout = e * ckt.advanc(ViE) * from_dB(40. - tubedrive);
+		tubeout = e * ckt.advanc(ViE) * from_dB(40. - tubedrive)*from_dB(-3.);
 		if (!ckt.on) {
 			tubeout = 0.0;
 		} else {
