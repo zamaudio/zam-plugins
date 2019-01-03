@@ -41,13 +41,14 @@ class ZamTubePlugin : public Plugin
 public:
 	Triode v;
 	TubeStageCircuit ckt;
-	T e;
 	T ci;
 	T ck;
 	T co;
-	T ro;
+	T e;
+	T er;
 	T rp;
 	T rg;
+	T ro;
 	T ri;
 	T rk;
 

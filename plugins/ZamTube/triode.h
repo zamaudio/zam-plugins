@@ -53,38 +53,13 @@ public:
 	T g1, mu1, gamma1, c1, gg1, e1, cg1, ig01;
 	T g2, mu2, gamma2, c2, gg2, e2, cg2, ig02;
 
-	T ffg(T VG);
-	T fgdash(T VG);
-	T ffp(T VP);
-	T ffp_insane(T VP);
-	T fpdash(T VP);
-	T ffk();
-	T secantfg(T *i1, T *i2);
-	T newtonfg(T *i1);
-	T secantfp(T *i1, T *i2);
-	T newtonfp(T *i1);
 	bool insane;
 	
 	Triode();
-	void compute(T Kbb, T Gbb, T Pbb);
-	void prepare(void);
-	T getC(void);
-	T getG(void);
-	T getP(void);
-
-	//Brent's method
-	T r8_abs ( T x );
-	T r8_epsilon;
-	T r8_max ( T x, T y );
-	T r8_sign ( T x );
-	T zeroffp ( T a, T b, T t );
-	T zeroffp_insane ( T a, T b, T t );
-	T zeroffg ( T a, T b, T t );
-
-private:
-	//Taylor series coefficients for fast calculations
-	double ffp_raw[3];
-	double ffp_coeff[3];
+	T compute(T Kbb, T Gbb, T Pbb, T R);
+	T getIa(T Vgk, T Vak);
+	T evaluateImplicitEquation(T Vak, T Vgk, T a, T R);
+	T iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R);
 };
 
 #endif
