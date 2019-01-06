@@ -949,19 +949,13 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		double in = sanitize_denormal(inputs[0][i]);
 
 		// protect against overflowing circuit
-		in = fabs(in) < DANGER ? in : 0.f; 
-	
+		in = fabs(in) < DANGER ? in : 0.f;
+
 		double pregain = from_dB(tubedrive*3.6364); // 0 to +40dB
-		double ViE = in*pregain;
+		double ViE = in * pregain * from_dB(15.); // assume in -15dBFS
 		double postgain = from_dB(tubedrive/2.) * from_dB(mastergain);
 		tubeout = ckt.advanc(ViE) * postgain / (e * 0.5);
-		/*
-		if (insane) {
-			tubeout = in*from_dB(-50.)*postgain;
-		} else {
-			tubeout = ckt.advanc(ViE) * postgain - in*from_dB(-50.)*postgain;
-		}
-		*/
+
 		//Tone Stack sim
 		fRec0[0] = sanitize_denormal((float)tubeout - (fSlow16 * (((fSlow14 * fRec0[2]) + (fSlow13 * fRec0[1])) + (fSlow11 * fRec0[3]))));
 		fRec1[0] = sanitize_denormal((float)tubeout - (fSlow47 * (((fSlow45 * fRec1[2]) + (fSlow44 * fRec1[1])) + (fSlow42 * fRec1[3]))));
