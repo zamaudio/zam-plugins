@@ -69,13 +69,14 @@ public:
 	}	
 
 	Real advanc(Real ViE) {
+		Real fudge = 0.9992;
 		//Get Bs
 		//P1_3GetB
 		Real Ckb = Cka;
 		//P1_1SetA
 		//RkGetB
 		//P1_2SetA
-		Real P1_3b3 = -P1_3Gamma1*(-Ckb);
+		Real P1_3b3 = -fudge*P1_3Gamma1*(-Ckb);
 		Real Cob = Coa;
 		//S3_1SetA
 		//RoGetB
@@ -84,7 +85,7 @@ public:
 		//P2_1SetA
 		//E500GetB
 		//P2_2SetA
-		Real P2_3b3 = E500E - P2_3Gamma1*(E500E - S3_3b3);
+		Real P2_3b3 = E500E - fudge*P2_3Gamma1*(E500E - S3_3b3);
 		//S2_2SetA
 		Real S2_3b3 = -(P1_3b3 + P2_3b3);
 		//S1_3GetB
@@ -105,7 +106,7 @@ public:
 		Real S1_3b3 = -(P0_3b3);
 		//Call tube model
 		Vg = -S1_3b3;
-		Real b = t.compute(-S2_3b3, S2_3Gamma1, Vg, Vk);
+		Real b = t.compute(-S2_3b3, S2_3Gamma1, Vg-Vk, Vk);
 		//Set As
 		//S2_3SetA
 		Real S2_3b1 = P1_3b3 - S2_3Gamma1*(P1_3b3 + P2_3b3 + b);
@@ -123,8 +124,8 @@ public:
 		//RoSetA
 		Real Roa = S3_3b2;
 		Vk = -P1_3b3;
-		//printf("K=%f G=%f P=%f  b=%f  in=%f out=%f\n", P1_3b3,S1_3b3,P2_3b3,b, ViE,-Roa);
-		return -(Roa);
+		//printf("Vk=%f Vg=%f Vpk(b)=%f(%f)  in=%f out=%f\n", Vk,Vg,P2_3b3,b, ViE,Roa);
+		return (Roa);
 	}
 
 private:
