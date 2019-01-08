@@ -69,7 +69,7 @@ public:
 	}	
 
 	Real advanc(Real ViE) {
-		Real fudge = 0.9992;
+		Real fudge = 0.997; // Critical to make Vk = ~2V when -15dbFS sine wave is input
 		//Get Bs
 		//P1_3GetB
 		Real Ckb = Cka;
