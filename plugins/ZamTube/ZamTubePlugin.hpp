@@ -36,6 +36,14 @@ typedef long double quad;
 #define TOLERANCE 1e-6
 #define DANGER 1000.f
 
+#define R1	0
+#define R2	1
+#define R3	2
+#define R4	3
+#define C1	4
+#define C2	5
+#define C3	6
+
 class ZamTubePlugin : public Plugin
 {
 public:
@@ -55,35 +63,7 @@ public:
         float   fConst0;
         float   fConst1;
         float   fConst2;
-        float   fConst3;
         float   fRec0[4];
-        float   fRec1[4];
-        float   fRec2[4];
-        float   fRec3[4];
-        float   fRec4[4];
-        float   fRec5[4];
-        float   fRec6[4];
-        float   fRec7[4];
-        float   fRec8[4];
-        float   fRec9[4];
-        float   fRec10[4];
-        float   fRec11[4];
-        float   fRec12[4];
-        float   fRec13[4];
-        float   fConst4;
-        float   fConst5;
-        float   fRec14[4];
-        float   fConst6;
-        float   fRec15[4];
-        float   fRec16[4];
-        float   fRec17[4];
-        float   fRec18[4];
-        float   fRec19[4];
-        float   fRec20[4];
-        float   fRec21[4];
-        float   fRec22[4];
-        float   fRec23[4];
-        float   fRec24[4];
 
 	float fSamplingFreq;
     enum Parameters
@@ -179,7 +159,35 @@ Wave digital filter physical model of a triode tube amplifier stage, with modell
     // -------------------------------------------------------------------
 
 private:
-    float tubedrive,bass,middle,treble,tonestack,mastergain,insane; //parameters
+	float tubedrive,bass,middle,treble,tonestack,mastergain,insane; //parameters
+	const float ts[25][7] = {
+	//	R1	R2	R3	R4	C1	C2	C3
+		{250e+3,1e+6,	25e+3,	56e+3,	250e-12,20e-9,	20e-9},
+		{250e+3,250e+3,	25e+3,	100e+3,	250e-12,100e-9,	47e-9},
+		{250e+3,250e+3,	10e+3,	100e+3,	120e-12,100e-9,	47e-9},
+		{250e+3,250e+3,	4.8e+3,	100e+3,	250e-12,100e-9,	47e-9},
+		{220e+3,1e+6,	22e+3,	33e+3,	470e-12,22e-9,	22e-9},
+		{250e+3,1e+6,	25e+3,	56e+3,	500e-12,22e-9,	22e-9},
+		{250e+3,1e+6,	25e+3,	33e+3,	270e-12,22e-9,	22e-9},
+		{250e+3,1e+6,	25e+3,	33e+3,	500e-12,22e-9,	22e-9},
+		{250e+3,250e+3,	25e+3,	56e+3,	250e-12,47e-9,	47e-9},
+		{1e+6,	1e+6,	10e+3,	100e+3,	50e-12,	22e-9,	22e-9},
+		{220e+3,220e+3,	220e+3,	100e+3,	470e-12,100e-9,	47e-9},
+		{250e+3,1e+6,	25e+3,	47e+3,	470e-12,20e-9,	20e-9},
+		{500e+3,1e+6,	10e+3,	47e+3,	470e-12,22e-9,	22e-9},
+		{250e+3,250e+3,	20e+3,	68e+3,	270e-12,22e-9,	22e-9},
+		{250e+3,250e+3,	10e+3,	100e+3,	270e-12,100e-9,	40e-9},
+		{250e+3,250e+3,	10e+3,	41e+3,	240e-12,33e-9,	82e-9},
+		{250e+3,1e+6,	25e+3,	32e+3,	470e-12,22e-9,	22e-9},
+		{250e+3,250e+3,	10e+3,	100e+3,	100e-12,100e-9,	47e-9},
+		{250e+3,1e+6,	33e+3,	51e+3,	220e-12,15e-9,	47e-9},
+		{220e+3,1e+6,	22e+3,	68e+3,	470e-12,22e-9,	22e-9},
+		{220e+3,220e+3,	10e+3,	100e+3,	220e-12,47e-9,	47e-9},
+		{250e+3,250e+3,	25e+3,	100e+3,	250e-12,22e-9,	22e-9},
+		{250e+3,250e+3,	10e+3,	100e+3,	250e-12,100e-9,	47e-9},
+		{250e+3,250e+3,	25e+3,	130e+3,	250e-12,100e-9,	22e-9},
+		{1e+6,	1e+6,	94e+3,	270e+3,	25e-12,	60e-9,	20e-9}
+	};
 };
 
 // -----------------------------------------------------------------------
