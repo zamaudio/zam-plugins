@@ -19,6 +19,7 @@
  */
 
 #include "ZamTubePlugin.hpp"
+#include "tonestacks.hpp"
 #include "triode.h"
 #include <stdio.h>
 
@@ -29,8 +30,44 @@ START_NAMESPACE_DISTRHO
 ZamTubePlugin::ZamTubePlugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
-    // set default values
-    loadProgram(0);
+	int i, j;
+
+	const float* tstacks[25] = {
+		Tonestacks::bassman,
+		Tonestacks::mesa,
+		Tonestacks::twin,
+		Tonestacks::princeton,
+		Tonestacks::jcm800,
+		Tonestacks::jcm2000,
+		Tonestacks::jtm45,
+		Tonestacks::mlead,
+		Tonestacks::m2199,
+		Tonestacks::ac30,
+		Tonestacks::ac15,
+		Tonestacks::soldano,
+		Tonestacks::sovtek,
+		Tonestacks::peavey,
+		Tonestacks::ibanez,
+		Tonestacks::roland,
+		Tonestacks::ampeg,
+		Tonestacks::ampegrev,
+		Tonestacks::bogner,
+		Tonestacks::groove,
+		Tonestacks::crunch,
+		Tonestacks::fenderblues,
+		Tonestacks::fender,
+		Tonestacks::fenderdeville,
+		Tonestacks::gibson
+	};
+
+	for (i = 0; i < 25; i++) {
+		for (j = 0; j < 7; j++) {
+			ts[i][j] = tstacks[i][j];
+		}
+	}
+
+	// set default values
+	loadProgram(0);
 }
 
 // -----------------------------------------------------------------------
@@ -200,7 +237,6 @@ void ZamTubePlugin::loadProgram(uint32_t index)
 
 void ZamTubePlugin::activate()
 {
-
 	T Fs = getSampleRate();
 	
 	// Passive components
@@ -244,8 +280,8 @@ void ZamTubePlugin::activate()
 	fConst1 = faustpower<2>(fConst0);
 	fConst2 = (3 * fConst0);
 	for (int i=0; i<4; i++) fRec0[i] = 0;
-}		
-		
+
+}
 		
 void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {

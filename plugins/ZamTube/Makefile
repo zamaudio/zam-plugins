@@ -14,7 +14,8 @@ NAME = ZamTube
 
 FILES_DSP = \
 	ZamTubePlugin.cpp \
-	triode.cpp
+	triode.cpp \
+	tonestacks.cpp
 
 FILES_UI  = \
 	ZamTubeArtwork.cpp \
