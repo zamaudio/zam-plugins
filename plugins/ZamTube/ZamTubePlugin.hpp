@@ -49,16 +49,14 @@ class ZamTubePlugin : public Plugin
 public:
 	Triode v;
 	TubeStageCircuit ckt;
-	T ci;
-	T ck;
-	T co;
-	T e;
-	T er;
-	T rp;
-	T rg;
-	T ro;
-	T ri;
-	T rk;
+	T ci[2];
+	T ck[2];
+	T co[2];
+	T e[2];
+	T er[2];
+	T rg[2];
+	T ro[2];
+	T rk[2];
 
         float   fConst0;
         float   fConst1;
