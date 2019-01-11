@@ -250,6 +250,16 @@ void ZamTubePlugin::activate()
 	co[0] = 10e-9;
 	ro[0] = 1e+6;
 
+	/* Matt's preamp */
+	ci[1] = 1.0e-7;
+	rg[1] = 1.;
+	rk[1] = 820.;
+	ck[1] = 50e-6;
+	e[1] = 300.0;
+	er[1] = 120e+3;
+	co[1] = 4.7e-9;
+	ro[1] = 470e+3;
+
 	/* CLA's preamp (not good with all tonestacks)
 	ci[1] = 1.0e-7;
 	rg[1] = 5.6e+3;
@@ -281,7 +291,7 @@ void ZamTubePlugin::activate()
 	v.cg2 = 11.99;
 	v.ig02 = 3.917e-8;
 
-	int pre = 0;
+	int pre = insane < 0.5 ? 0 : 1;
 	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], 0., rk[pre], 136e+3, ro[pre], Fs, v);
 	ckt.warmup_tubes();
 
@@ -346,7 +356,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float 	fSlow46 = (fSlow44 - (fConst1 * (fSlow36 + fSlow38)));
 
 	float tubeout = 0.f;
-	int pre = 0; //insane < 0.5 ? 0 : 1;
+	int pre = insane < 0.5 ? 0 : 1;
 	float volumepot = tubedrive / 11. * 1e+6;
 	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 136e+3, ro[pre], getSampleRate(), v);
 
