@@ -78,12 +78,12 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramTubedrive:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
         parameter.name       = "Tube Drive";
         parameter.symbol     = "tubedrive";
         parameter.unit       = " ";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = 0.0f;
+        parameter.ranges.def = 0.1f;
+        parameter.ranges.min = 0.1f;
         parameter.ranges.max = 11.0f;
         break;
     case paramBass:
@@ -218,7 +218,7 @@ void ZamTubePlugin::loadProgram(uint32_t index)
         return;
 
     /* Default parameter values */
-    tubedrive = 0.0f;
+    tubedrive = 0.1f;
     bass = 5.f;
     middle = 5.f;
     treble = 5.f;

@@ -49,10 +49,11 @@ ZamTubeUI::ZamTubeUI()
     // knobs
     fKnobTube = new ZamKnob(this, knobImage);
     fKnobTube->setAbsolutePos(177, 76);
-    fKnobTube->setRange(0.f, 11.0f);
+    fKnobTube->setRange(0.1f, 11.0f);
     fKnobTube->setLabel(true);
     fKnobTube->setScrollStep(1.0f);
-    fKnobTube->setDefault(0.0f);
+    fKnobTube->setUsingLogScale(true);
+    fKnobTube->setDefault(0.1f);
     fKnobTube->setRotationAngle(240);
     fKnobTube->setCallback(this);
 
@@ -150,7 +151,7 @@ void ZamTubeUI::programLoaded(uint32_t index)
         return;
 
     // Default values
-    fKnobTube->setValue(0.0f);
+    fKnobTube->setValue(0.1f);
     fKnobBass->setValue(5.f);
     fKnobMids->setValue(5.f);
     fKnobTreb->setValue(5.f);
