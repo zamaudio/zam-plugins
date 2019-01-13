@@ -13,7 +13,6 @@ T Triode::compute(T a, T R, T Vgate, T Vk) {
 	T Vak = VakGuess; // initial guess
 	int iteration = 0;
 	T err = 1e6;
-	T Iak = 0.0;
 	while (fabs(err)/fabs(Vak) > 1e-9){
 		VakGuess = iterateNewtonRaphson(Vak, 1e-6, Vgk, a, R);
 		err = Vak - VakGuess;
@@ -25,7 +24,7 @@ T Triode::compute(T a, T R, T Vgate, T Vk) {
 		}
 		++iteration;
 	}
-	T b = Vak - R*Iak;
+	T b = Vak - R*getIa(Vgk, Vak);
 
 	//printf("Vgate=%f Vk=%f  Vgk=%f b=%f\n", Vgate, Vk, Vgk, b);
 	return b;
@@ -45,7 +44,7 @@ T Triode::getIa(T Vgk, T Vak) {
 	T kp = 600.;
 	T kvb = 300.;
 
-	T e1 = Vak/kp*log(1.+exp(kp*(1./mu+Vgk/pow(kvb+Vak*Vak, 0.5))));
+	T e1 = Vak*log(1.+exp(kp*(1./mu+Vgk/pow(kvb+Vak*Vak, 0.5))))/kp;
 	if (e1 < 0) {
 		return 0.;
 	}
