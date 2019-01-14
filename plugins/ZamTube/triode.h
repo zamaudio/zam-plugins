@@ -21,14 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <math.h>
 
-#define BIG 1e12
-#define SMALL 1e-14
 #define EPSILON 1e-9
 #define ITER 50
-#define SWAP_PP(x,y) {T tmp=y; y=x; x=tmp;}
-#define SWAP_PN(x,y) {T tmp=y; y=-x; x=tmp;}
-#define SWAP_NP(x,y) {T tmp=y; y=x; x=-tmp;}
-#define SWAP_NN(x,y) {T tmp=y; y=-x; x=-tmp;}
 #define TOLERANCE 1e-6
 
 #define MAX(x, y) (( (x) > (y) ) ? x : y )
@@ -45,21 +39,15 @@ sanitize_denormal(float v) {
 
 class Triode {
 public:
-	T Kb, Gb, Pb;
-	T Kr, Gr, Pr;
+	T mu, kp, kvb, kg1, kx;
 
-	T vg, vk, vp;
-	T g, mu, gamma, c, gg, e, cg, ig0;
-	T g1, mu1, gamma1, c1, gg1, e1, cg1, ig01;
-	T g2, mu2, gamma2, c2, gg2, e2, cg2, ig02;
-
-	bool insane;
-	
 	Triode();
-	T compute(T Kbb, T Gbb, T Pbb, T R);
+	T compute(T a, T R, T Vg, T Vk);
 	T getIa(T Vgk, T Vak);
 	T evaluateImplicitEquation(T Vak, T Vgk, T a, T R);
 	T iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R);
+	const float *lut_ip;
+	bool insane;
 };
 
 #endif

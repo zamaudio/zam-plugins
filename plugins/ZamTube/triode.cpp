@@ -5,24 +5,17 @@
 using std::abs;
 #define DUMP(x) x
 
-T Triode::compute(T a, T R, T Vgate, T Vk) {
+T Triode::compute(T a, T R, T Vg, T Vk) {
 	T VakGuess = 100.;
-	
-	T Vgk = Vgate - Vk;
-
-	T Vak = VakGuess; // initial guess
+	T Vgk = Vg - Vk;
+	T Vak = VakGuess;
 	int iteration = 0;
 	T err = 1e6;
-	while (fabs(err)/fabs(Vak) > 1e-9){
-		VakGuess = iterateNewtonRaphson(Vak, 1e-6, Vgk, a, R);
+
+	for (iteration = 0; (fabs(err)/fabs(Vak) > EPSILON) && (iteration <= ITER); iteration++){
+		VakGuess = iterateNewtonRaphson(Vak, TOLERANCE, Vgk, a, R);
 		err = Vak - VakGuess;
 		Vak = VakGuess;
-
-		if (iteration > 100){
-			printf("Convergence failure!");
-			break;
-		}
-		++iteration;
 	}
 	T b = Vak - R*getIa(Vgk, Vak);
 
@@ -30,25 +23,23 @@ T Triode::compute(T a, T R, T Vgate, T Vk) {
 	return b;
 }
 
-T Triode::getIa(T Vgk, T Vak) {
-	if (Vak < 0.0) {
-		printf("Less than zero!\n");
-		Vak = 0.0;
+T Triode::getIa(T Vgk, T Vpk) {
+	if (Vpk < 0.0) {
+		//printf("Less than zero!\n");
+		Vpk = 0.0;
 	}
 	if (Vgk > 0.0) {
 		Vgk = 0.0;
 	}
-	T mu = 100.;
-	T kx = 1.4;
-	T kg1 = 3.981e-8;
-	T kp = 600.;
-	T kvb = 300.;
 
-	T e1 = Vak*log(1.+exp(kp*(1./mu+Vgk/pow(kvb+Vak*Vak, 0.5))))/kp;
+	T e1 = Vpk*log1p(exp(kp*(1./mu+Vgk/pow(kvb+Vpk*Vpk, 0.5))))/kp;
 	if (e1 < 0) {
 		return 0.;
 	}
-	return (pow(e1, kx) / kg1);
+	T test = 1e+6*pow(e1, kx) / kg1;
+	//printf("XXX Ip=%f lut=%f diff=%f  vgk=%f vpk=%f\n", test, test2, test2-test, Vgk, Vpk);
+	return test;
+
 }
 
 T Triode::evaluateImplicitEquation(T Vak, T Vgk, T a, T R){
@@ -64,8 +55,13 @@ T Triode::iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R){
 
 Triode::Triode()
 {
-	vg = 0.0;
-	vk = 0.0;
-	vp = 0.0;
-	insane = false;
+	insane = true;
+
+	//12AX7 EHX-1
+	kvb = 300.;
+	mu = 103.2;
+	kx = 1.26;
+	kg1 = 446.0;
+	kp = 3.4;
 }
+

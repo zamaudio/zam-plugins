@@ -225,6 +225,7 @@ void ZamTubePlugin::loadProgram(uint32_t index)
     tonestack = 0.0f;
     mastergain = 0.0f;
     insane = 1.0f;
+    insaneold = 1.0f;
 
     /* Default variable values */
 
@@ -250,8 +251,8 @@ void ZamTubePlugin::activate()
 	co[0] = 10e-9;
 	ro[0] = 1e+6;
 
-	/* Matt's preamp */
-	ci[1] = 1.0e-7;
+	/* Matt's preamp
+	ci[1] = 100e-9;
 	rg[1] = 1.;
 	rk[1] = 820.;
 	ck[1] = 50e-6;
@@ -259,6 +260,7 @@ void ZamTubePlugin::activate()
 	er[1] = 120e+3;
 	co[1] = 4.7e-9;
 	ro[1] = 470e+3;
+	*/
 
 	/* CLA's preamp (not good with all tonestacks)
 	ci[1] = 1.0e-7;
@@ -271,28 +273,9 @@ void ZamTubePlugin::activate()
 	ro[1] = 220e+3;
 	*/
 
-	// 12AX7 triode model RSD-1
-	v.g = 2.242e-3;
-	v.mu = 103.2;
-	v.gamma = 1.26;
-	v.c = 3.4;
-	v.gg = 6.177e-4;
-	v.e = 1.314;
-	v.cg = 9.901;
-	v.ig0 = 8.025e-8;
-
-	// 12AX7 triode model EHX-1
-	v.g2 = 1.371e-3;
-	v.mu2 = 86.9;
-	v.gamma2 = 1.349;
-	v.c2 = 4.56;
-	v.gg2 = 3.263e-4;
-	v.e2 = 1.156;
-	v.cg2 = 11.99;
-	v.ig02 = 3.917e-8;
-
-	int pre = insane < 0.5 ? 0 : 1;
+	int pre = 0;
 	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], 0., rk[pre], 136e+3, ro[pre], Fs, v);
+	ckt.t.insane = insane;
 	ckt.warmup_tubes();
 
         fSamplingFreq = Fs;
@@ -356,29 +339,36 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float 	fSlow46 = (fSlow44 - (fConst1 * (fSlow36 + fSlow38)));
 
 	float tubeout = 0.f;
-	int pre = insane < 0.5 ? 0 : 1;
+	
+	if (insaneold != insane) {
+		ckt.t.insane = insane;
+		insaneold = insane;
+	}
+	int pre = 0;
 	float volumepot = tubedrive / 11. * 1e+6;
 	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 136e+3, ro[pre], getSampleRate(), v);
 
+	double pregain = from_dB(tubedrive*3.6364 + 15.);
+	double postgain = from_dB(mastergain*3.) / e[pre];
+	
 	for (uint32_t i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
-		double in = sanitize_denormal(inputs[0][i]);
+		double in = inputs[0][i] * pregain;
 
 		// protect against overflowing circuit
 		in = fabs(in) < DANGER ? in : 0.f;
 
-		double pregain = from_dB(tubedrive*3.6364 + 15.); // 0 to +40dB with -15dBFS in
-		double postgain = from_dB(mastergain);
-
-		tubeout = ckt.advanc(in*pregain) * postgain / e[pre];
+		tubeout = ckt.advanc(in) * postgain;
 
 		//Tone Stack (post tube)
 		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3]))));
 		outputs[0][i] = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
 
 		// update filter states
-		for (int i=3; i>0; i--) fRec0[i] = fRec0[i-1];
+		fRec0[3] = fRec0[2];
+		fRec0[2] = fRec0[1];
+		fRec0[1] = fRec0[0];
 	}
 }
 

@@ -10,23 +10,27 @@ public:
 	bool on;
 
 	TubeStageCircuit() {
-		Cia = 0.0;
-		Cka = 0.0;
-		Coa = 0.0;
-		Vk = 0.0;
-		Vg = 0.0;
 		on = false;
+		reset_tubes();
 	}
 
 	void warmup_tubes(void) {
 		int i;
 		on = false;
-		for (i = 0; i < 8000; i++) {
+		for (i = 0; i < 100; i++) {
 			advanc(0.0);
 		}
 		on = true;
 	}
 
+	void reset_tubes(void) {
+		Cia = 0.0;
+		Cka = 0.0;
+		Coa = 0.0;
+		Vg = 0.0;
+		Vk = 0.0;
+		warmup_tubes();
+	}
 
 
 	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate, Triode& tube) {
@@ -124,7 +128,7 @@ public:
 		Real Roa = S3_3b2;
 		Vk = -P1_3b3;
 		//printf("Vk=%f Vg=%f Vpk(b)=%f(%f)  in=%f out=%f\n", Vk,Vg,P2_3b3,b, ViE,Roa);
-		return (Roa);
+		return Roa;
 	}
 
 private:
