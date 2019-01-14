@@ -30,13 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 typedef double T;
 
-static inline float
-sanitize_denormal(float v) {
-        if(!std::isnormal(v) || !std::isfinite(v))
-                return 0.f;
-        return v;
-}
-
 class Triode {
 public:
 	T mu, kp, kvb, kg1, kx;
@@ -46,7 +39,6 @@ public:
 	T getIa(T Vgk, T Vak);
 	T evaluateImplicitEquation(T Vak, T Vgk, T a, T R);
 	T iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R);
-	const float *lut_ip;
 	bool insane;
 };
 

@@ -12,6 +12,7 @@ public:
 	TubeStageCircuit() {
 		on = false;
 		reset_tubes();
+		warmup_tubes();
 	}
 
 	void warmup_tubes(void) {
@@ -29,9 +30,7 @@ public:
 		Coa = 0.0;
 		Vg = 0.0;
 		Vk = 0.0;
-		warmup_tubes();
 	}
-
 
 	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate, Triode& tube) {
 		t = tube;

@@ -24,6 +24,18 @@ T Triode::compute(T a, T R, T Vg, T Vk) {
 }
 
 T Triode::getIa(T Vgk, T Vpk) {
+	static bool prepared = false;
+	static double coeff[3];
+
+	if (!prepared) {
+		const double L2 = log(2.0);
+		const double scale = 2e+9*pow(L2, kx-2.0)/(8.0*pow(kp, kx));
+		coeff[0] = 8.0*L2*L2*scale;
+		coeff[1] = kx*kp*L2*4.0*scale;
+		coeff[2] = (kp*kp*kx*kx + L2*kp*kp*kx - kp*kp*kx) * scale;
+		prepared = true;
+	}
+
 	if (Vpk < 0.0) {
 		//printf("Less than zero!\n");
 		Vpk = 0.0;
@@ -32,14 +44,16 @@ T Triode::getIa(T Vgk, T Vpk) {
 		Vgk = 0.0;
 	}
 
-	T e1 = Vpk*log1p(exp(kp*(1./mu+Vgk/pow(kvb+Vpk*Vpk, 0.5))))/kp;
-	if (e1 < 0) {
-		return 0.;
-	}
-	T test = 1e+6*pow(e1, kx) / kg1;
-	//printf("XXX Ip=%f lut=%f diff=%f  vgk=%f vpk=%f\n", test, test2, test2-test, Vgk, Vpk);
-	return test;
+	double A = 1./mu + Vgk / sqrt(kvb + Vpk*Vpk);
+	return (coeff[0] + coeff[1]*A + coeff[2]*A*A) / kg1;
 
+	/* exact solution (takes > 300x longer)
+		e1 = Vpk*log1p(exp(kp*(1./mu+Vgk/sqrt(kvb+Vpk*Vpk))))/kp;
+		if (e1 < 0) {
+			return 0.;
+		}
+		return 1e+6*pow(e1, kx) / kg1;
+	*/
 }
 
 T Triode::evaluateImplicitEquation(T Vak, T Vgk, T a, T R){
@@ -55,13 +69,10 @@ T Triode::iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R){
 
 Triode::Triode()
 {
-	insane = true;
-
-	//12AX7 EHX-1
+	//12AX7 RSD-1
 	kvb = 300.;
 	mu = 103.2;
 	kx = 1.26;
 	kg1 = 446.0;
 	kp = 3.4;
 }
-
