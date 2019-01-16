@@ -10,7 +10,6 @@ public:
 	bool on;
 
 	TubeStageCircuit() {
-		on = false;
 		reset_tubes();
 		warmup_tubes();
 	}
@@ -18,7 +17,7 @@ public:
 	void warmup_tubes(void) {
 		int i;
 		on = false;
-		for (i = 0; i < 100; i++) {
+		for (i = 0; i < 5000; i++) {
 			advanc(0.0);
 		}
 		on = true;

@@ -37,7 +37,6 @@ public:
 	Triode();
 	T compute(T a, T R, T Vg, T Vk);
 	T getIa(T Vgk, T Vak);
-	T evaluateImplicitEquation(T Vak, T Vgk, T a, T R);
 	T iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R);
 	bool insane;
 };

@@ -78,7 +78,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramTubedrive:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomable;
         parameter.name       = "Tube Drive";
         parameter.symbol     = "tubedrive";
         parameter.unit       = " ";
@@ -127,8 +127,8 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Output level";
         parameter.symbol     = "gain";
         parameter.unit       = " ";
-        parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -30.0f;
+        parameter.ranges.def = 15.0f;
+        parameter.ranges.min = 0.0f;
         parameter.ranges.max = 30.0f;
         break;
     case paramInsane:
@@ -136,7 +136,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Quality Insane";
         parameter.symbol     = "insane";
         parameter.unit       = " ";
-        parameter.ranges.def = 1.0f;
+        parameter.ranges.def = 0.0f;
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         break;
@@ -223,9 +223,9 @@ void ZamTubePlugin::loadProgram(uint32_t index)
     middle = 5.f;
     treble = 5.f;
     tonestack = 0.0f;
-    mastergain = 0.0f;
-    insane = 1.0f;
-    insaneold = 1.0f;
+    mastergain = 15.0f;
+    insane = 0.0f;
+    insaneold = 0.0f;
 
     /* Default variable values */
 
@@ -251,7 +251,7 @@ void ZamTubePlugin::activate()
 	co[0] = 10e-9;
 	ro[0] = 1e+6;
 
-	/* Matt's preamp */
+	/* Matt's preamp
 	ci[1] = 100e-9;
 	rg[1] = 1.;
 	rk[1] = 820.;
@@ -260,6 +260,7 @@ void ZamTubePlugin::activate()
 	er[1] = 120e+3;
 	co[1] = 4.7e-9;
 	ro[1] = 470e+3;
+	*/
 
 	/* CLA's preamp
 	ci[1] = 1.0e-7;
@@ -273,8 +274,9 @@ void ZamTubePlugin::activate()
 	*/
 
 	int pre = 0;
-	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], 0., rk[pre], 136e+3, ro[pre], Fs, v);
-	ckt.t.insane = insane;
+	float volumepot = 1e+6;
+	ckt.on = false;
+	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 136e+3, ro[pre], Fs, v);
 	ckt.warmup_tubes();
 
         fSamplingFreq = Fs;
@@ -282,7 +284,19 @@ void ZamTubePlugin::activate()
 	fConst0 = (2 * float(MIN(192000, MAX(1, fSamplingFreq))));
 	fConst1 = faustpower<2>(fConst0);
 	fConst2 = (3 * fConst0);
-	for (int i=0; i<4; i++) fRec0[i] = 0;
+	fRec0[3] = 0.f;
+	fRec0[2] = 0.f;
+	fRec0[1] = 0.f;
+	fRec0[0] = 0.f;
+}
+
+void ZamTubePlugin::deactivate()
+{
+	ckt.warmup_tubes();
+	fRec0[3] = 0.f;
+	fRec0[2] = 0.f;
+	fRec0[1] = 0.f;
+	fRec0[0] = 0.f;
 }
 		
 void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
@@ -339,23 +353,14 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 	float tubeout = 0.f;
 	
-	if (insane != insaneold) {
-		ckt.reset_tubes();
-		ckt.warmup_tubes();
-		fRec0[3] = fRec0[2] = fRec0[1] = fRec0[0] = 0.f;
-		insaneold = insane;
-	}
-	int pre = insane < 0.5 ? 0 : 1;
-	float volumepot = tubedrive / 11. * 1e+6;
-	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 136e+3, ro[pre], getSampleRate(), v);
+	float cut = insane ? 0. : -15.;
+	float pregain = from_dB(tubedrive*3.6364 + cut);
+	float postgain = from_dB(mastergain + 36.*(1. - tubedrive/11.));
 
-	double pregain = from_dB(tubedrive*3.6364 + 15.);
-	double postgain = from_dB(mastergain*3.) / e[pre];
-	
 	for (uint32_t i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
-		double in = inputs[0][i] * pregain;
+		float in = inputs[0][i] * pregain;
 
 		// protect against overflowing circuit
 		in = fabs(in) < DANGER ? in : 0.f;
@@ -363,7 +368,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		tubeout = ckt.advanc(in) * postgain;
 
 		//Tone Stack (post tube)
-		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3]))));
+		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20;
 		outputs[0][i] = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
 
 		// update filter states

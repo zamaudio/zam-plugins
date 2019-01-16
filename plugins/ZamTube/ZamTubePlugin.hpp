@@ -34,7 +34,7 @@ template <> 	 inline int faustpower<1>(int x) 		{ return x; }
 typedef long double quad;
 
 #define TOLERANCE 1e-6
-#define DANGER 1000.f
+#define DANGER 180.f
 
 #define R1	0
 #define R2	1
@@ -152,6 +152,7 @@ Wave digital filter physical model of a triode tube amplifier stage, with modell
 	}
 
     void activate() override;
+    void deactivate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
     // -------------------------------------------------------------------

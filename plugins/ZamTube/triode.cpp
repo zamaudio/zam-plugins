@@ -29,7 +29,7 @@ T Triode::getIa(T Vgk, T Vpk) {
 
 	if (!prepared) {
 		const double L2 = log(2.0);
-		const double scale = 2e+9*pow(L2, kx-2.0)/(8.0*pow(kp, kx));
+		const double scale = 1e+6*pow(L2, kx-2.0)/(8.0*pow(kp, kx));
 		coeff[0] = 8.0*L2*L2*scale;
 		coeff[1] = kx*kp*L2*4.0*scale;
 		coeff[2] = (kp*kp*kx*kx + L2*kp*kp*kx - kp*kp*kx) * scale;
@@ -45,9 +45,9 @@ T Triode::getIa(T Vgk, T Vpk) {
 	}
 
 	double A = 1./mu + Vgk / sqrt(kvb + Vpk*Vpk);
-	return (coeff[0] + coeff[1]*A + coeff[2]*A*A) / kg1;
+	return Vpk*(coeff[0] + coeff[1]*A + coeff[2]*A*A) / kg1;
 
-	/* exact solution (takes > 300x longer)
+	/* exact solution (takes > 3x longer)
 		e1 = Vpk*log1p(exp(kp*(1./mu+Vgk/sqrt(kvb+Vpk*Vpk))))/kp;
 		if (e1 < 0) {
 			return 0.;
@@ -56,14 +56,10 @@ T Triode::getIa(T Vgk, T Vpk) {
 	*/
 }
 
-T Triode::evaluateImplicitEquation(T Vak, T Vgk, T a, T R){
-	T Iak = getIa(Vgk, Vak);
-	return Vak + R*Iak - a;
-}
-
 T Triode::iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R){
-	T F = evaluateImplicitEquation(x, Vgk, a, R);
-	T xNew = x - dx*F/(evaluateImplicitEquation(x + dx, Vgk, a, R) - F);
+	T xIak = getIa(Vgk, x);
+	T dxIak = getIa(Vgk, x + dx);
+	T xNew = x - dx*(x + R*xIak - a)/(dx + R*(dxIak - xIak));
 	return xNew;
 }
 
