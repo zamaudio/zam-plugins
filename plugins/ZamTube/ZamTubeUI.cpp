@@ -85,10 +85,10 @@ ZamTubeUI::ZamTubeUI()
 
     fKnobGain = new ZamKnob(this, knobImage);
     fKnobGain->setAbsolutePos(63, 231);
-    fKnobGain->setRange(0.f, 30.0f);
+    fKnobGain->setRange(-30.f, 30.0f);
     fKnobGain->setLabel(true);
     fKnobGain->setScrollStep(1.f);
-    fKnobGain->setDefault(15.0f);
+    fKnobGain->setDefault(0.0f);
     fKnobGain->setRotationAngle(240);
     fKnobGain->setCallback(this);
 
@@ -154,7 +154,7 @@ void ZamTubeUI::programLoaded(uint32_t index)
     fKnobBass->setValue(5.f);
     fKnobMids->setValue(5.f);
     fKnobTreb->setValue(5.f);
-    fKnobGain->setValue(15.0f);
+    fKnobGain->setValue(0.0f);
     fToggleInsane->setDown(false);
     fSliderNotch->setValue(0.0f);
 }

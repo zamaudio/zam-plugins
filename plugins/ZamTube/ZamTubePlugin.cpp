@@ -127,8 +127,8 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Output level";
         parameter.symbol     = "gain";
         parameter.unit       = " ";
-        parameter.ranges.def = 15.0f;
-        parameter.ranges.min = 0.0f;
+        parameter.ranges.def = 0.0f;
+        parameter.ranges.min = -30.0f;
         parameter.ranges.max = 30.0f;
         break;
     case paramInsane:
@@ -223,7 +223,7 @@ void ZamTubePlugin::loadProgram(uint32_t index)
     middle = 5.f;
     treble = 5.f;
     tonestack = 0.0f;
-    mastergain = 15.0f;
+    mastergain = 0.0f;
     insane = 0.0f;
     insaneold = 0.0f;
 
@@ -353,10 +353,9 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 	float tubeout = 0.f;
 	
-	float cut = insane ? 0. : -15.;
-	float compensate = insane ? -15. : 0.;
-	float pregain = from_dB(tubedrive*3.6364 + cut);
-	float postgain = from_dB(compensate + mastergain + 36.*(1. - tubedrive/11.));
+	float cut = insane ? 0. : 15.;
+	float pregain = from_dB(tubedrive*3.6364 - cut);
+	float postgain = from_dB(mastergain + cut + 42. * (1. - log1p(tubedrive/11.)));
 
 	for (uint32_t i = 0; i < frames; ++i) {
 
