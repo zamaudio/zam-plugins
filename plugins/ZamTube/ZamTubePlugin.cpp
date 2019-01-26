@@ -241,7 +241,7 @@ void ZamTubePlugin::activate()
 	T Fs = getSampleRate();
 	
 	// Passive components
-	/* Original WDF preamp */
+	/* Original WDF preamp
 	ci[0] = 100e-9;
 	rg[0] = 20e+3;
 	rk[0] = 1e+3;
@@ -250,27 +250,27 @@ void ZamTubePlugin::activate()
 	er[0] = 100e+3;
 	co[0] = 10e-9;
 	ro[0] = 1e+6;
-
-	/* Matt's preamp
-	ci[1] = 100e-9;
-	rg[1] = 1.;
-	rk[1] = 820.;
-	ck[1] = 50e-6;
-	e[1] = 300.0;
-	er[1] = 120e+3;
-	co[1] = 4.7e-9;
-	ro[1] = 470e+3;
 	*/
+	
+	/* Matt's preamp */
+	ci[0] = 100e-9;
+	rg[0] = 1e-3;
+	rk[0] = 820.;
+	ck[0] = 50e-6;
+	e[0] = 300.0;
+	er[0] = 120e+3;
+	co[0] = 4.7e-9;
+	ro[0] = 470e+3;
 
 	/* CLA's preamp
-	ci[1] = 1.0e-7;
-	rg[1] = 5.6e+3;
-	rk[1] = 1.5e+3;
-	ck[1] = 4.7e-6;
-	e[1] = 340.0;
-	er[1] = 230e+3;
-	co[1] = 472e-9;
-	ro[1] = 220e+3;
+	ci[0] = 1.0e-7;
+	rg[0] = 5.6e+3;
+	rk[0] = 1.5e+3;
+	ck[0] = 4.7e-6;
+	e[0] = 340.0;
+	er[0] = 230e+3;
+	co[0] = 4.72e-9;
+	ro[0] = 100e+3;
 	*/
 
 	int pre = 0;
@@ -355,7 +355,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	
 	float cut = insane ? 0. : 15.;
 	float pregain = from_dB(tubedrive*3.6364 - cut);
-	float postgain = from_dB(mastergain + cut + 42. * (1. - log1p(tubedrive/11.)));
+	float postgain = from_dB(mastergain + cut + 5. + 42. * (1. - log1p(tubedrive/11.)));
 
 	for (uint32_t i = 0; i < frames; ++i) {
 
