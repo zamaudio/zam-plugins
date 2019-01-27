@@ -133,7 +133,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramInsane:
         parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
-        parameter.name       = "Quality Insane";
+        parameter.name       = "Insane Boost";
         parameter.symbol     = "insane";
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
@@ -207,7 +207,7 @@ void ZamTubePlugin::setParameterValue(uint32_t index, float value)
         mastergain = value;
         break;
     case paramInsane:
-        insane = value;
+        insane = value > 0.5 ? 1.0 : 0.0;
         break;
     }
 }
@@ -369,7 +369,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		tubeout = ckt.advanc(in) * postgain;
 
 		//Tone Stack (post tube)
-		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20;
+		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
 		outputs[0][i] = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
 
 		// update filter states
