@@ -28,6 +28,8 @@ namespace Tonestacks
 	extern const float* fender;
 	extern const float* fenderdeville;
 	extern const float* gibson;
+
+	extern const float* adjustdb;
 }
 
 #endif

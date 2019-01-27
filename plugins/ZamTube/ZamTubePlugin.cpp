@@ -301,7 +301,8 @@ void ZamTubePlugin::deactivate()
 		
 void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	uint8_t stack = (uint8_t)tonestack > 24 ? 24 : (uint8_t)tonestack;
+	const uint8_t stack = (uint8_t)tonestack > 24 ? 24 : (uint8_t)tonestack;
+	const float adjustdb = Tonestacks::adjustdb[stack];
 
 	float 	fSlow0 = float(ts[stack][R4]);
 	float 	fSlow1 = float(ts[stack][R3]);
@@ -355,7 +356,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	
 	float cut = insane ? 0. : 15.;
 	float pregain = from_dB(tubedrive*3.6364 - cut);
-	float postgain = from_dB(mastergain + cut + 5. + 42. * (1. - log1p(tubedrive/11.)));
+	float postgain = from_dB(mastergain + cut + adjustdb + 5. + 42. * (1. - log1p(tubedrive/11.)));
 
 	for (uint32_t i = 0; i < frames; ++i) {
 

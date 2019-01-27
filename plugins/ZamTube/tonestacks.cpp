@@ -29,6 +29,34 @@ static const float tones[] = {
 	1e+6,	1e+6,	94e+3,	270e+3,	25e-12,	60e-9,	20e-9
 };
 
+static const float levels[] =  {
+	 8.,
+	10.,
+	17.,
+	13.,
+	 5.,
+	 5.,
+	 6.,
+	 4.,
+	 8.,
+	15.,
+	 1.,
+	 5.,
+	 4.,
+	 9.,
+	11.,
+	10.,
+	 4.,
+	19.,
+	 7.,
+	 7.,
+	14.,
+	10.,
+	12.,
+	10.,
+	12.
+};
+
 const float* Tonestacks::bassman = (const float*)&tones[0];
 const float* Tonestacks::mesa = (const float*)&tones[1*7];
 const float* Tonestacks::twin = (const float*)&tones[2*7];
@@ -55,3 +83,4 @@ const float* Tonestacks::fender = (const float*)&tones[22*7];
 const float* Tonestacks::fenderdeville = (const float*)&tones[23*7];
 const float* Tonestacks::gibson = (const float*)&tones[24*7];
 
+const float* Tonestacks::adjustdb = (const float*)&levels[0];
