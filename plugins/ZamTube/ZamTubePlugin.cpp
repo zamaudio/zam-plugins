@@ -356,7 +356,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	
 	float cut = insane ? 0. : 15.;
 	float pregain = from_dB(tubedrive*3.6364 - cut);
-	float postgain = from_dB(mastergain + cut + adjustdb + 5. + 42. * (1. - log1p(tubedrive/11.)));
+	float postgain = from_dB(mastergain + cut + adjustdb + 42. * (1. - log1p(tubedrive/11.)));
 
 	for (uint32_t i = 0; i < frames; ++i) {
 
