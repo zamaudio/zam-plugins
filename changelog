@@ -51,3 +51,10 @@
 	- ZamHeadX2 DSP algorithm redone (sounds much better)
 	- Docker file provided for cross-compiling
 	- Dependencies for all plugins on all OSes provided externally
+
+3.11 New plugin and DSP improvements
+	- New plugin: ZamGrains (granular delay)
+	- Cross-over filters DSP improvement (no peaking near fc)
+	- ZamTube complete makeover, DSP redone
+	- ZamGEQ31 disable bands outside filterable range
+	- Snap to defaults on slider shift-click
