@@ -33,15 +33,6 @@ ifeq ($(HAVE_JACK),true)
 TARGETS += jack
 endif
 
-ifeq ($(LINUX),true)
-TARGETS += dssi_dsp
-ifeq ($(HAVE_DGL),true)
-ifeq ($(HAVE_LIBLO),true)
-TARGETS += dssi_ui
-endif
-endif
-endif
-
 ifeq ($(HAVE_DGL),true)
 TARGETS += lv2_sep
 else
