@@ -340,7 +340,7 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 			Lxg = (ingain==0.f) ? -160.f : to_dB(fabs(ingain));
                 	Rxg = Lxg;
 		} else {
-			Lxg = (in0==0.f) ? -160.f : to_dB(fabs(in1));
+			Lxg = (in0==0.f) ? -160.f : to_dB(fabs(in0));
                 	Rxg = (in1==0.f) ? -160.f : to_dB(fabs(in1));
 		}
                 Lxg = sanitize_denormal(Lxg);
