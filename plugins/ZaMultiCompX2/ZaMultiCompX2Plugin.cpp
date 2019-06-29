@@ -817,12 +817,12 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         Lyg = Ryg = 0.f;
 	inL = sanitize_denormal(inL);
 	inR = sanitize_denormal(inR);
-        Lxg = (inL==0.f) ? -160.f : to_dB(fabs(inL));
-        Rxg = (inR==0.f) ? -160.f : to_dB(fabs(inR));
+        Lxg = (inL==0.f) ? -160.f : to_dB(fabsf(inL));
+        Rxg = (inR==0.f) ? -160.f : to_dB(fabsf(inR));
         Lxg = sanitize_denormal(Lxg);
         Rxg = sanitize_denormal(Rxg);
 
-	checkwidth = 2.f*fabs(Lxg-thresdb[k]);
+	checkwidth = 2.f*fabsf(Lxg-thresdb[k]);
 	if (2.f*(Lxg-thresdb[k]) < -width) {
 		Lyg = Lxg;
 	} else if (checkwidth <= width) {
@@ -833,7 +833,7 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 		Lyg = sanitize_denormal(Lyg);
 	}
 
-	checkwidth = 2.f*fabs(Rxg-thresdb[k]);
+	checkwidth = 2.f*fabsf(Rxg-thresdb[k]);
 	if (2.f*(Rxg-thresdb[k]) < -width) {
 		Ryg = Rxg;
 	} else if (checkwidth <= width) {
@@ -906,10 +906,10 @@ float ZaMultiCompX2Plugin::averageabs(float samples[])
 	float average = 0.f;
 
 	for (i = 0; i < MAX_SAMPLES; i++) {
-		average += samples[i]*samples[i];
+		average += fabsf(samples[i]);
 	}
 	average /= (float) MAX_SAMPLES;
-	return sqrt(average);
+	return average;
 }
 
 void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
@@ -945,8 +945,8 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 		float outR[MAX_COMP+1] = {0.f};
 		float inl = sanitize_denormal(inputs[0][i]);
 		float inr = sanitize_denormal(inputs[1][i]);
-		inl = (fabs(inl) < DANGER) ? inl : 0.f;
-		inr = (fabs(inr) < DANGER) ? inr : 0.f;
+		inl = (fabsf(inl) < DANGER) ? inl : 0.f;
+		inr = (fabsf(inr) < DANGER) ? inr : 0.f;
 
 		int listenmode = 0;
 

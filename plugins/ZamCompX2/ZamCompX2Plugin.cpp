@@ -337,11 +337,11 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 attslew = 0;
 		Lyg = Ryg = 0.f;
                 if (usesidechain) {
-			Lxg = (ingain==0.f) ? -160.f : to_dB(fabs(ingain));
+			Lxg = (ingain==0.f) ? -160.f : to_dB(fabsf(ingain));
                 	Rxg = Lxg;
 		} else {
-			Lxg = (in0==0.f) ? -160.f : to_dB(fabs(in0));
-                	Rxg = (in1==0.f) ? -160.f : to_dB(fabs(in1));
+			Lxg = (in0==0.f) ? -160.f : to_dB(fabsf(in0));
+			Rxg = (in1==0.f) ? -160.f : to_dB(fabsf(in1));
 		}
                 Lxg = sanitize_denormal(Lxg);
                 Rxg = sanitize_denormal(Rxg);
@@ -349,7 +349,7 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                 Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
                 Ryg = Rxg + (1.f/ratio-1.f)*(Rxg-thresdb+width/2.f)*(Rxg-thresdb+width/2.f)/(2.f*width);
 
-		checkwidth = 2.f*fabs(Lxg-thresdb);
+		checkwidth = 2.f*fabsf(Lxg-thresdb);
                 if (2.f*(Lxg-thresdb) < -width) {
                         Lyg = Lxg;
                 } else if (checkwidth <= width) {
@@ -365,7 +365,7 @@ void ZamCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
                         Lyg = sanitize_denormal(Lyg);
                 }
 
-		checkwidth = 2.f*fabs(Rxg-thresdb);
+		checkwidth = 2.f*fabsf(Rxg-thresdb);
                 if (2.f*(Rxg-thresdb) < -width) {
                         Ryg = Rxg;
                 } else if (checkwidth <= width) {

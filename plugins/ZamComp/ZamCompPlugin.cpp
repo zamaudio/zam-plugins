@@ -314,12 +314,12 @@ void ZamCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		ingain = usesidechain ? in1 : in0;
                 attslew = 0;
 		Lyg = 0.f;
-		Lxg = (ingain==0.f) ? -160.f : to_dB(fabs(ingain));
+		Lxg = (ingain==0.f) ? -160.f : to_dB(fabsf(ingain));
                 Lxg = sanitize_denormal(Lxg);
 
                 Lyg = Lxg + (1.f/ratio-1.f)*(Lxg-thresdb+width/2.f)*(Lxg-thresdb+width/2.f)/(2.f*width);
 
-		checkwidth = 2.f*fabs(Lxg-thresdb);
+		checkwidth = 2.f*fabsf(Lxg-thresdb);
                 if (2.f*(Lxg-thresdb) < -width) {
                         Lyg = Lxg;
                 } else if (checkwidth <= width) {

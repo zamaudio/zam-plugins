@@ -315,12 +315,12 @@ void ZaMultiCompUI::compcurve(float in, int k, float *outx, float* outy) {
         float xg, yg;
 
         yg = 0.f;
-        xg = (in==0.f) ? -160.f : to_dB(fabs(in));
+        xg = (in==0.f) ? -160.f : to_dB(fabsf(in));
         xg = sanitize_denormal(xg);
 
         if (2.f*(xg-thresdb)<-width) {
                 yg = xg;
-        } else if (2.f*fabs(xg-thresdb)<=width) {
+        } else if (2.f*fabsf(xg-thresdb)<=width) {
                 yg = xg + (1.f/ratio-1.f)*(xg-thresdb+width/2.f)*(xg-thresdb+width/2.f)/(2.f*width);
         } else if (2.f*(xg-thresdb)>width) {
                 yg = thresdb + (xg-thresdb)/ratio;
@@ -337,7 +337,7 @@ void ZaMultiCompUI::compdot(float in, int k, float *outx, float* outy) {
         float xg, yg;
 
         yg = 0.f;
-        xg = (in==0.f) ? -160.f : to_dB(fabs(in));
+        xg = (in==0.f) ? -160.f : to_dB(fabsf(in));
         xg = sanitize_denormal(xg);
 	yg = xg - fLedRedValue[k];
         yg = sanitize_denormal(yg);

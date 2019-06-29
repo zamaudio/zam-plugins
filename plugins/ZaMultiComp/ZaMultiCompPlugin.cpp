@@ -795,10 +795,10 @@ void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
 
         Lyg = 0.f;
 	in = sanitize_denormal(in);
-        Lxg = (in==0.f) ? -160.f : to_dB(fabs(in));
+        Lxg = (in==0.f) ? -160.f : to_dB(fabsf(in));
         Lxg = sanitize_denormal(Lxg);
 
-	checkwidth = 2.f*fabs(Lxg-thresdb[k]);
+	checkwidth = 2.f*fabsf(Lxg-thresdb[k]);
 	if (2.f*(Lxg-thresdb[k]) < -width) {
 		Lyg = Lxg;
 	} else if (checkwidth <= width) {
@@ -881,7 +881,7 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
 		float fil1[2], fil2[2], fil3[2], fil4[2];
 		float outL[MAX_COMP+1] = {0.f};
 		float inl = sanitize_denormal(inputs[0][i]);
-		inl = (fabs(inl) < DANGER) ? inl : 0.f;
+		inl = (fabsf(inl) < DANGER) ? inl : 0.f;
 
 		int listenmode = 0;
 
