@@ -894,15 +894,20 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
 
 void ZaMultiCompX2Plugin::pushsample(float samples[], float sample, int k)
 {
-	float l1norm = 0.f;
+	int idx0, idx1, idx2;
 
-	l1norm += fabsf(sample);
+	idx1 = pos[k];
 	++pos[k];
-	if (pos[k] >= MAX_SAMPLES)
+	if (pos[k] >= MAX_SAMPLES) {
 		pos[k] = 0;
-	l1norm -= fabsf(samples[pos[k]]);
-	samples[pos[k]] = sample;
-	average[k] += l1norm / (float) MAX_SAMPLES;
+	}
+	idx2 = pos[k];
+	idx0 = pos[k] + 1;
+	if (idx0 >= MAX_SAMPLES) {
+		idx0 = 0;
+	}
+	samples[idx2] = samples[idx1] + fabsf(sample);
+	average[k] = ( samples[idx2] - samples[idx0] ) / (float) MAX_SAMPLES;
 }
 
 void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
