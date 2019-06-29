@@ -171,7 +171,6 @@ Stereo version of ZaMultiComp, with individual threshold controls for each band 
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
 	void pushsample(float samples[], float sample, int k);
-	float averageabs(float samples[]);
 
 	struct linear_svf {
 		double k;
@@ -192,6 +191,7 @@ private:
     float old_yl[2][MAX_COMP], old_y1[2][MAX_COMP], old_yg[2][MAX_COMP];
     float old_ll[2], old_l1[2];
     float outlevel[3];
+    float average[3];
     int pos[3];
     float outlevelold[3][MAX_SAMPLES];
     float oldxover1, oldxover2;
