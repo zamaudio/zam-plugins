@@ -892,22 +892,12 @@ void ZaMultiCompX2Plugin::run_comp(int k, float inL, float inR, float *outL, flo
         old_yg[1][k] = Ryg;
 }
 
-void ZaMultiCompX2Plugin::pushsample(float samples[], float sample, int k)
+void ZaMultiCompX2Plugin::pushsample(float sample, int k)
 {
-	int idx0, idx1, idx2;
+	const float rate = 2. * M_PI * 5.;
+	float lpf = rate / (rate + getSampleRate());
 
-	idx1 = pos[k];
-	++pos[k];
-	if (pos[k] >= MAX_SAMPLES) {
-		pos[k] = 0;
-	}
-	idx2 = pos[k];
-	idx0 = pos[k] + 1;
-	if (idx0 >= MAX_SAMPLES) {
-		idx0 = 0;
-	}
-	samples[idx2] = samples[idx1] + fabsf(sample);
-	average[k] = ( samples[idx2] - samples[idx0] ) / (float) MAX_SAMPLES;
+	average[k] += lpf * (sample*sample - average[k]);
 }
 
 void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
@@ -954,8 +944,8 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 run_lr4(2, fil2[0], &fil3[0], &fil4[0]);
                 run_lr4(3, fil2[1], &fil3[1], &fil4[1]);
 
-		pushsample(outlevelold[0], std::max(fil1[0], fil1[1]), 0);
-		outlevel[0] = average[0];
+		pushsample(std::max(fil1[0], fil1[1]), 0);
+		outlevel[0] = sqrt(average[0]);
 		outlevel[0] = (outlevel[0] == 0.f) ? -45.0 : to_dB(outlevel[0]);
 		if (tog1)
 			run_comp(0, fil1[0], fil1[1], &outL[0], &outR[0]);
@@ -963,8 +953,8 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 		tmp1[0] = tog1 ? outL[0] * from_dB(makeup[0]) : fil1[0];
                 tmp1[1] = tog1 ? outR[0] * from_dB(makeup[0]) : fil1[1];
 
-		pushsample(outlevelold[1], std::max(fil3[0], fil3[1]), 1);
-		outlevel[1] = average[1];
+		pushsample(std::max(fil3[0], fil3[1]), 1);
+		outlevel[1] = sqrt(average[1]);
 		outlevel[1] = (outlevel[1] == 0.f) ? -45.0 : to_dB(outlevel[1]);
 		if (tog2)
 			run_comp(1, fil3[0], fil3[1], &outL[1], &outR[1]);
@@ -972,8 +962,8 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
                 tmp2[0] = tog2 ? outL[1] * from_dB(makeup[1]) : fil3[0];
                 tmp2[1] = tog2 ? outR[1] * from_dB(makeup[1]) : fil3[1];
 
-		pushsample(outlevelold[2], std::max(fil4[0], fil4[1]), 2);
-		outlevel[2] = average[2];
+		pushsample(std::max(fil4[0], fil4[1]), 2);
+		outlevel[2] = sqrt(average[2]);
 		outlevel[2] = (outlevel[2] == 0.f) ? -45.0 : to_dB(outlevel[2]);
 		if (tog3)
 			run_comp(2, fil4[0], fil4[1], &outL[2], &outR[2]);

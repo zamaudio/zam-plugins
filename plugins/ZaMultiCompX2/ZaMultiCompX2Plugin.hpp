@@ -170,7 +170,7 @@ Stereo version of ZaMultiComp, with individual threshold controls for each band 
     void activate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
-	void pushsample(float samples[], float sample, int k);
+	void pushsample(float sample, int k);
 
 	struct linear_svf {
 		double k;
