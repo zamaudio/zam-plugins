@@ -712,11 +712,6 @@ void ZaMultiCompPlugin::activate()
 		simper[1][i].s[1] = 0.f;
 	}
 	max = 0.f;
-	for (i = 0; i < MAX_SAMPLES; i++) {
-		outlevelold[0][i] = 0.f;
-		outlevelold[1][i] = 0.f;
-		outlevelold[2][i] = 0.f;
-	}
 	pos[0] = 0;
 	pos[1] = 0;
 	pos[2] = 0;
@@ -833,24 +828,12 @@ void ZaMultiCompPlugin::run_comp(int k, float in, float *out)
         old_yg[k] = Lyg;
 }
 
-void ZaMultiCompPlugin::pushsample(float samples[], float sample, int k)
+void ZaMultiCompPlugin::pushsample(float sample, int k)
 {
-	++pos[k];
-	if (pos[k] >= MAX_SAMPLES)
-		pos[k] = 0;
-	samples[pos[k]] = sample;
-}
+	const float rate = 2. * M_PI * 5.;
+	float lpf = rate / (rate + getSampleRate());
 
-float ZaMultiCompPlugin::averageabs(float samples[])
-{
-	int i;
-	float average = 0.f;
-
-	for (i = 0; i < MAX_SAMPLES; i++) {
-		average += samples[i]*samples[i];
-	}
-	average /= (float) MAX_SAMPLES;
-	return sqrt(average);
+	average[k] += lpf * (sample*sample - average[k]);
 }
 
 void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
@@ -889,24 +872,24 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
                 run_lr4(0, inl, &fil1[0], &fil2[0]);
                 run_lr4(1, fil2[0], &fil3[0], &fil4[0]);
 
-		pushsample(outlevelold[0], fil1[0], 0);
-		outlevel[0] = averageabs(outlevelold[0]);
+		pushsample(fil1[0], 0);
+		outlevel[0] = sqrt(average[0]);
 		outlevel[0] = (outlevel[0] == 0.f) ? -45.0 : to_dB(outlevel[0]);
 		if (tog1)
 			run_comp(0, fil1[0], &outL[0]);
 
 		tmp1[0] = tog1 ? outL[0] * from_dB(makeup[0]) : fil1[0];
 
-		pushsample(outlevelold[1], fil3[0], 1);
-		outlevel[1] = averageabs(outlevelold[1]);
+		pushsample(fil3[0], 1);
+		outlevel[1] = sqrt(average[1]);
 		outlevel[1] = (outlevel[1] == 0.f) ? -45.0 : to_dB(outlevel[1]);
 		if (tog2)
 			run_comp(1, fil3[0], &outL[1]);
 
                 tmp2[0] = tog2 ? outL[1] * from_dB(makeup[1]) : fil3[0];
 
-		pushsample(outlevelold[2], fil4[0], 2);
-		outlevel[2] = averageabs(outlevelold[2]);
+		pushsample(fil4[0], 2);
+		outlevel[2] = sqrt(average[2]);
 		outlevel[2] = (outlevel[2] == 0.f) ? -45.0 : to_dB(outlevel[2]);
 		if (tog3)
 			run_comp(2, fil4[0], &outL[2]);

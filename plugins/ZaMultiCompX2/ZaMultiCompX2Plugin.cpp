@@ -731,11 +731,6 @@ void ZaMultiCompX2Plugin::activate()
 		}
         }
 	maxL = maxR = 0.f;
-	for (i = 0; i < MAX_SAMPLES; i++) {
-		outlevelold[0][i] = 0.f;
-		outlevelold[1][i] = 0.f;
-		outlevelold[2][i] = 0.f;
-	}
 	pos[0] = 0;
 	pos[1] = 0;
 	pos[2] = 0;

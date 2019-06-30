@@ -180,8 +180,7 @@ protected:
     void linear_svf_reset(struct linear_svf *self);
     float run_linear_svf_xover(struct linear_svf *self, float in, float mixlow, float mixhigh);
 
-	void pushsample(float samples[], float sample, int k);
-	float averageabs(float samples[]);
+	void pushsample(float sample, int k);
     // -------------------------------------------------------------------
 
 private:
@@ -191,7 +190,7 @@ private:
     float old_ll, old_l1;
     float limit, outlevel[3];
     int pos[3];
-    float outlevelold[3][MAX_SAMPLES];
+    float average[3];
     float oldxover1, oldxover2;
     bool reset;
 
