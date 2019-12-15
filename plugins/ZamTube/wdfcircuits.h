@@ -11,7 +11,6 @@ public:
 
 	TubeStageCircuit() {
 		reset_tubes();
-		warmup_tubes();
 	}
 
 	void warmup_tubes(void) {
@@ -29,10 +28,19 @@ public:
 		Coa = 0.0;
 		Vg = 0.0;
 		Vk = 0.0;
+		P3_3Gamma1 = 1.;
+		P0_3Gamma1 = 1.;
+		S1_3Gamma1 = 1.;
+		S3_3Gamma1 = 1.;
+		P1_3Gamma1 = 1.;
+		ViE = 0.;
+		S0_3Gamma1 = 1.;
+		S2_3Gamma1 = 1.;
+		P2_3Gamma1 = 1.;
+		E500E = 0.;
 	}
 
-	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate, Triode& tube) {
-		t = tube;
+	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
 		Real ViR = R_Vi;
 		Real CiR = 1.0 / (2.0*C_Ci*sampleRate);
 		Real RiR = R_Ri;

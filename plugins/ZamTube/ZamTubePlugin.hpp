@@ -47,7 +47,6 @@ typedef long double quad;
 class ZamTubePlugin : public Plugin
 {
 public:
-	Triode v;
 	TubeStageCircuit ckt;
 	T ci[2];
 	T ck[2];
