@@ -58,3 +58,11 @@
 	- ZamTube complete makeover, DSP redone
 	- ZamGEQ31 disable bands outside filterable range
 	- Snap to defaults on slider shift-click
+
+3.12 Bugfixes and DSP improvements
+	- ZamCompX2: Fix bug with left channel using right side
+	- Compressors: 5% speedup
+	- ZaMultiCompX2: 15% Speed up - remove averaging every cycle
+	- ZaMultiCompX2: Fix averaging
+	- ZamTube: Fix uninitialised bugs
+
