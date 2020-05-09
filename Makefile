@@ -1,6 +1,7 @@
 PREFIX ?= /usr/local
 LIBDIR ?= lib
 BINDIR ?= bin
+HAVE_DGL ?= true
 
 NAME    = zam-plugins
 VERSION = $(shell cat .version)
