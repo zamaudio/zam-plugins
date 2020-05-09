@@ -110,12 +110,12 @@ protected:
 
 	static inline float
 	from_dB(float gdb) {
-		return (exp(gdb/20.f*log(10.f)));
+		return (expf(0.05f*gdb*logf(10.f)));
 	}
 
 	static inline float
 	to_dB(float g) {
-		return (20.f*log10(g));
+		return (20.f*log10f(g));
 	}
 
 	// -------------------------------------------------------------------

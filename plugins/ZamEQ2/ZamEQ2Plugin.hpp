@@ -108,12 +108,12 @@ protected:
 
 	static inline double
 	from_dB(double gdb) {
-	        return (exp(gdb/20.f*log(10.f)));
+	        return (exp(0.05*gdb*log(10.0)));
 	}
 
 	static inline double
 	to_dB(double g) {
-	        return (20.f*log10(g));
+	        return (20.0*log10(g));
 	}
 
 	static inline int
