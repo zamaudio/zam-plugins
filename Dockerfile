@@ -65,7 +65,6 @@ RUN apt-get install -y \
 	fftw3-dev \
 	libsndfile-dev \
 	libsamplerate0-dev \
-	libjack-dev \
 	ladspa-sdk \
 	libpthread-stubs0-dev
 

@@ -16,7 +16,7 @@ export LDFLAGS=
 make clean
 rm -fr bin
 mkdir bin
-make -j${CPUS} LINUX=true
+make -j${CPUS} LINUX=true HAVE_CAIRO=false HAVE_JACK=false
 mv bin linux
 
 # OSX
@@ -30,7 +30,7 @@ export CFLAGS="-I/opt/local/include"
 make clean
 touch dpf/utils/lv2_ttl_generator
 chmod a+x dpf/utils/lv2_ttl_generator
-make MACOS=true MACOS_OLD=true -j${CPUS}
+make MACOS=true MACOS_OLD=true -j${CPUS} HAVE_CAIRO=false HAVE_JACK=false
 mv bin osx
 
 # WIN32
@@ -46,7 +46,7 @@ export AR=x86_64-w64-mingw32-ar
 make clean
 touch dpf/utils/lv2_ttl_generator.exe
 chmod a+x dpf/utils/lv2_ttl_generator.exe
-make WIN32=true -j${CPUS}
+make WIN32=true -j${CPUS} HAVE_CAIRO=false HAVE_JACK=false
 mv bin win32
 
 # WIN64
@@ -58,7 +58,7 @@ export PKG_CONFIG_PATH=/opt/mingw64/lib/pkgconfig
 make clean
 touch dpf/utils/lv2_ttl_generator.exe
 chmod a+x dpf/utils/lv2_ttl_generator.exe
-make WIN32=true -j${CPUS}
+make WIN32=true -j${CPUS} HAVE_CAIRO=false HAVE_JACK=false
 mv bin win64
 
 # Metadata for LV2
