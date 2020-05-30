@@ -20,8 +20,7 @@ script:
 
 deploy:
   provider: releases
-  api_key:
-    secure: Lqo9+84VTeIpl3MHI+WP7gdbtYN1+kZSFrV76RZGkk6W+r1f4yAelNg/hg2nTONeAtU+ZzX1BUlnTglDkrVQIbkecBzQ2H7s2KVPq734TV/VemwiHn0dwr+idL3CK3ASU4X8M6N+7qylO8GiQ4fZETfkzIM0YfNwg6YF0Xm04Lp7lDPH0pZdIy/iWxcOi5Lo3lQClgk8lCLzySiyDiqChRMYJ4x35DUqjpahA+jSv5jffji3rke/2f17zUhl/VtYBfcoAV5YjrrOfvQQeq2+OttDEbXNLaMhgXCJ3VBJY+hlSwl60Olq8aUPvBlVWxNZv61a3xS1y3KzpuUvfnv80Ivn+xmc9lgGmaS0N8Bt+mEP13lW3X9NMM7kwNZ5iBk5gXzqjPO6lud+9mN/G5qE4O0YsE+96yJb9M7M4rgyVp3hUh1GCeqrqJR2JOxy1xsFzO5eXk7p2zAmBoCcsT2ZuQMXY30O0OxKsk4ZZEiIkzQsC/YJHVFRY26CK9dM1uOrxKDMTjDejEso4L2kPGqine7CCX4Fokmyd6/Db2KwKzzugiMLptmbZowTF/KdmApvyg5RIzTghvTq856Xa6+8RuJPY18+gfcGOlXNqy9rbeuBtn/Sdaf7QPSxf+A/WAyL8C4fFMCWwREXnhv/fF9jV7zoq2Wp95WtKAe+Q3KGN/k=
+  api_key: $RELEASES_TOKEN
   file:
     - zam-plugins-$TRAVIS_TAG-linuxlv2.zip
     - zam-plugins-$TRAVIS_TAG-osxlv2.zip
