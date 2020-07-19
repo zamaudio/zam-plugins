@@ -1,3 +1,10 @@
+3.13 Small tweaks
+	- ZamTube: Add labels for tonestack styles
+	- All: Fix narrowing of double to float math
+	- Fix glibc compat for finite math ABI change (-lm)
+	- Reorder changelog
+	- Fix travis releases
+
 3.12 Bugfixes and DSP improvements
 	- ZamCompX2: Fix bug with left channel using right side
 	- Compressors: 5% speedup
