@@ -76,19 +76,19 @@ for f in *.lv2; do cd $f; perl -pi -e 's/\.so/\.dll/g' manifest.ttl; perl -pi -e
 
 # Release
 cd ../linux
-zip -9 -r zam-plugins-$TRAVIS_TAG-linuxlv2.zip *.lv2
+zip -9 -r zam-plugins-${TRAVIS_TAG}-linuxlv2.zip *.lv2
 mv *.zip ../bin
 cd ../osx
-zip -9 -r zam-plugins-$TRAVIS_TAG-osxlv2.zip *.lv2
-zip -9 -r zam-plugins-$TRAVIS_TAG-osxvst.zip *.vst
+zip -9 -r zam-plugins-${TRAVIS_TAG}-osxlv2.zip *.lv2
+zip -9 -r zam-plugins-${TRAVIS_TAG}-osxvst.zip *.vst
 mv *.zip ../bin
 cd ../win32
-zip -9 -r zam-plugins-$TRAVIS_TAG-win32lv2.zip *.lv2
-zip -9 -r zam-plugins-$TRAVIS_TAG-win32vst.zip *-vst.dll
+zip -9 -r zam-plugins-${TRAVIS_TAG}-win32lv2.zip *.lv2
+zip -9 -r zam-plugins-${TRAVIS_TAG}-win32vst.zip *-vst.dll
 mv *.zip ../bin
 cd ../win64
-zip -9 -r zam-plugins-$TRAVIS_TAG-win64lv2.zip *.lv2
-zip -9 -r zam-plugins-$TRAVIS_TAG-win64vst.zip *-vst.dll
+zip -9 -r zam-plugins-${TRAVIS_TAG}-win64lv2.zip *.lv2
+zip -9 -r zam-plugins-${TRAVIS_TAG}-win64vst.zip *-vst.dll
 mv *.zip ../bin
 cd ../bin
 ls -l

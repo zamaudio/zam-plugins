@@ -16,21 +16,23 @@ before_install:
   - docker build -t damo22/zam-plugins-build:latest .
 
 script:
-  - docker run -v `pwd`:/tmp/build --entrypoint "/bin/bash" damo22/zam-plugins-build:latest -c "cd /tmp/build; CPUS=2 bash docker-script"
+  - docker run -v `pwd`:/tmp/build --entrypoint "/bin/bash" damo22/zam-plugins-build:latest -c "cd /tmp/build; CPUS=2 TRAVIS_TAG=${TRAVIS_TAG} bash docker-script"
 
 deploy:
   provider: releases
-  api_key: $RELEASES_TOKEN
+  api_key:
+    secure: ${RELEASES_TOKEN}
   file:
-    - zam-plugins-$TRAVIS_TAG-linuxlv2.zip
-    - zam-plugins-$TRAVIS_TAG-osxlv2.zip
-    - zam-plugins-$TRAVIS_TAG-win32lv2.zip
-    - zam-plugins-$TRAVIS_TAG-win64lv2.zip
-    - zam-plugins-$TRAVIS_TAG-osxvst.zip
-    - zam-plugins-$TRAVIS_TAG-win32vst.zip
-    - zam-plugins-$TRAVIS_TAG-win64vst.zip
+    - zam-plugins-${TRAVIS_TAG}-linuxlv2.zip
+    - zam-plugins-${TRAVIS_TAG}-osxlv2.zip
+    - zam-plugins-${TRAVIS_TAG}-win32lv2.zip
+    - zam-plugins-${TRAVIS_TAG}-win64lv2.zip
+    - zam-plugins-${TRAVIS_TAG}-osxvst.zip
+    - zam-plugins-${TRAVIS_TAG}-win32vst.zip
+    - zam-plugins-${TRAVIS_TAG}-win64vst.zip
   skip_cleanup: true
   overwrite: true
+  draft: true
   on:
     repo: zamaudio/zam-plugins
     tags: true

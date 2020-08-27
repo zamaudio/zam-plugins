@@ -35,5 +35,5 @@ Cross-compiling with docker:
 Package Maintainers:
 ====================
 
-	git checkout 3.10
+	git checkout 3.13
 	make dist
