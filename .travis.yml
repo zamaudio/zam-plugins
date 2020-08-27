@@ -20,8 +20,7 @@ script:
 
 deploy:
   provider: releases
-  api_key:
-    secure: ${RELEASES_TOKEN}
+  api_key: ${RELEASES_TOKEN}
   file:
     - zam-plugins-${TRAVIS_TAG}-linuxlv2.zip
     - zam-plugins-${TRAVIS_TAG}-osxlv2.zip
