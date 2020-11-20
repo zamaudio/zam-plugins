@@ -333,7 +333,7 @@ void ZamTubePlugin::activate()
 	int pre = 0;
 	float volumepot = 1e+6;
 	ckt.on = false;
-	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 136e+3, ro[pre], Fs);
+	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 1e+3, ro[pre], Fs);
 	ckt.warmup_tubes();
 
         fSamplingFreq = Fs;
