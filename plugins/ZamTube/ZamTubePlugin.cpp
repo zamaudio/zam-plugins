@@ -418,12 +418,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	for (uint32_t i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
-		float in = inputs[0][i] * pregain;
-
-		// protect against overflowing circuit
-		in = fabs(in) < DANGER ? in : 0.f;
-
-		tubeout = ckt.advanc(in) * postgain;
+		tubeout = ckt.advanc(inputs[0][i] * pregain) * postgain / 10000.;
 
 		//Tone Stack (post tube)
 		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;

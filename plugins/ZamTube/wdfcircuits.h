@@ -74,18 +74,13 @@ public:
 		Real P2_3R = 1.0 /(1.0 / P2_1R + 1.0 / P2_2R);
 		P2_3Gamma1 = 1.0 / P2_1R/(1.0 / P2_1R + 1.0 / P2_2R);
 		Assert(P2_3Gamma1 >= 0.0 && P2_3Gamma1 <= 1.0);
-		S2_3Gamma1 = P1_3R/(P1_3R + P2_3R);
-		Assert(S2_3Gamma1 >= 0.0 && S2_3Gamma1 <= 1.0);
-	}	
+		S2_3Gamma1 = P1_3R/(P1_3R + P2_3R); 
+	}
 
 	Real advanc(Real ViE) {
 		//Get Bs
-		//P1_3GetB
-		Real Ckb = Cka;
-		//P1_1SetA
-		//RkGetB
-		//P1_2SetA
-		Real P1_3b3 = -P1_3Gamma1*(-Ckb);
+		//P2_3GetB
+		//S3_3GetB
 		Real Cob = Coa;
 		//S3_1SetA
 		//RoGetB
@@ -95,8 +90,6 @@ public:
 		//E500GetB
 		//P2_2SetA
 		Real P2_3b3 = E500E - P2_3Gamma1*(E500E - S3_3b3);
-		//S2_2SetA
-		Real S2_3b3 = -(P1_3b3 + P2_3b3);
 		//S1_3GetB
 		//RgGetB
 		//S1_1SetA
@@ -113,28 +106,40 @@ public:
 		Real P0_3b3 = -P0_3Gamma1*(-S0_3b3);
 		//S1_2SetA
 		Real S1_3b3 = -(P0_3b3);
+		//P1_3GetB
+		Real Ckb = Cka;
+		//P1_1SetA
+		//RkGetB
+		//P1_2SetA
+		Real P1_3b3 = -P1_3Gamma1*(-Ckb);
 		//Call tube model
 		Vg = -S1_3b3;
-		Real b = t.compute(-S2_3b3, S2_3Gamma1, Vg, Vk);
+		Real b = t.compute(P2_3b3, P2_3Gamma1, Vg, Vk);
+		Vk = P1_3b3 + Vg * S2_3Gamma1;
 		//Set As
-		//S2_3SetA
-		Real S2_3b1 = P1_3b3 - S2_3Gamma1*(P1_3b3 + P2_3b3 + b);
-		//P1_3SetA
-		Real P1_3b1 = S2_3b1  - Ckb - P1_3Gamma1*(-Ckb);
-		Cka = P1_3b1;
-		//RkSetA
-		Real S2_3b2 = P1_3b3 + b - S2_3Gamma1*(P1_3b3 + P2_3b3 + b);
 		//P2_3SetA
-		Real P2_3b1 = S2_3b2 + E500E - S3_3b3 - P2_3Gamma1*(E500E - S3_3b3);
+		Real P2_3b1 = b + E500E - S3_3b3 - P2_3Gamma1*(E500E - S3_3b3);
 		//S3_3SetA
 		Real S3_3b1 = Cob - S3_3Gamma1*(Cob + P2_3b1);
 		Coa = S3_3b1;
 		Real S3_3b2 = Cob + P2_3b1 - S3_3Gamma1*(Cob + P2_3b1);
 		//RoSetA
 		Real Roa = S3_3b2;
-		Vk = -P1_3b3;
-		//printf("Vk=%f Vg=%f Vpk(b)=%f(%f)  in=%f out=%f\n", Vk,Vg,P2_3b3,b, ViE,Roa);
-		return Roa;
+		//S1_3SetA
+		//RgSetA
+		Real S1_3b2 = Vg - S1_3Gamma1*(P0_3b3 + Vg);
+		//P0_3SetA
+		Real P0_3b1 = S1_3b2  - S0_3b3 - P0_3Gamma1*(-S0_3b3);
+		//S0_3SetA
+		Real S0_3b1 = Cib - S0_3Gamma1*(Cib + ViE + P0_3b1);
+		Cia = S0_3b1;
+		//RiSetA
+		//P1_3SetA
+		Real P1_3b1 = Vk  - Ckb - P1_3Gamma1*(-Ckb);
+		Cka = P1_3b1;
+		//RkSetA
+		//printf("Vk=%f Vg=%f Vpk=%f  in=%f out=%f\n", Vk,Vg,b, ViE,Roa);
+		return -(Roa);
 	}
 
 private:
