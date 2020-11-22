@@ -312,7 +312,7 @@ void ZamTubePlugin::activate()
 	/* Matt's preamp */
 	ci[0] = 100e-9;
 	rg[0] = 1e-3;
-	rk[0] = 820.;
+	rk[0] = 1200.; // 820 originally
 	ck[0] = 50e-6;
 	e[0] = 300.0;
 	er[0] = 120e+3;
@@ -409,20 +409,22 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float 	fSlow45 = (fSlow44 + (fConst1 * (fSlow36 + fSlow42)));
 	float 	fSlow46 = (fSlow44 - (fConst1 * (fSlow36 + fSlow38)));
 
-	float tubeout = 0.f;
+	float toneout = 0.f;
 	
 	float cut = insane ? 0. : 15.;
-	float pregain = from_dB(tubedrive*3.6364 - cut);
-	float postgain = from_dB(mastergain + cut + adjustdb + 42. * (1. - log1p(tubedrive/11.)));
+	float pregain = from_dB(tubedrive*3.6364 - cut + mastergain);
+	float postgain = from_dB(cut + adjustdb + 42. * (1. - log1p(tubedrive/11.)));
 
 	for (uint32_t i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
-		tubeout = ckt.advanc(inputs[0][i] * pregain) * postgain / 10000.;
+		float in = inputs[0][i] * pregain;
 
 		//Tone Stack (post tube)
-		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
-		outputs[0][i] = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
+		fRec0[0] = (in - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
+		toneout = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
+
+		outputs[0][i] = ckt.advanc(toneout) * postgain / 10000.;
 
 		// update filter states
 		fRec0[3] = fRec0[2];
