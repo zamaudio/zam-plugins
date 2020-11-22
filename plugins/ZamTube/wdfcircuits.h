@@ -111,7 +111,7 @@ public:
 		//S0_1SetA
 		//ViGetB
 		//S0_2SetA
-		Real S0_3b3 = -(Cib + ViE);
+		Real S0_3b3 = -(/*Cib*/ + ViE);
 		//P0_1SetA
 		//RiGetB
 		//P0_2SetA
@@ -150,7 +150,7 @@ public:
 		//P0_3SetA
 		Real P0_3b1 = S1_3b2  - S0_3b3 - P0_3Gamma1*(-S0_3b3);
 		//S0_3SetA
-		Real S0_3b1 = Cib - S0_3Gamma1*(Cib + ViE + P0_3b1);
+		Real S0_3b1 = /*Cib*/ - S0_3Gamma1*(/*Cib*/ + ViE + P0_3b1);
 		Cia = S0_3b1;
 		//RiSetA
 		//printf("Vk=%f Vg=%f Vpk=%f  in=%f out=%f\n", Vk,Vg,S2_3b3, ViE,Roa);

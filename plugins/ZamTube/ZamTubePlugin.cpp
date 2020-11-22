@@ -331,7 +331,7 @@ void ZamTubePlugin::activate()
 	*/
 
 	int pre = 0;
-	float volumepot = 1e+6;
+	float volumepot = 800e+3; // 100 good at low gain, 1000 good at high gain 
 	ckt.on = false;
 	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 1e+3, ro[pre], Fs);
 	ckt.warmup_tubes();
