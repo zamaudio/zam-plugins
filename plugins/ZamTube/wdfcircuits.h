@@ -40,10 +40,9 @@ public:
 		E500E = 0.;
 	}
 
-	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
+	void updateRValues(Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
 
 		Real ViR = R_Vi;
-		Real CiR = 1.0 / (2.0*C_Ci*sampleRate);
 		Real RiR = R_Ri;
 		Real RgR = R_Rg;
 		Real RoR = R_Ro;
@@ -52,10 +51,7 @@ public:
 		Real E500R = R_E500;
 		E500E = E_E500;
 		Real CoR = 1.0 / (2.0*C_Co*sampleRate);
-		Real S0_3R = (CiR + ViR);
-		S0_3Gamma1 = CiR/(CiR + ViR);
-		Assert(S0_3Gamma1 >= 0.0 && S0_3Gamma1 <= 1.0);
-		Real P0_1R = S0_3R;
+		Real P0_1R = ViR;
 		Real P0_2R = RiR;
 		Real P0_3R = 1.0 /(1.0 / P0_1R + 1.0 / P0_2R);
 		P0_3Gamma1 = 1.0 / P0_1R/(1.0 / P0_1R + 1.0 / P0_2R);
@@ -111,11 +107,10 @@ public:
 		//S0_1SetA
 		//ViGetB
 		//S0_2SetA
-		Real S0_3b3 = -(/*Cib*/ + ViE);
 		//P0_1SetA
 		//RiGetB
 		//P0_2SetA
-		Real P0_3b3 = -P0_3Gamma1*(-S0_3b3);
+		Real P0_3b3 = -P0_3Gamma1*ViE;
 		//S1_2SetA
 		Real S1_3b3 = -(P0_3b3);
 		//P1_3GetB
@@ -144,15 +139,12 @@ public:
 		//RkSetA
 		//S1_3SetA
 		//RgSetA
-		Real S1_3b2 = Vg - S1_3Gamma1*(P0_3b3 + Vg);
 		//P0_3SetA
-		Real P0_3b1 = S1_3b2  - S0_3b3 - P0_3Gamma1*(-S0_3b3);
 		//S0_3SetA
-		Real S0_3b1 = /*Cib*/ - S0_3Gamma1*(/*Cib*/ + ViE + P0_3b1);
 		//Cia = S0_3b1;
 		//RiSetA
 		//printf("Vk=%f Vg=%f Vpk=%f  in=%f out=%f\n", Vk,Vg,S2_3b3, ViE,Roa);
-		return -(Roa);
+		return Roa;
 	}
 
 private:
