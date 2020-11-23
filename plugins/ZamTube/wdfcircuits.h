@@ -99,7 +99,7 @@ public:
 		//P1_1SetA
 		//RkGetB
 		//P1_2SetA
-		Real P1_3b3 = /*-*/P1_3Gamma1*(-Ckb);
+		Real P1_3b3 = P1_3Gamma1*(-Ckb);
 		//S2_2SetA
 		Real S2_3b3 = (P2_3b3 + P1_3b3);
 		//S1_3GetB
@@ -107,7 +107,7 @@ public:
 		//S1_1SetA
 		//P0_3GetB
 		//S0_3GetB
-		Real Cib = Cia;
+		//Real Cib = Cia;
 		//S0_1SetA
 		//ViGetB
 		//S0_2SetA
@@ -119,11 +119,9 @@ public:
 		//S1_2SetA
 		Real S1_3b3 = -(P0_3b3);
 		//P1_3GetB
-		//Real Ckb = Cka;
 		//P1_1SetA
 		//RkGetB
 		//P1_2SetA
-		//Real P1_3b3 = -P1_3Gamma1*(-Ckb);
 		//Call tube model
 		Vg = -S1_3b3;
 		Vk = -P1_3b3;
@@ -151,7 +149,7 @@ public:
 		Real P0_3b1 = S1_3b2  - S0_3b3 - P0_3Gamma1*(-S0_3b3);
 		//S0_3SetA
 		Real S0_3b1 = /*Cib*/ - S0_3Gamma1*(/*Cib*/ + ViE + P0_3b1);
-		Cia = S0_3b1;
+		//Cia = S0_3b1;
 		//RiSetA
 		//printf("Vk=%f Vg=%f Vpk=%f  in=%f out=%f\n", Vk,Vg,S2_3b3, ViE,Roa);
 		return -(Roa);
