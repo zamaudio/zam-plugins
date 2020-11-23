@@ -60,7 +60,7 @@ Triode::Triode()
 	//12AX7 RSD-1 (custom)
 	mu = 100.;
 	kx = 1.4;
-	kg1 = 446.;
+	kg1 = 1060.;
 	kp = 600.;
 	kvb = 300.;
 }
