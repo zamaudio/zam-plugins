@@ -181,7 +181,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         break;
     case paramGain:
         parameter.hints      = kParameterIsAutomable;
-        parameter.name       = "Output level";
+        parameter.name       = "Input level";
         parameter.symbol     = "gain";
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
