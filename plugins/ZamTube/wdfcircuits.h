@@ -123,14 +123,14 @@ public:
 		//RkGetB
 		//P1_2SetA
 		//Call tube model
-		Vg = -(S1_3b3);
-		Real Vd = Vk-Vg;
-		Real Rd = (Vd > 0.) ? 2e+2 : 10e+6;
-		Vk = -(P1_3b3 - Vg * S1_3Gamma1 / Rd);
+		Vg = (S1_3b3);
+		Real Vd = Vk+Vg;
+		Real Rd = (Vd > 0.) ? 2.7e+3 : 100e+9;
 		Real b = t.compute(S2_3b3, S2_3Gamma1, Vg, Vk);
+		Vk = -(P1_3b3 + Vd * S1_3Gamma1 / Rd);
 		//Set As
 		//S2_3SetA
-		Real S2_3b1 = P2_3b3 - S2_3Gamma1*(P2_3b3 - Vk + b);
+		Real S2_3b1 = P2_3b3 - S2_3Gamma1*(P2_3b3 - (Vk+Vg) + b);
 		//P2_3SetA
 		Real P2_3b1 = S2_3b1 + E500E - S3_3b3 - P2_3Gamma1*(E500E - S3_3b3);
 		//S3_3SetA
@@ -139,7 +139,7 @@ public:
 		Real S3_3b2 = Cob + P2_3b1 - S3_3Gamma1*(Cob + P2_3b1);
 		//RoSetA
 		Real Roa = S3_3b2;
-		Real S2_3b2 = P2_3b3 + b - S2_3Gamma1*(P2_3b3 - Vk + b);
+		Real S2_3b2 = P2_3b3 + b - S2_3Gamma1*(P2_3b3 - (Vk+Vg) + b);
 		//P1_3SetA
 		Real P1_3b1 = S2_3b2  - Ckb - P1_3Gamma1*(-Ckb);
 		Cka = P1_3b1;
@@ -153,7 +153,7 @@ public:
 		Real S0_3b1 = Cib - S0_3Gamma1*(Cib + ViE + P0_3b1);
 		Cia = S0_3b1;
 		//RiSetA
-		printf("Vk=%f Vg=%f Vd=%f in=%f out=%f\n", Vk,Vg,Vd, ViE,Roa);
+		//printf("Vk=%f Vg=%f Vd=%f in=%f out=%f\n", Vk,Vg,Vd, ViE,Roa);
 		return Roa;
 	}
 
