@@ -125,7 +125,7 @@ public:
 		//Call tube model
 		Vg = -(S1_3b3);
 		Real Vd = Vk+Vg;
-		Real Rd = (Vd < 0.) ? 2.7e+3 : 10e+6;
+		Real Rd = (Vd < 0.) ? 100e+3 : 100e+6;
 		Vk = -(P1_3b3 - Vg * S1_3Gamma1 / Rd);
 		Real b = t.compute(S2_3b3, S2_3Gamma1, Vg, Vk);
 		//Set As
@@ -153,7 +153,7 @@ public:
 		Real S0_3b1 = Cib - S0_3Gamma1*(Cib + ViE + P0_3b1);
 		Cia = S0_3b1;
 		//RiSetA
-		printf("Vk=%f Vg=%f Vd=%f in=%f out=%f\n", Vk,Vg,Vd, ViE,Roa);
+		//printf("Vk=%f Vg=%f Vd=%f in=%f out=%f\n", Vk,Vg,Vd, ViE,Roa);
 		return Roa;
 	}
 

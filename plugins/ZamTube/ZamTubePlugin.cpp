@@ -310,14 +310,14 @@ void ZamTubePlugin::activate()
 	*/
 	
 	/* Matt's preamp */
-	ci[0] = 100e-9;
-	rg[0] = 100e+0;
-	rk[0] = 1200.; // 820 originally
-	ck[0] = 50e-6;
+	ci[0] = 0.5e-6;
+	rg[0] = 1.;
+	rk[0] = 900.; // 820 originally
+	ck[0] = 10e-6;
 	e[0] = 300.0;
-	er[0] = 120e+3;
+	er[0] = 100e+3;
 	co[0] = 0.5e-6;
-	ro[0] = 1000e+3;
+	ro[0] = 240e+3;
 
 	/* CLA's preamp
 	ci[0] = 1.0e-7;
@@ -331,9 +331,9 @@ void ZamTubePlugin::activate()
 	*/
 
 	int pre = 0;
-	float volumepot = 900e+3; // 100 good at low gain, 1000 good at high gain 
+	float volumepot = 100e+3; // 100 good at low gain, 1000 good at high gain 
 	ckt.on = false;
-	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 1e+0, ro[pre], Fs);
+	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 1., ro[pre], Fs);
 	ckt.warmup_tubes();
 
         fSamplingFreq = Fs;
@@ -412,7 +412,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	
 	float cut = insane ? 0. : 15.;
 	float pregain = from_dB(tubedrive*3.6364 - cut + mastergain);
-	float postgain = from_dB(cut + 42. * (1. - log1p(tubedrive/11.)));
+	//float postgain = from_dB(cut + 42. * (1. - log1p(tubedrive/11.)));
 
 	for (uint32_t i = 0; i < frames; ++i) {
 
@@ -423,7 +423,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		fRec0[0] = (in - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
 		toneout = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
 
-		outputs[0][i] = ckt.advanc(toneout) * postgain / 10000.;
+		outputs[0][i] = ckt.advanc(toneout) / 500.;
 
 		// update filter states
 		fRec0[3] = fRec0[2];
