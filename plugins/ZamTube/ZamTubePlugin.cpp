@@ -314,7 +314,7 @@ void ZamTubePlugin::activate()
 	ck[0] = 50e-6;
 	e[0] = 300.0;
 	er[0] = 120e+3;
-	co[0] = 4.7e-9;
+	co[0] = 0.5e-6;
 	ro[0] = 470e+3;
 
 	/* CLA's preamp
