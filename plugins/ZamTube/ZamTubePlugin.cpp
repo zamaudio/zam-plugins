@@ -299,6 +299,7 @@ void ZamTubePlugin::activate()
 	
 	// Passive components
 	/* Original WDF preamp
+	ci[0] = 100e-9;
 	rg[0] = 20e+3;
 	rk[0] = 1e+3;
 	ck[0] = 10e-6;
@@ -309,6 +310,7 @@ void ZamTubePlugin::activate()
 	*/
 	
 	/* Matt's preamp */
+	ci[0] = 100e-9;
 	rg[0] = 1e-3;
 	rk[0] = 1200.; // 820 originally
 	ck[0] = 50e-6;
@@ -318,6 +320,7 @@ void ZamTubePlugin::activate()
 	ro[0] = 470e+3;
 
 	/* CLA's preamp
+	ci[0] = 100e-9;
 	rg[0] = 5.6e+3;
 	rk[0] = 1.5e+3;
 	ck[0] = 4.7e-6;
@@ -329,9 +332,7 @@ void ZamTubePlugin::activate()
 
 	int pre = 0;
 	float volumepot = 800e+3; // 100 good at low gain, 1000 good at high gain 
-	ckt.on = false;
-	ckt.updateRValues(ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 1e+3, ro[pre], Fs);
-	ckt.warmup_tubes();
+	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 1e+3, ro[pre], Fs);
 
         fSamplingFreq = Fs;
 	
@@ -346,7 +347,6 @@ void ZamTubePlugin::activate()
 
 void ZamTubePlugin::deactivate()
 {
-	ckt.warmup_tubes();
 	fRec0[3] = 0.f;
 	fRec0[2] = 0.f;
 	fRec0[1] = 0.f;
@@ -407,20 +407,26 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 	float toneout = 0.f;
 	
-	float cut = insane ? 0. : 15.;
+	float cut = 15.;
 	float pregain = from_dB(tubedrive*3.6364 - cut + mastergain);
 	float postgain = from_dB(cut + 42. * (1. - log1p(tubedrive/11.)));
+	
+	if (insaneold != (int)insane) {
+		insaneold = (int)insane;
+		ckt.set_mode(insane > 0.5 ? ckt.TUBE_MODE_GRIDLEAK : ckt.TUBE_MODE_SIXTIES);
+		ZamTubePlugin::deactivate();
+	}
 
 	for (uint32_t i = 0; i < frames; ++i) {
 
 		//Step 1: read input sample as voltage for the source
 		float in = inputs[0][i] * pregain;
 
-		//Tone Stack (post tube)
+		//Tone Stack (pre tube)
 		fRec0[0] = (in - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
 		toneout = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
 
-		outputs[0][i] = ckt.advanc(toneout) * postgain / 10000.;
+		outputs[0][i] = ckt.run(toneout) * postgain / 10000.;
 
 		// update filter states
 		fRec0[3] = fRec0[2];
