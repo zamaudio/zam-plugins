@@ -25,6 +25,7 @@ public:
 		P2_3Gamma1 = 1.;
 		E500E = 0.;
 		ViE = 0.;
+		mode = TUBE_MODE_SIXTIES;
 	}
 
 	enum tube_mode {
