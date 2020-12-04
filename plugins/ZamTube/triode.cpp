@@ -6,18 +6,19 @@ using std::abs;
 #define DUMP(x) x
 
 T Triode::compute(T a, T R, T Vg, T Vk) {
-	T VakGuess = 100.;
 	T Vgk = Vg - Vk;
+	T VakGuess = -mu * Vgk;
 	T Vak = VakGuess;
 	int iteration = 0;
 	T err = 1e6;
+	T b;
 
 	for (iteration = 0; (fabs(err)/fabs(Vak) > EPSILON) && (iteration <= ITER); iteration++){
 		VakGuess = iterateNewtonRaphson(Vak, TOLERANCE, Vgk, a, R);
 		err = Vak - VakGuess;
 		Vak = VakGuess;
 	}
-	T b = Vak - R*getIa(Vgk, Vak);
+	b = Vak - R*getIa(Vgk, Vak);
 
 	//printf("Vgate=%f Vk=%f  Vgk=%f b=%f\n", Vgate, Vk, Vgk, b);
 	return b;

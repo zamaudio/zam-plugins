@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <math.h>
 
-#define EPSILON 1e-9
+#define EPSILON 1e-8
 #define ITER 50
 #define TOLERANCE 1e-6
 
