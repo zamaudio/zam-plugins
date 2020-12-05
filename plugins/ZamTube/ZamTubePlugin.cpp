@@ -330,9 +330,7 @@ void ZamTubePlugin::activate()
 	ro[0] = 100e+3;
 	*/
 
-	int pre = 0;
-	float volumepot = 800e+3; // 100 good at low gain, 1000 good at high gain 
-	ckt.updateRValues(ci[pre], ck[pre], co[pre], e[pre], er[pre], rg[pre], volumepot, rk[pre], 1e+3, ro[pre], Fs);
+	ckt.updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], Fs);
 
         fSamplingFreq = Fs;
 	
@@ -414,6 +412,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	if (insaneold != (int)insane) {
 		insaneold = (int)insane;
 		ckt.set_mode(insane > 0.5 ? ckt.TUBE_MODE_GRIDLEAK : ckt.TUBE_MODE_SIXTIES);
+		ckt.updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], getSampleRate());
 		ZamTubePlugin::deactivate();
 	}
 

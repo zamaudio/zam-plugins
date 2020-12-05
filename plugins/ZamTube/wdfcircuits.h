@@ -45,7 +45,7 @@ public:
 		Vk = 0.0;
 	}
 
-	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
+	void updateRValues_gridleak(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
 		warmup_tubes();
 		Real ViR = R_Vi;
 		Real CiR = 1.0 / (2.0*C_Ci*sampleRate);
@@ -82,6 +82,49 @@ public:
 		Assert(P2_3Gamma1 >= 0.0 && P2_3Gamma1 <= 1.0);
 		S2_3Gamma1 = P2_3R/(P2_3R + P1_3R);
 		Assert(S2_3Gamma1 >= 0.0 && S2_3Gamma1 <= 1.0);
+	}
+
+	void updateRValues_sixties(Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
+		warmup_tubes();
+		Real ViR = R_Vi;
+		Real RiR = R_Ri;
+		Real RgR = R_Rg;
+		Real RoR = R_Ro;
+		Real RkR = R_Rk;
+		Real CkR = 1.0 / (2.0*C_Ck*sampleRate);
+		Real E500R = R_E500;
+		E500E = E_E500;
+		Real CoR = 1.0 / (2.0*C_Co*sampleRate);
+		Real P0_1R = ViR;
+		Real P0_2R = RiR;
+		Real P0_3R = 1.0 /(1.0 / P0_1R + 1.0 / P0_2R);
+		P0_3Gamma1 = 1.0 / P0_1R/(1.0 / P0_1R + 1.0 / P0_2R);
+		Assert(P0_3Gamma1 >= 0.0 && P0_3Gamma1 <= 1.0);
+		S1_3Gamma1 = RgR/(RgR + P0_3R);
+		Assert(S1_3Gamma1 >= 0.0 && S1_3Gamma1 <= 1.0);
+		Real P1_1R = CkR;
+		Real P1_2R = RkR;
+		Real P1_3R = 1.0 /(1.0 / P1_1R + 1.0 / P1_2R);
+		P1_3Gamma1 = 1.0 / P1_1R/(1.0 / P1_1R + 1.0 / P1_2R);
+		Assert(P1_3Gamma1 >= 0.0 && P1_3Gamma1 <= 1.0);
+		Real S3_3R = (CoR + RoR);
+		S3_3Gamma1 = CoR/(CoR + RoR);
+		Assert(S3_3Gamma1 >= 0.0 && S3_3Gamma1 <= 1.0);
+		Real P2_1R = S3_3R;
+		Real P2_2R = E500R;
+		Real P2_3R = 1.0 /(1.0 / P2_1R + 1.0 / P2_2R);
+		P2_3Gamma1 = 1.0 / P2_1R/(1.0 / P2_1R + 1.0 / P2_2R);
+		Assert(P2_3Gamma1 >= 0.0 && P2_3Gamma1 <= 1.0);
+		S2_3Gamma1 = P2_3R/(P2_3R + P1_3R);
+		Assert(S2_3Gamma1 >= 0.0 && S2_3Gamma1 <= 1.0);
+	}
+
+	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
+		if (mode == TUBE_MODE_SIXTIES) {
+			updateRValues_sixties(C_Ck, C_Co, E_E500, R_E500, R_Rg, R_Ri, R_Rk, R_Vi, R_Ro, sampleRate);
+		} else {
+			updateRValues_gridleak(C_Ci, C_Ck, C_Co, E_E500, R_E500, R_Rg, R_Ri, R_Rk, R_Vi, R_Ro, sampleRate);
+		}
 	}
 
 	Real advanc_gridleak(Real ViE) {
