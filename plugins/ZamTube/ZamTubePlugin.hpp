@@ -152,15 +152,17 @@ Wave digital filter physical model of a triode tube amplifier stage, with modell
 
     void activate() override;
     void deactivate() override;
+    void TonestackRecompute(int stack);
     void run(const float** inputs, float** outputs, uint32_t frames) override;
 
     // -------------------------------------------------------------------
 
 private:
 	float tubedrive,bass,middle,treble,tonestack,mastergain,insane; //parameters
-	int insaneold;
+	int insaneold, tonestackold;
 
 	float ts[25][7];
+	float fSlow27, fSlow29, fSlow30, fSlow31, fSlow41, fSlow43, fSlow45, fSlow46;
 
 };
 

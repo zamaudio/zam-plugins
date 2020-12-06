@@ -283,6 +283,7 @@ void ZamTubePlugin::loadProgram(uint32_t index)
     mastergain = 0.0f;
     insane = 0.0f;
     insaneold = 0.0f;
+    tonestackold = 0.0f;
 
     /* Default variable values */
 
@@ -337,10 +338,8 @@ void ZamTubePlugin::activate()
 	fConst0 = (2 * float(MIN(192000, MAX(1, fSamplingFreq))));
 	fConst1 = faustpower<2>(fConst0);
 	fConst2 = (3 * fConst0);
-	fRec0[3] = 0.f;
-	fRec0[2] = 0.f;
-	fRec0[1] = 0.f;
-	fRec0[0] = 0.f;
+	ZamTubePlugin::deactivate();
+	ZamTubePlugin::TonestackRecompute(tonestack);
 }
 
 void ZamTubePlugin::deactivate()
@@ -351,10 +350,8 @@ void ZamTubePlugin::deactivate()
 	fRec0[0] = 0.f;
 }
 		
-void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
+void ZamTubePlugin::TonestackRecompute(int stack)
 {
-	const uint8_t stack = (uint8_t)tonestack > 24 ? 24 : (uint8_t)tonestack;
-
 	float 	fSlow0 = float(ts[stack][R4]);
 	float 	fSlow1 = float(ts[stack][R3]);
 	float 	fSlow2 = float(ts[stack][C3]);
@@ -382,11 +379,11 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float 	fSlow24 = (fConst0 * fSlow23);
 	float 	fSlow25 = (fSlow8 * (fSlow6 + fSlow1));
 	float 	fSlow26 = (fConst0 * (((fSlow25 + (fSlow4 * (fSlow1 + fSlow0))) + (fSlow2 * (fSlow0 + fSlow16))) + fSlow19));
-	float 	fSlow27 = ((fSlow26 + (fConst1 * (fSlow24 - fSlow20))) - 1);
+	fSlow27 = ((fSlow26 + (fConst1 * (fSlow24 - fSlow20))) - 1);
 	float 	fSlow28 = (fConst2 * fSlow23);
-	float 	fSlow29 = ((fSlow26 + (fConst1 * (fSlow20 - fSlow28))) - 3);
-	float 	fSlow30 = ((fConst1 * (fSlow20 + fSlow28)) - (3 + fSlow26));
-	float 	fSlow31 = (1.0f / (0 - (1 + (fSlow26 + (fConst1 * (fSlow20 + fSlow24))))));
+	fSlow29 = ((fSlow26 + (fConst1 * (fSlow20 - fSlow28))) - 3);
+	fSlow30 = ((fConst1 * (fSlow20 + fSlow28)) - (3 + fSlow26));
+	fSlow31 = (1.0f / (0 - (1 + (fSlow26 + (fConst1 * (fSlow20 + fSlow24))))));
 	float 	fSlow32 = float(treble/10.);
 	float 	fSlow33 = (fSlow32 * fSlow6);
 	float 	fSlow34 = (fSlow33 * fSlow0);
@@ -396,19 +393,29 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float 	fSlow38 = (fConst0 * fSlow37);
 	float 	fSlow39 = ((fSlow1 * (fSlow35 + fSlow14)) + (((fSlow32 * fSlow8) * fSlow6) + fSlow19));
 	float 	fSlow40 = (fConst0 * fSlow39);
-	float 	fSlow41 = (fSlow40 + (fConst1 * (fSlow38 - fSlow36)));
+	fSlow41 = (fSlow40 + (fConst1 * (fSlow38 - fSlow36)));
 	float 	fSlow42 = (fConst2 * fSlow37);
-	float 	fSlow43 = (fSlow40 + (fConst1 * (fSlow36 - fSlow42)));
+	fSlow43 = (fSlow40 + (fConst1 * (fSlow36 - fSlow42)));
 	float 	fSlow44 = (fConst0 * (0 - fSlow39));
-	float 	fSlow45 = (fSlow44 + (fConst1 * (fSlow36 + fSlow42)));
-	float 	fSlow46 = (fSlow44 - (fConst1 * (fSlow36 + fSlow38)));
+	fSlow45 = (fSlow44 + (fConst1 * (fSlow36 + fSlow42)));
+	fSlow46 = (fSlow44 - (fConst1 * (fSlow36 + fSlow38)));
+}
 
-	float toneout = 0.f;
+void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
+{
+	const uint8_t stack = (uint8_t)tonestack > 24 ? 24 : (uint8_t)tonestack;
 	
+	float toneout = 0.f;
+
 	float cut = 15.;
 	float pregain = from_dB(tubedrive*3.6364 - cut + mastergain);
 	float postgain = from_dB(cut + 42. * (1. - log1p(tubedrive/11.)));
-	
+
+	if (tonestackold != stack) {
+		tonestackold = stack;
+		ZamTubePlugin::TonestackRecompute(stack);
+	}
+
 	if (insaneold != (int)insane) {
 		insaneold = (int)insane;
 		ckt.set_mode(insane > 0.5 ? ckt.TUBE_MODE_GRIDLEAK : ckt.TUBE_MODE_SIXTIES);
