@@ -3,7 +3,7 @@
 #include "glue.h"
 #include "triode.h"
 
-#define WARMUP_SAMPLES 48000
+#define WARMUP_SAMPLES 8
 
 class TubeStageCircuit {
 	/*Tube Preamp*/
@@ -14,7 +14,6 @@ public:
 	int counter;
 
 	TubeStageCircuit() {
-		reset_tubes();
 		P3_3Gamma1 = 1.;
 		P0_3Gamma1 = 1.;
 		S1_3Gamma1 = 1.;
@@ -26,6 +25,7 @@ public:
 		E500E = 0.;
 		ViE = 0.;
 		mode = TUBE_MODE_SIXTIES;
+		reset_tubes();
 	}
 
 	enum tube_mode {
@@ -38,11 +38,20 @@ public:
 	}
 
 	void reset_tubes(void) {
-		Cia = 0.0;
-		Cka = 0.0;
-		Coa = 0.0;
-		Vg = 0.0;
-		Vk = 0.0;
+		// Steady state solution
+		if (mode == TUBE_MODE_SIXTIES) {
+			Vk = 1.454119;
+			Vg = 0.0;
+			Cia = 0.0;
+			Coa = -154.562846;
+			Cka = 1.454372;
+		} else {
+			Vk = 2.732184;
+			Vg = 0.0;
+			Cia = 0.0;
+			Coa = -26.733935;
+			Cka = 2.732658;
+		}
 	}
 
 	void updateRValues_gridleak(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
@@ -202,6 +211,7 @@ public:
 		Cia = S0_3b1;
 		//RiSetA
 		//printf("Vk=%f Vg=%f Vd=%f in=%f out=%f\n", Vk,Vg,Vd, ViE,Roa);
+		//printf("GRIDLEAK: Vk=%f Vg=%f Cia=%f Coa=%f Cka=%f\n", Vk,Vg,Cia,Coa,Cka);
 		return -Roa;
 	}
 
@@ -274,12 +284,14 @@ public:
 		//Cia = S0_3b1;
 		//RiSetA
 		//printf("Vk=%f Vg=%f Vpk=%f  in=%f out=%f\n", Vk,Vg,S2_3b3, ViE,Roa);
+		//printf("SIXTIES: Vk=%f Vg=%f Cia=%f Coa=%f Cka=%f\n", Vk,Vg,Cia,Coa,Cka);
 		return -Roa;
 	}
 
 	void set_mode(enum tube_mode newmode) {
 		warmup_tubes();
 		mode = newmode;
+		reset_tubes();
 	}
 
 	Real run(Real input) {
