@@ -65,7 +65,7 @@ You can apply this plugin generously without affecting the tone.";
 
     uint32_t getVersion() const noexcept override
     {
-        return d_version(3, 13, 0);
+        return d_version(3, 14, 0);
     }
 
     int64_t getUniqueId() const noexcept override

@@ -1,3 +1,10 @@
+3.14 ZamTube DSP overhaul
+	- Thanks to oid on #opensourcemusicians!
+	- Released together with guitarix V0.42.0 tube improvements
+	- Virtual circuit redesigned for realistic tube emulation
+	- Two modes - 60's version and Gridleak version (insane toggle)
+	- Optimised slightly for lower DSP load without losing quality
+
 3.13 Small tweaks
 	- ZamTube: Add labels for tonestack styles
 	- All: Fix narrowing of double to float math
