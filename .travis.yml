@@ -22,13 +22,13 @@ deploy:
   provider: releases
   api_key: ${RELEASES_TOKEN}
   file:
-    - zam-plugins-${TRAVIS_TAG}-linuxlv2.zip
-    - zam-plugins-${TRAVIS_TAG}-osxlv2.zip
-    - zam-plugins-${TRAVIS_TAG}-win32lv2.zip
-    - zam-plugins-${TRAVIS_TAG}-win64lv2.zip
-    - zam-plugins-${TRAVIS_TAG}-osxvst.zip
-    - zam-plugins-${TRAVIS_TAG}-win32vst.zip
-    - zam-plugins-${TRAVIS_TAG}-win64vst.zip
+    - bin/zam-plugins-${TRAVIS_TAG}-linuxlv2.zip
+    - bin/zam-plugins-${TRAVIS_TAG}-osxlv2.zip
+    - bin/zam-plugins-${TRAVIS_TAG}-win32lv2.zip
+    - bin/zam-plugins-${TRAVIS_TAG}-win64lv2.zip
+    - bin/zam-plugins-${TRAVIS_TAG}-osxvst.zip
+    - bin/zam-plugins-${TRAVIS_TAG}-win32vst.zip
+    - bin/zam-plugins-${TRAVIS_TAG}-win64vst.zip
   skip_cleanup: true
   overwrite: true
   draft: true
