@@ -284,6 +284,9 @@ void ZamTubePlugin::loadProgram(uint32_t index)
     insane = 0.0f;
     insaneold = 0.0f;
     tonestackold = 0.0f;
+    bassold = 5.f;
+    middleold = 5.f;
+    trebleold = 5.f;
 
     /* Default variable values */
 
@@ -411,8 +414,12 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float pregain = from_dB(tubedrive*3.6364 - cut + mastergain);
 	float postgain = from_dB(cut + 42. * (1. - log1p(tubedrive/11.)));
 
-	if (tonestackold != stack) {
+	if ((tonestackold != stack) || (bassold != bass) ||
+	    (middleold != middle) || (trebleold != treble)) {
 		tonestackold = stack;
+		bassold = bass;
+		middleold = middle;
+		trebleold = treble;
 		ZamTubePlugin::TonestackRecompute(stack);
 	}
 
