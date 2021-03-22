@@ -92,6 +92,7 @@ private:
 
     int  fRotationAngle;
     bool fDragging;
+    bool fRightClicked;
     int  fLastX;
     int  fLastY;
 
@@ -130,6 +131,7 @@ ZamKnob::ZamKnob(Window& parent, const Image& image, Orientation orientation) no
       fOrientation(orientation),
       fRotationAngle(0),
       fDragging(false),
+      fRightClicked(false),
       fLastX(0),
       fLastY(0),
       fCallback(nullptr),
@@ -194,6 +196,7 @@ ZamKnob::ZamKnob(const ZamKnob& imageKnob)
       fOrientation(imageKnob.fOrientation),
       fRotationAngle(imageKnob.fRotationAngle),
       fDragging(false),
+      fRightClicked(false),
       fLastX(0),
       fLastY(0),
       fCallback(imageKnob.fCallback),
@@ -223,7 +226,8 @@ ZamKnob& ZamKnob::operator=(const ZamKnob& imageKnob)
     fUsingLog      = imageKnob.fUsingLog;
     fOrientation   = imageKnob.fOrientation;
     fRotationAngle = imageKnob.fRotationAngle;
-    fDragging = false;
+    fDragging      = false;
+    fRightClicked  = false;
     fLastX    = 0;
     fLastY    = 0;
     fCallback = imageKnob.fCallback;
@@ -476,8 +480,11 @@ void ZamKnob::onDisplay()
 
 bool ZamKnob::onMouse(const MouseEvent& ev)
 {
-    if (ev.button != 1)
-        return false;
+    if (ev.button > 3 || ev.button < 1) return false;  //allow all 3 standard mouse buttons
+    
+    if (ev.button == 3) fRightClicked = true;
+
+    if (ev.button == 1 || ev.button == 2) fRightClicked = false;
 
     if (ev.press)
     {
@@ -485,6 +492,13 @@ bool ZamKnob::onMouse(const MouseEvent& ev)
             return false;
 
         if ((ev.mod & kModifierShift) != 0 && fUsingDefault)
+        {
+            setValue(fValueDef, true);
+            fValueTmp = fValue;
+            return true;
+        }
+
+        if ((ev.button == 2) && fUsingDefault)
         {
             setValue(fValueDef, true);
             fValueTmp = fValue;
@@ -506,7 +520,7 @@ bool ZamKnob::onMouse(const MouseEvent& ev)
             fCallback->imageKnobDragFinished(this);
 
         fDragging = false;
-        return true;
+	return true;
     }
 
     return false;
@@ -525,6 +539,7 @@ bool ZamKnob::onMotion(const MotionEvent& ev)
         if (const int movX = ev.pos.getX() - fLastX)
         {
             d     = (ev.mod & kModifierControl) ? 2000.0f : 200.0f;
+	    if (fRightClicked) d = 2000.0f;
             value = (fUsingLog ? _invlogscale(fValueTmp) : fValueTmp) + (float(fMaximum - fMinimum) / d * float(movX));
             doVal = true;
         }
@@ -534,6 +549,7 @@ bool ZamKnob::onMotion(const MotionEvent& ev)
         if (const int movY = fLastY - ev.pos.getY())
         {
             d     = (ev.mod & kModifierControl) ? 2000.0f : 200.0f;
+	    if (fRightClicked) d = 2000.0f;
             value = (fUsingLog ? _invlogscale(fValueTmp) : fValueTmp) + (float(fMaximum - fMinimum) / d * float(movY));
             doVal = true;
         }
