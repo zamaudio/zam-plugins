@@ -483,8 +483,7 @@ bool ZamKnob::onMouse(const MouseEvent& ev)
     if (ev.button > 3 || ev.button < 1) return false;
     
     if (ev.button == 3) fRightClicked = true;
-
-    if (ev.button == 1 || ev.button == 2) fRightClicked = false;
+    else fRightClicked = false;
 
     if (ev.press)
     {
