@@ -520,7 +520,7 @@ bool ZamKnob::onMouse(const MouseEvent& ev)
             fCallback->imageKnobDragFinished(this);
 
         fDragging = false;
-	return true;
+        return true;
     }
 
     return false;
