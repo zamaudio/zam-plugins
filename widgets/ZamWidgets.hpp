@@ -480,7 +480,7 @@ void ZamKnob::onDisplay()
 
 bool ZamKnob::onMouse(const MouseEvent& ev)
 {
-    if (ev.button > 3 || ev.button < 1) return false;  //allow all 3 standard mouse buttons
+    if (ev.button > 3 || ev.button < 1) return false;
     
     if (ev.button == 3) fRightClicked = true;
 
@@ -539,7 +539,7 @@ bool ZamKnob::onMotion(const MotionEvent& ev)
         if (const int movX = ev.pos.getX() - fLastX)
         {
             d     = (ev.mod & kModifierControl) ? 2000.0f : 200.0f;
-	    if (fRightClicked) d = 2000.0f;
+            if (fRightClicked) d = 2000.0f;
             value = (fUsingLog ? _invlogscale(fValueTmp) : fValueTmp) + (float(fMaximum - fMinimum) / d * float(movX));
             doVal = true;
         }
@@ -549,7 +549,7 @@ bool ZamKnob::onMotion(const MotionEvent& ev)
         if (const int movY = fLastY - ev.pos.getY())
         {
             d     = (ev.mod & kModifierControl) ? 2000.0f : 200.0f;
-	    if (fRightClicked) d = 2000.0f;
+            if (fRightClicked) d = 2000.0f;
             value = (fUsingLog ? _invlogscale(fValueTmp) : fValueTmp) + (float(fMaximum - fMinimum) / d * float(movY));
             doVal = true;
         }
