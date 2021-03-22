@@ -539,7 +539,8 @@ bool ZamKnob::onMotion(const MotionEvent& ev)
         {
             d     = (ev.mod & kModifierControl) ? 2000.0f : 200.0f;
             if (fRightClicked) d = 2000.0f;
-            value = (fUsingLog ? _invlogscale(fValueTmp) : fValueTmp) + (float(fMaximum - fMinimum) / d * float(movX));
+            if (fRightClicked && (ev.mod & kModifierControl)) d = 20000.0f;
+	    value = (fUsingLog ? _invlogscale(fValueTmp) : fValueTmp) + (float(fMaximum - fMinimum) / d * float(movX));
             doVal = true;
         }
     }
@@ -549,6 +550,7 @@ bool ZamKnob::onMotion(const MotionEvent& ev)
         {
             d     = (ev.mod & kModifierControl) ? 2000.0f : 200.0f;
             if (fRightClicked) d = 2000.0f;
+            if (fRightClicked && (ev.mod & kModifierControl)) d = 20000.0f;
             value = (fUsingLog ? _invlogscale(fValueTmp) : fValueTmp) + (float(fMaximum - fMinimum) / d * float(movY));
             doVal = true;
         }
