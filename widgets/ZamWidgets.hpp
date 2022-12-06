@@ -19,18 +19,14 @@
 #ifndef DGL_ZAM_WIDGETS_HPP_INCLUDED
 #define DGL_ZAM_WIDGETS_HPP_INCLUDED
 
-#include "../dpf/dgl/Image.hpp"
-#include "../dpf/dgl/Widget.hpp"
-#include "../dpf/dgl/Window.hpp"
 #include "../dpf/dgl/NanoVG.hpp"
-#include "../dpf/dgl/src/Common.hpp"
 #include "../dpf/dgl/src/WidgetPrivateData.hpp"
 
 START_NAMESPACE_DGL
 
 // -----------------------------------------------------------------------
 
-class ZamKnob : public Widget,
+class ZamKnob : public SubWidget,
                 public NanoVG
 {
 public:
@@ -48,8 +44,7 @@ public:
         virtual void imageKnobValueChanged(ZamKnob* imageKnob, float value) = 0;
     };
 
-    explicit ZamKnob(Window& parent, const Image& image, Orientation orientation = Vertical) noexcept;
-    explicit ZamKnob(Widget* widget, const Image& image, Orientation orientation = Vertical) noexcept;
+    explicit ZamKnob(Widget* parentWidget, const Image& image, Orientation orientation = Vertical) noexcept;
     explicit ZamKnob(const ZamKnob& imageKnob);
     ZamKnob& operator=(const ZamKnob& imageKnob);
     ~ZamKnob() override;
@@ -113,40 +108,8 @@ private:
 
 // -----------------------------------------------------------------------
 
-ZamKnob::ZamKnob(Window& parent, const Image& image, Orientation orientation) noexcept
-    : Widget(parent),
-      NanoVG(CREATE_ANTIALIAS),
-      fImage(image),
-      fLabel(false),
-      fMinimum(0.0f),
-      fMaximum(1.0f),
-      fScrollStep(0.0f),
-      fStep(0.0f),
-      fValue(0.5f),
-      fValueDef(fValue),
-      fValueTmp(fValue),
-      fUsingDefault(false),
-      fUsingLog(false),
-      fOrientation(orientation),
-      fRotationAngle(0),
-      fDragging(false),
-      fLastX(0),
-      fLastY(0),
-      fCallback(nullptr),
-      fIsImgVertical(image.getHeight() > image.getWidth()),
-      fImgLayerWidth(fIsImgVertical ? image.getWidth() : image.getHeight()),
-      fImgLayerHeight(fImgLayerWidth),
-      fImgLayerCount(fIsImgVertical ? image.getHeight()/fImgLayerHeight : image.getWidth()/fImgLayerWidth),
-      fIsReady(false),
-      fTextureId(0)
-{
-    glGenTextures(1, &fTextureId);
-    setSize(fImgLayerWidth, fImgLayerHeight);
-    NanoVG::loadSharedResources();
-}
-
-ZamKnob::ZamKnob(Widget* widget, const Image& image, Orientation orientation) noexcept
-    : Widget(widget->getParentWindow()),
+ZamKnob::ZamKnob(Widget* parentWidget, const Image& image, Orientation orientation) noexcept
+    : SubWidget(parentWidget),
       NanoVG(CREATE_ANTIALIAS),
       fImage(image),
       fLabel(false),
@@ -178,7 +141,7 @@ ZamKnob::ZamKnob(Widget* widget, const Image& image, Orientation orientation) no
 }
 
 ZamKnob::ZamKnob(const ZamKnob& imageKnob)
-    : Widget(imageKnob.getParentWindow()),
+    : SubWidget(imageKnob.getParentWidget()),
       NanoVG(CREATE_ANTIALIAS),
       fImage(imageKnob.fImage),
       fLabel(false),
@@ -382,8 +345,8 @@ void ZamKnob::setImageLayerCount(uint count) noexcept
 void ZamKnob::labelDisplay()
 {
     char txt[16];
-    float ww = (float)getParentWindow().getWidth();
-    float wh = (float)getParentWindow().getHeight();
+    float ww = (float)getWindow().getWidth();
+    float wh = (float)getWindow().getHeight();
     float w = (float)fImage.getWidth();
     float h = (float)fImage.getHeight();
 
@@ -406,6 +369,7 @@ void ZamKnob::labelDisplay()
 
 void ZamKnob::onDisplay()
 {
+    const GraphicsContext& context(getGraphicsContext());
     const float normValue = ((fUsingLog ? _invlogscale(fValue) : fValue) - fMinimum) / (fMaximum - fMinimum);
 
     glEnable(GL_TEXTURE_2D);
@@ -440,7 +404,7 @@ void ZamKnob::onDisplay()
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
                      static_cast<GLsizei>(getWidth()), static_cast<GLsizei>(getHeight()), 0,
-                     fImage.getFormat(), fImage.getType(), fImage.getRawData() + imageDataOffset);
+                     fImage.getFormat(), GL_UNSIGNED_BYTE, fImage.getRawData() + imageDataOffset);
 
         fIsReady = true;
     }
@@ -458,13 +422,13 @@ void ZamKnob::onDisplay()
         glTranslatef(static_cast<float>(w2), static_cast<float>(h2), 0.0f);
         glRotatef(normValue*static_cast<float>(fRotationAngle), 0.0f, 0.0f, 1.0f);
 
-        Rectangle<int>(-w2, -h2, w, h).draw();
+        Rectangle<int>(-w2, -h2, w, h).draw(context);
 
         glPopMatrix();
     }
     else
     {
-        Rectangle<int>(0, 0, w, h).draw();
+        Rectangle<int>(0, 0, w, h).draw(context);
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -627,129 +591,6 @@ float ZamKnob::_invlogscale(float value) const
 }
 
 // -----------------------------------------------------------------------
-
-class ZamSwitch : public Widget
-{
-public:
-    class Callback
-    {
-    public:
-        virtual ~Callback() {}
-        virtual void imageSwitchClicked(ZamSwitch* imageButton, bool down) = 0;
-    };
-
-    explicit ZamSwitch(Window& parent, const Image& imageNormal, const Image& imageDown) noexcept;
-    explicit ZamSwitch(Widget* widget, const Image& imageNormal, const Image& imageDown) noexcept;
-    explicit ZamSwitch(const ZamSwitch& imageSwitch) noexcept;
-    ZamSwitch& operator=(const ZamSwitch& imageSwitch) noexcept;
-
-    bool isDown() const noexcept;
-    void setDown(bool down) noexcept;
-
-    void setCallback(Callback* callback) noexcept;
-
-protected:
-     void onDisplay() override;
-     bool onMouse(const MouseEvent&) override;
-
-private:
-    Image fImageNormal;
-    Image fImageDown;
-    bool  fIsDown;
-
-    Callback* fCallback;
-
-    DISTRHO_LEAK_DETECTOR(ZamSwitch)
-};
-
-ZamSwitch::ZamSwitch(Window& parent, const Image& imageNormal, const Image& imageDown) noexcept
-    : Widget(parent),
-      fImageNormal(imageNormal),
-      fImageDown(imageDown),
-      fIsDown(false),
-      fCallback(nullptr)
-{
-    DISTRHO_SAFE_ASSERT(fImageNormal.getSize() == fImageDown.getSize());
-
-    setSize(fImageNormal.getSize());
-}
-
-ZamSwitch::ZamSwitch(Widget* widget, const Image& imageNormal, const Image& imageDown) noexcept
-    : Widget(widget->getParentWindow()),
-      fImageNormal(imageNormal),
-      fImageDown(imageDown),
-      fIsDown(false),
-      fCallback(nullptr)
-{
-    DISTRHO_SAFE_ASSERT(fImageNormal.getSize() == fImageDown.getSize());
-
-    setSize(fImageNormal.getSize());
-}
-
-ZamSwitch::ZamSwitch(const ZamSwitch& imageSwitch) noexcept
-    : Widget(imageSwitch.getParentWindow()),
-      fImageNormal(imageSwitch.fImageNormal),
-      fImageDown(imageSwitch.fImageDown),
-      fIsDown(imageSwitch.fIsDown),
-      fCallback(imageSwitch.fCallback)
-{
-    DISTRHO_SAFE_ASSERT(fImageNormal.getSize() == fImageDown.getSize());
-
-    setSize(fImageNormal.getSize());
-}
-
-ZamSwitch& ZamSwitch::operator=(const ZamSwitch& imageSwitch) noexcept
-{
-    fImageNormal = imageSwitch.fImageNormal;
-    fImageDown   = imageSwitch.fImageDown;
-    fIsDown      = imageSwitch.fIsDown;
-    fCallback    = imageSwitch.fCallback;
-
-    DISTRHO_SAFE_ASSERT(fImageNormal.getSize() == fImageDown.getSize());
-
-    setSize(fImageNormal.getSize());
-
-    return *this;
-}
-
-bool ZamSwitch::isDown() const noexcept
-{
-    return fIsDown;
-}
-
-void ZamSwitch::setDown(bool down) noexcept
-{
-    fIsDown = down;
-}
-
-void ZamSwitch::setCallback(Callback* callback) noexcept
-{
-    fCallback = callback;
-}
-
-void ZamSwitch::onDisplay()
-{
-    if (fIsDown)
-        fImageDown.draw();
-    else
-        fImageNormal.draw();
-}
-
-bool ZamSwitch::onMouse(const MouseEvent& ev)
-{
-    if (ev.press && contains(ev.pos))
-    {
-        fIsDown = true;
-        repaint();
-
-        if (fCallback != nullptr)
-            fCallback->imageSwitchClicked(this, true);
-
-        return true;
-    }
-
-    return false;
-}
 
 END_NAMESPACE_DGL
 
