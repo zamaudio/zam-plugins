@@ -28,7 +28,7 @@ ZamDynamicEQUI::ZamDynamicEQUI()
     setSize(ZamDynamicEQArtwork::zamdynamiceqWidth, ZamDynamicEQArtwork::zamdynamiceqHeight);
 
     // background
-    fImgBackground = Image(ZamDynamicEQArtwork::zamdynamiceqData, ZamDynamicEQArtwork::zamdynamiceqWidth, ZamDynamicEQArtwork::zamdynamiceqHeight, GL_BGR);
+    fImgBackground = Image(ZamDynamicEQArtwork::zamdynamiceqData, ZamDynamicEQArtwork::zamdynamiceqWidth, ZamDynamicEQArtwork::zamdynamiceqHeight, kImageFormatBGR);
 
     // images
     fHighOnImg = Image(ZamDynamicEQArtwork::highonData, ZamDynamicEQArtwork::highonWidth, ZamDynamicEQArtwork::highonHeight);
@@ -49,24 +49,27 @@ ZamDynamicEQUI::ZamDynamicEQUI()
 
     Point<int> togglePosStart(20,135+yy);
 
-    fToggleLow = new ZamSwitch(this, fLowOffImg, fLowOnImg);
+    fToggleLow = new ImageButton(this, fLowOffImg, fLowOnImg);
     fToggleLow->setAbsolutePos(togglePosStart);
     fToggleLow->setId(ZamDynamicEQPlugin::paramToggleLow);
     fToggleLow->setCallback(this);
+    fToggleLow->setCheckable(true);
 
     togglePosStart.setY(172+yy);
 
-    fTogglePeak = new ZamSwitch(this, fPeakOffImg, fPeakOnImg);
+    fTogglePeak = new ImageButton(this, fPeakOffImg, fPeakOnImg);
     fTogglePeak->setAbsolutePos(togglePosStart);
     fTogglePeak->setId(ZamDynamicEQPlugin::paramTogglePeak);
     fTogglePeak->setCallback(this);
+    fTogglePeak->setCheckable(true);
 
     togglePosStart.setY(209+yy);
 
-    fToggleHigh = new ZamSwitch(this, fHighOffImg, fHighOnImg);
+    fToggleHigh = new ImageButton(this, fHighOffImg, fHighOnImg);
     fToggleHigh->setAbsolutePos(togglePosStart);
     fToggleHigh->setId(ZamDynamicEQPlugin::paramToggleHigh);
     fToggleHigh->setCallback(this);
+    fToggleHigh->setCheckable(true);
 
     togglePosStart.setX(278-230+4);
     togglePosStart.setY(113+130+5+yy);
@@ -230,13 +233,13 @@ void ZamDynamicEQUI::parameterChanged(uint32_t index, float value)
         fToggleBoostCut->setDown(value > 0.5);
         break;
     case ZamDynamicEQPlugin::paramToggleLow:
-        fToggleLow->setDown(value > 0.5);
+        fToggleLow->setChecked(value > 0.5, false);
         break;
     case ZamDynamicEQPlugin::paramTogglePeak:
-        fTogglePeak->setDown(value > 0.5);
+        fTogglePeak->setChecked(value > 0.5, false);
         break;
     case ZamDynamicEQPlugin::paramToggleHigh:
-        fToggleHigh->setDown(value > 0.5);
+        fToggleHigh->setChecked(value > 0.5, false);
         break;
     case ZamDynamicEQPlugin::paramControlGain:
         fControlGain = value;
@@ -271,9 +274,9 @@ void ZamDynamicEQUI::programLoaded(uint32_t index)
 		fKnobTargetFreq->setValue(1000.0f);
 		fKnobTargetWidth->setValue(1.0f);
 		fKnobDetectFreq->setValue(1000.0f);
-		fToggleLow->setDown(false);
-		fTogglePeak->setDown(true);
-		fToggleHigh->setDown(false);
+		fToggleLow->setChecked(false, false);
+		fTogglePeak->setChecked(true, false);
+		fToggleHigh->setChecked(false, false);
 		break;
 	case 1:
 		fKnobAttack->setValue(10.0f);
@@ -288,9 +291,9 @@ void ZamDynamicEQUI::programLoaded(uint32_t index)
 		fKnobTargetFreq->setValue(1000.0f);
 		fKnobTargetWidth->setValue(1.0f);
 		fKnobDetectFreq->setValue(1000.0f);
-		fToggleLow->setDown(false);
-		fTogglePeak->setDown(true);
-		fToggleHigh->setDown(false);
+		fToggleLow->setChecked(false, false);
+		fTogglePeak->setChecked(true, false);
+		fToggleHigh->setChecked(false, false);
 		break;
 	case 2:
 		fKnobAttack->setValue(50.0f);
@@ -305,9 +308,9 @@ void ZamDynamicEQUI::programLoaded(uint32_t index)
 		fKnobTargetFreq->setValue(1000.0f);
 		fKnobTargetWidth->setValue(1.0f);
 		fKnobDetectFreq->setValue(1000.0f);
-		fToggleLow->setDown(false);
-		fTogglePeak->setDown(true);
-		fToggleHigh->setDown(false);
+		fToggleLow->setChecked(false, false);
+		fTogglePeak->setChecked(true, false);
+		fToggleHigh->setChecked(false, false);
 		break;
 	}
 }
@@ -335,27 +338,27 @@ void ZamDynamicEQUI::imageSwitchClicked(ImageSwitch* tog, bool down)
     setParameterValue(tog->getId(), down ? 1.f : 0.f);
 }
 
-void ZamDynamicEQUI::imageSwitchClicked(ZamSwitch* tog, bool)
+void ZamDynamicEQUI::imageButtonClicked(ImageButton* tog, int)
 {
     setParameterValue(tog->getId(), 1.f);
     switch(tog->getId()) {
     case ZamDynamicEQPlugin::paramToggleLow:
         setParameterValue(ZamDynamicEQPlugin::paramToggleHigh, 0.f);
         setParameterValue(ZamDynamicEQPlugin::paramTogglePeak, 0.f);
-        fTogglePeak->setDown(false);
-        fToggleHigh->setDown(false);
+        fTogglePeak->setChecked(false, false);
+        fToggleHigh->setChecked(false, false);
         break;
     case ZamDynamicEQPlugin::paramTogglePeak:
         setParameterValue(ZamDynamicEQPlugin::paramToggleHigh, 0.f);
         setParameterValue(ZamDynamicEQPlugin::paramToggleLow, 0.f);
-        fToggleLow->setDown(false);
-        fToggleHigh->setDown(false);
+        fToggleLow->setChecked(false, false);
+        fToggleHigh->setChecked(false, false);
         break;
     case ZamDynamicEQPlugin::paramToggleHigh:
         setParameterValue(ZamDynamicEQPlugin::paramTogglePeak, 0.f);
         setParameterValue(ZamDynamicEQPlugin::paramToggleLow, 0.f);
-        fToggleLow->setDown(false);
-        fTogglePeak->setDown(false);
+        fToggleLow->setChecked(false, false);
+        fTogglePeak->setChecked(false, false);
         break;
     }
 }
@@ -477,10 +480,10 @@ void ZamDynamicEQUI::calceqcurve(float x[], float y[])
                 std::complex<double> exp2iw = std::polar(1.0, 2.0*theta);
                 double freqH;
 
-		if (fToggleLow->isDown()) {
+		if (fToggleLow->isChecked()) {
 			lowshelfeq(0.f,boostl,bwgaindbl,bwl,bwl,0.707f,Bl,Al);
                 	H = (1. + Al[1]*expiw + Al[2]*exp2iw)/(Bl[0] + Bl[1]*expiw + Bl[2]*exp2iw);
-		} else if (fTogglePeak->isDown()) {
+		} else if (fTogglePeak->isChecked()) {
 			peq(dcgain,boost2,bwgain2,w02,bw2,&a0y,&a1y,&a2y,&b0y,&b1y,&b2y,&gainy);
                 	H = (1. + a1y*expiw + a2y*exp2iw)/(b0y + b1y*expiw + b2y*exp2iw);
 		} else {
@@ -497,6 +500,8 @@ void ZamDynamicEQUI::calceqcurve(float x[], float y[])
 
 void ZamDynamicEQUI::onDisplay()
 {
+    const GraphicsContext& context(getGraphicsContext());
+
     calceqcurve(eqx, eqy);
 
     glClearColor(0.f, 0.f, 0.f, 0.f);
@@ -506,7 +511,7 @@ void ZamDynamicEQUI::onDisplay()
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    fImgBackground.draw();
+    fImgBackground.draw(context);
 
     int i;
     glLineWidth(1);

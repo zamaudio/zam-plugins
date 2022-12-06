@@ -27,7 +27,6 @@
 
 using DGL::Image;
 using DGL::ZamKnob;
-using DGL::ZamSwitch;
 using DGL::ImageSwitch;
 using DGL::ImageSlider;
 
@@ -37,7 +36,7 @@ START_NAMESPACE_DISTRHO
 
 class ZamDynamicEQUI : public UI,
                         public ZamKnob::Callback,
-                        public ZamSwitch::Callback,
+                        public ImageButton::Callback,
                         public ImageSwitch::Callback
 {
 public:
@@ -57,7 +56,7 @@ protected:
     void imageKnobDragFinished(ZamKnob* knob) override;
     void imageKnobValueChanged(ZamKnob* knob, float value) override;
     void imageSwitchClicked(ImageSwitch* toggle, bool down) override;
-    void imageSwitchClicked(ZamSwitch* toggle, bool down) override;
+    void imageButtonClicked(ImageButton* toggle, int button) override;
 
     void onDisplay() override;
 
@@ -89,7 +88,7 @@ private:
     Image fImgBackground, fHighOnImg, fHighOffImg, fLowOnImg, fLowOffImg;
     Image fPeakOnImg, fPeakOffImg, fTogOffImg, fTogOnImg, fSliderEq;
 
-    ScopedPointer<ZamSwitch> fToggleLow, fTogglePeak, fToggleHigh;
+    ScopedPointer<ImageButton> fToggleLow, fTogglePeak, fToggleHigh;
     ScopedPointer<ImageSwitch> fToggleSidechain, fToggleBoostCut;
     ScopedPointer<ZamKnob> fKnobAttack, fKnobRelease;
     ScopedPointer<ZamKnob> fKnobThresh, fKnobRatio, fKnobKnee, fKnobTargetWidth;
