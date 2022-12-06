@@ -29,21 +29,11 @@ include ../../dpf/Makefile.plugins.mk
 # --------------------------------------------------------------
 # Enable all possible plugin types
 
-ifeq ($(HAVE_JACK),true)
 TARGETS += jack
-endif
-
-ifeq ($(UNIX),true)
 TARGETS += ladspa
-endif
-
-ifeq ($(HAVE_DGL),true)
 TARGETS += lv2_sep
-else
-TARGETS += lv2_dsp
-endif
-
-TARGETS += vst
+TARGETS += vst2
+TARGETS += vst3
 
 all: $(TARGETS)
 
