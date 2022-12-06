@@ -49,7 +49,7 @@ void ZamNoisePlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramNoiseToggle:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Noise Capture";
         parameter.symbol     = "noisecapture";
         parameter.unit       = "";

@@ -30,7 +30,7 @@ ZamSFZUI::ZamSFZUI()
     setSize(ZamSFZArtwork::zamsfzWidth, ZamSFZArtwork::zamsfzHeight);
 
     // background
-    fImgBackground = Image(ZamSFZArtwork::zamsfzData, ZamSFZArtwork::zamsfzWidth, ZamSFZArtwork::zamsfzHeight, GL_BGR);
+    fImgBackground = Image(ZamSFZArtwork::zamsfzData, ZamSFZArtwork::zamsfzWidth, ZamSFZArtwork::zamsfzHeight, kImageFormatBGR);
 
     // knob
     Image knobImage(ZamSFZArtwork::knobData, ZamSFZArtwork::knobWidth, ZamSFZArtwork::knobHeight);

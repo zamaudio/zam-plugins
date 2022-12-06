@@ -36,7 +36,7 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramDelaytime:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Loop time";
         parameter.symbol     = "time";
         parameter.unit       = "ms";
@@ -45,7 +45,7 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1000.0f;
         break;
     case paramGrains:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsInteger;
         parameter.name       = "Grains";
         parameter.symbol     = "grains";
         parameter.unit       = " ";
@@ -54,7 +54,7 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.0f;
         break;
     case paramGrainspeed:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Grain Speed";
         parameter.symbol     = "gs";
         parameter.unit       = " ";
@@ -63,7 +63,7 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.f;
         break;
     case paramPlayspeed:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Play Speed";
         parameter.symbol     = "ps";
         parameter.unit       = " ";
@@ -72,7 +72,7 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.f;
         break;
     case paramGain:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Output Gain";
         parameter.symbol     = "gain";
         parameter.unit       = "dB";
@@ -81,7 +81,7 @@ void ZamGrainsPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramFreeze:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Freeze";
         parameter.symbol     = "freeze";
         parameter.unit       = " ";

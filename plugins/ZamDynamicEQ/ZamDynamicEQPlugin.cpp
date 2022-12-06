@@ -76,7 +76,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramAttack:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Attack";
         parameter.symbol     = "att";
         parameter.unit       = "ms";
@@ -85,7 +85,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.0f;
         break;
     case paramRelease:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
@@ -94,7 +94,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Knee";
         parameter.symbol     = "kn";
         parameter.unit       = "dB";
@@ -103,7 +103,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Ratio";
         parameter.symbol     = "rat";
         parameter.unit       = " ";
@@ -112,7 +112,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 5.0f;
         break;
     case paramThresh:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Threshold";
         parameter.symbol     = "thr";
         parameter.unit       = "dB";
@@ -121,7 +121,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramMaxBoostCut:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Max Boost/Cut";
         parameter.symbol     = "max";
         parameter.unit       = "dB";
@@ -130,7 +130,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 10.0f;
         break;
     case paramSlew:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Slew";
         parameter.symbol     = "slew";
         parameter.unit       = " ";
@@ -139,7 +139,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 150.0f;
         break;
     case paramSidechain:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Sidechain";
         parameter.symbol     = "sidech";
         parameter.unit       = " ";
@@ -148,7 +148,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramToggleLow:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Low Shelf";
         parameter.symbol     = "togglelow";
         parameter.unit       = " ";
@@ -157,7 +157,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramTogglePeak:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Peak";
         parameter.symbol     = "togglepeak";
         parameter.unit       = " ";
@@ -166,7 +166,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramToggleHigh:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "High Shelf";
         parameter.symbol     = "togglehigh";
         parameter.unit       = " ";
@@ -175,7 +175,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramDetectFreq:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Detect Frequency";
         parameter.symbol     = "detectfreq";
         parameter.unit       = "Hz";
@@ -184,7 +184,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 16000.0f;
         break;
     case paramTargetFreq:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Target Frequency";
         parameter.symbol     = "targetfreq";
         parameter.unit       = "Hz";
@@ -193,7 +193,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 16000.0f;
         break;
     case paramTargetWidth:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Target width";
         parameter.symbol     = "targetwidth";
         parameter.unit       = "oct";
@@ -202,7 +202,7 @@ void ZamDynamicEQPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 5.0f;
         break;
     case paramBoostCut:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Boost / Cut";
         parameter.symbol     = "boostcut";
         parameter.unit       = " ";

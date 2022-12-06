@@ -33,7 +33,7 @@ ZamTubeUI::ZamTubeUI()
     setSize(ZamTubeArtwork::zamtubeWidth, ZamTubeArtwork::zamtubeHeight);
 
     // background
-    fImgBackground = Image(ZamTubeArtwork::zamtubeData, ZamTubeArtwork::zamtubeWidth, ZamTubeArtwork::zamtubeHeight, GL_BGR);
+    fImgBackground = Image(ZamTubeArtwork::zamtubeData, ZamTubeArtwork::zamtubeWidth, ZamTubeArtwork::zamtubeHeight, kImageFormatBGR);
 
     // knob
     Image knobImage(ZamTubeArtwork::knobData, ZamTubeArtwork::knobWidth, ZamTubeArtwork::knobHeight);
@@ -229,7 +229,8 @@ void ZamTubeUI::imageSwitchClicked(ImageSwitch* toggle, bool down)
 
 void ZamTubeUI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 }
 
 // -----------------------------------------------------------------------

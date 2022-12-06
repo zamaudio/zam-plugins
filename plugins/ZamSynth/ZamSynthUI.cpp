@@ -30,7 +30,7 @@ ZamSynthUI::ZamSynthUI()
     setSize(ZamSynthArtwork::zamsynthWidth, ZamSynthArtwork::zamsynthHeight);
 
     // background
-    fImgBackground = Image(ZamSynthArtwork::zamsynthData, ZamSynthArtwork::zamsynthWidth, ZamSynthArtwork::zamsynthHeight, GL_BGR);
+    fImgBackground = Image(ZamSynthArtwork::zamsynthData, ZamSynthArtwork::zamsynthWidth, ZamSynthArtwork::zamsynthHeight, kImageFormatBGR);
 
     fDragging = false;
     fDragValid = false;

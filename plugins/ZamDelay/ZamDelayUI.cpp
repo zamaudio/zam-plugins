@@ -33,7 +33,7 @@ ZamDelayUI::ZamDelayUI()
     //font = fNanoText.findFont(NANOVG_DEJAVU_SANS_TTF);
 
     // background
-    fImgBackground = Image(ZamDelayArtwork::zamdelayData, ZamDelayArtwork::zamdelayWidth, ZamDelayArtwork::zamdelayHeight, GL_BGR);
+    fImgBackground = Image(ZamDelayArtwork::zamdelayData, ZamDelayArtwork::zamdelayWidth, ZamDelayArtwork::zamdelayHeight, kImageFormatBGR);
 
     // knob
     Image knobImage(ZamDelayArtwork::knobData, ZamDelayArtwork::knobWidth, ZamDelayArtwork::knobHeight);
@@ -214,7 +214,8 @@ void ZamDelayUI::imageKnobValueChanged(ZamKnob* knob, float value)
 
 void ZamDelayUI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 }
 
 // -----------------------------------------------------------------------

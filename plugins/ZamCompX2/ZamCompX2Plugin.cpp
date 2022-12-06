@@ -36,7 +36,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramAttack:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Attack";
         parameter.symbol     = "att";
         parameter.unit       = "ms";
@@ -45,7 +45,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.0f;
         break;
     case paramRelease:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
@@ -54,7 +54,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Knee";
         parameter.symbol     = "kn";
         parameter.unit       = "dB";
@@ -63,7 +63,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramRatio:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Ratio";
         parameter.symbol     = "rat";
         parameter.unit       = " ";
@@ -72,7 +72,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramThresh:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Threshold";
         parameter.symbol     = "thr";
         parameter.unit       = "dB";
@@ -81,7 +81,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramMakeup:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Makeup";
         parameter.symbol     = "mak";
         parameter.unit       = "dB";
@@ -90,7 +90,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramSlew:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Slew";
         parameter.symbol     = "slew";
         parameter.unit       = " ";
@@ -99,7 +99,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 150.0f;
         break;
     case paramSidechain:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Sidechain";
         parameter.symbol     = "sidechain";
         parameter.unit       = " ";
@@ -108,7 +108,7 @@ void ZamCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramStereo:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Stereo Detection";
         parameter.symbol     = "stereodet";
         parameter.unit       = " ";

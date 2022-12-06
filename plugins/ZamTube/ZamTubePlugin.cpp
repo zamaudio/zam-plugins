@@ -78,7 +78,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramTubedrive:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Tube Drive";
         parameter.symbol     = "tubedrive";
         parameter.unit       = " ";
@@ -87,7 +87,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 11.0f;
         break;
     case paramBass:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Bass";
         parameter.symbol     = "bass";
         parameter.unit       = " ";
@@ -96,7 +96,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 10.0f;
         break;
     case paramMiddle:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Mids";
         parameter.symbol     = "mids";
         parameter.unit       = " ";
@@ -105,7 +105,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 10.0f;
         break;
     case paramTreble:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Treble";
         parameter.symbol     = "treb";
         parameter.unit       = " ";
@@ -114,7 +114,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 10.0f;
         break;
     case paramToneStack:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsInteger;
         parameter.name       = "Tone Stack Model";
         parameter.symbol     = "tonestack";
         parameter.unit       = " ";
@@ -180,7 +180,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         }
         break;
     case paramGain:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Input level";
         parameter.symbol     = "gain";
         parameter.unit       = " ";
@@ -189,7 +189,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramInsane:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Insane Boost";
         parameter.symbol     = "insane";
         parameter.unit       = " ";

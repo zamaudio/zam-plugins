@@ -30,7 +30,7 @@ ZamCompX2UI::ZamCompX2UI()
     setSize(ZamCompX2Artwork::zamcompx2Width, ZamCompX2Artwork::zamcompx2Height);
 
     // background
-    fImgBackground = Image(ZamCompX2Artwork::zamcompx2Data, ZamCompX2Artwork::zamcompx2Width, ZamCompX2Artwork::zamcompx2Height, GL_BGR);
+    fImgBackground = Image(ZamCompX2Artwork::zamcompx2Data, ZamCompX2Artwork::zamcompx2Width, ZamCompX2Artwork::zamcompx2Height, kImageFormatBGR);
 
     // led images
     fLedRedImg = Image(ZamCompX2Artwork::ledredData, ZamCompX2Artwork::ledredWidth, ZamCompX2Artwork::ledredHeight);
@@ -249,7 +249,8 @@ void ZamCompX2UI::imageSwitchClicked(ImageSwitch* tog, bool down)
 
 void ZamCompX2UI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 
     // draw leds
     static const float sLedSpacing  = 15.5f;
@@ -287,8 +288,8 @@ void ZamCompX2UI::onDisplay()
 		numRedLeds = 1;
 	else numRedLeds = 0;
 
-    for (int i=numRedLeds; i>0; --i)
-        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
+	for (int i=numRedLeds; i>0; --i)
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
 
 	if (fLedYellowValue >= 20.f)
 		numYellowLeds = 19;
@@ -332,12 +333,12 @@ void ZamCompX2UI::onDisplay()
 
 	if (numYellowLeds > 12) {
 		for (int i=12; i<numYellowLeds; ++i)
-			fLedRedImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedRedImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 		for (int i=0; i<12; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 	} else {
 		for (int i=0; i<numYellowLeds; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 	}
 }
 

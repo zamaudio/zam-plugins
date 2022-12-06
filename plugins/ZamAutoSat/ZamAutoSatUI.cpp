@@ -27,7 +27,7 @@ ZamAutoSatUI::ZamAutoSatUI()
     setSize(ZamAutoSatArtwork::zamautosatWidth, ZamAutoSatArtwork::zamautosatHeight);
 
     // background
-    fImgBackground = Image(ZamAutoSatArtwork::zamautosatData, ZamAutoSatArtwork::zamautosatWidth, ZamAutoSatArtwork::zamautosatHeight, GL_BGR);
+    fImgBackground = Image(ZamAutoSatArtwork::zamautosatData, ZamAutoSatArtwork::zamautosatWidth, ZamAutoSatArtwork::zamautosatHeight, kImageFormatBGR);
 
 }
 
@@ -46,7 +46,8 @@ void ZamAutoSatUI::parameterChanged(uint32_t, float)
 
 void ZamAutoSatUI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 }
 
 // -----------------------------------------------------------------------

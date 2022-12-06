@@ -28,7 +28,7 @@ ZaMultiCompX2UI::ZaMultiCompX2UI()
     setSize(ZaMultiCompX2Artwork::zamulticompx2Width, ZaMultiCompX2Artwork::zamulticompx2Height);
 
     // background
-    fImgBackground = Image(ZaMultiCompX2Artwork::zamulticompx2Data, ZaMultiCompX2Artwork::zamulticompx2Width, ZaMultiCompX2Artwork::zamulticompx2Height, GL_BGR);
+    fImgBackground = Image(ZaMultiCompX2Artwork::zamulticompx2Data, ZaMultiCompX2Artwork::zamulticompx2Width, ZaMultiCompX2Artwork::zamulticompx2Height, kImageFormatBGR);
 
     // led images
     fLedRedImg = Image(ZaMultiCompX2Artwork::ledredData, ZaMultiCompX2Artwork::ledredWidth, ZaMultiCompX2Artwork::ledredHeight);
@@ -837,7 +837,8 @@ void ZaMultiCompX2UI::imageSwitchClicked(ImageSwitch* toggle, bool down)
 
 void ZaMultiCompX2UI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 
     // draw leds
     static const float sLedSpacing  = 15.3f;
@@ -933,14 +934,14 @@ void ZaMultiCompX2UI::onDisplay()
 		numRedLeds3 = 1;
 	else numRedLeds3 = 0;
 
-    for (int i=numRedLeds1; i>0; --i)
-        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed1StaticY);
+	for (int i=numRedLeds1; i>0; --i)
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLed1StaticY);
 
-    for (int i=numRedLeds2; i>0; --i)
-        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed2StaticY);
+	for (int i=numRedLeds2; i>0; --i)
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLed2StaticY);
 
-    for (int i=numRedLeds3; i>0; --i)
-        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed3StaticY);
+	for (int i=numRedLeds3; i>0; --i)
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLed3StaticY);
 
 	if (fLedYellowValueL >= 20.f)
 		numYellowLedsL = 19;
@@ -984,12 +985,12 @@ void ZaMultiCompX2UI::onDisplay()
 
 	if (numYellowLedsL > 12) {
 		for (int i=12; i<numYellowLedsL; ++i)
-			fLedRedImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
+			fLedRedImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
 		for (int i=0; i<12; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
 	} else {
 		for (int i=0; i<numYellowLedsL; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
 	}
 
 	if (fLedYellowValueR >= 20.f)
@@ -1034,12 +1035,12 @@ void ZaMultiCompX2UI::onDisplay()
 
 	if (numYellowLedsR > 12) {
 		for (int i=12; i<numYellowLedsR; ++i)
-			fLedRedImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYR);
+			fLedRedImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYR);
 		for (int i=0; i<12; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYR);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYR);
 	} else {
 		for (int i=0; i<numYellowLedsR; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYR);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYR);
 	}
 /*
 // TESTING - remove later

@@ -27,7 +27,7 @@ ZamGEQ31UI::ZamGEQ31UI()
     setSize(ZamGEQ31Artwork::zamgeq31Width, ZamGEQ31Artwork::zamgeq31Height);
 
     // background
-    fImgBackground = Image(ZamGEQ31Artwork::zamgeq31Data, ZamGEQ31Artwork::zamgeq31Width, ZamGEQ31Artwork::zamgeq31Height, GL_BGR);
+    fImgBackground = Image(ZamGEQ31Artwork::zamgeq31Data, ZamGEQ31Artwork::zamgeq31Width, ZamGEQ31Artwork::zamgeq31Height, kImageFormatBGR);
 
     // slider image
     Image sliderImage(ZamGEQ31Artwork::slidereqData, ZamGEQ31Artwork::slidereqWidth, ZamGEQ31Artwork::slidereqHeight);
@@ -719,7 +719,8 @@ void ZamGEQ31UI::imageSliderValueChanged(ImageSlider* slider, float value)
 
 void ZamGEQ31UI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 }
 
 // -----------------------------------------------------------------------

@@ -45,7 +45,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramFreq: // fentry0
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Tone Frequency";
         parameter.symbol     = "freq";
         parameter.unit       = "Hz";
@@ -54,7 +54,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20000.0f;
 	break;
     case paramGain: // fentry1
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Gain";
         parameter.symbol     = "gain";
         parameter.unit       = "";
@@ -63,7 +63,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramGate: // fbutton0
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Gate";
         parameter.symbol     = "gate";
         parameter.unit       = "";
@@ -72,7 +72,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
 	break;
     case paramBright: // fslider0
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Brightness";
         parameter.symbol     = "brightness";
         parameter.unit       = "";
@@ -81,7 +81,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramDetuning: // fslider3
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Detuning";
         parameter.symbol     = "detuning";
         parameter.unit       = "";
@@ -90,7 +90,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramHammerHard: // fslider1
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Hammer Hardness";
         parameter.symbol     = "hammerhard";
         parameter.unit       = "";
@@ -99,7 +99,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramStiffness: // fslider2
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Stiffness";
         parameter.symbol     = "stiffness";
         parameter.unit       = "";
@@ -108,7 +108,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramReverbGain: // fslider4
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Reverb Gain";
         parameter.symbol     = "reverbgain";
         parameter.unit       = "";
@@ -117,7 +117,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramReverbRoom: // fslider6
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Reverb Room Size";
         parameter.symbol     = "reverbroom";
         parameter.unit       = "";
@@ -126,7 +126,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 2.0f;
         break;
     case paramPanAngle: // fslider5
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Pan Angle";
         parameter.symbol     = "panangle";
         parameter.unit       = "";
@@ -135,7 +135,7 @@ void ZamPianoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramSpatialWidth: // fslider7
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Spatial Width";
         parameter.symbol     = "spatialwidth";
         parameter.unit       = "";

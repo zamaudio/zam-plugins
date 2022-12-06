@@ -45,7 +45,7 @@ void ZamSFZPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramGain:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Gain";
         parameter.symbol     = "gain";
         parameter.unit       = "dB";

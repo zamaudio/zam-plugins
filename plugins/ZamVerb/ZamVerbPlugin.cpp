@@ -70,7 +70,7 @@ void ZamVerbPlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramMaster:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Master level";
         parameter.symbol     = "master";
         parameter.unit       = "dB";
@@ -79,7 +79,7 @@ void ZamVerbPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramWetdry:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Wet / Dry";
         parameter.symbol     = "wetdry";
         parameter.unit       = "%";
@@ -88,7 +88,7 @@ void ZamVerbPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.f;
         break;
     case paramRoom:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsInteger;
         parameter.name       = "Room";
         parameter.symbol     = "room";
         parameter.unit       = " ";

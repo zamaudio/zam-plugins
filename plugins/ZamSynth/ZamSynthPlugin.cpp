@@ -59,7 +59,7 @@ void ZamSynthPlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramGain:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Gain";
         parameter.symbol     = "gain";
         parameter.unit       = "dB";
@@ -68,7 +68,7 @@ void ZamSynthPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramSpeed:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsInteger;
         parameter.name       = "Speed";
         parameter.symbol     = "speed";
         parameter.unit       = " ";
@@ -77,7 +77,7 @@ void ZamSynthPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramGraph:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Graph toggle";
         parameter.symbol     = "graph";
         parameter.unit       = " ";

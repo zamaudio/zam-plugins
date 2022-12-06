@@ -36,7 +36,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramMaster:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Master Gain";
         parameter.symbol     = "master";
         parameter.unit       = "dB";
@@ -45,7 +45,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.f;
         break;
     case paramGain1:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "32Hz";
         parameter.symbol     = "band1";
         parameter.unit       = "dB";
@@ -54,7 +54,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain2:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "40Hz";
         parameter.symbol     = "band2";
         parameter.unit       = "dB";
@@ -63,7 +63,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain3:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "50Hz";
         parameter.symbol     = "band3";
         parameter.unit       = "dB";
@@ -72,7 +72,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain4:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "63Hz";
         parameter.symbol     = "band4";
         parameter.unit       = "dB";
@@ -81,7 +81,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain5:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "79Hz";
         parameter.symbol     = "band5";
         parameter.unit       = "dB";
@@ -90,7 +90,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain6:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "100Hz";
         parameter.symbol     = "band6";
         parameter.unit       = "dB";
@@ -99,7 +99,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain7:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "126Hz";
         parameter.symbol     = "band7";
         parameter.unit       = "dB";
@@ -108,7 +108,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain8:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "158Hz";
         parameter.symbol     = "band8";
         parameter.unit       = "dB";
@@ -117,7 +117,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain9:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "200Hz";
         parameter.symbol     = "band9";
         parameter.unit       = "dB";
@@ -126,7 +126,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain10:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "251Hz";
         parameter.symbol     = "band10";
         parameter.unit       = "dB";
@@ -135,7 +135,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain11:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "316Hz";
         parameter.symbol     = "band11";
         parameter.unit       = "dB";
@@ -144,7 +144,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain12:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "398Hz";
         parameter.symbol     = "band12";
         parameter.unit       = "dB";
@@ -153,7 +153,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain13:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "501Hz";
         parameter.symbol     = "band13";
         parameter.unit       = "dB";
@@ -162,7 +162,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain14:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "631Hz";
         parameter.symbol     = "band14";
         parameter.unit       = "dB";
@@ -171,7 +171,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain15:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "794Hz";
         parameter.symbol     = "band15";
         parameter.unit       = "dB";
@@ -180,7 +180,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain16:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "999Hz";
         parameter.symbol     = "band16";
         parameter.unit       = "dB";
@@ -189,7 +189,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain17:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "1257Hz";
         parameter.symbol     = "band17";
         parameter.unit       = "dB";
@@ -198,7 +198,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain18:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "1584Hz";
         parameter.symbol     = "band18";
         parameter.unit       = "dB";
@@ -207,7 +207,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain19:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "1997Hz";
         parameter.symbol     = "band19";
         parameter.unit       = "dB";
@@ -216,7 +216,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain20:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "2514Hz";
         parameter.symbol     = "band20";
         parameter.unit       = "dB";
@@ -225,7 +225,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain21:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "3165Hz";
         parameter.symbol     = "band21";
         parameter.unit       = "dB";
@@ -234,7 +234,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain22:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "3986Hz";
         parameter.symbol     = "band22";
         parameter.unit       = "dB";
@@ -243,7 +243,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain23:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "5017Hz";
         parameter.symbol     = "band23";
         parameter.unit       = "dB";
@@ -252,7 +252,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain24:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "6318Hz";
         parameter.symbol     = "band24";
         parameter.unit       = "dB";
@@ -261,7 +261,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain25:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "7963Hz";
         parameter.symbol     = "band25";
         parameter.unit       = "dB";
@@ -270,7 +270,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain26:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "10032Hz";
         parameter.symbol     = "band26";
         parameter.unit       = "dB";
@@ -279,7 +279,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain27:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "12662Hz";
         parameter.symbol     = "band27";
         parameter.unit       = "dB";
@@ -288,7 +288,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain28:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "16081Hz";
         parameter.symbol     = "band28";
         parameter.unit       = "dB";
@@ -297,7 +297,7 @@ void ZamGEQ31Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 12.0f;
         break;
     case paramGain29:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "20801Hz";
         parameter.symbol     = "band29";
         parameter.unit       = "dB";

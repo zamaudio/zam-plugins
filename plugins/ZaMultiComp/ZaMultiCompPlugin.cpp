@@ -36,7 +36,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramAttack1:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Attack1";
         parameter.symbol     = "att1";
         parameter.unit       = "ms";
@@ -45,7 +45,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.0f;
         break;
     case paramAttack2:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Attack2";
         parameter.symbol     = "att2";
         parameter.unit       = "ms";
@@ -54,7 +54,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.0f;
         break;
     case paramAttack3:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Attack3";
         parameter.symbol     = "att3";
         parameter.unit       = "ms";
@@ -63,7 +63,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.0f;
         break;
     case paramRelease1:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Release1";
         parameter.symbol     = "rel1";
         parameter.unit       = "ms";
@@ -72,7 +72,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 500.0f;
         break;
     case paramRelease2:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Release2";
         parameter.symbol     = "rel2";
         parameter.unit       = "ms";
@@ -81,7 +81,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 500.0f;
         break;
     case paramRelease3:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Release3";
         parameter.symbol     = "rel3";
         parameter.unit       = "ms";
@@ -90,7 +90,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 500.0f;
         break;
     case paramKnee1:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Knee1";
         parameter.symbol     = "kn1";
         parameter.unit       = "dB";
@@ -99,7 +99,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramKnee2:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Knee2";
         parameter.symbol     = "kn2";
         parameter.unit       = "dB";
@@ -108,7 +108,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramKnee3:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Knee3";
         parameter.symbol     = "kn3";
         parameter.unit       = "dB";
@@ -117,7 +117,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8.0f;
         break;
     case paramRatio1:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Ratio1";
         parameter.symbol     = "rat1";
         parameter.unit       = " ";
@@ -126,7 +126,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramRatio2:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Ratio2";
         parameter.symbol     = "rat2";
         parameter.unit       = " ";
@@ -135,7 +135,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramRatio3:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Ratio3";
         parameter.symbol     = "rat3";
         parameter.unit       = " ";
@@ -144,7 +144,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramThresh1:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Threshold 1";
         parameter.symbol     = "thr1";
         parameter.unit       = "dB";
@@ -153,7 +153,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramThresh2:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Threshold 2";
         parameter.symbol     = "thr2";
         parameter.unit       = "dB";
@@ -162,7 +162,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramThresh3:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Threshold 3";
         parameter.symbol     = "thr3";
         parameter.unit       = "dB";
@@ -171,7 +171,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramMakeup1:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Makeup 1";
         parameter.symbol     = "mak1";
         parameter.unit       = "dB";
@@ -180,7 +180,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramMakeup2:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Makeup 2";
         parameter.symbol     = "mak2";
         parameter.unit       = "dB";
@@ -189,7 +189,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramMakeup3:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Makeup 3";
         parameter.symbol     = "mak3";
         parameter.unit       = "dB";
@@ -198,7 +198,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramGainR1:
-        parameter.hints      = kParameterIsAutomable | kParameterIsOutput;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 1";
         parameter.symbol     = "gr1";
         parameter.unit       = "dB";
@@ -207,7 +207,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramGainR2:
-        parameter.hints      = kParameterIsAutomable | kParameterIsOutput;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 2";
         parameter.symbol     = "gr2";
         parameter.unit       = "dB";
@@ -216,7 +216,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramGainR3:
-        parameter.hints      = kParameterIsAutomable | kParameterIsOutput;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 3";
         parameter.symbol     = "gr3";
         parameter.unit       = "dB";
@@ -225,7 +225,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramXover1:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Crossover freq 1";
         parameter.symbol     = "xover1";
         parameter.unit       = "Hz";
@@ -234,7 +234,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1400.0f;
         break;
     case paramXover2:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Crossover freq 2";
         parameter.symbol     = "xover2";
         parameter.unit       = "Hz";
@@ -243,7 +243,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 14000.0f;
         break;
     case paramToggle1:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "ZamComp 1 ON";
         parameter.symbol     = "toggle1";
         parameter.unit       = " ";
@@ -252,7 +252,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramToggle2:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "ZamComp 2 ON";
         parameter.symbol     = "toggle2";
         parameter.unit       = " ";
@@ -261,7 +261,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramToggle3:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "ZamComp 3 ON";
         parameter.symbol     = "toggle3";
         parameter.unit       = " ";
@@ -270,7 +270,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramListen1:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Listen 1";
         parameter.symbol     = "listen1";
         parameter.unit       = " ";
@@ -279,7 +279,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramListen2:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Listen 2";
         parameter.symbol     = "listen2";
         parameter.unit       = " ";
@@ -288,7 +288,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramListen3:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Listen 3";
         parameter.symbol     = "listen3";
         parameter.unit       = " ";
@@ -297,7 +297,7 @@ void ZaMultiCompPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramGlobalGain:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Master Trim";
         parameter.symbol     = "globalgain";
         parameter.unit       = "dB";

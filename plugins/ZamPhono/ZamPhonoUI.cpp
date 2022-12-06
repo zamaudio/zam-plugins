@@ -27,7 +27,7 @@ ZamPhonoUI::ZamPhonoUI()
     setSize(ZamPhonoArtwork::zamphonoWidth, ZamPhonoArtwork::zamphonoHeight);
 
     // background
-    fImgBackground = Image(ZamPhonoArtwork::zamphonoData, ZamPhonoArtwork::zamphonoWidth, ZamPhonoArtwork::zamphonoHeight, GL_BGR);
+    fImgBackground = Image(ZamPhonoArtwork::zamphonoData, ZamPhonoArtwork::zamphonoWidth, ZamPhonoArtwork::zamphonoHeight, kImageFormatBGR);
 
     // notch slider
     Image sliderImage(ZamPhonoArtwork::sliderData, ZamPhonoArtwork::sliderWidth, ZamPhonoArtwork::sliderHeight);
@@ -109,7 +109,8 @@ void ZamPhonoUI::imageSwitchClicked(ImageSwitch* toggle, bool down)
 
 void ZamPhonoUI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 }
 
 // -----------------------------------------------------------------------

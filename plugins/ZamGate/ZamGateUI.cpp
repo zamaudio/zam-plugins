@@ -26,7 +26,7 @@ ZamGateUI::ZamGateUI()
 	setSize(ZamGateArtwork::zamgateWidth, ZamGateArtwork::zamgateHeight);
 
 	// background
-	fImgBackground = Image(ZamGateArtwork::zamgateData, ZamGateArtwork::zamgateWidth, ZamGateArtwork::zamgateHeight, GL_BGR);
+	fImgBackground = Image(ZamGateArtwork::zamgateData, ZamGateArtwork::zamgateWidth, ZamGateArtwork::zamgateHeight, kImageFormatBGR);
 
 	// led images
 	fLedRedImg = Image(ZamGateArtwork::ledredData, ZamGateArtwork::ledredWidth, ZamGateArtwork::ledredHeight);
@@ -190,7 +190,8 @@ void ZamGateUI::imageSwitchClicked(ImageSwitch* tog, bool down)
 
 void ZamGateUI::onDisplay()
 {
-	fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+	fImgBackground.draw(context);
 
 	// draw leds
 	static const float sLedSpacing  = 15.5f;
@@ -229,7 +230,7 @@ void ZamGateUI::onDisplay()
 	else numRedLeds = 0;
 
 	for (int i=numRedLeds; i>0; --i)
-		fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
 
 	if (fLedYellowValue >= 20.f)
 		numYellowLeds = 19;
@@ -273,12 +274,12 @@ void ZamGateUI::onDisplay()
 
 	if (numYellowLeds > 12) {
 		for (int i=12; i<numYellowLeds; ++i)
-			fLedRedImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedRedImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 		for (int i=0; i<12; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 	} else {
 		for (int i=0; i<numYellowLeds; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 	}
 }
 

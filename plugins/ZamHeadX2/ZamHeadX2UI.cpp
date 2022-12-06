@@ -28,7 +28,7 @@ ZamHeadX2UI::ZamHeadX2UI()
     setSize(ZamHeadX2Artwork::zamheadx2Width, ZamHeadX2Artwork::zamheadx2Height);
 
     // background
-    fImgBackground = Image(ZamHeadX2Artwork::zamheadx2Data, ZamHeadX2Artwork::zamheadx2Width, ZamHeadX2Artwork::zamheadx2Height, GL_BGR);
+    fImgBackground = Image(ZamHeadX2Artwork::zamheadx2Data, ZamHeadX2Artwork::zamheadx2Width, ZamHeadX2Artwork::zamheadx2Height, kImageFormatBGR);
 
     // knob
     Image knobImage(ZamHeadX2Artwork::knobData, ZamHeadX2Artwork::knobWidth, ZamHeadX2Artwork::knobHeight);
@@ -118,7 +118,8 @@ void ZamHeadX2UI::imageKnobValueChanged(ZamKnob* knob, float value)
 
 void ZamHeadX2UI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 }
 
 void ZamHeadX2UI::stateChanged(const char*, const char*)

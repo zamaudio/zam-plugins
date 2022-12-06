@@ -52,7 +52,7 @@ void ZamChild670Plugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramInlevel:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Input level";
         parameter.symbol     = "inlevel";
         parameter.unit       = "dB";
@@ -61,7 +61,7 @@ void ZamChild670Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramAC:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "AC Threshold";
         parameter.symbol     = "acthres";
         parameter.unit       = "";
@@ -70,7 +70,7 @@ void ZamChild670Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramDC:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "DC Threshold";
         parameter.symbol     = "dcthres";
         parameter.unit       = "";
@@ -79,7 +79,7 @@ void ZamChild670Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramTau:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsInteger;
         parameter.name       = "Time constant select";
         parameter.symbol     = "tau";
         parameter.unit       = " ";
@@ -88,7 +88,7 @@ void ZamChild670Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 6.0f;
         break;
     case paramOutlevel:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Output level";
         parameter.symbol     = "outlevel";
         parameter.unit       = "dB";

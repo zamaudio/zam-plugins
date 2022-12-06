@@ -28,7 +28,7 @@ ZamPianoUI::ZamPianoUI()
     setSize(ZamPianoArtwork::zampianoWidth, ZamPianoArtwork::zampianoHeight);
 
     // background
-    fImgBackground = Image(ZamPianoArtwork::zampianoData, ZamPianoArtwork::zampianoWidth, ZamPianoArtwork::zampianoHeight, GL_BGR);
+    fImgBackground = Image(ZamPianoArtwork::zampianoData, ZamPianoArtwork::zampianoWidth, ZamPianoArtwork::zampianoHeight, kImageFormatBGR);
 
     // knob
     Image knobImage(ZamPianoArtwork::knobData, ZamPianoArtwork::knobWidth, ZamPianoArtwork::knobHeight);

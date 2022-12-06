@@ -87,7 +87,7 @@ void ZamHeadX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 90.0f;
         break;
     case paramWidth:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Width";
         parameter.symbol     = "width";
         parameter.unit       = " ";

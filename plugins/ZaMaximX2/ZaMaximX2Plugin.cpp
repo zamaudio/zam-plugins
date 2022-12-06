@@ -36,7 +36,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramRelease:
-        parameter.hints      = kParameterIsAutomable | kParameterIsLogarithmic;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Release";
         parameter.symbol     = "rel";
         parameter.unit       = "ms";
@@ -45,7 +45,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.0f;
         break;
     case paramCeiling:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Output Ceiling";
         parameter.symbol     = "ceil";
         parameter.unit       = "dB";
@@ -54,7 +54,7 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramThresh:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Threshold";
         parameter.symbol     = "thresh";
         parameter.unit       = "dB";

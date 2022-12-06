@@ -29,7 +29,7 @@ ZamEQ2UI::ZamEQ2UI()
     setSize(ZamEQ2Artwork::zameq2Width, ZamEQ2Artwork::zameq2Height);
 
     // background
-    fImgBackground = Image(ZamEQ2Artwork::zameq2Data, ZamEQ2Artwork::zameq2Width, ZamEQ2Artwork::zameq2Height, GL_BGR);
+    fImgBackground = Image(ZamEQ2Artwork::zameq2Data, ZamEQ2Artwork::zameq2Width, ZamEQ2Artwork::zameq2Height, kImageFormatBGR);
 
     // toggle image
     Image sliderImage(ZamEQ2Artwork::togglesliderData, ZamEQ2Artwork::togglesliderWidth, ZamEQ2Artwork::togglesliderHeight);
@@ -494,7 +494,8 @@ void ZamEQ2UI::calceqcurve(float x[], float y[])
 
 void ZamEQ2UI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 
     calceqcurve(eqx, eqy);
 

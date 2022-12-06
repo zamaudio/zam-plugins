@@ -26,7 +26,7 @@ ZamGateX2UI::ZamGateX2UI()
 	setSize(ZamGateX2Artwork::zamgatex2Width, ZamGateX2Artwork::zamgatex2Height);
 
 	// background
-	fImgBackground = Image(ZamGateX2Artwork::zamgatex2Data, ZamGateX2Artwork::zamgatex2Width, ZamGateX2Artwork::zamgatex2Height, GL_BGR);
+	fImgBackground = Image(ZamGateX2Artwork::zamgatex2Data, ZamGateX2Artwork::zamgatex2Width, ZamGateX2Artwork::zamgatex2Height, kImageFormatBGR);
 
 	// led images
 	fLedRedImg = Image(ZamGateX2Artwork::ledredData, ZamGateX2Artwork::ledredWidth, ZamGateX2Artwork::ledredHeight);
@@ -186,7 +186,8 @@ void ZamGateX2UI::imageSwitchClicked(ImageSwitch* tog, bool down)
 
 void ZamGateX2UI::onDisplay()
 {
-	fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+	fImgBackground.draw(context);
 
 	// draw leds
 	static const float sLedSpacing  = 15.5f;
@@ -225,7 +226,7 @@ void ZamGateX2UI::onDisplay()
 	else numRedLeds = 0;
 
 	for (int i=numRedLeds; i>0; --i)
-		fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLedStaticY);
 
 	if (fLedYellowValue >= 20.f)
 		numYellowLeds = 19;
@@ -269,12 +270,12 @@ void ZamGateX2UI::onDisplay()
 
 	if (numYellowLeds > 12) {
 		for (int i=12; i<numYellowLeds; ++i)
-			fLedRedImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedRedImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 		for (int i=0; i<12; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 	} else {
 		for (int i=0; i<numYellowLeds; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticY);
 	}
 }
 

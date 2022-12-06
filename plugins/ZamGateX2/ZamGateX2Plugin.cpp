@@ -47,7 +47,7 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 	switch (index)
 	{
 	case paramAttack:
-		parameter.hints = kParameterIsAutomable;
+		parameter.hints = kParameterIsAutomatable;
 		parameter.name = "Attack";
 		parameter.symbol = "att";
 		parameter.unit = "ms";
@@ -56,7 +56,7 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.max = 500.0f;
 		break;
 	case paramRelease:
-		parameter.hints = kParameterIsAutomable;
+		parameter.hints = kParameterIsAutomatable;
 		parameter.name = "Release";
 		parameter.symbol = "rel";
 		parameter.unit = "ms";
@@ -65,7 +65,7 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.max = 500.0f;
 		break;
 	case paramThresh:
-		parameter.hints = kParameterIsAutomable;
+		parameter.hints = kParameterIsAutomatable;
 		parameter.name = "Threshold";
 		parameter.symbol = "thr";
 		parameter.unit = "dB";
@@ -74,7 +74,7 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.max = 0.0f;
 		break;
 	case paramMakeup:
-		parameter.hints = kParameterIsAutomable;
+		parameter.hints = kParameterIsAutomatable;
 		parameter.name = "Makeup";
 		parameter.symbol = "mak";
 		parameter.unit = "dB";
@@ -83,7 +83,7 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.max = 30.0f;
 		break;
 	case paramGateclose:
-		parameter.hints = kParameterIsAutomable;
+		parameter.hints = kParameterIsAutomatable;
 		parameter.name = "Max gate close";
 		parameter.symbol = "close";
 		parameter.unit = "dB";
@@ -92,7 +92,7 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.max = 0.0f;
 		break;
 	case paramSidechain:
-		parameter.hints = kParameterIsAutomable | kParameterIsBoolean;
+		parameter.hints = kParameterIsAutomatable | kParameterIsBoolean;
 		parameter.name = "Sidechain";
 		parameter.symbol = "sidechain";
 		parameter.unit = " ";
@@ -101,7 +101,7 @@ void ZamGateX2Plugin::initParameter(uint32_t index, Parameter& parameter)
 		parameter.ranges.max = 1.0f;
 		break;
 	case paramOpenshut:
-		parameter.hints = kParameterIsAutomable | kParameterIsBoolean;
+		parameter.hints = kParameterIsAutomatable | kParameterIsBoolean;
 		parameter.name = "Mode open/shut";
 		parameter.symbol = "mode";
 		parameter.unit = " ";

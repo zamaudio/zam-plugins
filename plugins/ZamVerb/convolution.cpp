@@ -139,7 +139,18 @@ void LV2convolv::clv_release (void) {
 }
 
 void LV2convolv::clv_clone_settings(LV2convolv *clv_new) {
-	memcpy (clv_new, this, sizeof(LV2convolv));
+	convproc = clv_new->convproc;
+	ir_fn = clv_new->ir_fn;
+	ir_preset = clv_new->ir_preset;
+	memcpy (chn_inp, clv_new->chn_inp, sizeof(chn_inp));
+	memcpy (chn_out, clv_new->chn_out, sizeof(chn_out));
+	memcpy (ir_chan, clv_new->ir_chan, sizeof(ir_chan));
+	memcpy (ir_delay, clv_new->ir_delay, sizeof(ir_delay));
+	memcpy (ir_gain, clv_new->ir_gain, sizeof(ir_gain));
+	size = clv_new->size;
+	density = clv_new->density;
+	fragment_size = clv_new->fragment_size;
+
 	clv_new->convproc = NULL;
 	if (ir_fn) {
 		clv_new->ir_fn = strdup (ir_fn);

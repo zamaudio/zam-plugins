@@ -36,7 +36,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramInvert:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Invert";
         parameter.symbol     = "inv";
         parameter.unit       = " ";
@@ -45,7 +45,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramDelaytime:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Time";
         parameter.symbol     = "time";
         parameter.unit       = "ms";
@@ -54,7 +54,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 8000.0f;
         break;
     case paramSync:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Sync BPM";
         parameter.symbol     = "sync";
         parameter.unit       = " ";
@@ -63,7 +63,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramLPF:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "LPF";
         parameter.symbol     = "lpf";
         parameter.unit       = "Hz";
@@ -72,7 +72,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20000.0f;
         break;
     case paramDivisor:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsInteger;
         parameter.name       = "Divisor";
         parameter.symbol     = "div";
         parameter.unit       = " ";
@@ -81,7 +81,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 5.0f;
         break;
     case paramGain:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Output Gain";
         parameter.symbol     = "gain";
         parameter.unit       = "dB";
@@ -90,7 +90,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 0.0f;
         break;
     case paramDrywet:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Dry/Wet";
         parameter.symbol     = "drywet";
         parameter.unit       = " ";
@@ -99,7 +99,7 @@ void ZamDelayPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramFeedback:
-        parameter.hints      = kParameterIsAutomable;
+        parameter.hints      = kParameterIsAutomatable;
         parameter.name       = "Feedback";
         parameter.symbol     = "feedb";
         parameter.unit       = " ";

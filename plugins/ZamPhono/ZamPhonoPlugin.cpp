@@ -34,7 +34,7 @@ void ZamPhonoPlugin::initParameter(uint32_t index, Parameter& parameter)
     switch (index)
     {
     case paramToggle:
-        parameter.hints      = kParameterIsAutomable | kParameterIsBoolean;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
         parameter.name       = "Reproduction/Production";
         parameter.symbol     = "inv";
         parameter.unit       = " ";
@@ -43,7 +43,7 @@ void ZamPhonoPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 1.0f;
         break;
     case paramType:
-        parameter.hints      = kParameterIsAutomable | kParameterIsInteger;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsInteger;
         parameter.name       = "Phono Filter Type";
         parameter.symbol     = "type";
         parameter.unit       = " ";

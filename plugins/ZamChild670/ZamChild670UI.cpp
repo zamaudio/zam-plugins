@@ -28,7 +28,7 @@ ZamChild670UI::ZamChild670UI()
     setSize(ZamChild670Artwork::zamchild670Width, ZamChild670Artwork::zamchild670Height);
 
     // background
-    fImgBackground = Image(ZamChild670Artwork::zamchild670Data, ZamChild670Artwork::zamchild670Width, ZamChild670Artwork::zamchild670Height, GL_BGR);
+    fImgBackground = Image(ZamChild670Artwork::zamchild670Data, ZamChild670Artwork::zamchild670Width, ZamChild670Artwork::zamchild670Height, kImageFormatBGR);
 
     // knob
     Image knobImage(ZamChild670Artwork::knobData, ZamChild670Artwork::knobWidth, ZamChild670Artwork::knobHeight);

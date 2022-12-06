@@ -28,7 +28,7 @@ ZamGrainsUI::ZamGrainsUI()
     setSize(ZamGrainsArtwork::zamgrainsWidth, ZamGrainsArtwork::zamgrainsHeight);
 
     // background
-    fImgBackground = Image(ZamGrainsArtwork::zamgrainsData, ZamGrainsArtwork::zamgrainsWidth, ZamGrainsArtwork::zamgrainsHeight, GL_BGR);
+    fImgBackground = Image(ZamGrainsArtwork::zamgrainsData, ZamGrainsArtwork::zamgrainsWidth, ZamGrainsArtwork::zamgrainsHeight, kImageFormatBGR);
 
     // knob
     Image knobImage(ZamGrainsArtwork::knobData, ZamGrainsArtwork::knobWidth, ZamGrainsArtwork::knobHeight);
@@ -184,6 +184,8 @@ void ZamGrainsUI::imageSwitchClicked(ImageSwitch* toggle, bool down)
 
 void ZamGrainsUI::onDisplay()
 {
+    const GraphicsContext& context(getGraphicsContext());
+
     int i;
     int grainx = 0;
     int grains = (int)fKnobGrains->getValue();
@@ -194,7 +196,7 @@ void ZamGrainsUI::onDisplay()
     int offsetx = 5;
     int offsety = 175;
 
-    fImgBackground.draw();
+    fImgBackground.draw(context);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

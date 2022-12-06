@@ -28,7 +28,7 @@ ZamNoiseUI::ZamNoiseUI()
     setSize(ZamNoiseArtwork::zamnoiseWidth,  ZamNoiseArtwork::zamnoiseHeight);
 
     // background
-    fImgBackground = Image(ZamNoiseArtwork::zamnoiseData, ZamNoiseArtwork::zamnoiseWidth, ZamNoiseArtwork::zamnoiseHeight, GL_BGR);
+    fImgBackground = Image(ZamNoiseArtwork::zamnoiseData, ZamNoiseArtwork::zamnoiseWidth, ZamNoiseArtwork::zamnoiseHeight, kImageFormatBGR);
 
     // toggle img
     Image toggleonImage(ZamNoiseArtwork::toggleonData, ZamNoiseArtwork::toggleonWidth, ZamNoiseArtwork::toggleonHeight);

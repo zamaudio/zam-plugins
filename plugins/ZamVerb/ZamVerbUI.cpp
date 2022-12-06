@@ -28,7 +28,7 @@ ZamVerbUI::ZamVerbUI()
     setSize(ZamVerbArtwork::zamverbWidth, ZamVerbArtwork::zamverbHeight);
 
     // background
-    fImgBackground = Image(ZamVerbArtwork::zamverbData, ZamVerbArtwork::zamverbWidth, ZamVerbArtwork::zamverbHeight, GL_BGR);
+    fImgBackground = Image(ZamVerbArtwork::zamverbData, ZamVerbArtwork::zamverbWidth, ZamVerbArtwork::zamverbHeight, kImageFormatBGR);
 
     // knob
     Image knobImage(ZamVerbArtwork::knobData, ZamVerbArtwork::knobWidth, ZamVerbArtwork::knobHeight);
@@ -148,7 +148,8 @@ void ZamVerbUI::imageSliderValueChanged(ImageSlider*, float value)
 
 void ZamVerbUI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 }
 
 // -----------------------------------------------------------------------

@@ -28,7 +28,7 @@ ZaMultiCompUI::ZaMultiCompUI()
     setSize(ZaMultiCompArtwork::zamulticompWidth, ZaMultiCompArtwork::zamulticompHeight);
 
     // background
-    fImgBackground = Image(ZaMultiCompArtwork::zamulticompData, ZaMultiCompArtwork::zamulticompWidth, ZaMultiCompArtwork::zamulticompHeight, GL_BGR);
+    fImgBackground = Image(ZaMultiCompArtwork::zamulticompData, ZaMultiCompArtwork::zamulticompWidth, ZaMultiCompArtwork::zamulticompHeight, kImageFormatBGR);
 
     // led images
     fLedRedImg = Image(ZaMultiCompArtwork::ledredData, ZaMultiCompArtwork::ledredWidth, ZaMultiCompArtwork::ledredHeight);
@@ -822,7 +822,8 @@ void ZaMultiCompUI::imageSwitchClicked(ImageSwitch* toggle, bool down)
 
 void ZaMultiCompUI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 
     setState("stateMeterReset", "");
 
@@ -918,14 +919,14 @@ void ZaMultiCompUI::onDisplay()
 		numRedLeds3 = 1;
 	else numRedLeds3 = 0;
 
-    for (int i=numRedLeds1; i>0; --i)
-        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed1StaticY);
+	for (int i=numRedLeds1; i>0; --i)
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLed1StaticY);
 
-    for (int i=numRedLeds2; i>0; --i)
-        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed2StaticY);
+	for (int i=numRedLeds2; i>0; --i)
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLed2StaticY);
 
-    for (int i=numRedLeds3; i>0; --i)
-        fLedRedImg.drawAt(sLedInitialX + (12 - i)*sLedSpacing, sRedLed3StaticY);
+	for (int i=numRedLeds3; i>0; --i)
+		fLedRedImg.drawAt(context, sLedInitialX + (12 - i)*sLedSpacing, sRedLed3StaticY);
 
 	if (fLedYellowValueL >= 20.f)
 		numYellowLedsL = 19;
@@ -969,12 +970,12 @@ void ZaMultiCompUI::onDisplay()
 
 	if (numYellowLedsL > 12) {
 		for (int i=12; i<numYellowLedsL; ++i)
-			fLedRedImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
+			fLedRedImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
 		for (int i=0; i<12; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
 	} else {
 		for (int i=0; i<numYellowLedsL; ++i)
-			fLedYellowImg.drawAt(sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
+			fLedYellowImg.drawAt(context, sLedInitialX + i*sLedSpacing, sYellowLedStaticYL);
 	}
 
 /*
