@@ -16,6 +16,7 @@ jobs:
       - uses: distrho/dpf-makefile-action@v1
         with:
           target: ${{ matrix.target }}
+          pawpaw: true
 
   macos:
     strategy:
@@ -29,6 +30,7 @@ jobs:
       - uses: distrho/dpf-makefile-action@v1
         with:
           target: ${{ matrix.target }}
+          pawpaw: true
 
   windows:
     strategy:
@@ -42,6 +44,7 @@ jobs:
       - uses: distrho/dpf-makefile-action@v1
         with:
           target: ${{ matrix.target }}
+          pawpaw: true
 
   pluginval:
     runs-on: ubuntu-20.04
@@ -52,3 +55,4 @@ jobs:
       - uses: distrho/dpf-makefile-action@v1
         with:
           target: pluginval
+          pawpaw: true
