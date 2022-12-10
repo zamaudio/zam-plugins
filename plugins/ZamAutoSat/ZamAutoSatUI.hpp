@@ -22,7 +22,6 @@
 
 #include "Image.hpp"
 
-#include "ZamAutoSatArtwork.hpp"
 #include "ZamAutoSatPlugin.hpp"
 
 using DGL::Image;

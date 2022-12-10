@@ -22,13 +22,10 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamAutoSatUI::ZamAutoSatUI()
-    : UI()
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
-    setSize(ZamAutoSatArtwork::zamautosatWidth, ZamAutoSatArtwork::zamautosatHeight);
-
     // background
     fImgBackground = Image(ZamAutoSatArtwork::zamautosatData, ZamAutoSatArtwork::zamautosatWidth, ZamAutoSatArtwork::zamautosatHeight, kImageFormatBGR);
-
 }
 
 ZamAutoSatUI::~ZamAutoSatUI()
