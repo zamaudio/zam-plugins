@@ -33,7 +33,10 @@
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamGateX2"
-#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:GatePlugin"
+#define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZamGateX2"
+#define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:GatePlugin"
+#define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|Dynamics|Stereo"
+#define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "stereo"
+#define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZamGateX2"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

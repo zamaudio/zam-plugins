@@ -33,7 +33,10 @@
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamGEQ31"
-#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:EQPlugin"
+#define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZamGEQ31"
+#define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:EQPlugin"
+#define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|EQ|Mono"
+#define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "equalizer", "mono"
+#define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZamGEQ31"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

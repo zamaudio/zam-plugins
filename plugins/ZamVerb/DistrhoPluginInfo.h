@@ -33,7 +33,10 @@
 #define DISTRHO_PLUGIN_WANT_FULL_STATE 1
 #define DISTRHO_PLUGIN_WANT_TIMEPOS    0
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamVerb"
-#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:ReverbPlugin"
+#define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZamVerb"
+#define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:ReverbPlugin"
+#define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|Reverb|Stereo"
+#define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "reverb", "stereo"
+#define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZamVerb"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

@@ -31,8 +31,11 @@
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamGrains"
-#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:DelayPlugin"
+#define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZamGrains"
+#define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:DelayPlugin"
+#define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|Delay|Mono"
+#define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "delay", "granular", "mono"
+#define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZamGrains"
 
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

@@ -32,7 +32,10 @@
 #define DISTRHO_PLUGIN_WANT_STATE    0
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamTube"
-#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:DistortionPlugin"
+#define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZamTube"
+#define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:DistortionPlugin"
+#define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|Distortion|Mono"
+#define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "distortion", "mono"
+#define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZamTube"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

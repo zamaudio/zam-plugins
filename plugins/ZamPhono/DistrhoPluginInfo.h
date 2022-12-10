@@ -32,7 +32,10 @@
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamPhono"
-#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:UtilityPlugin"
+#define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZamPhono"
+#define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:UtilityPlugin"
+#define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|Tools|Mono"
+#define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "utility", "mono"
+#define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZamPhono"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

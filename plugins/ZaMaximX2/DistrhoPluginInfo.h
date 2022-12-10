@@ -33,7 +33,9 @@
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 #define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZaMaximX2"
-#define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:LimiterPlugin"
-
+#define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZaMaximX2"
+#define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:LimiterPlugin"
+#define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|Dynamics|Stereo"
+#define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "limiter", "stereo"
+#define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZaMaximX2"
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED
