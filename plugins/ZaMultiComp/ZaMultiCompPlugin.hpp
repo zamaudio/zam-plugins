@@ -77,12 +77,6 @@ public:
         paramCount
     };
 
-    enum States
-    {
-        stateReadMeter,
-	stateCount
-    };
-
     ZaMultiCompPlugin();
 
 protected:
@@ -129,7 +123,6 @@ protected:
 
     void initParameter(uint32_t index, Parameter& parameter) ;
     void initProgramName(uint32_t index, String& programName) ;
-    void initState(uint32_t, String&, String&) override;
 
     // -------------------------------------------------------------------
     // Internal data
@@ -137,8 +130,6 @@ protected:
     float getParameterValue(uint32_t index) const override;
     void setParameterValue(uint32_t index, float value) override;
     void loadProgram(uint32_t index) override;
-    String getState(const char* key) const override;
-    void setState(const char* key, const char* value) override;
 
     // -------------------------------------------------------------------
     // Process
@@ -192,7 +183,6 @@ private:
     int pos[3];
     float average[3];
     float oldxover1, oldxover2;
-    bool reset;
 
 };
 

@@ -675,20 +675,6 @@ void ZaMultiCompPlugin::setParameterValue(uint32_t index, float value)
     }
 }
 
-String ZaMultiCompPlugin::getState(const char*) const
-{
-    return String();
-}
-
-void ZaMultiCompPlugin::setState(const char*, const char*)
-{
-    reset = true;
-}
-
-void ZaMultiCompPlugin::initState(unsigned int, String&, String&)
-{
-}
-
 // -----------------------------------------------------------------------
 // Process
 
@@ -715,9 +701,15 @@ void ZaMultiCompPlugin::activate()
 	pos[0] = 0;
 	pos[1] = 0;
 	pos[2] = 0;
+	average[0] = 0.f;
+	average[1] = 0.f;
+	average[2] = 0.f;
 
 	oldxover1 = 0.f;
 	oldxover2 = 0.f;
+
+	calc_lr4(xover1, 0);
+	calc_lr4(xover2, 1);
 }
 
 /*
@@ -838,15 +830,24 @@ void ZaMultiCompPlugin::pushsample(float sample, int k)
 
 void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	float maxx = max;
+	float maxx = 0.f;
 
-        int tog1 = (toggle[0] > 0.5f) ? 1 : 0;
-        int tog2 = (toggle[1] > 0.5f) ? 1 : 0;
-        int tog3 = (toggle[2] > 0.5f) ? 1 : 0;
+	int tog1 = (toggle[0] > 0.5f) ? 1 : 0;
+	int tog2 = (toggle[1] > 0.5f) ? 1 : 0;
+	int tog3 = (toggle[2] > 0.5f) ? 1 : 0;
 
-        int listen1 = (listen[0] > 0.5f) ? 1 : 0;
-        int listen2 = (listen[1] > 0.5f) ? 1 : 0;
-        int listen3 = (listen[2] > 0.5f) ? 1 : 0;
+	int listen1 = (listen[0] > 0.5f) ? 1 : 0;
+	int listen2 = (listen[1] > 0.5f) ? 1 : 0;
+	int listen3 = (listen[2] > 0.5f) ? 1 : 0;
+
+	float tmp1[2] = {0.f};
+	float tmp2[2] = {0.f};
+	float tmp3[2] = {0.f};
+	float fil1[2] = {0.f};
+	float fil2[2] = {0.f};
+	float fil3[2] = {0.f};
+	float fil4[2] = {0.f};
+	float outL[MAX_COMP+1] = {0.f};
 
         if (oldxover1 != xover1) {
 		// recalculate coeffs
@@ -860,9 +861,6 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
 	}
 
         for (uint32_t i = 0; i < frames; ++i) {
-                float tmp1[2], tmp2[2], tmp3[2];
-		float fil1[2], fil2[2], fil3[2], fil4[2];
-		float outL[MAX_COMP+1] = {0.f};
 		float inl = sanitize_denormal(inputs[0][i]);
 		inl = (fabsf(inl) < DANGER) ? inl : 0.f;
 
@@ -918,12 +916,7 @@ void ZaMultiCompPlugin::run(const float** inputs, float** outputs, uint32_t fram
                 outputs[0][i] = sanitize_denormal(outputs[0][i]);
                 outputs[0][i] *= from_dB(globalgain);
 
-		if (reset) {
-			max = fabsf(outputs[0][i]);
-			reset = false;
-		} else {
-			maxx = (fabsf(outputs[0][i]) > maxx) ? fabsf(outputs[0][i]) : sanitize_denormal(maxx);
-		}
+		maxx = (fabsf(outputs[0][i]) > maxx) ? fabsf(outputs[0][i]) : sanitize_denormal(maxx);
         }
 	out = (maxx <= 0.f) ? -160.f : to_dB(maxx);
 }
