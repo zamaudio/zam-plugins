@@ -81,12 +81,6 @@ public:
         paramCount
     };
 
-    enum States
-    {
-        stateReadMeter,
-	stateCount
-    };
-
     ZaMultiCompX2Plugin();
 
 protected:
@@ -194,8 +188,6 @@ private:
     float average[3];
     int pos[3];
     float oldxover1, oldxover2;
-    bool resetl;
-    bool resetr;
 };
 
 // -----------------------------------------------------------------------
