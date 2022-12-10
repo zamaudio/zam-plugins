@@ -734,9 +734,17 @@ void ZaMultiCompX2Plugin::activate()
 	pos[0] = 0;
 	pos[1] = 0;
 	pos[2] = 0;
+	average[0] = 0.f;
+	average[1] = 0.f;
+	average[2] = 0.f;
 
 	oldxover1 = 0.f;
 	oldxover2 = 0.f;
+
+	calc_lr4(xover1, 0);
+	calc_lr4(xover1, 1);
+	calc_lr4(xover2, 2);
+	calc_lr4(xover2, 3);
 }
 
 /*
@@ -900,6 +908,15 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 	float maxxL = 0.;
 	float maxxR = 0.;
 	uint32_t i;
+	float tmp1[2] = {0.f};
+	float tmp2[2] = {0.f};
+	float tmp3[2] = {0.f};
+	float fil1[2] = {0.f};
+	float fil2[2] = {0.f};
+	float fil3[2] = {0.f};
+	float fil4[2] = {0.f};
+	float outL[MAX_COMP+1] = {0.f};
+	float outR[MAX_COMP+1] = {0.f};
 
         int tog1 = (toggle[0] > 0.5f) ? 1 : 0;
         int tog2 = (toggle[1] > 0.5f) ? 1 : 0;
@@ -922,10 +939,6 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 	}
 
         for (i = 0; i < frames; ++i) {
-                float tmp1[2], tmp2[2], tmp3[2];
-		float fil1[2], fil2[2], fil3[2], fil4[2];
-		float outL[MAX_COMP+1] = {0.f};
-		float outR[MAX_COMP+1] = {0.f};
 		float inl = sanitize_denormal(inputs[0][i]);
 		float inr = sanitize_denormal(inputs[1][i]);
 		inl = (fabsf(inl) < DANGER) ? inl : 0.f;
