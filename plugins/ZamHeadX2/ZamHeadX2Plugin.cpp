@@ -27,6 +27,9 @@ ZamHeadX2Plugin::ZamHeadX2Plugin()
 {
     signal = false;
     swap = 0;
+    active = 1;
+    azold = 0;
+    elold = 0;
     clv[swap] = new LV2convolv();
     clv[swap]->clv_configure("convolution.ir.preset", "0", "0");
     clv[swap]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
@@ -188,10 +191,11 @@ void ZamHeadX2Plugin::initState(unsigned int index, String& key, String& defval)
 
 void ZamHeadX2Plugin::setState(const char* key, const char*)
 {
-	uint8_t other;
+	uint8_t other = 0;
 	char elev[4] = { 0 };
 	char azim[4] = { 0 };
-	int az, el;
+	int az = 0;
+	int el = 0;
 
 	if (strcmp(key, "reload") == 0) {
 		el = (int)((elevation + 45.) * 24. / 135.);
