@@ -22,7 +22,6 @@
 #include "ImageWidgets.hpp"
 #include "../../widgets/ZamWidgets.hpp"
 
-#include "ZamGEQ31Artwork.hpp"
 #include "ZamGEQ31Plugin.hpp"
 
 using DGL::Image;

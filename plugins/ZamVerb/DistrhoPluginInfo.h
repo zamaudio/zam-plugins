@@ -18,6 +18,8 @@
 #ifndef DISTRHO_PLUGIN_INFO_H_INCLUDED
 #define DISTRHO_PLUGIN_INFO_H_INCLUDED
 
+#include "ZamVerbArtwork.hpp"
+
 #define DISTRHO_PLUGIN_BRAND "ZamAudio"
 #define DISTRHO_PLUGIN_NAME  "ZamVerb"
 
@@ -32,6 +34,9 @@
 #define DISTRHO_PLUGIN_WANT_STATE      1
 #define DISTRHO_PLUGIN_WANT_FULL_STATE 1
 #define DISTRHO_PLUGIN_WANT_TIMEPOS    0
+
+#define DISTRHO_UI_DEFAULT_WIDTH       ZamVerbArtwork::zamverbWidth
+#define DISTRHO_UI_DEFAULT_HEIGHT      ZamVerbArtwork::zamverbHeight
 
 #define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZamVerb"
 #define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:ReverbPlugin"

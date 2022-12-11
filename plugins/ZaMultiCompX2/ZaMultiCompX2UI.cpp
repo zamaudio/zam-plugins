@@ -23,10 +23,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZaMultiCompX2UI::ZaMultiCompX2UI()
-    : UI()
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
-    setSize(ZaMultiCompX2Artwork::zamulticompx2Width, ZaMultiCompX2Artwork::zamulticompx2Height);
-
     // background
     fImgBackground = Image(ZaMultiCompX2Artwork::zamulticompx2Data, ZaMultiCompX2Artwork::zamulticompx2Width, ZaMultiCompX2Artwork::zamulticompx2Height, kImageFormatBGR);
 

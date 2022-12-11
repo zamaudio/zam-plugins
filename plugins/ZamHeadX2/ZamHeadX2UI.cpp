@@ -23,10 +23,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamHeadX2UI::ZamHeadX2UI()
-    : UI()
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
-    setSize(ZamHeadX2Artwork::zamheadx2Width, ZamHeadX2Artwork::zamheadx2Height);
-
     // background
     fImgBackground = Image(ZamHeadX2Artwork::zamheadx2Data, ZamHeadX2Artwork::zamheadx2Width, ZamHeadX2Artwork::zamheadx2Height, kImageFormatBGR);
 

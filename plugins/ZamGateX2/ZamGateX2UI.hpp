@@ -21,7 +21,6 @@
 #include "DistrhoUI.hpp"
 #include "ImageWidgets.hpp"
 #include "../../widgets/ZamWidgets.hpp"
-#include "ZamGateX2Artwork.hpp"
 
 using DGL::Image;
 using DGL::ZamKnob;

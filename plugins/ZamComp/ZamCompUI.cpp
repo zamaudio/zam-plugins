@@ -25,10 +25,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamCompUI::ZamCompUI()
-    : UI()
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
-    setSize(ZamCompArtwork::zamcompWidth, ZamCompArtwork::zamcompHeight);
-
     // background
     fImgBackground = Image(ZamCompArtwork::zamcompData, ZamCompArtwork::zamcompWidth, ZamCompArtwork::zamcompHeight, kImageFormatBGR);
 

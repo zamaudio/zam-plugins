@@ -22,8 +22,6 @@
 #include "ImageWidgets.hpp"
 #include "../../widgets/ZamWidgets.hpp"
 
-#include "ZaMultiCompX2Artwork.hpp"
-
 #define COMPOINTS 1000
 #define MAX_COMP 3
 

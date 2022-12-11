@@ -20,8 +20,6 @@
 #include "ImageWidgets.hpp"
 #include "../../widgets/ZamWidgets.hpp"
 
-#include "ZamDynamicEQArtwork.hpp"
-
 #define EQPOINTS 575
 #include <complex>
 

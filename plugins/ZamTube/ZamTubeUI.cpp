@@ -28,10 +28,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamTubeUI::ZamTubeUI()
-    : UI()
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
-    setSize(ZamTubeArtwork::zamtubeWidth, ZamTubeArtwork::zamtubeHeight);
-
     // background
     fImgBackground = Image(ZamTubeArtwork::zamtubeData, ZamTubeArtwork::zamtubeWidth, ZamTubeArtwork::zamtubeHeight, kImageFormatBGR);
 

@@ -19,7 +19,6 @@
 #include "DistrhoUI.hpp"
 
 #include "ImageWidgets.hpp"
-#include "ZamPhonoArtwork.hpp"
 #include "ZamPhonoPlugin.hpp"
 
 using DGL::Image;

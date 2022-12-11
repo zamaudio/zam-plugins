@@ -22,8 +22,6 @@
 #include "ImageWidgets.hpp"
 #include "../../widgets/ZamWidgets.hpp"
 
-#include "ZamGateArtwork.hpp"
-
 using DGL::Image;
 using DGL::ZamKnob;
 using DGL::ImageSwitch;

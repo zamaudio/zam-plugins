@@ -20,8 +20,6 @@
 #include "ImageWidgets.hpp"
 #include "../../widgets/ZamWidgets.hpp"
 
-#include "ZamGrainsArtwork.hpp"
-
 using DGL::Image;
 using DGL::ImageSwitch;
 using DGL::ZamKnob;

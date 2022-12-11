@@ -18,6 +18,8 @@
 #ifndef DISTRHO_PLUGIN_INFO_H_INCLUDED
 #define DISTRHO_PLUGIN_INFO_H_INCLUDED
 
+#include "ZamTubeArtwork.hpp"
+
 #define DISTRHO_PLUGIN_BRAND "ZamAudio"
 #define DISTRHO_PLUGIN_NAME  "ZamTube"
 
@@ -31,6 +33,9 @@
 #define DISTRHO_PLUGIN_WANT_PROGRAMS 1
 #define DISTRHO_PLUGIN_WANT_STATE    0
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
+
+#define DISTRHO_UI_DEFAULT_WIDTH       ZamTubeArtwork::zamtubeWidth
+#define DISTRHO_UI_DEFAULT_HEIGHT      ZamTubeArtwork::zamtubeHeight
 
 #define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZamTube"
 #define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:DistortionPlugin"

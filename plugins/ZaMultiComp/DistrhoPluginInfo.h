@@ -18,6 +18,8 @@
 #ifndef DISTRHO_PLUGIN_INFO_H_INCLUDED
 #define DISTRHO_PLUGIN_INFO_H_INCLUDED
 
+#include "ZaMultiCompArtwork.hpp"
+
 #define DISTRHO_PLUGIN_BRAND "ZamAudio"
 #define DISTRHO_PLUGIN_NAME  "ZaMultiComp"
 
@@ -32,6 +34,9 @@
 #define DISTRHO_PLUGIN_WANT_STATE      0
 #define DISTRHO_PLUGIN_WANT_TIMEPOS    0
 #define DISTRHO_PLUGIN_IS_RT_SAFE      1
+
+#define DISTRHO_UI_DEFAULT_WIDTH       ZaMultiCompArtwork::zamulticompWidth
+#define DISTRHO_UI_DEFAULT_HEIGHT      ZaMultiCompArtwork::zamulticompHeight
 
 #define DISTRHO_PLUGIN_URI             "urn:zamaudio:ZaMultiComp"
 #define DISTRHO_PLUGIN_LV2_CATEGORY    "lv2:DynamicsPlugin"

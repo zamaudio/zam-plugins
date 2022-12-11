@@ -25,10 +25,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamDelayUI::ZamDelayUI()
-    : UI()
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
-    setSize(ZamDelayArtwork::zamdelayWidth, ZamDelayArtwork::zamdelayHeight);
-
     //fNanoText.loadSharedResources();
     //font = fNanoText.findFont(NANOVG_DEJAVU_SANS_TTF);
 

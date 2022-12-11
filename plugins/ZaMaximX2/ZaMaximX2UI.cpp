@@ -25,10 +25,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZaMaximX2UI::ZaMaximX2UI()
-    : UI()
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
-    setSize(ZaMaximX2Artwork::zamaximx2Width, ZaMaximX2Artwork::zamaximx2Height);
-
     // background
     fImgBackground = Image(ZaMaximX2Artwork::zamaximx2Data, ZaMaximX2Artwork::zamaximx2Width, ZaMaximX2Artwork::zamaximx2Height, kImageFormatBGR);
 

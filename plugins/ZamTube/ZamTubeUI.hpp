@@ -22,8 +22,6 @@
 #include "ImageWidgets.hpp"
 #include "../../widgets/ZamWidgets.hpp"
 
-#include "ZamTubeArtwork.hpp"
-
 using DGL::Image;
 using DGL::ZamKnob;
 using DGL::ImageSlider;

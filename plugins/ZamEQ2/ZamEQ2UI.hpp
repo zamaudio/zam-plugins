@@ -22,7 +22,6 @@
 #include "ImageWidgets.hpp"
 #include "../../widgets/ZamWidgets.hpp"
 
-#include "ZamEQ2Artwork.hpp"
 #include "ZamEQ2Plugin.hpp"
 
 #define EQPOINTS 1000
