@@ -1,4 +1,4 @@
-zam-plugins [![travis](https://travis-ci.org/zamaudio/zam-plugins.svg?branch=master)](https://travis-ci.org/zamaudio/zam-plugins)
+zam-plugins ![build](https://github.com/zamaudio/zam-plugins/actions/workflows/build.yml/badge.svg)
 ===========
 
 Collection of LV2/LADSPA/VST/JACK audio plugins for high quality processing
@@ -19,17 +19,9 @@ Build Dependencies:
 Bleeding edge installation:
 ===========================
 
-	git submodule update --init
+	git submodule update --init --recursive
 	make
 	sudo make install
-
-
-Cross-compiling with docker:
-============================
-
-	# Make sure docker is installed and configured
-	git submodule update --init
-	./make-all
 
 
 Package Maintainers:
