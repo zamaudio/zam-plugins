@@ -198,7 +198,7 @@ void ZaMultiCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 30.0f;
         break;
     case paramGainR1:
-        parameter.hints      = kParameterIsOutput;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 1";
         parameter.symbol     = "gr1";
         parameter.unit       = "dB";
@@ -207,7 +207,7 @@ void ZaMultiCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramGainR2:
-        parameter.hints      = kParameterIsOutput;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 2";
         parameter.symbol     = "gr2";
         parameter.unit       = "dB";
@@ -216,7 +216,7 @@ void ZaMultiCompX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 20.0f;
         break;
     case paramGainR3:
-        parameter.hints      = kParameterIsOutput;
+        parameter.hints      = kParameterIsAutomatable | kParameterIsOutput;
         parameter.name       = "Gain Reduction 3";
         parameter.symbol     = "gr3";
         parameter.unit       = "dB";

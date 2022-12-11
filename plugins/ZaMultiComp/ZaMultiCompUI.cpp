@@ -620,10 +620,6 @@ void ZaMultiCompUI::programLoaded(uint32_t index)
 	}
 }
 
-void ZaMultiCompUI::stateChanged(const char*, const char*)
-{
-}
-
 // -----------------------------------------------------------------------
 // Widget Callbacks
 
@@ -824,8 +820,6 @@ void ZaMultiCompUI::onDisplay()
 {
     const GraphicsContext& context(getGraphicsContext());
     fImgBackground.draw(context);
-
-    setState("stateMeterReset", "");
 
     // draw leds
     static const float sLedSpacing  = 15.3f;
