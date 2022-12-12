@@ -26,9 +26,10 @@ ZamVerbPlugin::ZamVerbPlugin()
 {
     signal = false;
     swap = 0;
-    clv[swap] = new LV2convolv();
-    clv[swap]->clv_configure("convolution.ir.preset", "0");
-    clv[swap]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+    active = 0;
+    clv[0] = new LV2convolv();
+    clv[0]->clv_configure("convolution.ir.preset", "0");
+    clv[0]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
 
     clv[1] = new LV2convolv();
     clv[1]->clv_configure("convolution.ir.preset", "0");
@@ -36,13 +37,13 @@ ZamVerbPlugin::ZamVerbPlugin()
 
     // Extra buffer for outputs since plugin can work in place
     tmpouts = (float **)malloc (2 * sizeof(float*));
-    tmpouts[0] = (float *)malloc (8192 * sizeof(float));
-    tmpouts[1] = (float *)malloc (8192 * sizeof(float));
+    tmpouts[0] = (float *)calloc (1, 8192 * sizeof(float));
+    tmpouts[1] = (float *)calloc (1, 8192 * sizeof(float));
 
     // Extra buffer for inputs since convolve might clobber ins
     tmpins = (float **)malloc (2 * sizeof(float*));
-    tmpins[0] = (float *)malloc (8192 * sizeof(float));
-    tmpins[1] = (float *)malloc (8192 * sizeof(float));
+    tmpins[0] = (float *)calloc (1, 8192 * sizeof(float));
+    tmpins[1] = (float *)calloc (1, 8192 * sizeof(float));
 
     // set default values
     loadProgram(0);
