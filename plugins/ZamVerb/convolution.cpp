@@ -109,6 +109,7 @@ int LV2convolv::resample_read_presets (const float *in, unsigned int in_frames, 
 					src_data.output_frames_gen * PRESETS_CH);
 			if (n_sp) *n_sp = (unsigned int) src_data.output_frames_gen;
 			free(iin);
+			src_delete (src_state);
 		}
 	}
 	return (0);
