@@ -193,10 +193,12 @@ void ZamVerbPlugin::setState(const char* key, const char*)
 	if (strcmp(key, "reload") == 0) {
 		snprintf(preset, 2, "%d", (int)room);
 		other = !active;
+		signal = false;
 		clv[other]->clv_release();
 		clv[other]->clv_configure("convolution.ir.preset", preset);
 		clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
 		swap = other;
+		signal = true;
 	}
 }
 

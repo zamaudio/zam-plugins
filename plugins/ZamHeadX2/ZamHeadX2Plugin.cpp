@@ -209,10 +209,12 @@ void ZamHeadX2Plugin::setState(const char* key, const char*)
 		snprintf(azim, 3, "%d", az);
 		if ((az != azold) || (el != elold)) {
 			other = !active;
+			signal = false;
 			clv[other]->clv_release();
 			clv[other]->clv_configure("convolution.ir.preset", elev, azim);
 			clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
 			swap = other;
+			signal = true;
 		}
 		azold = az;
 		elold = el;
