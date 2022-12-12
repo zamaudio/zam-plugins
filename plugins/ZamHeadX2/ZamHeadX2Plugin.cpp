@@ -27,7 +27,7 @@ ZamHeadX2Plugin::ZamHeadX2Plugin()
 {
     signal = false;
     swap = 0;
-    active = 1;
+    active = 0;
     azold = 0;
     elold = 0;
     clv[swap] = new LV2convolv();
