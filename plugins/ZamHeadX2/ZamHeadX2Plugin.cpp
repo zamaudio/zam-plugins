@@ -23,7 +23,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamHeadX2Plugin::ZamHeadX2Plugin()
-    : Plugin(paramCount, 1, 1)
+    : Plugin(paramCount, 1, 0)
 {
     signal = false;
     swap = 0;
@@ -133,13 +133,10 @@ float ZamHeadX2Plugin::getParameterValue(uint32_t index) const
     {
     case paramAzimuth:
         return azimuth;
-        break;
     case paramElevation:
         return elevation;
-        break;
     case paramWidth:
         return width;
-        break;
     }
     return 0.f;
 }
@@ -150,11 +147,11 @@ void ZamHeadX2Plugin::setParameterValue(uint32_t index, float value)
     {
     case paramAzimuth:
         azimuth = value;
-	setState("reload", "");
+        reload();
         break;
     case paramElevation:
         elevation = value;
-	setState("reload", "");
+        reload();
         break;
     case paramWidth:
         width = value;
@@ -167,7 +164,7 @@ void ZamHeadX2Plugin::setParameterValue(uint32_t index, float value)
 
 void ZamHeadX2Plugin::activate()
 {
-	setState("reload", "");
+	reload();
 	signal = true;
 }
 
@@ -176,49 +173,34 @@ void ZamHeadX2Plugin::deactivate()
 	signal = false;
 }
 
-String ZamHeadX2Plugin::getState(const char*) const
+void ZamHeadX2Plugin::reload()
 {
-	return String("");
-}
+    uint8_t other = 0;
+    char elev[4] = { 0 };
+    char azim[4] = { 0 };
+    int az = 0;
+    int el = 0;
 
-void ZamHeadX2Plugin::initState(unsigned int index, String& key, String& defval)
-{
-	if (index == 0) {
-		key = String("reload");
-	}
-	defval = String("");
-}
-
-void ZamHeadX2Plugin::setState(const char* key, const char*)
-{
-	uint8_t other = 0;
-	char elev[4] = { 0 };
-	char azim[4] = { 0 };
-	int az = 0;
-	int el = 0;
-
-	if (strcmp(key, "reload") == 0) {
-		el = (int)((elevation + 45.) * 24. / 135.);
-		if (el >= 24) el = 24;
-		if (el < 0) el = 0;
-		az = (int)((azimuth + 90.) * 49. / 360.);
-		if (az >= 49) az = 49;
-		if (az < 0) az = 0;
-		if (az > 24) az = 49 - az;
-		snprintf(elev, 3, "%d", el);
-		snprintf(azim, 3, "%d", az);
-		if ((az != azold) || (el != elold)) {
-			other = !active;
-			signal = false;
-			clv[other]->clv_release();
-			clv[other]->clv_configure("convolution.ir.preset", elev, azim);
-			clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
-			swap = other;
-			signal = true;
-		}
-		azold = az;
-		elold = el;
-	}
+    el = (int)((elevation + 45.) * 24. / 135.);
+    if (el >= 24) el = 24;
+    if (el < 0) el = 0;
+    az = (int)((azimuth + 90.) * 49. / 360.);
+    if (az >= 49) az = 49;
+    if (az < 0) az = 0;
+    if (az > 24) az = 49 - az;
+    snprintf(elev, 3, "%d", el);
+    snprintf(azim, 3, "%d", az);
+    if ((az != azold) || (el != elold)) {
+        other = !active;
+        signal = false;
+        clv[other]->clv_release();
+        clv[other]->clv_configure("convolution.ir.preset", elev, azim);
+        clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+        swap = other;
+        signal = true;
+    }
+    azold = az;
+    elold = el;
 }
 
 

@@ -51,8 +51,6 @@ protected:
 
     void onDisplay() override;
 
-    void stateChanged(const char*, const char*) override;
-
 private:
     Image fImgBackground;
     ScopedPointer<ZamKnob> fKnobAzimuth, fKnobElevation, fKnobWidth;

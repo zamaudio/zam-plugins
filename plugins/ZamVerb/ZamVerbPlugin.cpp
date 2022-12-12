@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamVerbPlugin::ZamVerbPlugin()
-    : Plugin(paramCount, 1, 1) // 1 program, 1 states
+    : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
     signal = false;
     swap = 0;
@@ -89,7 +89,7 @@ void ZamVerbPlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.max = 100.f;
         break;
     case paramRoom:
-        parameter.hints      = kParameterIsAutomatable | kParameterIsInteger;
+        parameter.hints      = kParameterIsInteger;
         parameter.name       = "Room";
         parameter.symbol     = "room";
         parameter.unit       = " ";
@@ -141,7 +141,7 @@ void ZamVerbPlugin::setParameterValue(uint32_t index, float value)
         break;
     case paramRoom:
         room = value;
-        setState("reload", "");
+        reload();
         break;
     }
 }
@@ -164,7 +164,7 @@ void ZamVerbPlugin::loadProgram(uint32_t index)
 
 void ZamVerbPlugin::activate()
 {
-	setState("reload", "");
+	reload();
 	signal = true;
 }
 
@@ -173,34 +173,19 @@ void ZamVerbPlugin::deactivate()
 	signal = false;
 }
 
-String ZamVerbPlugin::getState(const char*) const
-{
-	return String("");
-}
-
-void ZamVerbPlugin::initState(unsigned int index, String& key, String& defval)
-{
-	if (index == 0) {
-		key = String("reload");
-	}
-	defval = String("");
-}
-
-void ZamVerbPlugin::setState(const char* key, const char*)
+void ZamVerbPlugin::reload()
 {
 	uint8_t other;
 	char preset[2] = { 0 };
 
-	if (strcmp(key, "reload") == 0) {
-		snprintf(preset, 2, "%d", (int)room);
-		other = !active;
-		signal = false;
-		clv[other]->clv_release();
-		clv[other]->clv_configure("convolution.ir.preset", preset);
-		clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
-		swap = other;
-		signal = true;
-	}
+	snprintf(preset, 2, "%d", (int)room);
+	other = !active;
+	signal = false;
+	clv[other]->clv_release();
+	clv[other]->clv_configure("convolution.ir.preset", preset);
+	clv[other]->clv_initialize(getSampleRate(), 2, 2, getBufferSize());
+	swap = other;
+	signal = true;
 }
 
 void ZamVerbPlugin::run(const float** inputs, float** outputs, uint32_t frames)

@@ -89,9 +89,7 @@ protected:
     void  setParameterValue(uint32_t index, float value) override;
     void  loadProgram(uint32_t index);
 
-    String getState(const char*) const override;
-    void initState(unsigned int index, String& key, String& defval) override;
-    void setState(const char* key, const char*) override;
+    void reload();
 
     // -------------------------------------------------------------------
     // Process

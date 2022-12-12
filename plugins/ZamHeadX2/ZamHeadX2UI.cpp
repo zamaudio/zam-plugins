@@ -120,10 +120,6 @@ void ZamHeadX2UI::onDisplay()
     fImgBackground.draw(context);
 }
 
-void ZamHeadX2UI::stateChanged(const char*, const char*)
-{
-}
-
 // -----------------------------------------------------------------------
 
 UI* createUI()
