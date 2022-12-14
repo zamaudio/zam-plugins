@@ -212,8 +212,10 @@ void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	active = swap;
 
 	if (!signal) {
-		memcpy(outputs[0], inputs[0], frames * sizeof(float));
-		memcpy(outputs[1], inputs[1], frames * sizeof(float));
+		if (outputs[0] != inputs[0])
+			memcpy(outputs[0], inputs[0], frames * sizeof(float));
+		if (outputs[1] != inputs[1])
+			memcpy(outputs[1], inputs[1], frames * sizeof(float));
 		return;
 	}
 
@@ -227,8 +229,10 @@ void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
  
 	nprocessed = clv[active]->clv_convolve(tmpins, tmpouts, 2, 2, frames, from_dB(6.0));
 	if (nprocessed <= 0) {
-		memcpy(outputs[0], inputs[0], frames * sizeof(float));
-		memcpy(outputs[1], inputs[1], frames * sizeof(float));
+		if (outputs[0] != inputs[0])
+			memcpy(outputs[0], inputs[0], frames * sizeof(float));
+		if (outputs[1] != inputs[1])
+			memcpy(outputs[1], inputs[1], frames * sizeof(float));
 	} else {
 		memcpy(outputs[0], tmpouts[0], frames * sizeof(float));
 		memcpy(outputs[1], tmpouts[1], frames * sizeof(float));

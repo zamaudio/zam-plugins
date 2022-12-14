@@ -196,8 +196,10 @@ void ZamVerbPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float _wetdry = 0.01f * wetdry;
 
 	if (!signal) {
-		memcpy(outputs[0], inputs[0], frames * sizeof(float));
-		memcpy(outputs[1], inputs[1], frames * sizeof(float));
+		if (outputs[0] != inputs[0])
+			memcpy(outputs[0], inputs[0], frames * sizeof(float));
+		if (outputs[1] != inputs[1])
+			memcpy(outputs[1], inputs[1], frames * sizeof(float));
 		return;
 	}
 
@@ -206,8 +208,10 @@ void ZamVerbPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	memcpy(tmpins[1], inputs[1], frames * sizeof(float));
 	nprocessed = clv[active]->clv_convolve(tmpins, tmpouts, 2, 2, frames, from_dB(-16.f));
 	if (nprocessed <= 0) {
-		memcpy(outputs[0], inputs[0], frames * sizeof(float));
-		memcpy(outputs[1], inputs[1], frames * sizeof(float));
+		if (outputs[0] != inputs[0])
+			memcpy(outputs[0], inputs[0], frames * sizeof(float));
+		if (outputs[1] != inputs[1])
+			memcpy(outputs[1], inputs[1], frames * sizeof(float));
 	} else {
 		for (i = 0; i < frames; i++) {
 			outputs[0][i] = (_wetdry * tmpouts[0][i] + (1.f - _wetdry) * inputs[0][i]) * from_dB(master);
