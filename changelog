@@ -1,3 +1,10 @@
+4.0 Gratis and Free
+	- Thanks to falktx for porting to latest DPF
+	- All binaries available gratis for all operating systems
+	- Source code still Free
+	- Fixed a number of uninitialised value bugs
+	- With new DPF comes CLAP and VST3 versions
+
 3.14 ZamTube DSP overhaul
 	- Thanks to oid on #opensourcemusicians!
 	- Released together with guitarix V0.42.0 tube improvements
