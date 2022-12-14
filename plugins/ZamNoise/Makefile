@@ -25,6 +25,9 @@ FILES_UI  = \
 
 include ../../dpf/Makefile.plugins.mk
 
+BASE_FLAGS += $(shell pkg-config --cflags fftw3f)
+LINK_FLAGS += $(shell pkg-config --libs fftw3f)
+
 # --------------------------------------------------------------
 # Enable all possible plugin types
 
@@ -33,6 +36,7 @@ TARGETS += ladspa
 TARGETS += lv2_sep
 TARGETS += vst2
 TARGETS += vst3
+TARGETS += clap
 
 all: $(TARGETS)
 

@@ -23,10 +23,8 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamNoiseUI::ZamNoiseUI()
-    : UI()
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
-    setSize(ZamNoiseArtwork::zamnoiseWidth,  ZamNoiseArtwork::zamnoiseHeight);
-
     // background
     fImgBackground = Image(ZamNoiseArtwork::zamnoiseData, ZamNoiseArtwork::zamnoiseWidth, ZamNoiseArtwork::zamnoiseHeight, kImageFormatBGR);
 
@@ -35,10 +33,11 @@ ZamNoiseUI::ZamNoiseUI()
     Image toggleoffImage(ZamNoiseArtwork::toggleoffData, ZamNoiseArtwork::toggleoffWidth, ZamNoiseArtwork::toggleoffHeight);
 
     // toggle
-    fToggleNoise = new ImageToggle(this, toggleonImage, toggleoffImage);
+    fToggleNoise = new ImageButton(this, toggleonImage, toggleoffImage);
     fToggleNoise->setAbsolutePos(30, 30);
     fToggleNoise->setCallback(this);
-    fToggleNoise->setValue(0.f);
+    fToggleNoise->setCheckable(true);
+    fToggleNoise->setChecked(false, false);
 
     programLoaded(0);
 }
@@ -52,12 +51,12 @@ ZamNoiseUI::~ZamNoiseUI()
 
 void ZamNoiseUI::parameterChanged(uint32_t index, float value)
 {
-        switch (index)
-        {
-        case ZamNoisePlugin::paramNoiseToggle:
-                fToggleNoise->setValue(value);
-                break;
-        }
+    switch (index)
+    {
+    case ZamNoisePlugin::paramNoiseToggle:
+        fToggleNoise->setChecked(value > 0.5f, false);
+        break;
+    }
 }
 
 
@@ -66,14 +65,12 @@ void ZamNoiseUI::programLoaded(uint32_t index)
     if (index != 0)
         return;
 
-    fToggleNoise->setValue(0.0f);
+    fToggleNoise->setChecked(false, false);
 }
 
-void ZamNoiseUI::imageToggleClicked(ImageToggle*, int)
+void ZamNoiseUI::imageButtonClicked(ImageButton*, int)
 {
-        float toggle = fToggleNoise->getValue();
-        fToggleNoise->setValue(toggle);
-        setParameterValue(ZamNoisePlugin::paramNoiseToggle, toggle);
+    setParameterValue(ZamNoisePlugin::paramNoiseToggle, fToggleNoise->isChecked() ? 1.f : 0.f);
 }
 
 
@@ -81,7 +78,8 @@ void ZamNoiseUI::imageToggleClicked(ImageToggle*, int)
 
 void ZamNoiseUI::onDisplay()
 {
-    fImgBackground.draw();
+    const GraphicsContext& context(getGraphicsContext());
+    fImgBackground.draw(context);
 }
 
 // -----------------------------------------------------------------------

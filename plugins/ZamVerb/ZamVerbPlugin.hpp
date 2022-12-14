@@ -114,6 +114,8 @@ protected:
     void activate() override;
     void deactivate() override;
     void run(const float** inputs, float** outputs, uint32_t frames) override;
+    void bufferSizeChanged(uint32_t newBufferSize) override;
+    void sampleRateChanged(double newSampleRate) override;
 
     LV2convolv *clv[2];
     int8_t swap;

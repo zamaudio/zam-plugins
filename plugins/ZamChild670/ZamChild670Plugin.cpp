@@ -197,6 +197,13 @@ void ZamChild670Plugin::run(const float** inputs, float** outputs, uint32_t fram
 	
 	zamchild->process(inputs, outputs, (ulong)frames);
 }
+
+void ZamChild670Plugin::sampleRateChanged(double newSampleRate)
+{
+	delete zamchild;
+	zamchild = new Wavechild670(newSampleRate, *params);
+}
+
 // -----------------------------------------------------------------------
 
 Plugin* createPlugin()

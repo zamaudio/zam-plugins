@@ -216,6 +216,16 @@ void ZamVerbPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	}
 }
 
+void ZamVerbPlugin::bufferSizeChanged(uint32_t)
+{
+	reload();
+}
+
+void ZamVerbPlugin::sampleRateChanged(double)
+{
+	reload();
+}
+
 // -----------------------------------------------------------------------
 
 Plugin* createPlugin()

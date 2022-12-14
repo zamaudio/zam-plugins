@@ -42,6 +42,7 @@ ZamSynthPlugin::ZamSynthPlugin()
 
     curvoice = voice; //ptr to first voice
 
+    // TODO dynamic sample rate changes, while preserving user settings
     for (int i = 0; i < AREAHEIGHT; i++) {
         wave_y[i] = sin(i*2.*M_PI/getSampleRate());//*1000
     }
@@ -306,6 +307,10 @@ void ZamSynthPlugin::run(const float**, float** outputs, uint32_t frames,
 			outputs[1][i] = 0.f;
 		}
 	}
+}
+
+void ZamSynthPlugin::sampleRateChanged(double newSampleRate)
+{
 }
 
 // -----------------------------------------------------------------------

@@ -670,11 +670,6 @@ void ZamGEQ31Plugin::loadProgram(uint32_t index)
     omegaU[28] = 22400.;
 
     master = 0.f;
-    float srate = getSampleRate();
-    for (i = 0; i < 29; ++i) {
-        geq(i, srate, 0.);
-        gainold[i] = 0.;
-    }
 
     /* reset filter values */
     activate();
@@ -686,6 +681,11 @@ void ZamGEQ31Plugin::loadProgram(uint32_t index)
 void ZamGEQ31Plugin::activate()
 {
     int i, j;
+    float srate = getSampleRate();
+    for (i = 0; i < 29; ++i) {
+        geq(i, srate, gain[i]);
+        gainold[i] = gain[i];
+    }
     for (i = 0; i < 29; i++) {
         for (j = 0; j < 21; j++) {
             w11[i][j] = 0.;

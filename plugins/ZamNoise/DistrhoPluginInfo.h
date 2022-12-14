@@ -18,6 +18,8 @@
 #ifndef DISTRHO_PLUGIN_INFO_H_INCLUDED
 #define DISTRHO_PLUGIN_INFO_H_INCLUDED
 
+#include "ZamNoiseArtwork.hpp"
+
 #define DISTRHO_PLUGIN_BRAND "ZamAudio"
 #define DISTRHO_PLUGIN_NAME  "ZamNoise"
 
@@ -32,6 +34,10 @@
 #define DISTRHO_PLUGIN_WANT_STATE    0
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
 
-#define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamNoise"
+#define DISTRHO_UI_DEFAULT_WIDTH     ZamNoiseArtwork::zamnoiseWidth
+#define DISTRHO_UI_DEFAULT_HEIGHT    ZamNoiseArtwork::zamnoiseHeight
+
+#define DISTRHO_PLUGIN_URI     "urn:zamaudio:ZamNoise"
+#define DISTRHO_PLUGIN_CLAP_ID "com.zamaudio.ZamNoise"
 
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

@@ -139,6 +139,14 @@ void ZamNoisePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	zamnoise->process(inputs[0], outputs[0], buffer.cbi, frames, (int)noisetoggle);
 }
 
+void ZamNoisePlugin::sampleRateChanged(double newSampleRate)
+{
+	free(buffer.cbi);
+	delete zamnoise;
+	ZamNoisePlugin::init(newSampleRate);
+	zamnoise = new Denoise(newSampleRate);
+}
+
 // -----------------------------------------------------------------------
 
 Plugin* createPlugin()

@@ -343,6 +343,11 @@ void ZamSFZPlugin::run(const float**, float** outputs, uint32_t frames,
   }
 }
 
+void ZamSFZPlugin::sampleRateChanged(double newSampleRate)
+{
+    // TODO reload file when sample rate changes
+}
+
 // -----------------------------------------------------------------------
 
 Plugin* createPlugin()

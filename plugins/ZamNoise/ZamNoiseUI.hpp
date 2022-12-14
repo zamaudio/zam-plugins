@@ -21,20 +21,19 @@
 #include "DistrhoUI.hpp"
 
 #include "Image.hpp"
-#include "ImageToggle.hpp"
+#include "ImageWidgets.hpp"
 
-#include "ZamNoiseArtwork.hpp"
 #include "ZamNoisePlugin.hpp"
 
 using DGL::Image;
-using DGL::ImageToggle;
+using DGL::ImageButton;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZamNoiseUI : public UI,
-		public ImageToggle::Callback
+		public ImageButton::Callback
 {
 public:
     ZamNoiseUI();
@@ -49,13 +48,13 @@ protected:
 
     // -------------------------------------------------------------------
 
-    void imageToggleClicked(ImageToggle* imageToggle, int button) override;
+    void imageButtonClicked(ImageButton* imageButton, int button) override;
 
     void onDisplay() override;
 
 private:
     Image fImgBackground;
-    ScopedPointer<ImageToggle> fToggleNoise;
+    ScopedPointer<ImageButton> fToggleNoise;
 };
 
 // -----------------------------------------------------------------------

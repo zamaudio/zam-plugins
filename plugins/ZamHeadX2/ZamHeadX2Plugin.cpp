@@ -235,6 +235,16 @@ void ZamHeadX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	}
 }
 
+void ZamHeadX2Plugin::bufferSizeChanged(uint32_t)
+{
+	reload();
+}
+
+void ZamHeadX2Plugin::sampleRateChanged(double)
+{
+	reload();
+}
+
 // -----------------------------------------------------------------------
 
 Plugin* createPlugin()

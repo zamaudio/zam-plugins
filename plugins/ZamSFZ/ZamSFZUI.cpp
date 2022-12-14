@@ -125,11 +125,11 @@ void ZamSFZUI::imageKnobValueChanged(ZamKnob* knob, float value)
 
 void ZamSFZUI::imageButtonClicked(ImageButton*, int)
 {
-    DGL::Window::FileBrowserOptions opts;
+    FileBrowserOptions opts;
     opts.title = "Load SFZ";
     //opts.filters = "sfz;";
 
-    getParentWindow().openFileBrowser(opts);
+    openFileBrowser(opts);
 }
 
 void ZamSFZUI::imageSwitchClicked(ImageSwitch*, bool state)
@@ -140,8 +140,10 @@ void ZamSFZUI::imageSwitchClicked(ImageSwitch*, bool state)
 
 void ZamSFZUI::onDisplay()
 {
-	fImgBackground.draw();
+	const GraphicsContext& context(getGraphicsContext());
+	fImgBackground.draw(context);
 }
+
 // -----------------------------------------------------------------------
 
 UI* createUI()
