@@ -21,9 +21,6 @@ endif
 
 gen: $(PLUGINS) dpf/utils/lv2_ttl_generator
 	@$(CURDIR)/dpf/utils/generate-ttl.sh
-ifeq ($(MACOS),true)
-	@$(CURDIR)/dpf/utils/generate-vst-bundles.sh
-endif
 
 dpf/utils/lv2_ttl_generator:
 	$(MAKE) -C dpf/utils/lv2-ttl-generator
@@ -37,25 +34,29 @@ install: all
 	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa \
 		$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2 \
 		$(DESTDIR)$(PREFIX)/$(LIBDIR)/vst \
-		$(DESTDIR)$(PREFIX)/$(BINDIR) ; \
+		$(DESTDIR)$(PREFIX)/$(LIBDIR)/vst3 \
+		$(DESTDIR)$(PREFIX)/$(LIBDIR)/clap \
+		$(DESTDIR)$(PREFIX)/$(BINDIR)
 	for plugin in $(PLUGINS); do \
 		install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
-		install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 \
-			bin/"$$plugin".lv2/* ; \
+		install -m 644 bin/"$$plugin".lv2/* \
+			$(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2/ ; \
+		cp -r bin/"$$plugin".vst3 $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst3/ ; \
 	done;
-ifeq ($(HAVE_JACK),true)
 	for plugin in $(PLUGINS); do \
-		install -t $(DESTDIR)$(PREFIX)/$(BINDIR) bin/"$$plugin" ; \
+		install -m 755 bin/"$$plugin"$(APP_EXT) $(DESTDIR)$(PREFIX)/$(BINDIR)/ ; \
 	done;
-endif
-	install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa bin/*-ladspa.so
-	install -t $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst bin/*-vst.so
+	install -m 644 bin/*-ladspa$(LIB_EXT) $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/
+	install -m 644 bin/*-vst$(LIB_EXT) $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst/
+	install -m 644 bin/*.clap $(DESTDIR)$(PREFIX)/$(LIBDIR)/clap/
 
 uninstall:
 	for plugin in $(PLUGINS); do \
 		rm -rf $(DESTDIR)$(PREFIX)/$(LIBDIR)/lv2/"$$plugin".lv2 ; \
-		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa.so ; \
-		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst/"$$plugin"-vst.so ; \
+		rm -rf $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst3/"$$plugin".vst3 ; \
+		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/ladspa/"$$plugin"-ladspa$(LIB_EXT) ; \
+		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst/"$$plugin"-vst$(LIB_EXT) ; \
+		rm -f $(DESTDIR)$(PREFIX)/$(LIBDIR)/vst/"$$plugin".clap ; \
 		rm -f $(DESTDIR)$(PREFIX)/$(BINDIR)/"$$plugin" ; \
 	done
 
