@@ -1,3 +1,8 @@
+4.1 Patch release
+	- Install CLAP and VST3 versions
+	- Makefile tweaks
+	- Fix inline processing
+
 4.0 Gratis and Free
 	- Thanks to falktx for porting to latest DPF
 	- All binaries available gratis for all operating systems
