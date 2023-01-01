@@ -926,6 +926,8 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
         int listen2 = (listen[1] > 0.5f) ? 1 : 0;
         int listen3 = (listen[2] > 0.5f) ? 1 : 0;
 
+	int stereolink = (stereodet > 0.5f) ? STEREOLINK_MAX : STEREOLINK_AVERAGE;
+
         if (oldxover1 != xover1) {
 		calc_lr4(xover1, 0);
 		calc_lr4(xover1, 1);
@@ -939,6 +941,8 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 	}
 
         for (i = 0; i < frames; ++i) {
+		float left = 0.f;
+		float right = 0.f;
 		float inl = sanitize_denormal(inputs[0][i]);
 		float inr = sanitize_denormal(inputs[1][i]);
 		inl = (fabsf(inl) < DANGER) ? inl : 0.f;
@@ -982,10 +986,18 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 		outputs[0][i] = outputs[1][i] = 0.f;
 		if (listen1) {
 			listenmode = 1;
-			outputs[0][i] += outL[0] * tog1*from_dB(makeup[0])
+			left += outL[0] * tog1*from_dB(makeup[0])
 					+ (1.-tog1) * tmp1[0];
-			outputs[1][i] += outR[0] * tog1*from_dB(makeup[0])
+			right += outR[0] * tog1*from_dB(makeup[0])
 					+ (1.-tog1) * tmp1[1];
+
+			if (stereolink == STEREOLINK_AVERAGE) {
+				outputs[0][i] += (left + right) / 2.f;
+				outputs[1][i] += outputs[0][i];
+			} else {
+				outputs[0][i] += left;
+				outputs[1][i] += right;
+			}
 		}
 		if (listen2) {
 			listenmode = 1;
@@ -1002,9 +1014,17 @@ void ZaMultiCompX2Plugin::run(const float** inputs, float** outputs, uint32_t fr
 					+ (1.-tog3) * tmp3[1];
 		}
 		if (!listenmode) {
-			outputs[0][i] = tmp1[0] + tmp2[0] + tmp3[0];
-			outputs[1][i] = tmp1[1] + tmp2[1] + tmp3[1];
+			outputs[0][i] = tmp2[0] + tmp3[0];
+			outputs[1][i] = tmp2[1] + tmp3[1];
+			if (stereolink == STEREOLINK_AVERAGE) {
+				outputs[0][i] += (tmp1[0] + tmp1[1]) / 2.f;
+				outputs[1][i] += (tmp1[0] + tmp1[1]) / 2.f;
+			} else {
+				outputs[0][i] += tmp1[0];
+				outputs[1][i] += tmp1[1];
+			}
 		}
+
                 outputs[0][i] = sanitize_denormal(outputs[0][i]);
                 outputs[1][i] = sanitize_denormal(outputs[1][i]);
                 outputs[0][i] *= from_dB(globalgain);
