@@ -409,10 +409,10 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	const uint8_t stack = (uint8_t)tonestack > 24 ? 24 : (uint8_t)tonestack;
 	
 	float tubeout = 0.f;
+	float scaled_drive = (tubedrive - 0.1) / 10.9;
 
-	float cut = 15.;
-	float pregain = from_dB(tubedrive*3.6364 - cut + mastergain);
-	float postgain = from_dB(cut + 42. * (1. - log1p(tubedrive/11.)));
+	float pregain = from_dB(scaled_drive * 20.);
+	float postgain = from_dB(mastergain - 6.) * 0.01;
 
 	if ((tonestackold != stack) || (bassold != bass) ||
 	    (middleold != middle) || (trebleold != treble)) {
@@ -435,7 +435,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		//Step 1: read input sample as voltage for the source
 		float in = inputs[0][i] * pregain;
 
-		tubeout = ckt.run(in) * postgain / 10000.;
+		tubeout = ckt.run(in) * postgain;
 
 		//Tone Stack (post tube)
 		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
