@@ -334,7 +334,10 @@ void ZamTubePlugin::activate()
 	ro[0] = 100e+3;
 	*/
 
-	ckt.updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], Fs);
+	ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], Fs);
+	ckt[1].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], Fs);
+	ckt[0].set_mode(ckt[0].TUBE_MODE_SIXTIES);
+	ckt[1].set_mode(ckt[1].TUBE_MODE_SIXTIES);
 
         fSamplingFreq = Fs;
 	
@@ -412,7 +415,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float scaled_drive = (tubedrive - 0.1) / 10.9;
 
 	float pregain = from_dB(scaled_drive * 20.);
-	float postgain = from_dB(mastergain - 6.) * 0.01;
+	float postgain = from_dB(mastergain - 48.);
 
 	if ((tonestackold != stack) || (bassold != bass) ||
 	    (middleold != middle) || (trebleold != treble)) {
@@ -425,9 +428,8 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 	if (insaneold != (int)insane) {
 		insaneold = (int)insane;
-		ckt.set_mode(insane > 0.5 ? ckt.TUBE_MODE_GRIDLEAK : ckt.TUBE_MODE_SIXTIES);
-		ckt.updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], getSampleRate());
-		ZamTubePlugin::deactivate();
+		ckt[0].set_mode(insane > 0.5 ? ckt[0].TUBE_MODE_GRIDLEAK : ckt[0].TUBE_MODE_SIXTIES);
+		ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], getSampleRate());
 	}
 
 	for (uint32_t i = 0; i < frames; ++i) {
@@ -435,11 +437,13 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		//Step 1: read input sample as voltage for the source
 		float in = inputs[0][i] * pregain;
 
-		tubeout = ckt.run(in) * postgain;
+		tubeout = ckt[0].run(in) * 0.01;
 
-		//Tone Stack (post tube)
+		//Tone Stack (sandwiched between two tube stages)
 		fRec0[0] = ((float)tubeout - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
-		outputs[0][i] = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
+		tubeout = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
+
+		outputs[0][i] = ckt[1].run(tubeout) * postgain;
 
 		// update filter states
 		fRec0[3] = fRec0[2];
