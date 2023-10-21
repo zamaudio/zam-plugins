@@ -334,10 +334,10 @@ void ZamTubePlugin::activate()
 	ro[0] = 100e+3;
 	*/
 
-	ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], Fs);
-	ckt[1].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], Fs);
 	ckt[0].set_mode(ckt[0].TUBE_MODE_SIXTIES);
 	ckt[1].set_mode(ckt[1].TUBE_MODE_SIXTIES);
+	ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], Fs);
+	ckt[1].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], Fs);
 
         fSamplingFreq = Fs;
 	
