@@ -137,7 +137,7 @@ public:
 	}
 
 	Real advanc_gridleak(Real ViE) {
-		ViE *= 0.05;
+		ViE *= 2.;
 		//Get Bs
 		//S2_3GetB
 		//P2_3GetB
@@ -182,13 +182,14 @@ public:
 		//P1_2SetA
 		//Call tube model
 		Vg = (-S1_3b3);
-		Real Vd = (Vk+Vg);
-		Real Rd = (Vd > 0.) ? 2.7e+3 : 100e+9;
+		Vk = (-P1_3b3);
+		Real Vd = Vk+Vg;
+		Real Rd = (Vd > 0.) ? 2.7e+2 : 100e+4;
+		Vk += (Vg / Rd);
 		Real b = -t.compute(S2_3b3, S2_3Gamma1, Vg, Vk);
-		Vk = -(P1_3b3 + Vd * S1_3Gamma1 / Rd);
 		//Set As
 		//S2_3SetA
-		Real S2_3b1 = P2_3b3 - S2_3Gamma1*(P2_3b3 - (Vk+Vg) + b);
+		Real S2_3b1 = P2_3b3 - S2_3Gamma1*(P2_3b3 - (Vk) + b);
 		//P2_3SetA
 		Real P2_3b1 = S2_3b1 + E500E - S3_3b3 - P2_3Gamma1*(E500E - S3_3b3);
 		//S3_3SetA
@@ -197,7 +198,7 @@ public:
 		Real S3_3b2 = Cob + P2_3b1 - S3_3Gamma1*(Cob + P2_3b1);
 		//RoSetA
 		Real Roa = S3_3b2;
-		Real S2_3b2 = P2_3b3 + b - S2_3Gamma1*(P2_3b3 - (Vk+Vg) + b);
+		Real S2_3b2 = P2_3b3 + b - S2_3Gamma1*(P2_3b3 - (Vk) + b);
 		//P1_3SetA
 		Real P1_3b1 = S2_3b2  - Ckb - P1_3Gamma1*(-Ckb);
 		Cka = P1_3b1;
