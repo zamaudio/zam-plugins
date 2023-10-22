@@ -137,7 +137,7 @@ public:
 	}
 
 	Real advanc_gridleak(Real ViE) {
-		ViE *= 2.;
+		ViE *= 2.5;
 		//Get Bs
 		//S2_3GetB
 		//P2_3GetB
