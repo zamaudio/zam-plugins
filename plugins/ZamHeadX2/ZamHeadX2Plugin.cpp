@@ -78,15 +78,15 @@ void ZamHeadX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "az";
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -90.0f;
-        parameter.ranges.max = 270.0f;
+        parameter.ranges.min = -120.0f;
+        parameter.ranges.max = 120.0f;
         break;
     case paramElevation:
         parameter.name       = "Elevation";
         parameter.symbol     = "elev";
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -45.0f;
+        parameter.ranges.min = -30.0f;
         parameter.ranges.max = 90.0f;
         break;
     case paramWidth:
@@ -181,13 +181,12 @@ void ZamHeadX2Plugin::reload()
     int az = 0;
     int el = 0;
 
-    el = (int)((elevation + 45.) * 24. / 135.);
-    if (el >= 24) el = 24;
+    el = (int)((elevation + 30.) * 49. / 120.);
+    if (el >= 49) el = 49;
     if (el < 0) el = 0;
-    az = (int)((azimuth + 90.) * 49. / 360.);
-    if (az >= 49) az = 49;
+    az = (int)((azimuth + 120.) * 24. / 240.);
+    if (az >= 24) az = 24;
     if (az < 0) az = 0;
-    if (az > 24) az = 49 - az;
     snprintf(elev, 3, "%d", el);
     snprintf(azim, 3, "%d", az);
     if ((az != azold) || (el != elold)) {
