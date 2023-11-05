@@ -1,3 +1,9 @@
+4.2 Bugfixes and DSP improvements
+	- ZamTube: Introduced both sides of 12AX7 valve emulation
+	  with tonestack sandwiched between the valves.
+	- ZamHeadX2: Fixed bug with wrong array dimensions.
+	- Updated DPF to fix VST2 param bug among other improvements.
+
 4.1 Patch release
 	- Install CLAP and VST3 versions
 	- Makefile tweaks

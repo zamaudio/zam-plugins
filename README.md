@@ -27,5 +27,5 @@ Bleeding edge installation:
 Package Maintainers:
 ====================
 
-	git checkout 4.1
+	git checkout 4.2
 	make dist

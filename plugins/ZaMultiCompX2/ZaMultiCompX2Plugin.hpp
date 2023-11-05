@@ -115,7 +115,7 @@ Stereo version of ZaMultiComp, with individual threshold controls for each band 
 
     uint32_t getVersion() const noexcept override
     {
-        return d_version(4, 1, 0);
+        return d_version(4, 2, 0);
     }
 
     int64_t getUniqueId() const noexcept override
