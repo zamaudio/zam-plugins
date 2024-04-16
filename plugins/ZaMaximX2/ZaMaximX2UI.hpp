@@ -54,7 +54,7 @@ protected:
 private:
     Image fImgBackground;
     ScopedPointer<ZamKnob> fKnobRelease, fKnobThresh;
-    ScopedPointer<ZamKnob> fKnobCeiling;
+    ScopedPointer<ZamKnob> fKnobGain;
 
     Image fLedRedImg;
     float fLedRedValue;

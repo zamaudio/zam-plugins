@@ -63,15 +63,15 @@ ZaMaximX2UI::ZaMaximX2UI()
     fKnobThresh->setRotationAngle(240);
     fKnobThresh->setCallback(this);
 
-    fKnobCeiling = new ZamKnob(this, knobImage);
-    fKnobCeiling->setAbsolutePos(192, 46);
-    fKnobCeiling->setId(ZaMaximX2Plugin::paramCeiling);
-    fKnobCeiling->setRange(-30.0f, 0.0f);
-    fKnobCeiling->setScrollStep(1.0f);
-    fKnobCeiling->setLabel(true);
-    fKnobCeiling->setDefault(0.0f);
-    fKnobCeiling->setRotationAngle(240);
-    fKnobCeiling->setCallback(this);
+    fKnobGain = new ZamKnob(this, knobImage);
+    fKnobGain->setAbsolutePos(192, 46);
+    fKnobGain->setId(ZaMaximX2Plugin::paramGain);
+    fKnobGain->setRange(-20.0f, 20.0f);
+    fKnobGain->setScrollStep(1.0f);
+    fKnobGain->setLabel(true);
+    fKnobGain->setDefault(0.0f);
+    fKnobGain->setRotationAngle(240);
+    fKnobGain->setCallback(this);
 
     // set default values
     programLoaded(0);
@@ -90,8 +90,8 @@ void ZaMaximX2UI::parameterChanged(uint32_t index, float value)
     case ZaMaximX2Plugin::paramThresh:
         fKnobThresh->setValue(value);
         break;
-    case ZaMaximX2Plugin::paramCeiling:
-        fKnobCeiling->setValue(value);
+    case ZaMaximX2Plugin::paramGain:
+        fKnobGain->setValue(value);
         break;
     case ZaMaximX2Plugin::paramGainRed:
         if (fLedRedValue != value)
@@ -114,9 +114,9 @@ void ZaMaximX2UI::programLoaded(uint32_t index)
 {
 	switch(index) {
 	case 0:
-		fKnobRelease->setValue(1.0f);
+		fKnobRelease->setValue(25.0f);
 		fKnobThresh->setValue(0.0f);
-		fKnobCeiling->setValue(-6.0f);
+		fKnobGain->setValue(0.0f);
 		break;
 	}
 }

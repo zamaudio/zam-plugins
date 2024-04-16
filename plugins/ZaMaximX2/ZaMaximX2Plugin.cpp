@@ -44,14 +44,14 @@ void ZaMaximX2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 1.0f;
         parameter.ranges.max = 100.0f;
         break;
-    case paramCeiling:
+    case paramGain:
         parameter.hints      = kParameterIsAutomatable;
-        parameter.name       = "Output Ceiling";
-        parameter.symbol     = "ceil";
+        parameter.name       = "Input Gain";
+        parameter.symbol     = "gain";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -30.0f;
-        parameter.ranges.max = 0.0f;
+        parameter.ranges.min = -20.0f;
+        parameter.ranges.max = 20.0f;
         break;
     case paramThresh:
         parameter.hints      = kParameterIsAutomatable;
@@ -98,7 +98,7 @@ void ZaMaximX2Plugin::loadProgram(uint32_t index)
 	switch(index) {
 	case 0:
 		release = 25.0;
-		ceiling = 0.0;
+		gain = 0.0;
 		thresdb = 0.0;
 		gainred = 0.0;
 		outlevel = -45.0;
@@ -121,8 +121,8 @@ float ZaMaximX2Plugin::getParameterValue(uint32_t index) const
     case paramThresh:
         return thresdb;
         break;
-    case paramCeiling:
-        return ceiling;
+    case paramGain:
+        return gain;
         break;
     case paramGainRed:
         return gainred;
@@ -145,8 +145,8 @@ void ZaMaximX2Plugin::setParameterValue(uint32_t index, float value)
     case paramThresh:
         thresdb = value;
         break;
-    case paramCeiling:
-        ceiling = value;
+    case paramGain:
+        gain = value;
         break;
     case paramGainRed:
         gainred = value;
@@ -186,14 +186,6 @@ void ZaMaximX2Plugin::activate()
 void ZaMaximX2Plugin::deactivate()
 {
 	activate();
-}
-
-double ZaMaximX2Plugin::normalise(double in)
-{
-	if (ceiling < thresdb) {
-		return in;
-	}
-	return from_dB(-thresdb + ceiling) * in;
 }
 
 void ZaMaximX2Plugin::pushsample(double in[], double sample, int *pos, int maxsamples)
@@ -257,8 +249,8 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 	double inL, inR;
 
 	for (i = 0; i < frames; i++) {
-		inL = inputs[0][i];
-		inR = inputs[1][i];
+		inL = inputs[0][i] * from_dB(gain);
+		inR = inputs[1][i] * from_dB(gain);
 		absx[0] = fmaxf(fabsf(inL), fabsf(inR));
 		c[0] = fmaxf(absx[0], (absx[0]-beta*e_old[0]) / (1. - beta));
 		xmax[0] = maxsample(&cn[0][0]);
@@ -284,8 +276,8 @@ void ZaMaximX2Plugin::run(const float** inputs, float** outputs, uint32_t frames
 
 		gainred = -to_dB(g[0]);
 
-		outputs[0][i] = z[0][(posz[0]+1+MAX_DELAY) % MAX_DELAY] * g[0] * from_dB(ceiling - thresdb);
-		outputs[1][i] = z[1][(posz[1]+1+MAX_DELAY) % MAX_DELAY] * g[0] * from_dB(ceiling - thresdb);
+		outputs[0][i] = z[0][(posz[0]+1+MAX_DELAY) % MAX_DELAY] * g[0];
+		outputs[1][i] = z[1][(posz[1]+1+MAX_DELAY) % MAX_DELAY] * g[0];
 
 		max = fmaxf(fabsf(outputs[0][i]), fabsf(outputs[1][i]));
 

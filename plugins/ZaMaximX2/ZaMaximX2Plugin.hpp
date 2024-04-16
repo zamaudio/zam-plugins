@@ -31,7 +31,7 @@ public:
     enum Parameters
     {
         paramRelease = 0,
-        paramCeiling,
+        paramGain,
         paramThresh,
         paramGainRed,
         paramOutputLevel,
@@ -125,7 +125,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float release,ceiling,thresdb,gainred,outlevel;//parameters
+    float release,gain,thresdb,gainred,outlevel;//parameters
     int pose[2], posz[2], posc[2];
     double cn[2][MAX_DELAY];
     double emaxn[2][MAX_AVG];
