@@ -21,7 +21,7 @@
 #include "Denoise.hpp"
 #include "bessel.inc"
 
-void Denoise::compute_bark_z(int FFT_SIZE, int rate)
+void Denoise::compute_bark_z(int rate)
 {
     int k;
 
@@ -32,7 +32,7 @@ void Denoise::compute_bark_z(int FFT_SIZE, int rate)
     }
 }
 
-void Denoise::compute_johnston_gain(int FFT_SIZE, double tonality_factor)
+void Denoise::compute_johnston_gain(double tonality_factor)
 {
     int k;
 
@@ -242,7 +242,7 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
 	SFM = 10.0*( kinv*sum_log_p - log10(sum_p*kinv) );
 	tonality_factor = MIN(SFM/-60.0, 1);
     }
-
+/*
         for (k = 1; k <= FFT_SIZE/2 ; ++k) {
             int j ;
 
@@ -262,12 +262,12 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
                 masked[k] += MAX((Y2[j]-noise2[j]),0.0)*gain ;
             }
 	}
-
+*/
 
     for (k = 1; k <= FFT_SIZE/2 ; ++k) {
 	if(noise2[k] > DBL_MIN) {
 	    double gain, Fk, Gk;
-/*
+
 		double Rpost = MAX(Y2[k]/noise2[k]-1.0, 0.0);
 		double alpha = dn_gamma;
 		double Rprio;
@@ -280,7 +280,8 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
 		gain = gain_em(Rprio, Rpost, alpha);
 		gain_prev[k] = gain;
 		Y2_prev[k] = Y2[k];
-*/
+
+/*
                 double Rpost = MAX(Y2[k]/noise2[k]-1.0, 0.0) ;
                 double alpha = dn_gamma ;
                 double Rprio ;
@@ -299,7 +300,7 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
                 }
 
                 gain_prev[k] = gain ;
-
+*/
 	    Fk = amount*(1.0-gain);
 
 	    if(Fk < 0.0) Fk = 0.0;
@@ -329,7 +330,7 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
 
 Denoise::Denoise(float srate) {
     int k;
-    FFT_SIZE = 16384;
+    FFT_SIZE = 4096;
     dn_gamma = 0.95;
     n_noise_samples = FFT_SIZE;
     rate = (int) srate;
@@ -383,7 +384,7 @@ Denoise::~Denoise() {
 
 void Denoise::get_noise_sample(float* noisebuffer, fftw_real *left_noise_min, fftw_real *left_noise_max, fftw_real *left_noise_avg)
 {
-    int i, k;
+    int k;
 
     for(k = 0 ; k < FFT_SIZE ; k++) {
 	window_coef[k] = 1.0;
@@ -419,8 +420,8 @@ void Denoise::get_noise_sample(float* noisebuffer, fftw_real *left_noise_min, ff
 	left_noise_avg[k] /= (double)n_noise_samples;
     }
 
-    compute_bark_z(FFT_SIZE, rate);
-    compute_johnston_gain(FFT_SIZE, tonality_factor);
+    compute_bark_z(rate);
+    compute_johnston_gain(tonality_factor);
 /*
     if(freq_filter) {
 	if(estimate_power_floor) {

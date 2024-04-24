@@ -27,7 +27,7 @@
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
 
 #define FFTW(func) fftwf_ ## func
-#define DENOISE_MAX_FFT 32768
+#define DENOISE_MAX_FFT 8192
 #define DENOISE_WINDOW_BLACKMAN 0
 #define DENOISE_WINDOW_BLACKMAN_HYBRID 1
 #define DENOISE_WINDOW_HANNING_OVERLAP_ADD 2
@@ -40,8 +40,8 @@ public:
 	Denoise(float srate);
 	~Denoise();
 	void process(const float* ins, float* outs, float* noisebuffer, uint32_t frames, int noisetoggle);
-	void compute_bark_z(int FFT_SIZE, int rate);
-	void compute_johnston_gain(int FFT_SIZE, double tonality_factor);
+	void compute_bark_z(int rate);
+	void compute_johnston_gain(double tonality_factor);
 	int get_window_delta();
 	void compute_sum_window_wgts();
 	double gain_weiner(double Yk2, double Dk2);
