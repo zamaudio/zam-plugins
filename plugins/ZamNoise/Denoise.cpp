@@ -291,7 +291,7 @@ Denoise::Denoise(float srate) {
     dn_gamma = 0.95;
     n_noise_samples = FFT_SIZE;
     rate = (int) srate;
-    amount = 0.75;
+    amount = 0.9;
     smoothness = 11;
     randomness = 0.0;
     estimate_power_floor = 0;
