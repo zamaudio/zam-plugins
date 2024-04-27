@@ -25,7 +25,7 @@ ZamNoisePlugin::ZamNoisePlugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
 
-    ZamNoisePlugin::init(getSampleRate());
+    ZamNoisePlugin::init();
     zamnoise = new Denoise(getSampleRate());
 
     // set default values
@@ -110,16 +110,14 @@ void ZamNoisePlugin::loadProgram(uint32_t index)
 }
 
 
-void ZamNoisePlugin::InstantiateCircularBuffer(CircularBuffer* buffer, unsigned long SampleRate) {
-	buffer->cbsize = 16384;
+void ZamNoisePlugin::InstantiateCircularBuffer(CircularBuffer* buffer) {
+	buffer->cbsize = DENOISE_MAX_FFT;
 	buffer->cbi = (float*) calloc(buffer->cbsize, sizeof(float));
 }
 
-void ZamNoisePlugin::init (float fsamp)
+void ZamNoisePlugin::init (void)
 {
-        InstantiateCircularBuffer(&buffer,fsamp);
-        unsigned long N=buffer.cbsize;
-        noverlap = 2;
+        InstantiateCircularBuffer(&buffer);
 }
 
 
@@ -143,7 +141,7 @@ void ZamNoisePlugin::sampleRateChanged(double newSampleRate)
 {
 	free(buffer.cbi);
 	delete zamnoise;
-	ZamNoisePlugin::init(newSampleRate);
+	ZamNoisePlugin::init();
 	zamnoise = new Denoise(newSampleRate);
 }
 

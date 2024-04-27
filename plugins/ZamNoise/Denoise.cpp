@@ -21,112 +21,6 @@
 #include "Denoise.hpp"
 #include "bessel.inc"
 
-void Denoise::compute_bark_z(int rate)
-{
-    int k;
-
-    /* compute the bark z value for this frequency bin */
-    for(k = 1 ; k <= FFT_SIZE/2 ; k++) {
-	double freq = (double)rate / 2.0 /(double)(FFT_SIZE/2)*(double)k;
-	bark_z[k] = 7.0*log(freq/650.0 + sqrt(1 + (freq/650.0)*(freq/650.0)));
-    }
-}
-
-void Denoise::compute_johnston_gain(double tonality_factor)
-{
-    int k;
-
-    for (k = 1; k <= FFT_SIZE/2 ; ++k) {
-	int j;
-
-	for(j = k-1 ; j > 0 ; j--) {
-	    double bark_diff = bark_z[k] - bark_z[j];
-
-	    double johnston = 15.81 + 7.5*(bark_diff+.474) - 17.5*sqrt(1.0+(bark_diff+0.474)*(bark_diff+0.474));
-	    double johnston_masked = johnston - (tonality_factor*(14.5+bark_z[j])+5.5*(1.0 - tonality_factor));
-	    double gain = pow(10.0, johnston_masked/10.0);
-
-	    jg_lower[k][k-j] = gain;
-
-	    if(k - j > 10) break;
-	}
-
-	for(j = k ; j <= FFT_SIZE/2 ; j++) {
-	    double bark_diff = bark_z[j] - bark_z[k];
-
-	    double johnston = 15.81 + 7.5*(bark_diff+.474) - 17.5*sqrt(1.0+(bark_diff+0.474)*(bark_diff+0.474));
-	    double johnston_masked = johnston - (tonality_factor*(14.5+bark_z[j])+5.5*(1.0 - tonality_factor));
-	    double gain = pow(10.0, johnston_masked/10.0);
-
-	    jg_upper[k][j-k] = gain;
-
-	    if(j - k > 10) break;
-
-	}
-    }
-}
-
-int Denoise::get_window_delta()
-{
-
-    if(window_type == DENOISE_WINDOW_HANNING_OVERLAP_ADD) {
-	return FFT_SIZE/2;
-    } else {
-	if(window_type == DENOISE_WINDOW_BLACKMAN)
-	    return FFT_SIZE/smoothness;
-	else
-	    return 3*FFT_SIZE/4;
-    }
-}
-
-void Denoise::compute_sum_window_wgts()
-{
-    int delta = get_window_delta();
-    int i, k;
-
-    for(i = 0 ; i < FFT_SIZE ; i++) {
-	sum_window_wgts[i] = 0.0;
-	for(k = i ; k < FFT_SIZE+i ; k += delta) {
-	    sum_window_wgts[i] += window_coef[k%FFT_SIZE];
-	}
-    }
-}
-
-double Denoise::gain_weiner(double Yk2, double Dk2)
-{
-    double gain;
-    double Xk2 = Yk2 - Dk2;
-
-    if(Yk2 > Dk2)
-	gain = (Xk2) / (Xk2+Dk2);
-    else
-	gain = 0.0;
-
-    return gain;
-}
-
-double Denoise::gain_power_subtraction(double Yk2, double Dk2)
-{
-    double level = MAX(Yk2-Dk2, 0.0);
-
-    if(Yk2 > DBL_MIN)
-	return level/Yk2;
-    else
-	return 0.0;
-}
-
-double Denoise::alpha_lorber(double snr)
-{
-    double snr_db = 10.*log10(snr);
-    double alpha;
-
-    if(snr_db > 20) return 1.0;
-
-    alpha = MIN((3.0 - 0.10*snr_db), 3.5);
-
-    return alpha;
-}
-
 double Denoise::hypergeom(double theta)
 {
     if(theta < 7.389056)
@@ -135,7 +29,7 @@ double Denoise::hypergeom(double theta)
 	return exp(0.09379 + 0.50447*log(theta));
 }
 
-double Denoise::gain_em(double Rprio, double Rpost, double alpha)
+double Denoise::gain_em(double Rprio, double Rpost)
 {
     /* Ephraim-Malah classic noise suppression, from 1984 paper */
 
@@ -170,12 +64,6 @@ double Denoise::blackman_hybrid(int k, int n_flat, int N)
     }
 }
 
-double Denoise::welty_alpha(double w, double x)
-{
-    double alpha = ( log(acos(-2.0*w+1)) - log(M_PI) ) / log(1.0 - x);
-    return alpha;
-}
-
 double Denoise::fft_window(int k, int N, int window_type)
 {
     if(window_type == DENOISE_WINDOW_BLACKMAN) {
@@ -195,19 +83,16 @@ double Denoise::db2w(double db)
 }
 
 
-void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], fftw_real noise_avg2[], FFTW(plan) *pFor, FFTW(plan) *pBak)
+void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], FFTW(plan) *pFor, FFTW(plan) *pBak)
 {
     int k;
     uint32_t i;
-    fftw_real noise2[DENOISE_MAX_FFT/2+1];
-    fftw_real Y2[DENOISE_MAX_FFT/2+1];
-    fftw_real masked[DENOISE_MAX_FFT/2+1];
-    fftw_real gain_k[DENOISE_MAX_FFT];
-    static fftw_real bsig_prev[DENOISE_MAX_FFT],bY2_prev[DENOISE_MAX_FFT/2+1],bgain_prev[DENOISE_MAX_FFT/2+1];
-    fftw_real *sig_prev, *Y2_prev,*gain_prev;
-    double SFM; 
+    fftw_real noise2[DENOISE_MAX_FFT/2+1] = {0};
+    fftw_real Y2[DENOISE_MAX_FFT/2+1] = {0};
+    static fftw_real bY2_prev[DENOISE_MAX_FFT/2+1] = {0};
+    static fftw_real bgain_prev[DENOISE_MAX_FFT/2+1] = {0};
+    fftw_real *Y2_prev, *gain_prev;
 
-    sig_prev = bsig_prev;
     Y2_prev = bY2_prev;
     gain_prev = bgain_prev;
 
@@ -223,7 +108,6 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
     {
 	double sum_log_p = 0.0;
 	double sum_p = 0.0;
-	double kinv = 1./(double)(FFT_SIZE/2.0);
 
 	for (k = 1; k <= FFT_SIZE/2 ; ++k) {
 	    noise2[k] = noise_min2[k] + 0.5*(noise_max2[k] - noise_min2[k]);
@@ -235,10 +119,6 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
 	    sum_log_p += log10(Y2[k]);
 	    sum_p += Y2[k];
 	}
-
-
-	SFM = 10.0*( kinv*sum_log_p - log10(sum_p*kinv) );
-	tonality_factor = MIN(SFM/-60.0, 1);
     }
 
     for (k = 1; k <= FFT_SIZE/2 ; ++k) {
@@ -254,21 +134,23 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
 	    else
 	        Rprio = Rpost;
 
-	    gain = gain_em(Rprio, Rpost, alpha);
+	    gain = gain_em(Rprio, Rpost);
 	    gain_prev[k] = gain;
 	    Y2_prev[k] = Y2[k];
 
 	    Fk = amount*(1.0-gain);
 
-	    if(Fk < 0.0) Fk = 0.0;
-	    if(Fk > 1.0) Fk = 1.0;
+	    if(Fk < 0.0)
+	        Fk = 0.0;
+	    if(Fk > 1.0)
+	        Fk = 1.0;
 
 	    Gk =  1.0 - Fk;
 
 	    out[k] *= Gk;
-	    if(k < FFT_SIZE/2) out[FFT_SIZE-k] *= Gk;
 
-	    gain_k[k] = Gk;
+	    if(k < FFT_SIZE/2)
+	        out[FFT_SIZE-k] *= Gk;
 	}
     }
 
@@ -292,23 +174,20 @@ Denoise::Denoise(float srate) {
     n_noise_samples = FFT_SIZE;
     rate = (int) srate;
     amount = 0.9;
-    smoothness = 11;
-    randomness = 0.0;
-    estimate_power_floor = 0;
     noisebufpos = 0;
     prev_sample = 0;
     
     pFor = FFTW(plan_r2r_1d)(FFT_SIZE, windowed, out, FFTW_R2HC, FFTW_ESTIMATE);
     pBak = FFTW(plan_r2r_1d)(FFT_SIZE, out, windowed, FFTW_HC2R, FFTW_ESTIMATE);
 
-    pForLeft = FFTW(plan_r2r_1d)(FFT_SIZE, left, tmp, FFTW_R2HC, FFTW_ESTIMATE);
+    pForNoise = FFTW(plan_r2r_1d)(FFT_SIZE, noise, noisefft, FFTW_R2HC, FFTW_ESTIMATE);
 
     window_type = DENOISE_WINDOW_BLACKMAN;
 
     for(k = 0; k < FFT_SIZE; k++) {
 	window_coef[k] = fft_window(k,FFT_SIZE, window_type);
-	left_prev_frame[k] = 0.0;
-	left[k] = 0.0;
+	prev_frame[k] = 0.0;
+	noise[k] = 0.0;
     }
 }
 
@@ -324,57 +203,46 @@ void Denoise::process(const float* ins, float* outs, float* noisebuffer, uint32_
 				noisebufpos = 0;
 
 			if (noisebufpos % (n_noise_samples/2) == 0) {
-				get_noise_sample(noisebuffer, left_noise_min, left_noise_max, left_noise_avg);
+				get_noise_sample(noisebuffer, noise_min, noise_max);
 			}
 			outs[i] = ins[i];
 		}
 	} else {
-		fft_remove_noise(ins, outs, frames, left_noise_min, left_noise_max, left_noise_avg, &pFor, &pBak);
+		fft_remove_noise(ins, outs, frames, noise_min, noise_max, &pFor, &pBak);
 	}
 }
 
 Denoise::~Denoise() {
-    FFTW(destroy_plan)(pForLeft);
+    FFTW(destroy_plan)(pForNoise);
     FFTW(destroy_plan)(pBak);
     FFTW(destroy_plan)(pFor);
 }
 
-void Denoise::get_noise_sample(float* noisebuffer, fftw_real *left_noise_min, fftw_real *left_noise_max, fftw_real *left_noise_avg)
+void Denoise::get_noise_sample(float* noisebuffer, fftw_real *noise_min, fftw_real *noise_max)
 {
     int k;
 
     for(k = 0 ; k < FFT_SIZE ; k++) {
-	left_noise_max[k] = 0.0;
-	left_noise_avg[k] = 0.0;
-	left_noise_min[k] = DBL_MAX;
+	noise_max[k] = 0.0;
+	noise_min[k] = DBL_MAX;
     }
 
-	for(k = 0 ; k < FFT_SIZE ; k++) {
-	    left[k] = noisebuffer[k] * window_coef[k];
-	}
-
-	FFTW(execute)(pForLeft);
-
-	/* convert noise sample to power spectrum */
-	for(k = 1 ; k <= FFT_SIZE/2 ; k++) {
-	    double p2;
-	    if(k < FFT_SIZE/2) {
-		p2 = tmp[k] * tmp[k] + tmp[FFT_SIZE-k]*tmp[FFT_SIZE-k];
-	    } else {
-		/* Nyquist Frequency */
-		p2 = tmp[k] * tmp[k];
-	    }
-	    left_noise_min[k] = MIN(left_noise_min[k], p2);
-	    left_noise_max[k] = MAX(left_noise_max[k], p2);
-	    left_noise_avg[k] = p2;
-	}
-
-
-    /* average out the power spectrum samples */
+    for(k = 0 ; k < FFT_SIZE ; k++) {
+        noise[k] = noisebuffer[k] * window_coef[k];
+    }
+    
+    FFTW(execute)(pForNoise);
+    
+    /* convert noise sample to power spectrum */
     for(k = 1 ; k <= FFT_SIZE/2 ; k++) {
-	left_noise_avg[k] /= (double)n_noise_samples;
+        double p2;
+        if(k < FFT_SIZE/2) {
+    	    p2 = noisefft[k] * noisefft[k] + noisefft[FFT_SIZE-k]*noisefft[FFT_SIZE-k];
+        } else {
+    	    /* Nyquist Frequency */
+    	    p2 = noisefft[k] * noisefft[k];
+        }
+        noise_min[k] = MIN(noise_min[k], p2);
+        noise_max[k] = MAX(noise_max[k], p2);
     }
-
-    compute_bark_z(rate);
-    compute_johnston_gain(tonality_factor);
 }

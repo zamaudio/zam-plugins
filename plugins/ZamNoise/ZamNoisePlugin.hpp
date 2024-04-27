@@ -104,10 +104,9 @@ protected:
     // -------------------------------------------------------------------
 	float noisetoggle;
 
-	void InstantiateCircularBuffer(CircularBuffer* buffer, unsigned long SampleRate);
+	void InstantiateCircularBuffer(CircularBuffer* buffer);
 	inline void IncrementPointer(CircularBuffer& buffer);	
-	void init(float srate);
-	int noverlap;
+	void init(void);
 	CircularBuffer buffer;
 	Denoise* zamnoise;
 };
