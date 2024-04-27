@@ -24,9 +24,9 @@ START_NAMESPACE_DISTRHO
 ZamNoisePlugin::ZamNoisePlugin()
     : Plugin(paramCount, 1, 0) // 1 program, 0 states
 {
-
-    ZamNoisePlugin::init();
+    buffer.cbsize = 0;
     zamnoise = new Denoise(getSampleRate());
+    ZamNoisePlugin::init();
 
     // set default values
     loadProgram(0);
@@ -37,6 +37,7 @@ ZamNoisePlugin::ZamNoisePlugin()
 
 ZamNoisePlugin::~ZamNoisePlugin()
 {
+	buffer.cbsize = 0;
 	delete zamnoise;
 	free(buffer.cbi);
 }
@@ -104,7 +105,8 @@ void ZamNoisePlugin::setParameterValue(uint32_t index, float value)
     {
     case paramNoiseToggle:
         if (value == 1.f) {
-		memset(buffer.cbi, 0, buffer.cbsize*sizeof(float));
+		if (buffer.cbsize > 0)
+			memset(buffer.cbi, 0, buffer.cbsize*sizeof(float));
 	}
 	noisetoggle = value;
         break;
@@ -126,9 +128,9 @@ void ZamNoisePlugin::loadProgram(uint32_t index)
 }
 
 
-void ZamNoisePlugin::InstantiateCircularBuffer(CircularBuffer* buffer) {
-	buffer->cbsize = DENOISE_MAX_FFT;
-	buffer->cbi = (float*) calloc(buffer->cbsize, sizeof(float));
+void ZamNoisePlugin::InstantiateCircularBuffer(CircularBuffer* buf) {
+	buf->cbi = (float*) calloc(DENOISE_MAX_FFT, sizeof(float));
+	buf->cbsize = DENOISE_MAX_FFT;
 }
 
 void ZamNoisePlugin::init (void)
@@ -150,7 +152,7 @@ void ZamNoisePlugin::deactivate()
 
 void ZamNoisePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	if (zamnoise) {
+	if (buffer.cbsize > 0) {
 		zamnoise->process(inputs[0], outputs[0], buffer.cbi, frames, (int)noisetoggle, amount / 100.);
 	} else {
 		uint32_t i;
@@ -162,10 +164,11 @@ void ZamNoisePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 void ZamNoisePlugin::sampleRateChanged(double newSampleRate)
 {
+	buffer.cbsize = 0;
 	delete zamnoise;
 	free(buffer.cbi);
-	ZamNoisePlugin::init();
 	zamnoise = new Denoise(newSampleRate);
+	ZamNoisePlugin::init();
 }
 
 // -----------------------------------------------------------------------
