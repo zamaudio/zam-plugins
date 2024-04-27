@@ -57,6 +57,15 @@ void ZamNoisePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.f;
         parameter.ranges.max = 1.f;
         break;
+    case paramReductionAmount:
+        parameter.hints      = kParameterIsAutomatable;
+        parameter.name       = "Reduction Amount";
+        parameter.symbol     = "amount";
+        parameter.unit       = "%";
+        parameter.ranges.def = 50.f;
+        parameter.ranges.min = 0.f;
+        parameter.ranges.max = 100.f;
+        break;
     default:
 	break;
     }
@@ -80,6 +89,9 @@ float ZamNoisePlugin::getParameterValue(uint32_t index) const
     case paramNoiseToggle:
         return noisetoggle;
         break;
+    case paramReductionAmount:
+        return amount;
+        break;
     default:
 	return 0.0f;
         break;
@@ -96,6 +108,9 @@ void ZamNoisePlugin::setParameterValue(uint32_t index, float value)
 	}
 	noisetoggle = value;
         break;
+    case paramReductionAmount:
+        amount = value;
+        break;
     }
 }
 
@@ -105,6 +120,7 @@ void ZamNoisePlugin::loadProgram(uint32_t index)
         return;
 
     noisetoggle = 0.f;
+    amount = 50.f;
 
     activate();
 }
@@ -134,7 +150,7 @@ void ZamNoisePlugin::deactivate()
 
 void ZamNoisePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	zamnoise->process(inputs[0], outputs[0], buffer.cbi, frames, (int)noisetoggle);
+	zamnoise->process(inputs[0], outputs[0], buffer.cbi, frames, (int)noisetoggle, amount / 100.);
 }
 
 void ZamNoisePlugin::sampleRateChanged(double newSampleRate)

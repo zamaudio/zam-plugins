@@ -39,15 +39,14 @@ class Denoise {
 public:
 	Denoise(float srate);
 	~Denoise();
-	void process(const float* ins, float* outs, float* noisebuffer, uint32_t frames, int noisetoggle);
+	void process(const float* ins, float* outs, float* noisebuffer, uint32_t frames, int noisetoggle, float amount);
 	double hypergeom(double theta);
 	double gain_em(double Rprio, double Rpost);
 	double blackman(int k, int N);
 	double hanning(int k, int N);
 	double blackman_hybrid(int k, int n_flat, int N);
 	double fft_window(int k, int N, int window_type);
-	double db2w(double db);
-	void fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], FFTW(plan) *pFor, FFTW(plan) *pBak);
+	void fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], float amount, FFTW(plan) *pFor, FFTW(plan) *pBak);
 	int denoise(long noise_start, long noise_end, long first_sample, long last_sample);
 	void get_noise_sample(float* noisebuffer, fftw_real *noise_min, fftw_real *noise_max);
 
@@ -55,7 +54,6 @@ private:
 	int window_type;
 	int FFT_SIZE;
 	int n_noise_samples;
-	double amount;
 	double dn_gamma;
 	double min_sample_freq;
 	double max_sample_freq;

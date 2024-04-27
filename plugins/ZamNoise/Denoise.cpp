@@ -77,13 +77,7 @@ double Denoise::fft_window(int k, int N, int window_type)
     return 0.0;
 }
 
-double Denoise::db2w(double db)
-{
-    return pow(10,db/10);
-}
-
-
-void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], FFTW(plan) *pFor, FFTW(plan) *pBak)
+void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], float amount, FFTW(plan) *pFor, FFTW(plan) *pBak)
 {
     int k;
     uint32_t i;
@@ -138,7 +132,7 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
 	    gain_prev[k] = gain;
 	    Y2_prev[k] = Y2[k];
 
-	    Fk = amount*(1.0-gain);
+	    Fk = amount * (1.0-gain);
 
 	    if(Fk < 0.0)
 	        Fk = 0.0;
@@ -173,7 +167,6 @@ Denoise::Denoise(float srate) {
     dn_gamma = 0.95;
     n_noise_samples = FFT_SIZE;
     rate = (int) srate;
-    amount = 0.9;
     noisebufpos = 0;
     prev_sample = 0;
     
@@ -192,7 +185,7 @@ Denoise::Denoise(float srate) {
 }
 
 
-void Denoise::process(const float* ins, float* outs, float* noisebuffer, uint32_t frames, int togglenoise) {
+void Denoise::process(const float* ins, float* outs, float* noisebuffer, uint32_t frames, int togglenoise, float amount) {
 
 	if (togglenoise == 1) {
 		uint32_t i;
@@ -208,7 +201,7 @@ void Denoise::process(const float* ins, float* outs, float* noisebuffer, uint32_
 			outs[i] = ins[i];
 		}
 	} else {
-		fft_remove_noise(ins, outs, frames, noise_min, noise_max, &pFor, &pBak);
+		fft_remove_noise(ins, outs, frames, noise_min, noise_max, amount, &pFor, &pBak);
 	}
 }
 
