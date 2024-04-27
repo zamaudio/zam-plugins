@@ -37,8 +37,8 @@ ZamNoisePlugin::ZamNoisePlugin()
 
 ZamNoisePlugin::~ZamNoisePlugin()
 {
-	free(buffer.cbi);
 	delete zamnoise;
+	free(buffer.cbi);
 }
 
 // -----------------------------------------------------------------------
@@ -150,13 +150,20 @@ void ZamNoisePlugin::deactivate()
 
 void ZamNoisePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
-	zamnoise->process(inputs[0], outputs[0], buffer.cbi, frames, (int)noisetoggle, amount / 100.);
+	if (zamnoise) {
+		zamnoise->process(inputs[0], outputs[0], buffer.cbi, frames, (int)noisetoggle, amount / 100.);
+	} else {
+		uint32_t i;
+		for (i = 0; i < frames; i++) {
+			outputs[0][i] = inputs[0][i];
+		}
+	}
 }
 
 void ZamNoisePlugin::sampleRateChanged(double newSampleRate)
 {
-	free(buffer.cbi);
 	delete zamnoise;
+	free(buffer.cbi);
 	ZamNoisePlugin::init();
 	zamnoise = new Denoise(newSampleRate);
 }
