@@ -181,6 +181,8 @@ Denoise::Denoise(float srate) {
 	window_coef[k] = fft_window(k,FFT_SIZE, window_type);
 	prev_frame[k] = 0.0;
 	noise[k] = 0.0;
+	noise_max[k] = 0.0;
+	noise_min[k] = 0.0;
     }
 }
 
