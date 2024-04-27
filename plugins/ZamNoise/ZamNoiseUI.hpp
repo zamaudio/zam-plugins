@@ -22,17 +22,19 @@
 
 #include "Image.hpp"
 #include "ImageWidgets.hpp"
-
+#include "../../widgets/ZamWidgets.hpp"
 #include "ZamNoisePlugin.hpp"
 
 using DGL::Image;
 using DGL::ImageButton;
+using DGL::ZamKnob;
 
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
 
 class ZamNoiseUI : public UI,
+                public ZamKnob::Callback,
 		public ImageButton::Callback
 {
 public:
@@ -47,7 +49,11 @@ protected:
     void programLoaded(uint32_t index) override;
 
     // -------------------------------------------------------------------
+    // Widget Callbacks
 
+    void imageKnobDragStarted(ZamKnob* knob) override;
+    void imageKnobDragFinished(ZamKnob* knob) override;
+    void imageKnobValueChanged(ZamKnob* knob, float value) override;
     void imageButtonClicked(ImageButton* imageButton, int button) override;
 
     void onDisplay() override;
@@ -55,6 +61,7 @@ protected:
 private:
     Image fImgBackground;
     ScopedPointer<ImageButton> fToggleNoise;
+    ScopedPointer<ZamKnob> fKnobReduction;
 };
 
 // -----------------------------------------------------------------------

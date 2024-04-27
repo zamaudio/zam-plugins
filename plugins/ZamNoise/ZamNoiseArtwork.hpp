@@ -5,6 +5,11 @@
 
 namespace ZamNoiseArtwork
 {
+    extern const char* knobData;
+    const unsigned int knobDataSize = 7056;
+    const unsigned int knobWidth    = 42;
+    const unsigned int knobHeight   = 42;
+
     extern const char* toggleoffData;
     const unsigned int toggleoffDataSize = 1056;
     const unsigned int toggleoffWidth    = 12;
@@ -16,9 +21,9 @@ namespace ZamNoiseArtwork
     const unsigned int toggleonHeight   = 22;
 
     extern const char* zamnoiseData;
-    const unsigned int zamnoiseDataSize = 45264;
-    const unsigned int zamnoiseWidth    = 164;
-    const unsigned int zamnoiseHeight   = 92;
+    const unsigned int zamnoiseDataSize = 114800;
+    const unsigned int zamnoiseWidth    = 287;
+    const unsigned int zamnoiseHeight   = 100;
 }
 
 #endif // BINARY_ZAMNOISEARTWORK_HPP

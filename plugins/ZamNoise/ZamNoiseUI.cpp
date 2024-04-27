@@ -26,18 +26,31 @@ ZamNoiseUI::ZamNoiseUI()
     : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
 {
     // background
-    fImgBackground = Image(ZamNoiseArtwork::zamnoiseData, ZamNoiseArtwork::zamnoiseWidth, ZamNoiseArtwork::zamnoiseHeight, kImageFormatBGR);
+    fImgBackground = Image(ZamNoiseArtwork::zamnoiseData, ZamNoiseArtwork::zamnoiseWidth, ZamNoiseArtwork::zamnoiseHeight);
 
     // toggle img
     Image toggleonImage(ZamNoiseArtwork::toggleonData, ZamNoiseArtwork::toggleonWidth, ZamNoiseArtwork::toggleonHeight);
     Image toggleoffImage(ZamNoiseArtwork::toggleoffData, ZamNoiseArtwork::toggleoffWidth, ZamNoiseArtwork::toggleoffHeight);
 
+    // knob
+    Image knobImage(ZamNoiseArtwork::knobData, ZamNoiseArtwork::knobWidth, ZamNoiseArtwork::knobHeight);
+
     // toggle
     fToggleNoise = new ImageButton(this, toggleonImage, toggleoffImage);
-    fToggleNoise->setAbsolutePos(30, 30);
+    fToggleNoise->setAbsolutePos(244, 40);
     fToggleNoise->setCallback(this);
     fToggleNoise->setCheckable(true);
     fToggleNoise->setChecked(false, false);
+
+    fKnobReduction = new ZamKnob(this, knobImage);
+    fKnobReduction->setAbsolutePos(22, 40);
+    fKnobReduction->setId(ZamNoisePlugin::paramReductionAmount);
+    fKnobReduction->setRange(0.0f, 100.0f);
+    fKnobReduction->setLabel(true);
+    fKnobReduction->setScrollStep(1.0f);
+    fKnobReduction->setDefault(50.0f);
+    fKnobReduction->setRotationAngle(240);
+    fKnobReduction->setCallback(this);
 
     programLoaded(0);
 }
@@ -56,6 +69,9 @@ void ZamNoiseUI::parameterChanged(uint32_t index, float value)
     case ZamNoisePlugin::paramNoiseToggle:
         fToggleNoise->setChecked(value > 0.5f, false);
         break;
+    case ZamNoisePlugin::paramReductionAmount:
+        fKnobReduction->setValue(value);
+        break;
     }
 }
 
@@ -66,6 +82,22 @@ void ZamNoiseUI::programLoaded(uint32_t index)
         return;
 
     fToggleNoise->setChecked(false, false);
+    fKnobReduction->setValue(50.f);
+}
+
+void ZamNoiseUI::imageKnobDragStarted(ZamKnob* knob)
+{
+    editParameter(knob->getId(), true);
+}
+
+void ZamNoiseUI::imageKnobDragFinished(ZamKnob* knob)
+{
+    editParameter(knob->getId(), false);
+}
+
+void ZamNoiseUI::imageKnobValueChanged(ZamKnob* knob, float value)
+{
+    setParameterValue(knob->getId(), value);
 }
 
 void ZamNoiseUI::imageButtonClicked(ImageButton*, int)
