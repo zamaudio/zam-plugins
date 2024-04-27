@@ -211,6 +211,7 @@ Denoise::~Denoise() {
     FFTW(destroy_plan)(pForNoise);
     FFTW(destroy_plan)(pBak);
     FFTW(destroy_plan)(pFor);
+    FFTW(cleanup)();
 }
 
 void Denoise::get_noise_sample(float* noisebuffer, fftw_real *noise_min, fftw_real *noise_max)
