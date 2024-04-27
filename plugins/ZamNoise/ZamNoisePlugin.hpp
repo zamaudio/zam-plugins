@@ -23,6 +23,7 @@
 
 typedef struct {
 	unsigned long cbsize; // size of circular buffer
+	unsigned long cbsizeold; // old size of circular buffer
 	float* cbi;
 } CircularBuffer;
 
