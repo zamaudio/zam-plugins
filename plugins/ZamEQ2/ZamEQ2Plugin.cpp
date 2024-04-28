@@ -41,7 +41,7 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "boost1";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -50.0f;
+        parameter.ranges.min = -20.0f;
         parameter.ranges.max = 20.0f;
         break;
     case paramQ1:
@@ -49,18 +49,18 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bandwidth 1";
         parameter.symbol     = "bw1";
         parameter.unit       = " ";
-        parameter.ranges.def = 1.0f;
-        parameter.ranges.min = 0.1f;
-        parameter.ranges.max = 6.0f;
+        parameter.ranges.def = 1.5f;
+        parameter.ranges.min = 0.7f;
+        parameter.ranges.max = 2.5f;
         break;
     case paramFreq1:
         parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
         parameter.name       = "Frequency 1";
         parameter.symbol     = "f1";
         parameter.unit       = "Hz";
-        parameter.ranges.def = 500.0f;
-        parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 14000.0f;
+        parameter.ranges.def = 200.0f;
+        parameter.ranges.min = 1000.0f;
+        parameter.ranges.max = 2500.0f;
         break;
     case paramGain2:
         parameter.hints      = kParameterIsAutomatable;
@@ -68,7 +68,7 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "boost2";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -50.0f;
+        parameter.ranges.min = -20.0f;
         parameter.ranges.max = 20.0f;
         break;
     case paramQ2:
@@ -76,9 +76,9 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Bandwidth 2";
         parameter.symbol     = "bw2";
         parameter.unit       = " ";
-        parameter.ranges.def = 1.0f;
-        parameter.ranges.min = 0.1f;
-        parameter.ranges.max = 6.0f;
+        parameter.ranges.def = 1.5f;
+        parameter.ranges.min = 0.7f;
+        parameter.ranges.max = 2.5f;
         break;
     case paramFreq2:
         parameter.hints      = kParameterIsAutomatable | kParameterIsLogarithmic;
@@ -86,8 +86,8 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "f2";
         parameter.unit       = "Hz";
         parameter.ranges.def = 3000.0f;
-        parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 14000.0f;
+        parameter.ranges.min = 600.0f;
+        parameter.ranges.max = 7000.0f;
         break;
     case paramGainL:
         parameter.hints      = kParameterIsAutomatable;
@@ -95,7 +95,7 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "boostl";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -50.0f;
+        parameter.ranges.min = -20.0f;
         parameter.ranges.max = 20.0f;
         break;
     case paramFreqL:
@@ -104,8 +104,8 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "fl";
         parameter.unit       = "Hz";
         parameter.ranges.def = 250.0f;
-        parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 14000.0f;
+        parameter.ranges.min = 40.0f;
+        parameter.ranges.max = 600.0f;
         break;
     case paramGainH:
         parameter.hints      = kParameterIsAutomatable;
@@ -113,7 +113,7 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "boosth";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -50.0f;
+        parameter.ranges.min = -20.0f;
         parameter.ranges.max = 20.0f;
         break;
     case paramFreqH:
@@ -122,26 +122,26 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "fh";
         parameter.unit       = "Hz";
         parameter.ranges.def = 8000.0f;
-        parameter.ranges.min = 20.0f;
-        parameter.ranges.max = 14000.0f;
+        parameter.ranges.min = 1500.0f;
+        parameter.ranges.max = 22000.0f;
         break;
     case paramMaster:
         parameter.hints      = kParameterIsAutomatable;
-        parameter.name       = "Master Gain";
-        parameter.symbol     = "master";
+        parameter.name       = "Output gain";
+        parameter.symbol     = "outputgain";
         parameter.unit       = "dB";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = -12.0f;
-        parameter.ranges.max = 12.0f;
+        parameter.ranges.min = -10.0f;
+        parameter.ranges.max = 10.0f;
         break;
-    case paramTogglePeaks:
-        parameter.hints      = kParameterIsAutomatable | kParameterIsBoolean;
-        parameter.name       = "Peaks ON";
-        parameter.symbol     = "peaks";
+    case paramInputGain:
+        parameter.hints      = kParameterIsAutomatable;
+        parameter.name       = "Input gain";
+        parameter.symbol     = "inputgain";
         parameter.unit       = " ";
         parameter.ranges.def = 0.0f;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
+        parameter.ranges.min = -10.0f;
+        parameter.ranges.max = 10.0f;
         break;
     }
 }
@@ -179,7 +179,7 @@ void ZamEQ2Plugin::loadProgram(uint32_t index)
 		gainh = 0.0;
 		freqh = 8000.0;
 		master = 0.0;
-		togglepeaks = 0.0;
+		inputgain = 0.0;
 		break;
 	case 1:
 		gain1 = 0.0;
@@ -193,7 +193,7 @@ void ZamEQ2Plugin::loadProgram(uint32_t index)
 		gainh = 0.0;
 		freqh = 8000.0;
 		master = -6.0;
-		togglepeaks = 0.0;
+		inputgain = 0.0;
 		break;
 	case 2:
 		gain1 = 5.6;
@@ -207,7 +207,7 @@ void ZamEQ2Plugin::loadProgram(uint32_t index)
 		gainh = 0.0;
 		freqh = 8000.0;
 		master = -6.0;
-		togglepeaks = 0.0;
+		inputgain = 0.0;
 		break;
 	case 3:
 		gain1 = 0.0;
@@ -221,7 +221,7 @@ void ZamEQ2Plugin::loadProgram(uint32_t index)
 		gainh = 6.0;
 		freqh = 330.0;
 		master = -12.0;
-		togglepeaks = 0.0;
+		inputgain = 0.0;
 		break;
 	}
     /* reset filter values */
@@ -268,8 +268,8 @@ float ZamEQ2Plugin::getParameterValue(uint32_t index) const
     case paramMaster:
         return master;
         break;
-    case paramTogglePeaks:
-        return togglepeaks;
+    case paramInputGain:
+        return inputgain;
         break;
     default:
         return 0.0f;
@@ -313,8 +313,8 @@ void ZamEQ2Plugin::setParameterValue(uint32_t index, float value)
     case paramMaster:
         master = value;
         break;
-    case paramTogglePeaks:
-        togglepeaks = value;
+    case paramInputGain:
+        inputgain = value;
         break;
     }
 }
@@ -457,7 +457,7 @@ void ZamEQ2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
 
         for (uint32_t i = 0; i < frames; i++) {
                 double tmp,tmpl, tmph;
-                double in = inputs[0][i];
+                double in = inputs[0][i] * from_dB(inputgain);
                 x1 = sanitize_denormal(x1);
                 x2 = sanitize_denormal(x2);
                 y1 = sanitize_denormal(y1);
@@ -511,8 +511,8 @@ void ZamEQ2Plugin::run(const float** inputs, float** outputs, uint32_t frames)
                 y2a = y1a;
                 x1a = tmp;
                 y1a = outputs[0][i];
-
-                outputs[0][i] *= from_dB(master);
+                
+		outputs[0][i] *= from_dB(master);
 	}
 }
 

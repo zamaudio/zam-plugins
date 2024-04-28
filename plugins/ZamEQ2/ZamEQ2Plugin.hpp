@@ -38,7 +38,7 @@ public:
         paramGainH,
         paramFreqH,
         paramMaster,
-        paramTogglePeaks,
+        paramInputGain,
         paramCount
     };
 
@@ -134,7 +134,7 @@ protected:
     // -------------------------------------------------------------------
 
 private:
-    float gain1,q1,freq1,gain2,q2,freq2,gainl,freql,gainh,freqh,master,togglepeaks; //parameters
+    float gain1,q1,freq1,gain2,q2,freq2,gainl,freql,gainh,freqh,master,inputgain; //parameters
         double x1,x2,y1,y2;
         double x1a,x2a,y1a,y2a;
         double zln1,zln2,zld1,zld2;
