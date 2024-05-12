@@ -1,3 +1,11 @@
+4.3 First AU release
+	- Huge kudos to falktx for completing AU support in DPF!
+	- New plugin: ZamNoise noise reduction based on Gnome Wave Cleaner,
+	  uses Ephriam / Malah noise suppression algorithm from 1984
+	- Tweak defaults and ranges on ZamEQ2
+	- Make ZaMaximX2 threshold/gain controls more usable in response
+	  to unfa's critique of FOSS limiter plugins
+
 4.2 Bugfixes and DSP improvements
 	- ZamTube: Introduced both sides of 12AX7 valve emulation
 	  with tonestack sandwiched between the valves.

@@ -14,6 +14,7 @@ Build Dependencies:
 ===================
 
 	pkg-config libx11-dev libgl-dev liblo-dev libjack-dev ladspa-sdk
+	libfftw3-dev libfftw3-single3 libsamplerate0-dev
 
 
 Bleeding edge installation:
@@ -27,5 +28,6 @@ Bleeding edge installation:
 Package Maintainers:
 ====================
 
-	git checkout 4.2
+	git checkout 4.3
+	git submodule update --init --recursive
 	make dist
