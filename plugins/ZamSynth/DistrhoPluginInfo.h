@@ -35,4 +35,8 @@
 #define DISTRHO_PLUGIN_URI "urn:zamaudio:ZamSynth"
 #define DISTRHO_PLUGIN_LV2_CATEGORY "lv2:InstrumentPlugin"
 
+#define DPF_VST3_DONT_USE_BRAND_ID   1
+#define DISTRHO_PLUGIN_BRAND_ID ZamP
+#define DISTRHO_PLUGIN_UNIQUE_ID zsth
+
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

@@ -43,4 +43,9 @@
 #define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|Dynamics|Stereo"
 #define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "limiter", "stereo"
 #define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZaMaximX2"
+
+#define DPF_VST3_DONT_USE_BRAND_ID   1
+#define DISTRHO_PLUGIN_BRAND_ID ZamP
+#define DISTRHO_PLUGIN_UNIQUE_ID zmx2
+
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

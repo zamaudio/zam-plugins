@@ -44,4 +44,8 @@
 #define DISTRHO_PLUGIN_CLAP_FEATURES   "audio-effect", "stereo"
 #define DISTRHO_PLUGIN_CLAP_ID         "com.zamaudio.ZamGateX2"
 
+#define DPF_VST3_DONT_USE_BRAND_ID   1
+#define DISTRHO_PLUGIN_BRAND_ID ZamP
+#define DISTRHO_PLUGIN_UNIQUE_ID zgt2
+
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED

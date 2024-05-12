@@ -40,4 +40,8 @@
 #define DISTRHO_PLUGIN_URI     "urn:zamaudio:ZamNoise"
 #define DISTRHO_PLUGIN_CLAP_ID "com.zamaudio.ZamNoise"
 
+#define DPF_VST3_DONT_USE_BRAND_ID   1
+#define DISTRHO_PLUGIN_BRAND_ID ZamP
+#define DISTRHO_PLUGIN_UNIQUE_ID znoi
+
 #endif // DISTRHO_PLUGIN_INFO_H_INCLUDED
