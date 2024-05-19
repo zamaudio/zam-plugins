@@ -1,7 +1,7 @@
 zam-plugins ![build](https://github.com/zamaudio/zam-plugins/actions/workflows/build.yml/badge.svg)
 ===========
 
-Collection of LV2/LADSPA/VST/JACK audio plugins for high quality processing
+Collection of LV2/LADSPA/CLAP/VST3/VST/JACK audio plugins for high quality processing
 
 Note:
 
