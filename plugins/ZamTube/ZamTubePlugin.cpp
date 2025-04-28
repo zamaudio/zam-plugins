@@ -282,8 +282,8 @@ void ZamTubePlugin::loadProgram(uint32_t index)
     tonestack = 0.0f;
     mastergain = 0.0f;
     insane = 0.0f;
-    insaneold = 0.0f;
-    tonestackold = 0.0f;
+    insaneold = 1;
+    tonestackold = 1;
     bassold = 5.f;
     middleold = 5.f;
     trebleold = 5.f;
