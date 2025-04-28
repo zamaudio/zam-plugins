@@ -39,19 +39,11 @@ public:
 
 	void reset_tubes(void) {
 		// Steady state solution
-		if (mode == TUBE_MODE_SIXTIES) {
-			Vk = 1.454119;
-			Vg = 0.0;
-			Cia = 0.0;
-			Coa = -154.562846;
-			Cka = 1.454372;
-		} else {
-			Vk = 2.732184;
-			Vg = 0.0;
-			Cia = 0.0;
-			Coa = -26.733935;
-			Cka = 2.732658;
-		}
+		Vk = 1.454193;
+		Vg = 0.0;
+		Cia = 0.0;
+		Coa = -154.568049;
+		Cka = 1.454320;
 	}
 
 	void updateRValues_gridleak(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
@@ -184,7 +176,7 @@ public:
 		Vg = (S1_3b3);
 		Vk = (-P1_3b3);
 		Real Vd = Vk+Vg;
-		Real Rd = (Vd > 0.) ? 2.7e+2 : 100e+4;
+		Real Rd = (Vd > 0.) ? 2.7e+3 : 100e+3;
 		Vk += (Vg / Rd);
 		Real b = -t.compute(S2_3b3, S2_3Gamma1, Vg, Vk);
 		//Set As
