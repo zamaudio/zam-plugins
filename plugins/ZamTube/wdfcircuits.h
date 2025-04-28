@@ -14,18 +14,18 @@ public:
 	int counter;
 
 	TubeStageCircuit() {
-		P3_3Gamma1 = 1.;
-		P0_3Gamma1 = 1.;
-		S1_3Gamma1 = 1.;
-		S3_3Gamma1 = 1.;
-		P1_3Gamma1 = 1.;
-		S0_3Gamma1 = 1.;
-		S2_3Gamma1 = 1.;
-		P2_3Gamma1 = 1.;
+		P3_3Gamma1 = 0.;
+		P0_3Gamma1 = 0.;
+		S1_3Gamma1 = 0.;
+		S3_3Gamma1 = 0.;
+		P1_3Gamma1 = 0.;
+		S0_3Gamma1 = 0.;
+		S2_3Gamma1 = 0.;
+		P2_3Gamma1 = 0.;
 		E500E = 0.;
-		ViE = 0.;
 		mode = TUBE_MODE_SIXTIES;
 		reset_tubes();
+		t = Triode();
 	}
 
 	enum tube_mode {
@@ -316,7 +316,6 @@ private:
 	Real S1_3Gamma1;
 	Real S3_3Gamma1;
 	Real P1_3Gamma1;
-	Real ViE;
 	Real S0_3Gamma1;
 	Real S2_3Gamma1;
 	Real P2_3Gamma1;
