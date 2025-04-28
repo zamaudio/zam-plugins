@@ -181,7 +181,7 @@ public:
 		//RkGetB
 		//P1_2SetA
 		//Call tube model
-		Vg = (-S1_3b3);
+		Vg = (S1_3b3);
 		Vk = (-P1_3b3);
 		Real Vd = Vk+Vg;
 		Real Rd = (Vd > 0.) ? 2.7e+2 : 100e+4;
@@ -210,7 +210,7 @@ public:
 		Real P0_3b1 = S1_3b2  - S0_3b3 - P0_3Gamma1*(-S0_3b3);
 		//S0_3SetA
 		Real S0_3b1 = Cib - S0_3Gamma1*(Cib + ViE + P0_3b1);
-		Cia = S0_3b1;
+		Cia = -S0_3b1;
 		//RiSetA
 		//printf("Vk=%f Vg=%f Vd=%f in=%f out=%f\n", Vk,Vg,Vd, ViE,Roa);
 		//printf("GRIDLEAK: Vk=%f Vg=%f Cia=%f Coa=%f Cka=%f\n", Vk,Vg,Cia,Coa,Cka);
@@ -261,7 +261,7 @@ public:
 		//RkGetB
 		//P1_2SetA
 		//Call tube model
-		Vg = -S1_3b3;
+		Vg = S1_3b3;
 		Vk = -P1_3b3;
 		Real b = -t.compute(S2_3b3, S2_3Gamma1, Vg, Vk);
 		//Set As
@@ -287,7 +287,7 @@ public:
 		Real P0_3b1 = S1_3b2  - S0_3b3 - P0_3Gamma1*(-S0_3b3);
 		//S0_3SetA
 		Real S0_3b1 = Cib - S0_3Gamma1*(Cib + ViE + P0_3b1);
-		Cia = S0_3b1;
+		Cia = -S0_3b1;
 		//RiSetA
 		//printf("Vk=%f Vg=%f Vpk=%f  in=%f out=%f\n", Vk,Vg,S2_3b3, ViE,Roa);
 		//printf("SIXTIES: Vk=%f Vg=%f Cia=%f Coa=%f Cka=%f\n", Vk,Vg,Cia,Coa,Cka);

@@ -430,6 +430,8 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		insaneold = (int)insane;
 		ckt[0].set_mode(insane > 0.5 ? ckt[0].TUBE_MODE_GRIDLEAK : ckt[0].TUBE_MODE_SIXTIES);
 		ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], getSampleRate());
+		ckt[1].set_mode(insane > 0.5 ? ckt[1].TUBE_MODE_GRIDLEAK : ckt[1].TUBE_MODE_SIXTIES);
+		ckt[1].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 800e+3, rk[0], 1e+3, ro[0], getSampleRate());
 	}
 
 	for (uint32_t i = 0; i < frames; ++i) {
