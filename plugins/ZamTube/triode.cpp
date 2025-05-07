@@ -50,18 +50,46 @@ T Triode::iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R) const {
 
 Triode::Triode()
 {
-	/* good for low gain, broken at high gain
-	kvb = 300.;
-	mu = 103.2;
-	kx = 1.26;
-	kg1 = 446.0;
-	kp = 3.4;
-	*/
-	
-	//12AX7 RSD-1 (custom)
-	mu = 100.;
-	kx = 1.4;
-	kg1 = 1060.;
-	kp = 600.;
-	kvb = 300.;
+}
+
+void Triode::set_model(int model)
+{
+	if (model == 0) {
+		//12AX7 RSD-1 (custom)
+		mu = 100.;
+		kx = 1.4;
+		kg1 = 1060.;
+		kp = 600.;
+		kvb = 300.;
+	} else if (model == 1) {
+		/* good for low gain, broken at high gain */
+		mu = 103.2;
+		kx = 1.26;
+		kg1 = 446.0;
+		kp = 340.;
+		kvb = 300.;
+	} else if (model == 2) {
+		//6C16
+		mu = 42.2;
+		kx = 2.21;
+		kg1 = 393.;
+		kp = 629.;
+		kvb = 446.;
+	} else if (model == 3) {
+		// 6DJ8
+		mu = 28.;
+		kx = 1.3;
+		kg1 = 330.;
+		kp = 320.;
+		kvb = 300.;
+	} else if (model == 4) {
+		// 6V6
+		mu = 12.67;
+		kx = 1.198;
+		kg1 = 915.;
+		// original
+		//kg2 = 4500;
+		kp = 38.07;
+		kvb = 30.2;
+	}
 }

@@ -33,6 +33,7 @@ typedef double T;
 class Triode {
 public:
 	Triode();
+	void set_model(int model);
 	T compute(T a, T R, T Vg, T Vk);
 	bool insane;
 private:

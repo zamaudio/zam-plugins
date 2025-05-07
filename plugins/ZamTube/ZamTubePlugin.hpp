@@ -47,15 +47,15 @@ typedef long double quad;
 class ZamTubePlugin : public Plugin
 {
 public:
-	TubeStageCircuit ckt[2];
-	T ci[2];
-	T ck[2];
-	T co[2];
-	T e[2];
-	T er[2];
-	T rg[2];
-	T ro[2];
-	T rk[2];
+	TubeStageCircuit ckt[4];
+	T ci[4];
+	T ck[4];
+	T co[4];
+	T e[4];
+	T er[4];
+	T rg[4];
+	T ro[4];
+	T rk[4];
 
         float   fConst0;
         float   fConst1;
@@ -159,7 +159,7 @@ Wave digital filter physical model of a triode tube amplifier stage, with modell
 
 private:
 	float tubedrive,bass,middle,treble,tonestack,mastergain,insane; //parameters
-	int insaneold, tonestackold;
+	int insaneold, tonestackold, mastergainold, tubedriveold;
 	float bassold, middleold, trebleold;
 
 	float ts[25][7];
