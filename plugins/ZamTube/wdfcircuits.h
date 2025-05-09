@@ -13,6 +13,11 @@ public:
 	int mode;
 	int counter;
 
+	typedef struct Pair {
+		Real v;
+		Real c;
+	} Pair_t;
+
 	TubeStageCircuit() {
 		P3_3Gamma1 = 0.;
 		P0_3Gamma1 = 0.;
@@ -44,8 +49,9 @@ public:
 		Cka = 1.874;
 	}
 
-	void updateRValues(Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) {
+	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) { 
 		Real ViR = R_Vi;
+		Real CiR = 1.0 / (2.0*C_Ci*sampleRate);
 		Real RiR = R_Ri;
 		Real RgR = R_Rg;
 		Real RoR = R_Ro;
@@ -54,7 +60,10 @@ public:
 		Real E500R = R_E500;
 		E500E = E_E500;
 		Real CoR = 1.0 / (2.0*C_Co*sampleRate);
-		Real P0_1R = ViR;
+		Real S0_3R = (CiR + ViR);
+		S0_3Gamma1 = CiR/(CiR + ViR);
+		Assert(S0_3Gamma1 >= 0.0 && S0_3Gamma1 <= 1.0);
+		Real P0_1R = S0_3R;
 		Real P0_2R = RiR;
 		Real P0_3R = 1.0 /(1.0 / P0_1R + 1.0 / P0_2R);
 		P0_3Gamma1 = 1.0 / P0_1R/(1.0 / P0_1R + 1.0 / P0_2R);
@@ -78,7 +87,8 @@ public:
 		Assert(S2_3Gamma1 >= 0.0 && S2_3Gamma1 <= 1.0);
 	}
 
-	Real advance(Real ViE) {
+	Pair_t advance(Real ViE, Real CiE) {
+		Pair_t out;
 		//Get Bs
 		//S2_3GetB
 		//P2_3GetB
@@ -106,7 +116,7 @@ public:
 		//S1_1SetA
 		//P0_3GetB
 		//S0_3GetB
-		Real Cib = Cia;
+		Real Cib = CiE;
 		//S0_1SetA
 		//ViGetB
 		//S0_2SetA
@@ -150,16 +160,19 @@ public:
 		Real S0_3b1 = Cib - S0_3Gamma1*(Cib + ViE + P0_3b1);
 		Cia = S0_3b1;
 		//RiSetA
-		//printf("Vk=%f Vg=%f Vpk=%f  in=%f out=%f\n", Vk,Vg,S2_3b3, ViE,Roa);
-		//printf("SIXTIES: Vk=%f Vg=%f Cia=%f Coa=%f Cka=%f\n", Vk,Vg,Cia,Coa,Cka);
-		return Roa;
+		//printf("Vk=%f Vg=%f Vd=%f in=%f out=%f\n", Vk,Vg,Vd, ViE,Roa);
+		//printf("Vk=%f Vg=%f Cia=%f Coa=%f Cka=%f\n", Vk,Vg,Cia,Coa,Cka);
+		out.v = Roa;
+		out.c = Cia;
+		return out;
 	}
 
-	Real run(Real input) {
-		Real output = advance(input);
+	Pair_t run(Pair_t input) {
+		Pair_t zero = {0., input.c};
+		Pair_t output = advance(input.v, input.c);
 		if (counter > 0) {
 			counter--;
-			return 0.;
+			return zero;
 		} else {
 			return output;
 		}
