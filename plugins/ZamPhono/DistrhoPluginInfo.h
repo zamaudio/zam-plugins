@@ -20,6 +20,7 @@
 
 #include "ZamPhonoArtwork.hpp"
 
+#define DISTRHO_PLUGIN_BRAND "ZamAudio"
 #define DISTRHO_PLUGIN_NAME "ZamPhono"
 
 #define DISTRHO_PLUGIN_HAS_UI        1

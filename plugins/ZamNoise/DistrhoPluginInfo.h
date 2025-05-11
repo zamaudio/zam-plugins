@@ -33,6 +33,7 @@
 #define DISTRHO_PLUGIN_WANT_PROGRAMS 1
 #define DISTRHO_PLUGIN_WANT_STATE    0
 #define DISTRHO_PLUGIN_WANT_TIMEPOS  0
+#define DISTRHO_PLUGIN_IS_RT_SAFE    1
 
 #define DISTRHO_UI_DEFAULT_WIDTH     ZamNoiseArtwork::zamnoiseWidth
 #define DISTRHO_UI_DEFAULT_HEIGHT    ZamNoiseArtwork::zamnoiseHeight
