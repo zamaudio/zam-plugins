@@ -58,8 +58,8 @@ void ZamEQ2Plugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.name       = "Frequency 1";
         parameter.symbol     = "f1";
         parameter.unit       = "Hz";
-        parameter.ranges.def = 200.0f;
-        parameter.ranges.min = 1000.0f;
+        parameter.ranges.def = 1000.0f;
+        parameter.ranges.min = 200.0f;
         parameter.ranges.max = 2500.0f;
         break;
     case paramGain2:
@@ -170,7 +170,7 @@ void ZamEQ2Plugin::loadProgram(uint32_t index)
 	case 0:
 		gain1 = 0.0;
 		q1 = 1.0;
-		freq1 = 500.0;
+		freq1 = 1000.0;
 		gain2 = 0.0;
 		q2 = 1.0;
 		freq2 = 3000.0;
