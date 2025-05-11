@@ -163,6 +163,7 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
 
 Denoise::Denoise(float srate) {
     int k;
+    destroying = 1;
     FFT_SIZE = 4096;
     dn_gamma = 0.95;
     n_noise_samples = FFT_SIZE;
@@ -184,10 +185,19 @@ Denoise::Denoise(float srate) {
 	noise_max[k] = 0.0;
 	noise_min[k] = 0.0;
     }
+    destroying = 0;
 }
 
 
 void Denoise::process(const float* ins, float* outs, float* noisebuffer, uint32_t frames, int togglenoise, float amount) {
+
+	if (destroying == 1) {
+		uint32_t i;
+		for (i = 0; i < frames; i++) {
+			outs[i] = ins[i];
+		}
+		return;
+	}
 
 	if (togglenoise == 1) {
 		uint32_t i;
@@ -208,9 +218,7 @@ void Denoise::process(const float* ins, float* outs, float* noisebuffer, uint32_
 }
 
 Denoise::~Denoise() {
-    FFTW(destroy_plan)(pForNoise);
-    FFTW(destroy_plan)(pBak);
-    FFTW(destroy_plan)(pFor);
+    destroying = 1;
     FFTW(cleanup)();
 }
 

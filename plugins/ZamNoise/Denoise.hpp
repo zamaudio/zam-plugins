@@ -60,6 +60,7 @@ private:
 	int rate;
 	double window_coef[DENOISE_MAX_FFT];
 	int noisebufpos;
+	int destroying;
 
 	int prev_sample;
 
