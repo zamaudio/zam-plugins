@@ -46,7 +46,7 @@ public:
 	double hanning(int k, int N);
 	double blackman_hybrid(int k, int n_flat, int N);
 	double fft_window(int k, int N, int window_type);
-	void fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], float amount, FFTW(plan) *pFor, FFTW(plan) *pBak);
+	void fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], float amount);
 	int denoise(long noise_start, long noise_end, long first_sample, long last_sample);
 	void get_noise_sample(float* noisebuffer, fftw_real *noise_min, fftw_real *noise_max);
 

@@ -77,7 +77,7 @@ double Denoise::fft_window(int k, int N, int window_type)
     return 0.0;
 }
 
-void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], float amount, FFTW(plan) *pFor, FFTW(plan) *pBak)
+void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, fftw_real noise_min2[], fftw_real noise_max2[], float amount)
 {
     int k;
     uint32_t i;
@@ -97,7 +97,7 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
     	windowed[i] = 0.f;
     }
 
-    FFTW(execute)(*pFor);
+    FFTW(execute)(pFor);
 
     {
 	double sum_log_p = 0.0;
@@ -149,7 +149,7 @@ void Denoise::fft_remove_noise(const float* ins, float* outs, uint32_t frames, f
     }
 
     /* the inverse fft */
-    FFTW(execute)(*pBak);
+    FFTW(execute)(pBak);
 
     for(k = 0 ; k < FFT_SIZE ; k++)
 	windowed[k] /= (double)(FFT_SIZE);
@@ -213,12 +213,15 @@ void Denoise::process(const float* ins, float* outs, float* noisebuffer, uint32_
 			outs[i] = ins[i];
 		}
 	} else {
-		fft_remove_noise(ins, outs, frames, noise_min, noise_max, amount, &pFor, &pBak);
+		fft_remove_noise(ins, outs, frames, noise_min, noise_max, amount);
 	}
 }
 
 Denoise::~Denoise() {
     destroying = 1;
+    FFTW(destroy_plan)(pForNoise);
+    FFTW(destroy_plan)(pFor);
+    FFTW(destroy_plan)(pBak);
     FFTW(cleanup)();
 }
 
