@@ -41,7 +41,6 @@ ZamNoisePlugin::~ZamNoisePlugin()
 	buffer.cbsize = 0;
 	delete zamnoise;
 	free(buffer.cbi);
-	FFTW(cleanup)();
 }
 
 // -----------------------------------------------------------------------
