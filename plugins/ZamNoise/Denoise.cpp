@@ -171,6 +171,11 @@ Denoise::Denoise(float srate) {
     noisebufpos = 0;
     prev_sample = 0;
     
+    windowed = FFTW(alloc_real)(DENOISE_MAX_FFT);
+    out = FFTW(alloc_real)(DENOISE_MAX_FFT);
+    noise = FFTW(alloc_real)(DENOISE_MAX_FFT);
+    noisefft = FFTW(alloc_real)(DENOISE_MAX_FFT);
+
     pFor = FFTW(plan_r2r_1d)(FFT_SIZE, windowed, out, FFTW_R2HC, FFTW_ESTIMATE);
     pBak = FFTW(plan_r2r_1d)(FFT_SIZE, out, windowed, FFTW_HC2R, FFTW_ESTIMATE);
 
@@ -222,6 +227,10 @@ Denoise::~Denoise() {
     FFTW(destroy_plan)(pForNoise);
     FFTW(destroy_plan)(pFor);
     FFTW(destroy_plan)(pBak);
+    FFTW(free)(windowed);
+    FFTW(free)(out);
+    FFTW(free)(noise);
+    FFTW(free)(noisefft);
     FFTW(cleanup)();
 }
 

@@ -64,14 +64,13 @@ private:
 
 	int prev_sample;
 
-	fftw_real windowed[DENOISE_MAX_FFT];
-	fftw_real out[DENOISE_MAX_FFT];
+	fftw_real *windowed;
+	fftw_real *out;
+	fftw_real *noise;
+	fftw_real *noisefft;
 
-    fftw_real noise[DENOISE_MAX_FFT];
-    fftw_real sample[DENOISE_MAX_FFT];
     fftw_real noise_max[DENOISE_MAX_FFT];
     fftw_real noise_min[DENOISE_MAX_FFT];
-    fftw_real noisefft[DENOISE_MAX_FFT];
     fftw_real prev_frame[DENOISE_MAX_FFT];
     FFTW(plan) pForNoise;
     FFTW(plan) pFor, pBak;
