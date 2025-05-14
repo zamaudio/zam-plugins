@@ -231,7 +231,6 @@ Denoise::~Denoise() {
     FFTW(free)(out);
     FFTW(free)(noise);
     FFTW(free)(noisefft);
-    FFTW(cleanup)();
 }
 
 void Denoise::get_noise_sample(float* noisebuffer, fftw_real *noise_min, fftw_real *noise_max)
