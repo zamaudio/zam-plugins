@@ -162,6 +162,7 @@ private:
 	int insaneold, tonestackold, mastergainold, tubedriveold;
 	float bassold, middleold, trebleold;
 
+	double oldc[4];
 	float ts[25][7];
 	float fSlow27, fSlow29, fSlow30, fSlow31, fSlow41, fSlow43, fSlow45, fSlow46;
 
