@@ -3,6 +3,9 @@ name: build
 on:
   push:
 
+env:
+  PAWPAW_COMMIT_HASH: 0946f783f0e9e230bca893289325f91144a3429f
+
 jobs:
   linux:
     strategy:
