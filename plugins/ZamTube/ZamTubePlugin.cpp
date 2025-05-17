@@ -383,9 +383,9 @@ void ZamTubePlugin::activate()
 	ckt[3].set_model(0);
 
 	float scaled_drive = from_dB(-30. * (1. - tubedrive / 11.));
-	float trim_pot = from_dB(mastergain - 30.);
-	float trim_pot_a = 1e+3 + 100e+3*trim_pot;
-	float trim_pot_b = 1e+3 + 100e+3*(1. - trim_pot);
+	float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane);
+	float trim_pot_a = 1. + 100e+3*trim_pot;
+	float trim_pot_b = 1. + 100e+3*(1. - trim_pot);
 	ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 1e+6, rk[0], 1., 100e+3, Fs);
 	ckt[1].updateRValues(ci[1], ck[1], co[1], e[1], er[1], rg[1], 100e+3, rk[1], 100e+3, trim_pot_a, Fs);
 	ckt[2].updateRValues(ci[2], ck[2], co[2], e[2], er[2], rg[2], 100e+3*scaled_drive, rk[2], 1e+3 + 100e+3*(1.-scaled_drive), trim_pot_a + ro[2], Fs);
@@ -413,6 +413,10 @@ void ZamTubePlugin::deactivate()
 	fRec0[2] = 0.f;
 	fRec0[1] = 0.f;
 	fRec0[0] = 0.f;
+	ckt[0].warmup_tubes();
+	ckt[1].warmup_tubes();
+	ckt[2].warmup_tubes();
+	ckt[3].warmup_tubes();
 }
 		
 void ZamTubePlugin::TonestackRecompute(int stack)
@@ -471,11 +475,11 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	const uint8_t stack = (uint8_t)tonestack > 24 ? 24 : (uint8_t)tonestack;
 	TubeStageCircuit::Pair_t out = {0., 0.};
 	float scaled_drive = from_dB(-30. * (1. - tubedrive / 11.));
-	float trim_pot = from_dB(mastergain - 30.);
-	float trim_pot_a = 1e+3 + 100e+3*trim_pot;
-	float trim_pot_b = 1e+3 + 100e+3*(1. - trim_pot);
+	float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane);
+	float trim_pot_a = 1. + 100e+3*trim_pot;
+	float trim_pot_b = 1. + 100e+3*(1. - trim_pot);
 	float Fs = getSampleRate();
-	float postgain = from_dB(-15.*((int)insane)) / 150.;
+	float fullscale = (2. - ((int)insane)) / 612.;
 
 	if ((tonestackold != (int)tonestack) || (bassold != bass) || (middleold != middle) || (trebleold != treble)) {
 		tonestackold = (int)tonestack;
@@ -489,10 +493,10 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		insaneold = (int)insane;
 		tubedriveold = tubedrive;
 		mastergainold = mastergain;
-	ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 1e+6, rk[0], 1., 100e+3, Fs);
-	ckt[1].updateRValues(ci[1], ck[1], co[1], e[1], er[1], rg[1], 100e+3, rk[1], 100e+3, trim_pot_a, Fs);
-	ckt[2].updateRValues(ci[2], ck[2], co[2], e[2], er[2], rg[2], 100e+3*scaled_drive, rk[2], 1e+3 + 100e+3*(1.-scaled_drive), trim_pot_a + ro[2], Fs);
-	ckt[3].updateRValues(ci[3], ck[3], co[3], e[3], er[3], rg[3], trim_pot_a, rk[3], 100e+3 + trim_pot_b, 100e+3*scaled_drive + ro[3], Fs);
+		ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 1e+6, rk[0], 1., 100e+3, Fs);
+		ckt[1].updateRValues(ci[1], ck[1], co[1], e[1], er[1], rg[1], 100e+3, rk[1], 100e+3, trim_pot_a, Fs);
+		ckt[2].updateRValues(ci[2], ck[2], co[2], e[2], er[2], rg[2], 100e+3*scaled_drive, rk[2], 1e+3 + 100e+3*(1.-scaled_drive), trim_pot_a + ro[2], Fs);
+		ckt[3].updateRValues(ci[3], ck[3], co[3], e[3], er[3], rg[3], trim_pot_a, rk[3], 100e+3 + trim_pot_b, 100e+3*scaled_drive + ro[3], Fs);
 	}
 
 	for (uint32_t i = 0; i < frames; ++i) {
@@ -514,7 +518,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 			out = ckt[3].run(out);
 		}
 
-		outputs[0][i] = out.v * postgain;
+		outputs[0][i] = out.v * fullscale;
 
 		// update filter states
 		fRec0[3] = fRec0[2];
