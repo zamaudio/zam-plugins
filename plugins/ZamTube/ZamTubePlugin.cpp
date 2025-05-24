@@ -23,6 +23,8 @@
 #include "triode.h"
 #include <stdio.h>
 
+#define ADJ_TOLERANCE 1e-4
+
 START_NAMESPACE_DISTRHO
 
 // -----------------------------------------------------------------------
@@ -479,14 +481,18 @@ void ZamTubePlugin::TonestackRecompute(int stack)
 void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 {
 	const uint8_t stack = (uint8_t)tonestack > 24 ? 24 : (uint8_t)tonestack;
+	const uint8_t insane_int = (uint8_t)(insane > 0.5) ? 1 : 0;
 	TubeStageCircuit::Pair_t out = {0., 0.};
 	float scaled_drive = from_dB(-30. * (1. - tubedrive / 11.));
-	//float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane);
+	//float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*insane_int);
 	float trim_pot_a = 100e+3;
 	float trim_pot_b = 1.;
 	float Fs = getSampleRate();
 
-	if ((tonestackold != (int)tonestack) || (bassold != bass) || (middleold != middle) || (trebleold != treble)) {
+	if ((tonestackold != (int)tonestack) ||
+	    (abs(bassold - bass) > ADJ_TOLERANCE) ||
+	    (abs(middleold - middle) > ADJ_TOLERANCE) ||
+	    (abs(trebleold - treble) > ADJ_TOLERANCE)) {
 		tonestackold = (int)tonestack;
 		bassold = bass;
 		middleold = middle;
@@ -494,8 +500,9 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		ZamTubePlugin::TonestackRecompute(stack);
 	}
 
-	if ((insaneold != (int)insane) || (mastergainold != mastergain) || (tubedriveold != tubedrive)) {
-		insaneold = (int)insane;
+	if ((insaneold != insane_int) ||
+	    (abs(mastergainold - mastergain) > ADJ_TOLERANCE) ||
+	    (abs(tubedriveold - tubedrive) > ADJ_TOLERANCE)) {
 		tubedriveold = tubedrive;
 		mastergainold = mastergain;
 		ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 1e+6, rk[0], 1., 100e+3, Fs);
@@ -504,13 +511,21 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		ckt[3].updateRValues(ci[3], ck[3], co[3], e[3], er[3], rg[3], trim_pot_a, rk[3], 100e+3 + trim_pot_b, 100e+3*scaled_drive + ro[3], Fs);
 	}
 
+	if (insaneold != insane_int) {
+		insaneold = insane_int;
+		ckt[0].warmup_tubes();
+		ckt[1].warmup_tubes();
+		ckt[2].warmup_tubes();
+		ckt[3].warmup_tubes();
+	}
+
 	for (uint32_t i = 0; i < frames; ++i) {
 		double c1;
 		double c2;
 		double c3;
 
 		//Step 1: read input sample as voltage for the source
-		out.v = (double)inputs[0][i] * (1. + 3.*(int)insane) * from_dB(mastergain / 4.);
+		out.v = (double)inputs[0][i] * (1. + 3.*insane_int) * from_dB(mastergain / 4.);
 		out.c = 0.;
 		out = ckt[0].run(out);
 		c1 = out.c;
@@ -522,7 +537,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		out = ckt[1].run(out);
 		c2 = out.c;
 
-		if ((int)insane) {
+		if (insane_int) {
 			out.c = oldc[2];
 			out.v *= 0.01;
 			out = ckt[2].run(out);
@@ -531,7 +546,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 			out.c = oldc[3];
 			out.v *= 0.1;
 			out = ckt[3].run(out);
-			out.v *= 0.5;
+			out.v *= 0.16;
 
 			oldc[3] = c3;
 			oldc[2] = c2;

@@ -159,7 +159,8 @@ Wave digital filter physical model of a triode tube amplifier stage, with modell
 
 private:
 	float tubedrive,bass,middle,treble,tonestack,mastergain,insane; //parameters
-	int insaneold, tonestackold, mastergainold, tubedriveold;
+	int insaneold;
+	float tonestackold, mastergainold, tubedriveold;
 	float bassold, middleold, trebleold;
 
 	double oldc[4];

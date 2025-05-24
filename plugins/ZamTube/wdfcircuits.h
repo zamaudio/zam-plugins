@@ -3,7 +3,7 @@
 #include "glue.h"
 #include "triode.h"
 
-#define WARMUP_SAMPLES 8
+#define WARMUP_SAMPLES 32
 
 class TubeStageCircuit {
 	/*Tube Preamp*/
@@ -27,7 +27,7 @@ public:
 		S0_3Gamma1 = 0.;
 		S2_3Gamma1 = 0.;
 		P2_3Gamma1 = 0.;
-		E500E = 0.;
+		E500E = 303.;
 		reset_tubes();
 		t = Triode();
 	}
@@ -38,15 +38,15 @@ public:
 
 	void warmup_tubes(void) {
 		counter = WARMUP_SAMPLES;
+		reset_tubes();
 	}
 
 	void reset_tubes(void) {
-		// Steady state solution
-		Vk = 0.0;
+		Vk = 0.1;
 		Vg = 0.0;
 		Cia = 0.0;
-		Coa = -305.;
-		Cka = 0.0;
+		Coa = 1. - E500E;
+		Cka = 0.1;
 	}
 
 	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) { 
