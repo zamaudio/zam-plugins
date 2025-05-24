@@ -42,11 +42,11 @@ public:
 
 	void reset_tubes(void) {
 		// Steady state solution
-		Vk = 1.871401;
+		Vk = 0.0;
 		Vg = 0.0;
 		Cia = 0.0;
-		Coa = -178.066660;
-		Cka = 1.874;
+		Coa = -305.;
+		Cka = 0.0;
 	}
 
 	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) { 
@@ -132,9 +132,9 @@ public:
 		//RkGetB
 		//P1_2SetA
 		//Call tube model
-		Vg = -S1_3b3;
+		Vg = S1_3b3;
 		Vk = -P1_3b3;
-		Real b = -t.compute(S2_3b3, S2_3Gamma1, Vg, Vk);
+		Real b = -t.compute(S2_3b3, S2_3Gamma1, -Vg, -Vk);
 		//Set As
 		//S2_3SetA
 		Real S2_3b1 = P2_3b3 - S2_3Gamma1*(P2_3b3 + P1_3b3 + b);
@@ -160,9 +160,9 @@ public:
 		Real S0_3b1 = Cib - S0_3Gamma1*(Cib + ViE + P0_3b1);
 		Cia = S0_3b1;
 		//RiSetA
-		//printf("Vk=%f Vg=%f Vd=%f in=%f out=%f\n", Vk,Vg,Vd, ViE,Roa);
-		//printf("Vk=%f Vg=%f Cia=%f Coa=%f Cka=%f\n", Vk,Vg,Cia,Coa,Cka);
-		out.v = Roa;
+		//printf("Vk=%f Vg=%f in=%f out=%f\n", Vk,Vg,ViE,Roa);
+		//printf("Vk=%.1f Vg=%.1f\tVgk=%.1f tb=%.1f\tCia=%.1f Coa=%.1f Cka=%.1f\tin=%.2f Roa=%.4f\n", Vk,Vg,Vg-Vk,b,Cia,Coa,Cka,ViE,Roa);
+		out.v = Roa * 50.;
 		out.c = Cia;
 		return out;
 	}

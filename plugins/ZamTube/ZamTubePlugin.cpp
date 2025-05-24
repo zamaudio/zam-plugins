@@ -383,9 +383,11 @@ void ZamTubePlugin::activate()
 	ckt[3].set_model(0);
 
 	float scaled_drive = from_dB(-30. * (1. - tubedrive / 11.));
-	float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane);
-	float trim_pot_a = 1. + 100e+3*trim_pot;
-	float trim_pot_b = 1. + 100e+3*(1. - trim_pot);
+	//float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane);
+	//float trim_pot_a = 1. + 100e+3*trim_pot;
+	//float trim_pot_b = 1. + 100e+3*(1. - trim_pot);
+	float trim_pot_a = 100e+3;
+	float trim_pot_b = 1.;
 	ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 1e+6, rk[0], 1., 100e+3, Fs);
 	ckt[1].updateRValues(ci[1], ck[1], co[1], e[1], er[1], rg[1], 100e+3, rk[1], 100e+3, trim_pot_a, Fs);
 	ckt[2].updateRValues(ci[2], ck[2], co[2], e[2], er[2], rg[2], 100e+3*scaled_drive, rk[2], 1e+3 + 100e+3*(1.-scaled_drive), trim_pot_a + ro[2], Fs);
@@ -479,11 +481,10 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	const uint8_t stack = (uint8_t)tonestack > 24 ? 24 : (uint8_t)tonestack;
 	TubeStageCircuit::Pair_t out = {0., 0.};
 	float scaled_drive = from_dB(-30. * (1. - tubedrive / 11.));
-	float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane);
-	float trim_pot_a = 1. + 100e+3*trim_pot;
-	float trim_pot_b = 1. + 100e+3*(1. - trim_pot);
+	//float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane);
+	float trim_pot_a = 100e+3;
+	float trim_pot_b = 1.;
 	float Fs = getSampleRate();
-	float fullscale = (2. - ((int)insane)) / 612.;
 
 	if ((tonestackold != (int)tonestack) || (bassold != bass) || (middleold != middle) || (trebleold != treble)) {
 		tonestackold = (int)tonestack;
@@ -509,7 +510,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		double c3;
 
 		//Step 1: read input sample as voltage for the source
-		out.v = (double)inputs[0][i];
+		out.v = (double)inputs[0][i] * (1. + 3.*(int)insane) * from_dB(mastergain / 4.);
 		out.c = 0.;
 		out = ckt[0].run(out);
 		c1 = out.c;
@@ -523,11 +524,14 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 		if ((int)insane) {
 			out.c = oldc[2];
+			out.v *= 0.01;
 			out = ckt[2].run(out);
 			c3 = out.c;
 
 			out.c = oldc[3];
+			out.v *= 0.1;
 			out = ckt[3].run(out);
+			out.v *= 0.5;
 
 			oldc[3] = c3;
 			oldc[2] = c2;
@@ -535,7 +539,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 		oldc[1] = c1;
 
-		outputs[0][i] = out.v * fullscale;
+		outputs[0][i] = out.v * 0.025;
 
 		// update filter states
 		fRec0[3] = fRec0[2];

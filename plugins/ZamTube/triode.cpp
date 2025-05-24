@@ -28,8 +28,8 @@ T Triode::getIa(T Vgk, T Vpk) const {
 	if (Vpk < 0.0) {
 		Vpk = 0.0;
 	}
-	if (Vgk > 0.0) {
-		Vgk = 0.0;
+	if (Vgk > 20.0) {
+		Vgk = 20.0;
 	}
 
 	/* exact solution (expensive) */
@@ -38,7 +38,7 @@ T Triode::getIa(T Vgk, T Vpk) const {
 		return 0.;
 	}
 	//printf("Vpk=%f ans=%f e1=%f exact_e1=%f\n", Vpk, ans, e1, ee1);
-	return 1e+6*pow(ee1, kx) / kg1;
+	return 1e+2*pow(ee1, kx) / kg1;
 }
 
 T Triode::iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R) const {
