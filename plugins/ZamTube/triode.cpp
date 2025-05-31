@@ -26,9 +26,6 @@ T Triode::compute(T a, T R, T Vg, T Vk) {
 }
 
 T Triode::getIa(T Vgk, T Vpk) const {
-	if (Vpk < 0.0) {
-		Vpk = 0.0;
-	}
 	if (Vgk > 20.0) {
 		Vgk = 20.0;
 	}

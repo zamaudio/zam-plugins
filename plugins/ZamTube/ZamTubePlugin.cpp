@@ -525,9 +525,10 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		double c3;
 
 		//Step 1: read input sample as voltage for the source
-		out.v = (double)inputs[0][i] * (1. + 3.*insane_int) * from_dB(mastergain);
+		out.v = (double)inputs[0][i] * from_dB(15. * (tubedrive / 11.));
 		out.c = 0.;
 		out = ckt[0].run(out);
+		out.v *= 150.;
 		c1 = out.c;
 
 		//Tone Stack (sandwiched between two tube stages)
@@ -539,11 +540,13 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 		if (insane_int) {
 			out.c = oldc[2];
+			out.v *= 100.;
 			out = ckt[2].run(out);
 			c3 = out.c;
 
 			out.c = oldc[3];
 			out = ckt[3].run(out);
+			out.v *= 2.;
 
 			oldc[3] = c3;
 			oldc[2] = c2;
@@ -551,12 +554,14 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 		oldc[1] = c1;
 
-		outputs[0][i] = out.v;
+		outputs[0][i] = out.v * from_dB(mastergain * 0.25);
 
 		// update filter states
 		fRec0[3] = fRec0[2];
 		fRec0[2] = fRec0[1];
 		fRec0[1] = fRec0[0];
+
+		//printf("\n");
 	}
 }
 

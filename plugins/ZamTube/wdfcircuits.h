@@ -43,11 +43,11 @@ public:
 	}
 
 	void reset_tubes(void) {
-		Vk = 0.0054;
+		Vk = 0.0124;
 		Vg = 0.0;
 		Cia = 0.0;
-		Coa = 0.;
-		Cka = 0.007;
+		Coa = 0.0;
+		Cka = 0.0062;
 	}
 
 	void updateRValues(Real C_Ci, Real C_Ck, Real C_Co, Real E_E500, Real R_E500, Real R_Rg, Real R_Ri, Real R_Rk, Real R_Vi, Real R_Ro, Real sampleRate) { 
@@ -142,8 +142,7 @@ public:
 		//P0_3GetB
 		//S0_3GetB
 		//Call tube model
-		Vg = S1_3b3;
-		Real b = -t.compute(St_3b3, St_3Gamma1, Vg, Vk);
+		Real b = t.compute(-St_3b3, St_3Gamma1, Vg, Vk);
 		//Set As
 		//St_3SetA
 		Real St_3b1 = P2_3b3 - St_3Gamma1*(P2_3b3 + Pt_3b3 + b);
@@ -152,9 +151,9 @@ public:
 		//S3_3SetA
 		Real S3_3b1 = 0.0 - S3_3Gamma1*(0.0 + Cob + P2_3b1);
 		//RoSetA
-		Real Roa = -S3_3b1 * E500E;
+		Real Roa = S3_3b1 * 25.;
 		Real S3_3b2 = 0.0 + P2_3b1 - S3_3Gamma1*(0.0 + Cob + P2_3b1);
-		Coa = S3_3b2;
+		Coa = -S3_3b2;
 		Real St_3b2 = P2_3b3 + b - St_3Gamma1*(P2_3b3 + Pt_3b3 + b);
 		//Pt_3SetA
 		Real Pt_3b1 = St_3b2 + P1_3b3 - S1_3b3 - Pt_3Gamma1*(P1_3b3 - S1_3b3);
@@ -163,13 +162,13 @@ public:
 		//P0_3SetA
 		Real P0_3b1 = S1_3b1 + 0.0 - S0_3b3 - P0_3Gamma1*(0.0 - S0_3b3);
 		//S0_3SetA
-		Real S0_3b1 = ViE - S0_3Gamma1*(ViE + Cib + P0_3b1);
+		//Real S0_3b1 = ViE - S0_3Gamma1*(ViE + Cib + P0_3b1);
 		Real S0_3b2 = ViE + P0_3b1 - S0_3Gamma1*(ViE + Cib + P0_3b1);
 		Cia = S0_3b2;
-		Real P0_3b2 = S1_3b1 - P0_3Gamma1*(0.0 - S0_3b3);
+		//Real P0_3b2 = S1_3b1 - P0_3Gamma1*(0.0 - S0_3b3);
 		//RiSetA
-		Real Ria = P0_3b2;
-		Real S1_3b2 = P0_3b3 + Pt_3b1 - S1_3Gamma1*(P0_3b3 + 0.0 + Pt_3b1);
+		//Real Ria = P0_3b2;
+		//Real S1_3b2 = P0_3b3 + Pt_3b1 - S1_3Gamma1*(P0_3b3 + 0.0 + Pt_3b1);
 		Real Pt_3b2 = St_3b2 - Pt_3Gamma1*(P1_3b3 - S1_3b3);
 		//P1_3SetA
 		Real P1_3b1 = Pt_3b2 + 0.0 - Ckb - P1_3Gamma1*(0.0 - Ckb);
@@ -178,12 +177,13 @@ public:
 		//RkSetA
 		Real Rka = P1_3b2;
 		//RgSetA
-		Real Rga = S1_3b2;
+		//Real Rga = S1_3b2;
 		//printf("Vk=%f Vg=%f in=%f out=%f\n", Vk,Vg,ViE,Roa);
-		Vk = P1_3b3;
+		Vg = S1_3b3;
+		Vk = Rka;//P1_3b3;
 		//printf("Vk=%.4f Vg=%.4f\tVgk=%.4f tb=%.1f\tCia=%.1f Coa=%.1f Cka=%.4f\tin=%.2f out=%.4f\n", Vk,Vg,Vg-Vk,b,Cia,Coa,Cka,ViE,Roa);
 		out.v = Roa;
-		out.c = -Cia;
+		out.c = Cia;
 		return out;
 	}
 
