@@ -525,7 +525,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		double c3;
 
 		//Step 1: read input sample as voltage for the source
-		out.v = (double)inputs[0][i] * (1. + 3.*insane_int) * from_dB(mastergain / 4.);
+		out.v = (double)inputs[0][i] * (1. + 3.*insane_int) * from_dB(mastergain);
 		out.c = 0.;
 		out = ckt[0].run(out);
 		c1 = out.c;
@@ -539,14 +539,11 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 		if (insane_int) {
 			out.c = oldc[2];
-			out.v *= 0.01;
 			out = ckt[2].run(out);
 			c3 = out.c;
 
 			out.c = oldc[3];
-			out.v *= 0.1;
 			out = ckt[3].run(out);
-			out.v *= 0.16;
 
 			oldc[3] = c3;
 			oldc[2] = c2;
@@ -554,7 +551,7 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 		oldc[1] = c1;
 
-		outputs[0][i] = out.v * 0.025;
+		outputs[0][i] = out.v;
 
 		// update filter states
 		fRec0[3] = fRec0[2];
