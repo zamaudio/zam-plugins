@@ -3,8 +3,8 @@ name: build
 on:
   push:
 
-env:
-  PAWPAW_COMMIT_HASH: 0946f783f0e9e230bca893289325f91144a3429f
+#env:
+#  PAWPAW_COMMIT_HASH: 21dec126478a334a9ab5cce12489e5d1df62a37f
 
 jobs:
   linux:
