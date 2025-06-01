@@ -1,3 +1,10 @@
+4.4 Bugfixes and DSP improvements
+	- ZamTube now based on a new circuit focusing on clean, warm tones
+	  with valve-like distortion at high settings.
+	- ZamEQ2 wrong parameter fixed.
+	- ZamNoise fixed memory leaks.
+	- Thanks to falktx for continual support of github CI.
+
 4.3 First AU release
 	- Huge kudos to falktx for completing AU support in DPF!
 	- New plugin: ZamNoise noise reduction based on Gnome Wave Cleaner,

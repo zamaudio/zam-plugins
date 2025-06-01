@@ -56,7 +56,7 @@ protected:
 
     const char* getDescription() const noexcept override
     {
-        return "";
+        return "Background noise reduction";
     }
 
     const char* getMaker() const noexcept override
@@ -76,7 +76,7 @@ protected:
 
     uint32_t getVersion() const noexcept override
     {
-        return d_version(4, 3, 0);
+        return d_version(4, 4, 0);
     }
 
     int64_t getUniqueId() const noexcept override
