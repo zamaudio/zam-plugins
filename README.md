@@ -28,6 +28,6 @@ Bleeding edge installation:
 Package Maintainers:
 ====================
 
-	git checkout 4.4
+	git checkout 4.5
 	git submodule update --init --recursive
 	make dist

@@ -1,3 +1,7 @@
+4.5 New plugin
+	- ZamEcho added, single parameter plugin suitable for DJ transition
+	- CI bumped for macOS builds
+
 4.4 Bugfixes and DSP improvements
 	- ZamTube now based on a new circuit focusing on clean, warm tones
 	  with valve-like distortion at high settings.
