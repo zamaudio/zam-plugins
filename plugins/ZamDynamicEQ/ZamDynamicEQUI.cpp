@@ -23,7 +23,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamDynamicEQUI::ZamDynamicEQUI()
-    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT)
 {
     // background
     fImgBackground = Image(ZamDynamicEQArtwork::zamdynamiceqData, ZamDynamicEQArtwork::zamdynamiceqWidth, ZamDynamicEQArtwork::zamdynamiceqHeight, kImageFormatBGR);

@@ -23,7 +23,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamVerbUI::ZamVerbUI()
-    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT)
 {
     // background
     fImgBackground = Image(ZamVerbArtwork::zamverbData, ZamVerbArtwork::zamverbWidth, ZamVerbArtwork::zamverbHeight, kImageFormatBGR);

@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamGEQ31UI::ZamGEQ31UI()
-    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT)
 {
     // background
     fImgBackground = Image(ZamGEQ31Artwork::zamgeq31Data, ZamGEQ31Artwork::zamgeq31Width, ZamGEQ31Artwork::zamgeq31Height, kImageFormatBGR);

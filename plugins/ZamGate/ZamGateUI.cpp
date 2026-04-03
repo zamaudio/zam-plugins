@@ -21,7 +21,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamGateUI::ZamGateUI()
-    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT)
 {
 	// background
 	fImgBackground = Image(ZamGateArtwork::zamgateData, ZamGateArtwork::zamgateWidth, ZamGateArtwork::zamgateHeight, kImageFormatBGR);

@@ -23,7 +23,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamGrainsUI::ZamGrainsUI()
-    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT)
 {
     // background
     fImgBackground = Image(ZamGrainsArtwork::zamgrainsData, ZamGrainsArtwork::zamgrainsWidth, ZamGrainsArtwork::zamgrainsHeight, kImageFormatBGR);

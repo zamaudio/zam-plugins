@@ -25,7 +25,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamEchoUI::ZamEchoUI()
-    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT)
 {
     //fNanoText.loadSharedResources();
     //font = fNanoText.findFont(NANOVG_DEJAVU_SANS_TTF);

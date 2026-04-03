@@ -22,7 +22,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 ZamPhonoUI::ZamPhonoUI()
-    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT, true)
+    : UI(DISTRHO_UI_DEFAULT_WIDTH, DISTRHO_UI_DEFAULT_HEIGHT)
 {
     // background
     fImgBackground = Image(ZamPhonoArtwork::zamphonoData, ZamPhonoArtwork::zamphonoWidth, ZamPhonoArtwork::zamphonoHeight, kImageFormatBGR);
