@@ -120,9 +120,7 @@ private:
     float echo;
     float z[MAX_DELAY];
     unsigned int posz;
-    unsigned int tap[2];
-    int active;
-    int next;
+    unsigned int tap;
     float fbstate;
 };
 

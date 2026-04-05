@@ -103,10 +103,7 @@ void ZamEchoPlugin::activate()
 		z[i] = 0.f;
 	}
 	posz = 0;
-	tap[0] = 0;
-	tap[1] = 0;
-	active = 0;
-	next = 1;
+	tap = 0;
 	fbstate = 0.f;
 }
 
@@ -126,8 +123,6 @@ void ZamEchoPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	float srate = getSampleRate();
 	TimePosition t = getTimePosition();
 	int delaysamples;
-	unsigned int tmp;
-	float xfade;
 	float bpm;
 	float delayms = 300.0;
 
@@ -136,32 +131,21 @@ void ZamEchoPlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		delayms = (float)t.bbt.beatType * 1000.f * 60.f / (bpm * 4.);
 	}
 	delaysamples = (int)(delayms * srate) / 1000;
-	tap[next] = delaysamples;
+	tap = delaysamples;
 
-	xfade = 0.f;
 	for (i = 0; i < frames; i++) {
 		int p;
 		in = inputs[0][i];
 		z[posz] = in + echo * fbstate;
-		fbstate = 0.f;
-		p = posz - tap[active]; // active line
+		p = posz - tap;
 		if (p<0) p += MAX_DELAY;
-		fbstate += z[p];
+		fbstate = z[p];
 		
-		xfade += 1.0f / (float)frames;
-		fbstate *= (1.-xfade);
-		p = posz - tap[next]; // next line
-		if (p<0) p += MAX_DELAY;
-		fbstate += z[p] * xfade;
-
-		outputs[0][i] = clamp(fbstate);
+		outputs[0][i] = clamp(z[posz]);
 		if (++posz >= MAX_DELAY) {
 			posz = 0;
 		}
 	}
-	tmp = active;
-	active = next;
-	next = tmp;
 }
 
 // -----------------------------------------------------------------------
