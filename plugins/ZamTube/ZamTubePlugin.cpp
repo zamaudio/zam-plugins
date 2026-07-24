@@ -417,10 +417,6 @@ void ZamTubePlugin::deactivate()
 	fRec0[2] = 0.f;
 	fRec0[1] = 0.f;
 	fRec0[0] = 0.f;
-	oldc[0] = 0.;
-	oldc[1] = 0.;
-	oldc[2] = 0.;
-	oldc[3] = 0.;
 	ckt[0].warmup_tubes();
 	ckt[1].warmup_tubes();
 	ckt[2].warmup_tubes();
@@ -520,39 +516,29 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	}
 
 	for (uint32_t i = 0; i < frames; ++i) {
-		double c1;
-		double c2;
-		double c3;
 
 		//Step 1: read input sample as voltage for the source
 		out.v = (double)inputs[0][i] * from_dB(15. * (tubedrive / 11.));
 		out.c = 0.;
 		out = ckt[0].run(out);
-		out.v *= 150.;
-		c1 = out.c;
+		out.v *= 10.;
+		out.c = -out.c;
 
 		//Tone Stack (sandwiched between two tube stages)
 		fRec0[0] = (out.v - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
 		out.v = sanitize_denormal((float)(fSlow31 * ((((fSlow46 * fRec0[0]) + (fSlow45 * fRec0[1])) + (fSlow43 * fRec0[2])) + (fSlow41 * fRec0[3]))));
-		out.c = oldc[1];
+
 		out = ckt[1].run(out);
-		c2 = out.c;
+		out.v *= 0.1;
+		out.c = -out.c;
 
 		if (insane_int) {
-			out.c = oldc[2];
-			out.v *= 100.;
+			out.v *= 10.;
 			out = ckt[2].run(out);
-			c3 = out.c;
-
-			out.c = oldc[3];
+			out.c = -out.c;
 			out = ckt[3].run(out);
-			out.v *= 2.;
-
-			oldc[3] = c3;
-			oldc[2] = c2;
+			out.v *= 0.01;
 		}
-
-		oldc[1] = c1;
 
 		outputs[0][i] = out.v * from_dB(mastergain * 0.25);
 

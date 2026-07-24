@@ -36,7 +36,7 @@ T Triode::getIa(T Vgk, T Vpk) const {
 		return 0.;
 	}
 	//printf("Vpk=%f ans=%f e1=%f exact_e1=%f\n", Vpk, ans, e1, ee1);
-	return pow(ee1, kx) / kg1;
+	return 1e+2*pow(ee1, kx) / kg1;
 }
 
 T Triode::iterateNewtonRaphson(T x, T dx, T Vgk, T a, T R) const {
