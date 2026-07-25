@@ -94,7 +94,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "bass";
         parameter.unit       = " ";
         parameter.ranges.def = 5.0f;
-        parameter.ranges.min = 0.0f;
+        parameter.ranges.min = 0.1f;
         parameter.ranges.max = 10.0f;
         break;
     case paramMiddle:
@@ -103,7 +103,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "mids";
         parameter.unit       = " ";
         parameter.ranges.def = 5.0f;
-        parameter.ranges.min = 0.0f;
+        parameter.ranges.min = 0.1f;
         parameter.ranges.max = 10.0f;
         break;
     case paramTreble:
@@ -112,7 +112,7 @@ void ZamTubePlugin::initParameter(uint32_t index, Parameter& parameter)
         parameter.symbol     = "treb";
         parameter.unit       = " ";
         parameter.ranges.def = 5.0f;
-        parameter.ranges.min = 0.0f;
+        parameter.ranges.min = 0.1f;
         parameter.ranges.max = 10.0f;
         break;
     case paramToneStack:
@@ -385,11 +385,9 @@ void ZamTubePlugin::activate()
 	ckt[3].set_model(0);
 
 	float scaled_drive = from_dB(-30. * (1. - tubedrive / 11.));
-	//float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane);
-	//float trim_pot_a = 1. + 100e+3*trim_pot;
-	//float trim_pot_b = 1. + 100e+3*(1. - trim_pot);
-	float trim_pot_a = 100e+3;
-	float trim_pot_b = 1.;
+	float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*(int)insane - 3.);
+	float trim_pot_a = 100e+3*(1. - trim_pot);
+	float trim_pot_b = 100e+3*trim_pot;
 	ckt[0].updateRValues(ci[0], ck[0], co[0], e[0], er[0], rg[0], 1e+6, rk[0], 1., 100e+3, Fs);
 	ckt[1].updateRValues(ci[1], ck[1], co[1], e[1], er[1], rg[1], 100e+3, rk[1], 100e+3, trim_pot_a, Fs);
 	ckt[2].updateRValues(ci[2], ck[2], co[2], e[2], er[2], rg[2], 100e+3*scaled_drive, rk[2], 1e+3 + 100e+3*(1.-scaled_drive), trim_pot_a + ro[2], Fs);
@@ -422,9 +420,20 @@ void ZamTubePlugin::deactivate()
 	ckt[2].warmup_tubes();
 	ckt[3].warmup_tubes();
 }
-		
+
+static float logscale(const float v, const float minimum, const float maximum)
+{
+	const float b = logf(maximum/minimum)/(maximum-minimum);
+	const float a = maximum/expf(maximum*b);
+	return a * expf(b*v);
+}
+
 void ZamTubePlugin::TonestackRecompute(int stack)
 {
+	float	b = logscale(bass * 0.1f, 0.01f, 1.f);
+	float	m = logscale(middle * 0.1f, 0.01f, 1.f);
+	float	t = logscale(treble * 0.1f, 0.01f, 1.f);
+
 	float 	fSlow0 = float(ts[stack][R4]);
 	float 	fSlow1 = float(ts[stack][R3]);
 	float 	fSlow2 = float(ts[stack][C3]);
@@ -436,11 +445,11 @@ void ZamTubePlugin::TonestackRecompute(int stack)
 	float 	fSlow8 = float(ts[stack][C1]);
 	float 	fSlow9 = (fSlow6 + fSlow0);
 	float 	fSlow10 = ((fSlow2 * fSlow0) + (fSlow4 * fSlow9));
-	float 	fSlow11 = expf((3.4f * (float(bass/10.) - 1)));
+	float 	fSlow11 = expf((3.4f * (b - 1.)));
 	float 	fSlow12 = float(ts[stack][R2]);
 	float 	fSlow13 = (fSlow12 * fSlow11);
 	float 	fSlow14 = (fSlow8 + fSlow4);
-	float 	fSlow15 = float(middle/10.);
+	float 	fSlow15 = m;
 	float 	fSlow16 = (fSlow15 * fSlow1);
 	float 	fSlow17 = (fSlow16 * fSlow14);
 	float 	fSlow18 = (fSlow4 * fSlow0);
@@ -457,7 +466,7 @@ void ZamTubePlugin::TonestackRecompute(int stack)
 	fSlow29 = ((fSlow26 + (fConst1 * (fSlow20 - fSlow28))) - 3);
 	fSlow30 = ((fConst1 * (fSlow20 + fSlow28)) - (3 + fSlow26));
 	fSlow31 = (1.0f / (0 - (1 + (fSlow26 + (fConst1 * (fSlow20 + fSlow24))))));
-	float 	fSlow32 = float(treble/10.);
+	float 	fSlow32 = t;
 	float 	fSlow33 = (fSlow32 * fSlow6);
 	float 	fSlow34 = (fSlow33 * fSlow0);
 	float 	fSlow35 = (fSlow15 * fSlow2);
@@ -480,9 +489,9 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 	const uint8_t insane_int = (uint8_t)(insane > 0.5) ? 1 : 0;
 	TubeStageCircuit::Pair_t out = {0., 0.};
 	float scaled_drive = from_dB(-30. * (1. - tubedrive / 11.));
-	//float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*insane_int);
-	float trim_pot_a = 100e+3;
-	float trim_pot_b = 1.;
+	float trim_pot = from_dB((-30. * (1. - (mastergain + 30.) / 60.)) - 15.*insane_int - 3.);
+	float trim_pot_a = 100e+3*(1. - trim_pot);
+	float trim_pot_b = 100e+3*trim_pot;
 	float Fs = getSampleRate();
 
 	if ((tonestackold != (int)tonestack) ||
@@ -522,7 +531,6 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 		out.c = 0.;
 		out = ckt[0].run(out);
 		out.v *= 10.;
-		out.c = -out.c;
 
 		//Tone Stack (sandwiched between two tube stages)
 		fRec0[0] = (out.v - (fSlow31 * (((fSlow30 * fRec0[1]) + (fSlow29 * fRec0[2])) + (fSlow27 * fRec0[3])))) + 1e-20f;
@@ -530,17 +538,15 @@ void ZamTubePlugin::run(const float** inputs, float** outputs, uint32_t frames)
 
 		out = ckt[1].run(out);
 		out.v *= 0.1;
-		out.c = -out.c;
 
 		if (insane_int) {
 			out.v *= 10.;
 			out = ckt[2].run(out);
-			out.c = -out.c;
 			out = ckt[3].run(out);
 			out.v *= 0.01;
 		}
 
-		outputs[0][i] = out.v * from_dB(mastergain * 0.25);
+		outputs[0][i] = -out.v * from_dB(mastergain * 0.25);
 
 		// update filter states
 		fRec0[3] = fRec0[2];

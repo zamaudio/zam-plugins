@@ -182,8 +182,8 @@ public:
 		Vg = S1_3b3;
 		Vk = Rka;//P1_3b3;
 		//printf("Vk=%.4f Vg=%.4f\tVgk=%.4f tb=%.1f\tCia=%.1f Coa=%.1f Cka=%.4f\tin=%.2f out=%.4f\n", Vk,Vg,Vg-Vk,b,Cia,Coa,Cka,ViE,Roa);
-		out.v = Roa;
-		out.c = Cia;
+		out.v = -Roa;
+		out.c = -Cia;
 		return out;
 	}
 
