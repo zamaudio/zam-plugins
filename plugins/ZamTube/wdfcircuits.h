@@ -94,7 +94,7 @@ public:
 		Assert(St_3Gamma1 >= 0.0 && St_3Gamma1 <= 1.0);
 	}
 
-	Pair_t advance(Real ViE, Real CiE) {
+	Pair_t advance(Real ViE, Real /* CiE */) {
 		Pair_t out;
 		//Get Bs
 		//St_3GetB
@@ -116,7 +116,7 @@ public:
 		//S0_3GetB
 		//ViGetB
 		//S0_1SetA
-		Real Cib = CiE;
+		Real Cib = Cia;
 		//S0_2SetA
 		Real S0_3b3 = -(ViE + Cib);
 		//P0_1SetA
